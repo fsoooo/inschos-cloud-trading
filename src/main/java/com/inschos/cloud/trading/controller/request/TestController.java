@@ -1,4 +1,4 @@
-package com.inschos.cloud.trading.controller;
+package com.inschos.cloud.trading.controller.request;
 
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.model.Area;

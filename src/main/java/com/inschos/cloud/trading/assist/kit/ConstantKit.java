@@ -9,7 +9,7 @@ import javax.annotation.PostConstruct;
  * Created by IceAnt on 2017/7/7.
  */
 @Component
-public class ConstantCfgKit {
+public class ConstantKit {
 
 	public static boolean IS_PRODUCT = true;
 
