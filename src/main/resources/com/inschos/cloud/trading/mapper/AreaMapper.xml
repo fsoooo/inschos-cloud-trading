@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.dao.AreaMapper">
+
+    <sql id="Base_Column_List">
+        `id`,`area_code`,`name`,`parent_id`,`short_name`,`level_type`,`city_code`,`zip_code`,`merger_name`,`longitude`,`latitude`,`pinyin`
+    </sql>
+
+    <select id="findAll"  resultType="com.inschos.cloud.trading.model.Area">
+        select
+          <include refid="Base_Column_List"/>
+        from area order by parent_id ,pinyin
+
+    </select>
+    
+    <select id="findChildren" parameterType="int" resultType="com.inschos.cloud.trading.model.Area">
+        select
+          <include refid="Base_Column_List"/>
+        from area
+        where  `parent_id`=#{parent_id}
+    </select>
+    <select id="findOne" parameterType="int" resultType="com.inschos.cloud.trading.model.Area">
+        select
+        <include refid="Base_Column_List"/>
+        from area
+        where  `id`=#{id}
+    </select>
+
+    <select id="findOneByAreaCode" parameterType="int" resultType="com.inschos.cloud.trading.model.Area">
+        select
+        <include refid="Base_Column_List"/>
+        from area
+        where  `area_code`=#{area_code}
+    </select>
+
+    <select id="findByNamePid" parameterType="com.inschos.cloud.trading.model.Area" resultType="com.inschos.cloud.trading.model.Area">
+        select
+        <include refid="Base_Column_List"/>
+        from area
+        where  `parent_id`=#{parent_id} and (`name`=#{name} or `short_name`=#{name})
+    </select>
+</mapper>
