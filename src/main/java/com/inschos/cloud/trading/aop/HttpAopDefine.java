@@ -1,13 +1,13 @@
 package com.inschos.cloud.trading.aop;
 
 
+import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
+import com.inschos.cloud.trading.access.http.controller.bean.BaseRequest;
+import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.annotation.GetActionBeanAnnotation;
 import com.inschos.cloud.trading.assist.kit.HttpKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.controller.bean.ActionBean;
-import com.inschos.cloud.trading.controller.bean.BaseRequest;
-import com.inschos.cloud.trading.controller.bean.BaseResponse;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 @Aspect
 public class HttpAopDefine {
 
-	@Around("@annotation(com.inschos.rule.annotation.GetActionBeanAnnotation)")
+	@Around("@annotation(com.inschos.cloud.trading.annotation.GetActionBeanAnnotation)")
 	public Object checkAuth(ProceedingJoinPoint joinPoint) throws Throwable {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 

@@ -1,10 +1,10 @@
-package com.inschos.cloud.trading.controller.action;
+package com.inschos.cloud.trading.access.http.controller.action;
 
+import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
+import com.inschos.cloud.trading.access.http.controller.bean.PageBean;
 import com.inschos.cloud.trading.annotation.ParamCheckAnnotation;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.controller.bean.BaseResponse;
-import com.inschos.cloud.trading.controller.bean.PageBean;
 import com.inschos.cloud.trading.model.Page;
 
 import java.lang.reflect.Field;

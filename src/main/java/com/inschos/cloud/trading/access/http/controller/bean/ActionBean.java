@@ -1,4 +1,4 @@
-package com.inschos.cloud.trading.controller.bean;
+package com.inschos.cloud.trading.access.http.controller.bean;
 
 
 import com.inschos.cloud.trading.assist.kit.*;

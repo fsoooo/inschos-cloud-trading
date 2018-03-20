@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.inschos.cloud.trading.dao.AreaMapper">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.AreaMapper">
 
     <sql id="Base_Column_List">
         `id`,`area_code`,`name`,`parent_id`,`short_name`,`level_type`,`city_code`,`zip_code`,`merger_name`,`longitude`,`latitude`,`pinyin`
@@ -39,4 +39,8 @@
         from area
         where  `parent_id`=#{parent_id} and (`name`=#{name} or `short_name`=#{name})
     </select>
+    <insert id="insert" parameterType="com.inschos.cloud.trading.model.Area">
+        insert into area(`id`,`area_code`,`name`,`parent_id`,`short_name`,`level_type`,`city_code`,`zip_code`,`merger_name`,`longitude`,`latitude`,`pinyin`)
+        values(#{id},#{area_code},#{name},#{parent_id},#{short_name},#{level_type},#{city_code},#{zip_code},#{merger_name},#{longitude},#{latitude},#{pinyin})
+    </insert>
 </mapper>

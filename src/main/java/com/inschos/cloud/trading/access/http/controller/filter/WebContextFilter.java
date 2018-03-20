@@ -1,4 +1,4 @@
-package com.inschos.cloud.trading.controller.filter;
+package com.inschos.cloud.trading.access.http.controller.filter;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;

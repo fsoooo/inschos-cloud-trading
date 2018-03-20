@@ -15,10 +15,15 @@
     <!-- 用dubbo协议在20880端口暴露服务 -->
     <!--<dubbo:protocol name="dubbo" port="9900" />-->
     <!-- 用dubbo协议在20880端口暴露服务 -->
-    <dubbo:protocol name="${registry.hessian.name}" port="${registry.hessian.port}" default="${registry.hessian.default}" />
+    <dubbo:protocol name="${registry.hessian.name}" port="${registry.hessian.port}" default="${registry.hessian.default}" serialization="json" />
 
 
-    <dubbo:service interface="com.inschos.cloud.trading.service.DemoService" ref="demoService" />
+    <!--<dubbo:service interface="com.inschos.cloud.trading.access.rpc.service.DemoService" ref="demoService" />-->
+    <dubbo:annotation package="com.inschos.cloud.trading.access.rpc.service.impl" />
+
+
+
+
 
 
 </beans>

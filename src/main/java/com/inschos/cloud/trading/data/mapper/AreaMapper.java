@@ -1,4 +1,4 @@
-package com.inschos.cloud.trading.dao;
+package com.inschos.cloud.trading.data.mapper;
 
 
 import com.inschos.cloud.trading.model.Area;
@@ -20,6 +20,8 @@ public interface AreaMapper {
     Area findOneByAreaCode(int areaCode);
 
     Area findByNamePid(Area region);
+
+    int insert(Area area);
 
 
 }

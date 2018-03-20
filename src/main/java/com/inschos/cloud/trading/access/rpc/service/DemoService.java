@@ -1,4 +1,4 @@
-package com.inschos.cloud.trading.service;
+package com.inschos.cloud.trading.access.rpc.service;
 
 
 import com.inschos.cloud.trading.model.Area;

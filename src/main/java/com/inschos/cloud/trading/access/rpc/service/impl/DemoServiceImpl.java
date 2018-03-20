@@ -1,17 +1,17 @@
-package com.inschos.cloud.trading.service.impl;
+package com.inschos.cloud.trading.access.rpc.service.impl;
 
 
+import com.alibaba.dubbo.config.annotation.Service;
+import com.inschos.cloud.trading.access.rpc.service.DemoService;
 import com.inschos.cloud.trading.assist.kit.L;
-import com.inschos.cloud.trading.dao.AreaMapper;
+import com.inschos.cloud.trading.data.mapper.AreaMapper;
 import com.inschos.cloud.trading.model.Area;
-import com.inschos.cloud.trading.service.DemoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * Created by IceAnt on 2018/3/6.
  */
-@Service("demoService")
+@Service
 public class DemoServiceImpl implements DemoService {
 //
 
