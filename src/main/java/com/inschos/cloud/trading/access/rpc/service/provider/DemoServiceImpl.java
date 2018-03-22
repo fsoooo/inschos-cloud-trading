@@ -1,4 +1,4 @@
-package com.inschos.cloud.trading.access.rpc.service.impl;
+package com.inschos.cloud.trading.access.rpc.service.provider;
 
 
 import com.alibaba.dubbo.config.annotation.Service;

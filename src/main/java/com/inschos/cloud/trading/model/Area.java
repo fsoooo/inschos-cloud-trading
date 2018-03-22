@@ -7,6 +7,9 @@ import java.io.Serializable;
  */
 public class Area implements Serializable {
 
+    private static final long serialVersionUID = -6820100104768934343L;
+
+
     public static final int LEVEL_PROVINCE = 1;
     public static final int LEVEL_CITY = 2;
     public static final int LEVEL_DISTRICT = 3;
@@ -14,6 +17,7 @@ public class Area implements Serializable {
     public static final int DEFAULT_ALL_ID_BASE = -10000;
 
     public static final int ROOT_ID = 1;
+
 
     /** 区域ID*/
     public int id;
@@ -50,6 +54,7 @@ public class Area implements Serializable {
 
     /** 拼音*/
     public String pinyin;
+
 
     public static int toAllId(int parentId){
         return DEFAULT_ALL_ID_BASE - parentId;
