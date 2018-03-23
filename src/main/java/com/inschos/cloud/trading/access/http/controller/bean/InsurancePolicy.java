@@ -1,9 +1,7 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
 
-import javax.smartcardio.Card;
 import java.util.List;
 
 /**
@@ -53,7 +51,7 @@ public class InsurancePolicy {
         public List<InsurancePolicyBaseBean> data;
     }
 
-    public static class InsurancePolicyInsureRequest extends BaseRequest {
+    public static class InsurancePolicyInsureForPersonRequest extends BaseRequest {
 
         // '客户ID'
         public String userId;
@@ -81,7 +79,39 @@ public class InsurancePolicy {
 
     }
 
-    public static class InsurancePolicyInsureResponse extends BaseResponse {
+    public static class InsurancePolicyInsureForPersonResponse extends BaseResponse {
+
+    }
+
+    public static class InsurancePolicyInsureForCompanyRequest extends BaseRequest {
+
+        // '客户ID'
+        public String userId;
+
+        // '产品ID'
+        public String productId;
+
+        // '起保时间'
+        public String startTime;
+
+        // '结束时间'
+        public String endTime;
+
+        // '购买份数'
+        public String count;
+
+        // 投保人
+        public PersonInfo policyholder;
+
+        // 被保险人
+        public PersonInfo insured;
+
+        // 受益人
+        public PersonInfo beneficiary;
+
+    }
+
+    public static class InsurancePolicyInsureForCompanyResponse extends BaseResponse {
 
     }
 

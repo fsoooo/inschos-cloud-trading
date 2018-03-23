@@ -28,12 +28,12 @@ public class InsurancePolicyAction extends BaseAction {
     @Autowired
     private InsurancePreservationDao insurancePreservationDao;
 
-    public String insure(InsurancePolicy.InsurancePolicyInsureRequest insurancePolicyInsureRequest) {
+    public String insure(InsurancePolicy.InsurancePolicyInsureForPersonRequest insurancePolicyInsureForPersonRequest) {
 
         // 校验有效性后，重新计算保费，用重新计算的保费写数据库，并生成订单。
 
-        if (StringKit.isInteger(insurancePolicyInsureRequest.startTime) && StringKit.isInteger(insurancePolicyInsureRequest.endTime)) {
-            if (Long.valueOf(insurancePolicyInsureRequest.endTime) <= Long.valueOf(insurancePolicyInsureRequest.startTime)) {
+        if (StringKit.isInteger(insurancePolicyInsureForPersonRequest.startTime) && StringKit.isInteger(insurancePolicyInsureForPersonRequest.endTime)) {
+            if (Long.valueOf(insurancePolicyInsureForPersonRequest.endTime) <= Long.valueOf(insurancePolicyInsureForPersonRequest.startTime)) {
                 return "错误";
             }
         } else {
@@ -45,26 +45,26 @@ public class InsurancePolicyAction extends BaseAction {
         // TODO: 2018/3/23 记得校验部分参数
         InsurancePolicy.InsurancePolicyBaseBean insurancePolicyBaseBean = new InsurancePolicy.InsurancePolicyBaseBean();
 
-        insurancePolicyBaseBean.userId = insurancePolicyInsureRequest.userId;
-        insurancePolicyBaseBean.productId = insurancePolicyInsureRequest.productId;
+        insurancePolicyBaseBean.userId = insurancePolicyInsureForPersonRequest.userId;
+        insurancePolicyBaseBean.productId = insurancePolicyInsureForPersonRequest.productId;
         insurancePolicyBaseBean.privateCode = insurancePolicyBaseBean.createPrivateCode();
 
-        insurancePolicyBaseBean.startTime = insurancePolicyInsureRequest.startTime;
-        insurancePolicyBaseBean.endTime = insurancePolicyInsureRequest.endTime;
-        insurancePolicyBaseBean.count = insurancePolicyInsureRequest.count;
+        insurancePolicyBaseBean.startTime = insurancePolicyInsureForPersonRequest.startTime;
+        insurancePolicyBaseBean.endTime = insurancePolicyInsureForPersonRequest.endTime;
+        insurancePolicyBaseBean.count = insurancePolicyInsureForPersonRequest.count;
 
         insurancePolicyBaseBean.createdTime = String.valueOf(time);
         insurancePolicyBaseBean.updatedTime = String.valueOf(time);
 
         InsurancePolicy.PersonInfo policyholder = new InsurancePolicy.PersonInfo();
-        if (insurancePolicyInsureRequest.policyholder != null) {
-            policyholder.name = insurancePolicyInsureRequest.policyholder.name;
-            policyholder.cardType = insurancePolicyInsureRequest.policyholder.cardType;
-            if (!policyholder.setCardCode(insurancePolicyInsureRequest.policyholder.cardCode)) {
+        if (insurancePolicyInsureForPersonRequest.policyholder != null) {
+            policyholder.name = insurancePolicyInsureForPersonRequest.policyholder.name;
+            policyholder.cardType = insurancePolicyInsureForPersonRequest.policyholder.cardType;
+            if (!policyholder.setCardCode(insurancePolicyInsureForPersonRequest.policyholder.cardCode)) {
                 // 证件号码不符合规则
                 return "错误";
             }
-            policyholder.phone = insurancePolicyInsureRequest.policyholder.phone;
+            policyholder.phone = insurancePolicyInsureForPersonRequest.policyholder.phone;
 
         } else {
             return "错误";
@@ -73,48 +73,48 @@ public class InsurancePolicyAction extends BaseAction {
 
         InsurancePolicy.PersonInfo insured = new InsurancePolicy.PersonInfo();
 
-        if (insurancePolicyInsureRequest.insured != null) {
-            insured.relationName = insurancePolicyInsureRequest.insured.relationName;
-            insured.name = insurancePolicyInsureRequest.insured.name;
-            insured.cardType = insurancePolicyInsureRequest.insured.cardType;
-            if (!insured.setCardCode(insurancePolicyInsureRequest.insured.cardCode)) {
+        if (insurancePolicyInsureForPersonRequest.insured != null) {
+            insured.relationName = insurancePolicyInsureForPersonRequest.insured.relationName;
+            insured.name = insurancePolicyInsureForPersonRequest.insured.name;
+            insured.cardType = insurancePolicyInsureForPersonRequest.insured.cardType;
+            if (!insured.setCardCode(insurancePolicyInsureForPersonRequest.insured.cardCode)) {
                 // 证件号码不符合规则
                 return "错误";
             }
-            insured.phone = insurancePolicyInsureRequest.insured.phone;
-            insured.birthday = insurancePolicyInsureRequest.insured.birthday;
-            insured.sex = insurancePolicyInsureRequest.insured.sex;
-            insured.phone = insurancePolicyInsureRequest.insured.phone;
-            insured.occupation = insurancePolicyInsureRequest.insured.occupation;
-            insured.email = insurancePolicyInsureRequest.insured.email;
-            insured.area = insurancePolicyInsureRequest.insured.area;
-            insured.address = insurancePolicyInsureRequest.insured.address;
-            insured.nationality = insurancePolicyInsureRequest.insured.nationality;
-            insured.annualIncome = insurancePolicyInsureRequest.insured.annualIncome;
-            insured.height = insurancePolicyInsureRequest.insured.height;
-            insured.weight = insurancePolicyInsureRequest.insured.weight;
+            insured.phone = insurancePolicyInsureForPersonRequest.insured.phone;
+            insured.birthday = insurancePolicyInsureForPersonRequest.insured.birthday;
+            insured.sex = insurancePolicyInsureForPersonRequest.insured.sex;
+            insured.phone = insurancePolicyInsureForPersonRequest.insured.phone;
+            insured.occupation = insurancePolicyInsureForPersonRequest.insured.occupation;
+            insured.email = insurancePolicyInsureForPersonRequest.insured.email;
+            insured.area = insurancePolicyInsureForPersonRequest.insured.area;
+            insured.address = insurancePolicyInsureForPersonRequest.insured.address;
+            insured.nationality = insurancePolicyInsureForPersonRequest.insured.nationality;
+            insured.annualIncome = insurancePolicyInsureForPersonRequest.insured.annualIncome;
+            insured.height = insurancePolicyInsureForPersonRequest.insured.height;
+            insured.weight = insurancePolicyInsureForPersonRequest.insured.weight;
 
         } else {
             return "错误";
         }
 
         InsurancePolicy.PersonInfo beneficiary = new InsurancePolicy.PersonInfo();
-        if (insurancePolicyInsureRequest.beneficiary != null) {
-            beneficiary.relationName = insurancePolicyInsureRequest.beneficiary.relationName;
-            beneficiary.name = insurancePolicyInsureRequest.beneficiary.name;
-            beneficiary.cardType = insurancePolicyInsureRequest.beneficiary.cardType;
-            if (!beneficiary.setCardCode(insurancePolicyInsureRequest.beneficiary.cardCode)) {
+        if (insurancePolicyInsureForPersonRequest.beneficiary != null) {
+            beneficiary.relationName = insurancePolicyInsureForPersonRequest.beneficiary.relationName;
+            beneficiary.name = insurancePolicyInsureForPersonRequest.beneficiary.name;
+            beneficiary.cardType = insurancePolicyInsureForPersonRequest.beneficiary.cardType;
+            if (!beneficiary.setCardCode(insurancePolicyInsureForPersonRequest.beneficiary.cardCode)) {
                 // 证件号码不符合规则
                 return "错误";
             }
-            beneficiary.phone = insurancePolicyInsureRequest.beneficiary.phone;
-            beneficiary.birthday = insurancePolicyInsureRequest.beneficiary.birthday;
-            beneficiary.sex = insurancePolicyInsureRequest.beneficiary.sex;
-            beneficiary.phone = insurancePolicyInsureRequest.beneficiary.phone;
-            beneficiary.email = insurancePolicyInsureRequest.beneficiary.email;
-            beneficiary.area = insurancePolicyInsureRequest.beneficiary.area;
-            beneficiary.address = insurancePolicyInsureRequest.beneficiary.address;
-            beneficiary.nationality = insurancePolicyInsureRequest.beneficiary.nationality;
+            beneficiary.phone = insurancePolicyInsureForPersonRequest.beneficiary.phone;
+            beneficiary.birthday = insurancePolicyInsureForPersonRequest.beneficiary.birthday;
+            beneficiary.sex = insurancePolicyInsureForPersonRequest.beneficiary.sex;
+            beneficiary.phone = insurancePolicyInsureForPersonRequest.beneficiary.phone;
+            beneficiary.email = insurancePolicyInsureForPersonRequest.beneficiary.email;
+            beneficiary.area = insurancePolicyInsureForPersonRequest.beneficiary.area;
+            beneficiary.address = insurancePolicyInsureForPersonRequest.beneficiary.address;
+            beneficiary.nationality = insurancePolicyInsureForPersonRequest.beneficiary.nationality;
 
         } else {
             return "错误";
@@ -127,7 +127,7 @@ public class InsurancePolicyAction extends BaseAction {
         // TODO: 2018/3/23 成功后记得存保全记录
         InsurancePreservationModel insurancePreservationModel = new InsurancePreservationModel();
 
-        insurancePreservationModel.cust_id = insurancePolicyInsureRequest.userId;
+        insurancePreservationModel.cust_id = insurancePolicyInsureForPersonRequest.userId;
         insurancePreservationModel.private_code = insurancePolicyBaseBean.privateCode;
         insurancePreservationModel.event = String.valueOf(InsurancePreservationModel.EVENT_TYPE_INSURE);
         insurancePreservationModel.apply_time = String.valueOf(time);
