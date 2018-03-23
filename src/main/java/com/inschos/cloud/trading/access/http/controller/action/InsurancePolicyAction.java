@@ -1,16 +1,14 @@
 package com.inschos.cloud.trading.access.http.controller.action;
 
-import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
-import com.inschos.cloud.trading.annotation.GetActionBeanAnnotation;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
+import com.inschos.cloud.trading.data.dao.InsurancePreservationDao;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.model.InsurancePreservationModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -27,6 +25,9 @@ public class InsurancePolicyAction extends BaseAction {
     @Autowired
     private InsuranceParticipantDao insuranceParticipantDao;
 
+    @Autowired
+    private InsurancePreservationDao insurancePreservationDao;
+
     public String insure(InsurancePolicy.InsurancePolicyInsureRequest insurancePolicyInsureRequest) {
 
         // 校验有效性后，重新计算保费，用重新计算的保费写数据库，并生成订单。
@@ -39,6 +40,8 @@ public class InsurancePolicyAction extends BaseAction {
             return "错误";
         }
 
+        long time = System.currentTimeMillis();
+
         // TODO: 2018/3/23 记得校验部分参数
         InsurancePolicy.InsurancePolicyBaseBean insurancePolicyBaseBean = new InsurancePolicy.InsurancePolicyBaseBean();
 
@@ -49,6 +52,9 @@ public class InsurancePolicyAction extends BaseAction {
         insurancePolicyBaseBean.startTime = insurancePolicyInsureRequest.startTime;
         insurancePolicyBaseBean.endTime = insurancePolicyInsureRequest.endTime;
         insurancePolicyBaseBean.count = insurancePolicyInsureRequest.count;
+
+        insurancePolicyBaseBean.createdTime = String.valueOf(time);
+        insurancePolicyBaseBean.updatedTime = String.valueOf(time);
 
         InsurancePolicy.PersonInfo policyholder = new InsurancePolicy.PersonInfo();
         if (insurancePolicyInsureRequest.policyholder != null) {
@@ -116,6 +122,39 @@ public class InsurancePolicyAction extends BaseAction {
 
 
         // TODO: 2018/3/23 重新计算费用
+
+
+        // TODO: 2018/3/23 成功后记得存保全记录
+        InsurancePreservationModel insurancePreservationModel = new InsurancePreservationModel();
+
+        insurancePreservationModel.cust_id = insurancePolicyInsureRequest.userId;
+        insurancePreservationModel.private_code = insurancePolicyBaseBean.privateCode;
+        insurancePreservationModel.event = String.valueOf(InsurancePreservationModel.EVENT_TYPE_INSURE);
+        insurancePreservationModel.apply_time = String.valueOf(time);
+        insurancePreservationModel.created_at = String.valueOf(time);
+
+        insurancePreservationDao.addInsurancePreservation(insurancePreservationModel);
+
+        return "";
+    }
+
+    public String surrender(InsurancePolicy.InsurancePolicySurrenderRequest insurancePolicySurrenderRequest) {
+
+        // TODO: 2018/3/23 请求退保
+
+        long time = System.currentTimeMillis();
+        // TODO: 2018/3/23 成功后记得存保全记录
+        InsurancePreservationModel insurancePreservationModel = new InsurancePreservationModel();
+
+
+        insurancePreservationModel.cust_id = insurancePolicySurrenderRequest.userId;
+        insurancePreservationModel.private_code = insurancePolicySurrenderRequest.privateCode;
+
+        insurancePreservationModel.event = String.valueOf(InsurancePreservationModel.EVENT_TYPE_SURRENDER);
+        insurancePreservationModel.apply_time = String.valueOf(time);
+        insurancePreservationModel.created_at = String.valueOf(time);
+
+        insurancePreservationDao.addInsurancePreservation(insurancePreservationModel);
 
         return "";
     }

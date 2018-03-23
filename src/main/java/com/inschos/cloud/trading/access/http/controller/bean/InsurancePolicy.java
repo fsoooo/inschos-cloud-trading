@@ -85,6 +85,25 @@ public class InsurancePolicy {
 
     }
 
+    public static class InsurancePolicySurrenderRequest extends BaseRequest {
+
+        // '客户ID'
+        public String userId;
+
+        // '产品ID'
+        public String productId;
+
+        public String privateCode;
+
+        public String surrenderReason;
+    }
+
+    public static class InsurancePolicySurrenderResponse extends BaseResponse {
+
+    }
+
+
+
     // 待核保
     public static final int ORDER_STATUS_WAITING_UNDERWRITING = 1;
     // 核保失败
@@ -138,6 +157,9 @@ public class InsurancePolicy {
         public String endTime;
 
         public String timeText;
+
+        // '创建时间'
+        public String createdTime;
 
         // '更新时间'
         public String updatedTime;

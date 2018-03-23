@@ -21,10 +21,33 @@ public class TradeController {
     @Autowired
     private InsurancePolicyAction mInsurancePolicyAction;
 
+    // 投保
     @GetActionBeanAnnotation
-    @RequestMapping("/insurance_policy_list")
+    @RequestMapping("/insure")
+    @ResponseBody
+    public String insure(ActionBean bean) {
+        return "";
+    }
+
+    // 退保
+    @GetActionBeanAnnotation
+    @RequestMapping("/surrender")
+    @ResponseBody
+    public String surrender(ActionBean bean) {
+        return "";
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/insurance_policy_list_by_user_id")
     @ResponseBody
     public String findInsurancePolicyListByUserId(ActionBean bean) {
+        return "";
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/insurance_policy_list_by_other_info")
+    @ResponseBody
+    public String findInsurancePolicyListByOtherInfo(ActionBean bean) {
         return "";
     }
 
@@ -34,6 +57,8 @@ public class TradeController {
     public String findInsurancePolicyDetailByPrivateCode(ActionBean bean) {
         return "";
     }
+
+
 
 //    // 保费试算
 //    @GetActionBeanAnnotation
