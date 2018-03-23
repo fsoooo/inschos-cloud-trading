@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 创建日期：2018/3/22 on 16:52
- * 描述：
+ * 描述：保单信息
  * 作者：zhangyunhe
  */
 @Component

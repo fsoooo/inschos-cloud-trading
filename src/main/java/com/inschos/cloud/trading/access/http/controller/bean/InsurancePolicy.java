@@ -53,6 +53,38 @@ public class InsurancePolicy {
         public List<InsurancePolicyBaseBean> data;
     }
 
+    public static class InsurancePolicyInsureRequest extends BaseRequest {
+
+        // '客户ID'
+        public String userId;
+
+        // '产品ID'
+        public String productId;
+
+        // '起保时间'
+        public String startTime;
+
+        // '结束时间'
+        public String endTime;
+
+        // '购买份数'
+        public String count;
+
+        // 投保人
+        public PersonInfo policyholder;
+
+        // 被保险人
+        public PersonInfo insured;
+
+        // 受益人
+        public PersonInfo beneficiary;
+
+    }
+
+    public static class InsurancePolicyInsureResponse extends BaseResponse {
+
+    }
+
     // 待核保
     public static final int ORDER_STATUS_WAITING_UNDERWRITING = 1;
     // 核保失败
@@ -115,6 +147,10 @@ public class InsurancePolicy {
 
         // '购买份数'
         public String count;
+
+        public String createPrivateCode() {
+            return "";
+        }
 
         public boolean setStatus(int status) {
             if (status > 11 || status < 1) {
@@ -210,7 +246,7 @@ public class InsurancePolicy {
         public String email;
 
         // '被保车牌号'
-        public String car_code;
+        public String carCode;
 
         // '职业'
         public String occupation;
