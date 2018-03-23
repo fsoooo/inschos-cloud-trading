@@ -152,5 +152,6 @@ public class InsurancePolicyModel {
      */
     public String state;
 
+    public Page page;
 
 }

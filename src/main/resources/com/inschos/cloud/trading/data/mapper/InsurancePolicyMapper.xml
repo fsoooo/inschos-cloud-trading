@@ -2,6 +2,58 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper">
 
+    <sql id="Base_Column_List">
+        `id`,`union_order_code`,`warranty_code`,`private_code`,`user_id`,`user_type`,`agent_id`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`company_name`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`parameter`,`is_settlement`,`warranty_url`,`warranty_image`,`warranty_from`,`car_code`,`type`,`status`,`created_at`,`updated_at`,`state`
+    </sql>
+
+    <select id="findInsurancePolicyDetailByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        <include refid="Base_Column_List" />
+        from cust_warranty where private_code=#{_parameter} AND state = 1
+    </select>
+
+    <select id="findInsurancePolicyListByUserIdAndStatus" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        <!--select-->
+        <!--<include refid="Base_Column_List" />-->
+        <!--from cust_warranty-->
+        <!--<where>-->
+            <!--<choose>-->
+                <!--<when test="page.lastId>0">-->
+                    <!--id&gt;#{page.lastId}-->
+                <!--</when>-->
+                <!--<when test="page.start>0">-->
+                    <!--id&gt;=(select id from cust_warranty where company_id=#{company_id} AND state=1-->
+                    <!--<if test="search!=null and search!=''">-->
+                        <!--and `name` like concat("%",#{search},"%")-->
+                    <!--</if>-->
+                    <!--limit #{page.start},1-->
+                    <!--)-->
+                <!--</when>-->
+                <!--<otherwise>-->
+                    <!--1=1-->
+                <!--</otherwise>-->
+            <!--</choose>-->
+            <!--and user_id=#{user_id} AND state = 1-->
+            <!--<if test="search!=null and search!=''">-->
+                <!--and `name` like concat("%",#{search},"%")-->
+            <!--</if>-->
+            <!--limit #{page.offset}-->
+        <!--</where>-->
+        <!---->
+        <!---->
+        <!---->
+        <!---->
+        <!--<if test="status!=0">-->
+            <!---->
+        <!--</if>-->
+    </select>
+
+
+    <select id="findInsurancePolicyListByOtherInfo" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        <include refid="Base_Column_List" />
+        from cust_warranty where private_code=#{_parameter}
+    </select>
 
 
 </mapper>
