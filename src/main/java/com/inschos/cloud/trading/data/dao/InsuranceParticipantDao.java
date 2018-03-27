@@ -22,4 +22,5 @@ public class InsuranceParticipantDao extends BaseDao {
         return insuranceParticipantMapper.findInsuranceParticipantByPrivateCode(privateCode);
     }
 
+
 }

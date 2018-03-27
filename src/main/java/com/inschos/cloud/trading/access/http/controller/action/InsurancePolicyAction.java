@@ -2,9 +2,11 @@ package com.inschos.cloud.trading.access.http.controller.action;
 
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.data.dao.InsuranceClaimsDao;
 import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.data.dao.InsurancePreservationDao;
+import com.inschos.cloud.trading.model.InsuranceClaimsModel;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.InsurancePreservationModel;
@@ -27,6 +29,9 @@ public class InsurancePolicyAction extends BaseAction {
 
     @Autowired
     private InsurancePreservationDao insurancePreservationDao;
+
+    @Autowired
+    private InsuranceClaimsDao insuranceClaimsDao;
 
     public String insure(InsurancePolicy.InsurancePolicyInsureForPersonRequest insurancePolicyInsureForPersonRequest) {
 
@@ -69,7 +74,6 @@ public class InsurancePolicyAction extends BaseAction {
         } else {
             return "错误";
         }
-
 
         InsurancePolicy.PersonInfo insured = new InsurancePolicy.PersonInfo();
 
@@ -187,6 +191,23 @@ public class InsurancePolicyAction extends BaseAction {
 
         // 个人
         List<InsuranceParticipantModel> insuranceParticipantByPrivateCode = insuranceParticipantDao.findInsuranceParticipantByPrivateCode(insurancePolicyModel.private_code);
+
+        return "";
+    }
+
+    public String findInsuranceClaimsListByUserId(InsurancePolicy.InsuranceClaimsListByUserIdRequest insuranceClaimsListByUserIdRequest) {
+
+        InsuranceClaimsModel insuranceClaimsModel = new InsuranceClaimsModel();
+        insuranceClaimsModel.user_id = insuranceClaimsListByUserIdRequest.userId;
+        insuranceClaimsModel.status = insuranceClaimsListByUserIdRequest.status;
+        insuranceClaimsModel.search = insuranceClaimsListByUserIdRequest.searchKey;
+
+
+        List<InsuranceClaimsModel> insuranceClaimsListByUserId = insuranceClaimsDao.findInsuranceClaimsListByUserId(insuranceClaimsModel);
+
+        insuranceClaimsListByUserId.sort((o1, o2) -> (int) (Long.valueOf(o1.created_at) - Long.valueOf(o2.created_at)));
+
+        // TODO: 2018/3/27 保全记录
 
         return "";
     }

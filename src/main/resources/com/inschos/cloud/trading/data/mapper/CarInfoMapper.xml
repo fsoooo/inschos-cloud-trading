@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.model.CarInfoModel">
+
+    <sql id="Base_Column_List">
+        `id`,`car_code`,`name`,`code`,`phone`,`frame_no`,`engine_no`,`vehicle_fgw_code`,`vehicle_fgw_name`,`parent_veh_name`,`brand_code`,`brand_name`,`engine_desc`,`new_car_price`,`purchase_price_tax`,`import_flag`,`seat`,`standard_name`,`is_trans`,`remark`,`created_at`,`updated_at`
+    </sql>
+
+    <insert id="addCarInfo" parameterType="com.inschos.rule.model.ComAgents" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into cust_car
+        (`id`,`car_code`,`name`,`code`,`phone`,`frame_no`,`engine_no`,`vehicle_fgw_code`,`vehicle_fgw_name`,`parent_veh_name`,`brand_code`,`brand_name`,`engine_desc`,`new_car_price`,`purchase_price_tax`,`import_flag`,`seat`,`standard_name`,`is_trans`,`remark`,`created_at`,`updated_at`)
+        values
+        #{id},#{car_code},#{name},#{code},#{phone},#{frame_no},#{engine_no},#{vehicle_fgw_code},#{vehicle_fgw_name},#{parent_veh_name},#{brand_code},#{brand_name},#{engine_desc},#{new_car_price},#{purchase_price_tax},#{import_flag},#{seat},#{standard_name},#{is_trans},#{remark},#{created_at},#{updated_at}
+    </insert>
+
+    <select id="findOneByCarCode" parameterType="String" resultType="com.inschos.cloud.trading.model.CarInfoModel">
+        select
+        <include refid="Base_Column_List" />
+        from cust_car where car_code=#{_parameter}
+    </select>
+
+
+</mapper>

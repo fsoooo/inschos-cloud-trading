@@ -44,7 +44,7 @@ public class InsurancePolicy {
         // 渠道id
         public String ditchId;
         // 关键字
-        public String key;
+        public String searchKey;
     }
 
     public static class InsurancePolicyListByOtherInfoResponse extends BaseResponse {
@@ -132,7 +132,21 @@ public class InsurancePolicy {
 
     }
 
+    public static class InsuranceClaimsListByUserIdRequest extends BaseRequest {
 
+        // '客户ID'
+        public String userId;
+
+        // 关键字
+        public String searchKey;
+
+        // 状态，0-全部
+        public String status;
+    }
+
+    public static class InsuranceClaimsListByUserIdResponse extends BaseResponse {
+
+    }
 
     // 待核保
     public static final int ORDER_STATUS_WAITING_UNDERWRITING = 1;
@@ -320,6 +334,9 @@ public class InsurancePolicy {
 
         // '详细地址'
         public String address;
+
+        // 是否添加联系人，0-不添加，1-添加
+        public String contact;
 
         public boolean setCardType(int cardType) {
             if (cardType != CardCodeKit.CARD_TYPE_ID_CARD && cardType != CardCodeKit.CARD_TYPE_PASSPORT && cardType != CardCodeKit.CARD_TYPE_MILITARY_CERTIFICATE) {

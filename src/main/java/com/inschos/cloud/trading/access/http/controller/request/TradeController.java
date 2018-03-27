@@ -59,6 +59,13 @@ public class TradeController {
     }
 
 
+    @GetActionBeanAnnotation
+    @RequestMapping("/insurance_claims_list_by_user_id")
+    @ResponseBody
+    public String findInsuranceClaimsListByUserId(ActionBean bean) {
+        return "";
+    }
+
 
 //    // 保费试算
 //    @GetActionBeanAnnotation
