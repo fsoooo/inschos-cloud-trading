@@ -6,6 +6,14 @@
         `id`,`union_order_code`,`warranty_code`,`private_code`,`user_id`,`user_type`,`agent_id`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`company_name`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`parameter`,`is_settlement`,`warranty_url`,`warranty_image`,`warranty_from`,`car_code`,`type`,`status`,`created_at`,`updated_at`,`state`
     </sql>
 
+    <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into cust_warranty
+        <include refid="Base_Column_List" />
+        values
+        #{id},#{union_order_code},#{warranty_code},#{private_code},#{user_id},#{user_type},#{agent_id},#{ditch_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{company_name},#{count},#{pay_time},#{pay_way},#{by_stages_way},#{parameter},#{is_settlement},#{warranty_url},#{warranty_image},#{warranty_from},#{car_code},#{type},#{status},#{created_at},#{updated_at},#{state}
+    </insert>
+
     <select id="findInsurancePolicyDetailByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
         <include refid="Base_Column_List" />

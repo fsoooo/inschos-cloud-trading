@@ -1,7 +1,5 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
-import com.inschos.cloud.trading.assist.kit.CardCodeKit;
-
 import java.util.List;
 
 /**
@@ -148,29 +146,6 @@ public class InsurancePolicy {
 
     }
 
-    // 待核保
-    public static final int ORDER_STATUS_WAITING_UNDERWRITING = 1;
-    // 核保失败
-    public static final int ORDER_STATUS_UNDERWRITING_FAIL = 2;
-    // 未支付-核保成功
-    public static final int ORDER_STATUS_UNDERWRITING_UNPAID = 3;
-    // 支付中
-    public static final int ORDER_STATUS_PAYING = 4;
-    // 支付失败
-    public static final int ORDER_STATUS_PAYMENT_FAIL = 5;
-    // 支付成功
-    public static final int ORDER_STATUS_PAYMENT_SUCCESS = 6;
-    // 保障中
-    public static final int ORDER_STATUS_PROTECTING = 7;
-    // 待生效
-    public static final int ORDER_STATUS_WAITING_EFFECTIVE = 8;
-    // 待续保
-    public static final int ORDER_STATUS_WAITING_RENEWAL = 9;
-    // 已失效
-    public static final int ORDER_STATUS_FAILURE = 10;
-    // 已退保
-    public static final int ORDER_STATUS_SURRENDER = 11;
-
     public static class InsurancePolicyBaseBean {
         // id,分页用
         public long id;
@@ -214,56 +189,6 @@ public class InsurancePolicy {
         // '购买份数'
         public String count;
 
-        public String createPrivateCode() {
-            return "";
-        }
-
-        public boolean setStatus(int status) {
-            if (status > 11 || status < 1) {
-                return false;
-            }
-
-            this.status = status;
-            return true;
-        }
-
-        public void setStatusText(int status) {
-            switch (status) {
-                case ORDER_STATUS_WAITING_UNDERWRITING:
-                    statusText = "待核保";
-                    break;
-                case ORDER_STATUS_UNDERWRITING_FAIL:
-                    statusText = "核保失败";
-                    break;
-                case ORDER_STATUS_UNDERWRITING_UNPAID:
-                    statusText = "未支付-核保成功";
-                    break;
-                case ORDER_STATUS_PAYING:
-                    statusText = "支付中";
-                    break;
-                case ORDER_STATUS_PAYMENT_FAIL:
-                    statusText = "支付失败";
-                    break;
-                case ORDER_STATUS_PAYMENT_SUCCESS:
-                    statusText = "支付成功";
-                    break;
-                case ORDER_STATUS_PROTECTING:
-                    statusText = "保障中";
-                    break;
-                case ORDER_STATUS_WAITING_EFFECTIVE:
-                    statusText = "待生效";
-                    break;
-                case ORDER_STATUS_WAITING_RENEWAL:
-                    statusText = "待续保";
-                    break;
-                case ORDER_STATUS_FAILURE:
-                    statusText = "已失效";
-                    break;
-                case ORDER_STATUS_SURRENDER:
-                    statusText = "已退保";
-                    break;
-            }
-        }
     }
 
     public static class InsurancePolicyDetailForPersonBean extends InsurancePolicyBaseBean {
@@ -337,58 +262,6 @@ public class InsurancePolicy {
 
         // 是否添加联系人，0-不添加，1-添加
         public String contact;
-
-        public boolean setCardType(int cardType) {
-            if (cardType != CardCodeKit.CARD_TYPE_ID_CARD && cardType != CardCodeKit.CARD_TYPE_PASSPORT && cardType != CardCodeKit.CARD_TYPE_MILITARY_CERTIFICATE) {
-                return false;
-            }
-
-            this.cardType = cardType;
-            setCardTypeText(cardType);
-
-            return true;
-        }
-
-        public int cardType() {
-            return cardType;
-        }
-
-        public void setCardTypeText(int cardType) {
-            switch (cardType) {
-                case CardCodeKit.CARD_TYPE_ID_CARD:
-                    cardTypeText = "身份证";
-                    break;
-                case CardCodeKit.CARD_TYPE_PASSPORT:
-                    cardTypeText = "护照";
-                    break;
-                case CardCodeKit.CARD_TYPE_MILITARY_CERTIFICATE:
-                    cardTypeText = "军官证";
-                    break;
-            }
-        }
-
-        public String getCardTypeText() {
-            return cardTypeText;
-        }
-
-        // 先设置证件类型
-        public boolean setCardCode(String cardCode) {
-            if (cardType == 0) {
-                return false;
-            }
-
-            if (!CardCodeKit.isLegal(cardType, cardCode)) {
-                return false;
-            }
-
-            this.cardCode = cardCode;
-
-            return true;
-        }
-
-        public String getCardCode() {
-            return cardCode;
-        }
 
     }
 

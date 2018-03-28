@@ -11,6 +11,8 @@ import java.util.List;
  */
 public interface InsurancePolicyMapper {
 
+    int addInsurancePolicy(InsurancePolicyModel insurancePolicyModel);
+
     InsurancePolicyModel findInsurancePolicyDetailByPrivateCode(String privateCode);
 
     List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);

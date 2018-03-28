@@ -1,5 +1,7 @@
 package com.inschos.cloud.trading.model;
 
+import com.inschos.cloud.trading.assist.kit.StringKit;
+
 /**
  * 创建日期：2018/3/22 on 16:43
  * 描述：
@@ -153,5 +155,82 @@ public class InsurancePolicyModel {
     public String state;
 
     public Page page;
+
+    public String createPrivateCode () {
+        return "";
+    }
+
+    public boolean setStatus(String status) {
+        if (!StringKit.isInteger(status) || Integer.valueOf(status) > 11 || Integer.valueOf(status) < 1) {
+            return false;
+        }
+
+        this.status = status;
+        return true;
+    }
+
+    // 待核保
+    public static final int ORDER_STATUS_WAITING_UNDERWRITING = 1;
+    // 核保失败
+    public static final int ORDER_STATUS_UNDERWRITING_FAIL = 2;
+    // 未支付-核保成功
+    public static final int ORDER_STATUS_UNDERWRITING_UNPAID = 3;
+    // 支付中
+    public static final int ORDER_STATUS_PAYING = 4;
+    // 支付失败
+    public static final int ORDER_STATUS_PAYMENT_FAIL = 5;
+    // 支付成功
+    public static final int ORDER_STATUS_PAYMENT_SUCCESS = 6;
+    // 保障中
+    public static final int ORDER_STATUS_PROTECTING = 7;
+    // 待生效
+    public static final int ORDER_STATUS_WAITING_EFFECTIVE = 8;
+    // 待续保
+    public static final int ORDER_STATUS_WAITING_RENEWAL = 9;
+    // 已失效
+    public static final int ORDER_STATUS_FAILURE = 10;
+    // 已退保
+    public static final int ORDER_STATUS_SURRENDER = 11;
+
+    public String getStatusText(String status) {
+        String statusText = null;
+        int s = Integer.valueOf(status);
+        switch (s) {
+            case ORDER_STATUS_WAITING_UNDERWRITING:
+                statusText = "待核保";
+                break;
+            case ORDER_STATUS_UNDERWRITING_FAIL:
+                statusText = "核保失败";
+                break;
+            case ORDER_STATUS_UNDERWRITING_UNPAID:
+                statusText = "未支付-核保成功";
+                break;
+            case ORDER_STATUS_PAYING:
+                statusText = "支付中";
+                break;
+            case ORDER_STATUS_PAYMENT_FAIL:
+                statusText = "支付失败";
+                break;
+            case ORDER_STATUS_PAYMENT_SUCCESS:
+                statusText = "支付成功";
+                break;
+            case ORDER_STATUS_PROTECTING:
+                statusText = "保障中";
+                break;
+            case ORDER_STATUS_WAITING_EFFECTIVE:
+                statusText = "待生效";
+                break;
+            case ORDER_STATUS_WAITING_RENEWAL:
+                statusText = "待续保";
+                break;
+            case ORDER_STATUS_FAILURE:
+                statusText = "已失效";
+                break;
+            case ORDER_STATUS_SURRENDER:
+                statusText = "已退保";
+                break;
+        }
+        return statusText;
+    }
 
 }

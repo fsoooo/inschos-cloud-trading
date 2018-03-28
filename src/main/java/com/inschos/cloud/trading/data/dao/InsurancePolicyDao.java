@@ -16,6 +16,10 @@ public class InsurancePolicyDao extends BaseDao {
     @Autowired
     public InsurancePolicyMapper insurancePolicyMapper;
 
+    public int addInsurancePolicy(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.addInsurancePolicy(insurancePolicyModel);
+    }
+
     public InsurancePolicyModel findInsurancePolicyDetailByPrivateCode(String privateCode) {
         return insurancePolicyMapper.findInsurancePolicyDetailByPrivateCode(privateCode);
     }

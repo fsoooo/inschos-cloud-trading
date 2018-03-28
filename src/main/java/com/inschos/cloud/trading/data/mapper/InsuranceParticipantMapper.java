@@ -11,6 +11,8 @@ import java.util.List;
  */
 public interface InsuranceParticipantMapper {
 
+    int addInsuranceParticipant (InsuranceParticipantModel insuranceParticipantModel);
+
     List<InsuranceParticipantModel> findInsuranceParticipantByPrivateCode(String privateCode);
 
 }

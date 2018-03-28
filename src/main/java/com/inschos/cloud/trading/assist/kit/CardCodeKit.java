@@ -16,8 +16,11 @@ public class CardCodeKit {
 
     public static boolean isLegal(int cardType, String cardCode) {
 
-        if (cardType == CARD_TYPE_ID_CARD && !StringKit.isEmpty(cardCode)) {
+        if (StringKit.isEmpty(cardCode)) {
+            return false;
+        }
 
+        if (cardType == CARD_TYPE_ID_CARD ) {
             if (cardCode.length() != 18) {
                 return false;
             }
@@ -26,10 +29,10 @@ public class CardCodeKit {
             boolean flag = false;
             for (int i = 0; i < 18; i++) {
                 char c = cardCode.charAt(i);
-                if (i < 17 && c >= '1' && c <= '9') {
-                    int num = (int) c;
+                if (i < 17 && c >= '0' && c <= '9') {
+                    int num = c - '0';
                     result += (num * coefficient[i]);
-                } else if (i == 17 && (c >= '1' && c <= '9') || c == 'x' || c == 'X') {
+                } else if (i == 17 && (c >= '0' && c <= '9') || c == 'x' || c == 'X') {
                     long l = result % 11;
                     String s = String.valueOf(c);
                     flag =  s.equalsIgnoreCase(base[(int) l]);
@@ -41,9 +44,9 @@ public class CardCodeKit {
 
             return flag;
 
-        } else if (cardType == CARD_TYPE_ID_CARD && !StringKit.isEmpty(cardCode)) {
+        } else if (cardType == CARD_TYPE_PASSPORT) {
             return true;
-        } else if (cardType == CARD_TYPE_ID_CARD && !StringKit.isEmpty(cardCode)) {
+        } else if (cardType == CARD_TYPE_MILITARY_CERTIFICATE) {
             return true;
         } else {
             return false;

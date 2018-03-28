@@ -18,6 +18,10 @@ public class InsuranceParticipantDao extends BaseDao {
     @Autowired
     private InsuranceParticipantMapper insuranceParticipantMapper;
 
+    public int addInsuranceParticipant (InsuranceParticipantModel insuranceParticipantModel) {
+        return insuranceParticipantMapper.addInsuranceParticipant(insuranceParticipantModel);
+    }
+
     public List<InsuranceParticipantModel> findInsuranceParticipantByPrivateCode(String privateCode) {
         return insuranceParticipantMapper.findInsuranceParticipantByPrivateCode(privateCode);
     }

@@ -6,6 +6,14 @@
       `id`,`private_code`,`type`,`relation_name`,`name`,`car_code`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`
     </sql>
 
+    <insert id="addInsuranceParticipant" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into cust_warranty_policy
+        <include refid="Base_Column_List" />
+        values
+        #{id},#{private_code},#{type},#{relation_name},#{name},#{car_code},#{card_type},#{card_code},#{phone},#{occupation},#{birthday},#{sex},#{email},#{nationality},#{annual_income},#{height},#{weight},#{area},#{address},#{start_time},#{end_time}
+    </insert>
+
     <select id="findInsuranceParticipantByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         <include refid="Base_Column_List" />
