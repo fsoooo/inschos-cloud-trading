@@ -19,10 +19,14 @@
 
 
     <!--<dubbo:service interface="com.inschos.cloud.trading.access.rpc.service.DemoService" ref="demoService" />-->
-    <dubbo:annotation package="com.inschos.cloud.trading.access.rpc.service.impl" />
+    <dubbo:annotation package="com.inschos.cloud.trading.access.rpc.service" />
 
+    <!--<bean class="com.inschos.cloud.trading.access.http.controller.request.TestController">-->
+        <!--<property name="accountService" ref="accountService"/>-->
+    <!--</bean>-->
+    <dubbo:consumer generic="true" default="true" />
 
-
+    <dubbo:reference interface="com.inschos.cloud.account.access.rpc.service.AccountService"  id="rpcAccountService" protocol="hessian" />
 
 
 

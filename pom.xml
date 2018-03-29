@@ -40,7 +40,7 @@
     <dependency>
       <groupId>com.alibaba</groupId>
       <artifactId>dubbo</artifactId>
-      <version>${dubbo.version}</version>
+      <version>2.6.0</version>
       <exclusions>
         <exclusion>
           <groupId>org.springframework</groupId>
@@ -49,10 +49,16 @@
       </exclusions>
     </dependency>
 
+    <!--<dependency>-->
+      <!--<groupId>org.apache.curator</groupId>-->
+      <!--<artifactId>curator-framework</artifactId>-->
+      <!--<version>4.0.1</version>-->
+    <!--</dependency>-->
+
     <dependency>
       <groupId>com.caucho</groupId>
       <artifactId>hessian</artifactId>
-      <version>4.0.51</version>
+      <version>4.0.7</version>
     </dependency>
 
     <dependency>
