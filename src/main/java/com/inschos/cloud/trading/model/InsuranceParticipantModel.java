@@ -109,6 +109,11 @@ public class InsuranceParticipantModel {
     public String address;
 
     /**
+     * 被保险人单号
+     */
+    public String out_order_code;
+
+    /**
      * 开始时间
      */
     public String start_time;

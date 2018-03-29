@@ -19,5 +19,10 @@ public interface InsurancePolicyMapper {
 
     List<InsurancePolicyModel> findInsurancePolicyListByOtherInfo(InsurancePolicyModel insurancePolicyModel);
 
+    int updateInsurancePolicyUnionOrderCode(InsurancePolicyModel insurancePolicyModel);
+
+    int updateInsurancePolicyWarrantyCode(InsurancePolicyModel insurancePolicyModel);
+
+    String findInsurancePolicyPrivateCodeByUnionOrderCode(String unionOrderCode);
 
 }

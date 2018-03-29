@@ -15,4 +15,6 @@ public interface InsuranceParticipantMapper {
 
     List<InsuranceParticipantModel> findInsuranceParticipantByPrivateCode(String privateCode);
 
+    List<InsuranceParticipantModel> findInsuranceParticipantInsuredByPrivateCode(String privateCode);
+
 }

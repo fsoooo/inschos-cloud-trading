@@ -6,7 +6,7 @@
         `id`,`car_code`,`name`,`code`,`phone`,`frame_no`,`engine_no`,`vehicle_fgw_code`,`vehicle_fgw_name`,`parent_veh_name`,`brand_code`,`brand_name`,`engine_desc`,`new_car_price`,`purchase_price_tax`,`import_flag`,`seat`,`standard_name`,`is_trans`,`remark`,`created_at`,`updated_at`
     </sql>
 
-    <insert id="addCarInfo" parameterType="com.inschos.rule.model.ComAgents" useGeneratedKeys="true"
+    <insert id="addCarInfo" parameterType="com.inschos.cloud.trading.model.CarInfoModel" useGeneratedKeys="true"
             keyProperty="id">
         insert into cust_car
         (`id`,`car_code`,`name`,`code`,`phone`,`frame_no`,`engine_no`,`vehicle_fgw_code`,`vehicle_fgw_name`,`parent_veh_name`,`brand_code`,`brand_name`,`engine_desc`,`new_car_price`,`purchase_price_tax`,`import_flag`,`seat`,`standard_name`,`is_trans`,`remark`,`created_at`,`updated_at`)

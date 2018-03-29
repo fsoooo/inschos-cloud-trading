@@ -12,17 +12,17 @@ public class InsurancePolicyCodeBean {
         /**
          * 被保人订单号
          */
-        private String order_code;
+        public String order_code;
 
         /**
          * 联合订单号
          */
-        private String union_order_code;
+        public String union_order_code;
 
         /**
          * 产品唯一码
          */
-        private String private_p_code;
+        public String private_p_code;
 
     }
 

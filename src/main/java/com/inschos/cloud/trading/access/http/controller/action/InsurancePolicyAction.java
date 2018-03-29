@@ -2,18 +2,19 @@ package com.inschos.cloud.trading.access.http.controller.action;
 
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
+import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicyCodeBean;
 import com.inschos.cloud.trading.access.http.controller.bean.PaymentFinishBean;
+import com.inschos.cloud.trading.assist.kit.HttpClientKit;
+import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.data.dao.InsuranceClaimsDao;
-import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
-import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
-import com.inschos.cloud.trading.data.dao.InsurancePreservationDao;
+import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.model.InsuranceClaimsModel;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.InsurancePreservationModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -34,6 +35,9 @@ public class InsurancePolicyAction extends BaseAction {
 
     @Autowired
     private InsuranceClaimsDao insuranceClaimsDao;
+
+    @Autowired
+    private BrokerageCommissionDao brokerageCommissionDao;
 
     public String insure(InsurancePolicy.InsurancePolicyInsureForPersonRequest insurancePolicyInsureForPersonRequest) {
 
@@ -285,12 +289,39 @@ public class InsurancePolicyAction extends BaseAction {
     /**
      * TODO 支付回调
      */
-    private void onPaymentFinish (PaymentFinishBean paymentFinishBean) {
+    private void onPaymentFinish(PaymentFinishBean paymentFinishBean) {
+        if (StringKit.equals(paymentFinishBean.notice_type, "pay_call_back")) {
+            if (paymentFinishBean.data != null && !StringKit.isEmpty(paymentFinishBean.data.union_order_code) && paymentFinishBean.data.status) {
 
-        if (StringKit.equals(paymentFinishBean.notice_type,"pay_call_back")) {
+                String privateCode = insurancePolicyDao.findInsurancePolicyPrivateCodeByUnionOrderCode(paymentFinishBean.data.union_order_code);
 
+                if (!StringKit.isEmpty(privateCode)) {
+
+                    List<InsuranceParticipantModel> insuranceParticipantInsuredByPrivateCode = insuranceParticipantDao.findInsuranceParticipantInsuredByPrivateCode(privateCode);
+
+                    for (InsuranceParticipantModel insuranceParticipantModel : insuranceParticipantInsuredByPrivateCode) {
+                        InsurancePolicyCodeBean.InsurancePolicyCodeBeanRequest insurancePolicyCodeBeanRequest = new InsurancePolicyCodeBean.InsurancePolicyCodeBeanRequest();
+
+                        insurancePolicyCodeBeanRequest.order_code = insuranceParticipantModel.out_order_code;
+                        insurancePolicyCodeBeanRequest.union_order_code = paymentFinishBean.data.union_order_code;
+                        insurancePolicyCodeBeanRequest.private_p_code = privateCode;
+
+                        try {
+                            String result = HttpClientKit.post("", JsonKit.bean2Json(insurancePolicyCodeBeanRequest));
+
+                            InsurancePolicyCodeBean.InsurancePolicyCodeBeanResponse insurancePolicyCodeBeanResponse = JsonKit.json2Bean(result, InsurancePolicyCodeBean.InsurancePolicyCodeBeanResponse.class);
+
+                            // insurancePolicyCodeBeanResponse.policy_order_code
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+            }
         }
-
     }
 
     /**
@@ -299,5 +330,11 @@ public class InsurancePolicyAction extends BaseAction {
     private void getInsurancePolicy() {
 
     }
+
+    // TODO: 2018/3/28 车险投保
+    private void insureCar() {
+
+    }
+
 
 }

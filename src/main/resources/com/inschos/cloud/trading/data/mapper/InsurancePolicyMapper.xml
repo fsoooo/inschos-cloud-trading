@@ -20,6 +20,12 @@
         from cust_warranty where private_code=#{_parameter} AND state = 1
     </select>
 
+    <select id="findInsurancePolicyPrivateCodeByUnionOrderCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        `private_code`
+        from cust_warranty where union_order_code=#{_parameter} AND state = 1
+    </select>
+
     <select id="findInsurancePolicyListByUserIdAndStatus" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         <!--select-->
         <!--<include refid="Base_Column_List" />-->
