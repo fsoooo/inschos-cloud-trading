@@ -5,6 +5,7 @@ import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseRequest;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.annotation.GetActionBeanAnnotation;
+import com.inschos.cloud.trading.assist.kit.ConstantKit;
 import com.inschos.cloud.trading.assist.kit.HttpKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -34,7 +35,7 @@ public class HttpAopDefine {
 			String platform = request.getParameter(BaseRequest.FILEID_PLATFORM);
 			String apiCode = request.getParameter(BaseRequest.FILEID_APICODE);
 
-			if (!isValidVersion(buildCode, platform)) {
+			if (ConstantKit.IS_PRODUCT && !isValidVersion(buildCode, platform)) {
 				response.code = BaseResponse.CODE_VERSION_FAILURE;
 				response.message = "版本过低或无效，请安装最新版本";
 				return JsonKit.bean2Json(response);
