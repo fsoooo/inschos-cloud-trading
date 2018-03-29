@@ -311,6 +311,7 @@ public class InsurancePolicyAction extends BaseAction {
 
                             InsurancePolicyCodeBean.InsurancePolicyCodeBeanResponse insurancePolicyCodeBeanResponse = JsonKit.json2Bean(result, InsurancePolicyCodeBean.InsurancePolicyCodeBeanResponse.class);
 
+                            // TODO: 2018/3/29 怎么存保单号
                             // insurancePolicyCodeBeanResponse.policy_order_code
 
                         } catch (IOException e) {
