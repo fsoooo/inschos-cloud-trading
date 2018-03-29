@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.model.InsurancePreservationModel">
+
+    <sql id="Base_Column_List">
+        `id`,`private_code`,`cust_id`,`cust_type`,`apply_time`,`event`,`ip_address`,`old_content`,`content`,`describe`,`type`,`status`,`remark`,`created_at`,`updated_at`
+    </sql>
+
+    <insert id="addInsurancePreservation" parameterType="com.inschos.cloud.trading.model.InsurancePreservationModel" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into cust_warranty_change_record
+        <include refid="Base_Column_List" />
+        values
+        (#{id},#{private_code},#{cust_id},#{cust_type},#{apply_time},#{event},#{ip_address},#{old_content},#{content},#{describe},#{type},#{status},#{remark},#{created_at},#{updated_at})
+    </insert>
+
+    <select id="findInsurancePreservationListPrivateCode" parameterType="com.inschos.cloud.trading.model.InsurancePreservationModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePreservationModel">
+
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty_change_record
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    id&gt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    id&gt;=(select id from cust_warranty_change_record where private_code=#{private_code} AND state=1 AND event=#{event}
+                    <if test="search!=null and search!=''">
+--                        and `name` like concat("%",#{search},"%")
+                    </if>
+
+                    <if test="status!=0">
+                        and status=#{status}
+                    </if>
+
+                    limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            and private_code=#{private_code} AND state = 1 AND event=#{event}
+            <if test="search!=null and search!=''">
+                --                 and `name` like concat("%",#{search},"%")
+            </if>
+
+            <if test="status!=0">
+                and status=#{status}
+            </if>
+
+            limit #{page.offset}
+        </where>
+
+    </select>
+
+</mapper>

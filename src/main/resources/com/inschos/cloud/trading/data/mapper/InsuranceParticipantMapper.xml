@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.model.InsuranceParticipantModel">
+
+    <sql id="Base_Column_List">
+      `id`,`private_code`,`type`,`relation_name`,`name`,`car_code`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`out_order_code`,`start_time`,`end_time`
+    </sql>
+
+    <insert id="addInsuranceParticipant" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into cust_warranty_policy
+        <include refid="Base_Column_List" />
+        values
+        #{id},#{private_code},#{type},#{relation_name},#{name},#{car_code},#{card_type},#{card_code},#{phone},#{occupation},#{birthday},#{sex},#{email},#{nationality},#{annual_income},#{height},#{weight},#{area},#{address},#{start_time},#{end_time}
+    </insert>
+
+    <select id="findInsuranceParticipantByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
+        select
+        <include refid="Base_Column_List" />
+        from cust_warranty_policy where private_code=#{_parameter} AND state = 1
+    </select>
+
+    <select id="findInsuranceParticipantInsuredByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
+        select
+        <include refid="Base_Column_List" />
+        from cust_warranty_policy where private_code=#{_parameter} AND `type`=2 AND state=1
+    </select>
+
+</mapper>
