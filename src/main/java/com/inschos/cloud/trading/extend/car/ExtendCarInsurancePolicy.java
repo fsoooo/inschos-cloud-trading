@@ -292,4 +292,209 @@ public class ExtendCarInsurancePolicy {
         public String standardName;
     }
 
+    public static class GetPremiumFactorRequest extends CarInsuranceRequest {
+        public String bizID;
+    }
+
+    public static class GetPremiumFactorResponse extends CarInsuranceResponse {
+        public String centile;
+        public String ecompensationRate;
+        public String totalEcompensationRate;
+        public String ciApperNo;
+        public String biApperNo;
+        public DiscountInfo discountInfo;
+        public List<InsuranceClaims> lossInfoList;
+    }
+
+    public static class InsuranceClaims {
+        public String insurerCode;
+        public String payAmount;
+        public String endCaseTime;
+        public String lossTime;
+        public String kindCode;
+    }
+
+
+    public static class ApplyUnderwritingRequest extends CarInsuranceRequest {
+        public String channelCode;
+        public String insurerCode;
+        public String bizID;
+        public String addresseeName;
+        public String addresseeMobile;
+        public String addresseeDetails;
+        public String policyEmail;
+        public String addresseeCounty;
+        public String addresseeCity;
+        public String addresseeProvince;
+        public String verificationCode;
+        public String refereeMobile;
+        public String payType;
+    }
+
+    public static class ApplyUnderwritingResponse extends CarInsuranceResponse {
+        public String biProposalNo;
+        public String ciProposalNo;
+        public String payLink;
+        // 核保状态说明：
+        // state=1 和 synchFlag=0  这个就是核保成功
+        // state=1 和 synchFlag=1  这个就是核保中，需要等待几分钟回写核保结果
+        // state=0 这个就是核保失败
+        public String synchFlag;
+        public String bjCodeFlag;
+        public String bizID;
+        public String thpBizID;
+        public String operType;
+        public String uploadType;
+        public String billNo;
+
+    }
+
+    /**
+     * 回调接口
+     */
+    public static class GetApplyUnderwritingResultRequest {
+        public String msg;
+        public String sendTime;
+        public String state;
+        public UnderwritingInfo data;
+    }
+
+    /**
+     * 回调接口
+     */
+    public static class GetApplyUnderwritingResultResponse {
+        public String state;
+        public String msg;
+        public String msgCode;
+    }
+
+    /**
+     * 回调接口
+     */
+    public static class UnderwritingInfo {
+        public String operType;
+        public String thpBizID;
+        public String bizID;
+        public String biProposalNo;
+        public String ciProposalNo;
+        public String payLink;
+        public String expiredTime;
+        public String uploadType;
+    }
+
+    public static class GetPayLinkRequest extends CarInsuranceRequest {
+        public String bizID;
+    }
+
+    public static class GetPayLinkResponse extends CarInsuranceResponse {
+        public String biProposalNo;
+        public String ciProposalNo;
+        public String payLink;
+        public String bizID;
+        public String expiredTime;
+        public String thpBizID;
+    }
+
+    public static class VerifyPhoneCodeRequest extends CarInsuranceRequest {
+        public String verificationCode;
+        public String bizID;
+    }
+
+    public static class VerifyPhoneCodeResponse extends CarInsuranceResponse {
+        public String biProposalNo;
+        public String ciProposalNo;
+        public String payLink;
+        public String synchFlag;
+    }
+
+    public static class ReGetPhoneVerifyCodeRequest extends CarInsuranceRequest {
+        public String bizID;
+    }
+
+    public static class ReGetPhoneVerifyCodeResponse extends CarInsuranceResponse {
+    }
+
+
+    /**
+     * 回调接口
+     */
+    public static class GetInsurancePolicyRequest {
+        public String msg;
+        public String sendTime;
+        public String state;
+        public InsurancePolicyByCallback data;
+    }
+
+    /**
+     * 回调接口
+     */
+    public static class GetInsurancePolicyResponse {
+        public String state;
+        public String msg;
+        public String msgCode;
+    }
+
+    /**
+     * 回调接口
+     */
+    public static class InsurancePolicyByCallback {
+        public String operType;
+        public String thpBizID;
+        public String bizID;
+        public String payState;
+        public String payMoney;
+        public String payTime;
+        public String biPolicyNo;
+        public String ciPolicyNo;
+    }
+
+    /**
+     * 回调接口
+     */
+    public static class GetExpressInfoRequest {
+        public String msg;
+        public String sendTime;
+        public String state;
+        public ExpressInfoByCallback data;
+    }
+
+    /**
+     * 回调接口
+     */
+    public static class GetExpressInfoResponse {
+        public String state;
+        public String msg;
+        public String msgCode;
+    }
+
+    public static class ExpressInfoByCallback {
+        public String operType;
+        public String thpBizID;
+        public String bizID;
+        public String addresseeName;
+        public String addresseeMobile;
+        public String addresseeProvince;
+        public String addresseeCity;
+        public String addresseeCounty;
+        public String addresseeDetails;
+        public String expressNo;
+        public String expressCompanyName;
+        // 0-自取，1-快递
+        public String deliveryType;
+    }
+
+
+    public static class GetInsuranceInstructionRequest extends CarInsuranceRequest {
+        public String insurerCodes;
+    }
+
+    public static class GetInsuranceInstructionResponse extends CarInsuranceResponse {
+        public List<InsuranceInstruction> data;
+    }
+
+    public static class InsuranceInstruction {
+        public String insurerCode;
+        public String statementContent;
+    }
+
 }

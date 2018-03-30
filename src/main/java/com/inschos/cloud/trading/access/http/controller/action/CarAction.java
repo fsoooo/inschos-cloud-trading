@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.access.http.controller.action;
 
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
+import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.extend.car.CarInsuranceCommon;
 import com.inschos.cloud.trading.extend.car.CarInsuranceHttpRequest;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
@@ -436,45 +437,199 @@ public class CarAction extends BaseAction {
      */
     private static final String get_premium_factor = "http://apiplus-test.ztwltech.com/v2.0/assist/quoteFactors";
 
+    public String getPremiumFactor (ActionBean actionBean) {
+        ExtendCarInsurancePolicy.GetPremiumFactorRequest getPremiumFactorRequest = new ExtendCarInsurancePolicy.GetPremiumFactorRequest();
+
+        // TODO: 2018/3/29  从我们的request里面获取这个值
+//        getPremiumFactorRequest.bizID
+
+        ExtendCarInsurancePolicy.GetPremiumFactorResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetPremiumFactorRequest, ExtendCarInsurancePolicy.GetPremiumFactorResponse>(get_premium_factor, getPremiumFactorRequest).post();
+        // 验签
+        String str;
+        // TODO: 2018/3/29 返回我们的response
+        if (result.verify) {
+
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+        }
+
+        return "";
+
+    }
+
     /**
      * 申请核保
      */
     private static final String apply_underwriting = CarInsuranceCommon.getServerHost() + "/main/applyUnderwrite";
+
+    public String applyUnderwriting (ActionBean actionBean) {
+        ExtendCarInsurancePolicy.ApplyUnderwritingRequest applyUnderwritingRequest = new ExtendCarInsurancePolicy.ApplyUnderwritingRequest();
+
+        // TODO: 2018/3/29  从我们的request里面获取这个值
+//        applyUnderwritingRequest.channelCode
+//        applyUnderwritingRequest.insurerCode
+//        applyUnderwritingRequest.bizID
+//        applyUnderwritingRequest.addresseeName
+//        applyUnderwritingRequest.addresseeMobile
+//        applyUnderwritingRequest.addresseeDetails
+//        applyUnderwritingRequest.policyEmail
+//        applyUnderwritingRequest.addresseeCounty
+//        applyUnderwritingRequest.addresseeCity
+//        applyUnderwritingRequest.addresseeProvince
+//        applyUnderwritingRequest.verificationCode
+//        applyUnderwritingRequest.refereeMobile
+//        applyUnderwritingRequest.payType
+
+        ExtendCarInsurancePolicy.ApplyUnderwritingResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.ApplyUnderwritingRequest, ExtendCarInsurancePolicy.ApplyUnderwritingResponse>(apply_underwriting, applyUnderwritingRequest).post();
+        // 验签
+        String str;
+        // TODO: 2018/3/29 返回我们的response
+        if (result.verify) {
+
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+        }
+
+        return "";
+    }
 
     /**
      * 回写核保信息（回调接口）
      */
     private static final String get_apply_underwriting_result = "";
 
+    public String getApplyUnderwritingResult (ActionBean actionBean) {
+        // TODO: 2018/3/30  actionBean 就是我们的Request，处理数据，处理回执
+        ExtendCarInsurancePolicy.GetApplyUnderwritingResultRequest request = JsonKit.json2Bean(actionBean.body, ExtendCarInsurancePolicy.GetApplyUnderwritingResultRequest.class);
+
+        ExtendCarInsurancePolicy.GetApplyUnderwritingResultResponse response = new ExtendCarInsurancePolicy.GetApplyUnderwritingResultResponse();
+
+        return JsonKit.bean2Json(response);
+    }
+
     /**
      * 获取支付链接
      */
     private static final String get_pay_link = CarInsuranceCommon.getServerHost() + "/payment/payLink";
 
+    public String getPayLink (ActionBean actionBean) {
+        ExtendCarInsurancePolicy.GetPayLinkRequest getPayLinkRequest = new ExtendCarInsurancePolicy.GetPayLinkRequest();
+
+        // TODO: 2018/3/29  从我们的request里面获取这个值
+//        getPayLinkRequest.bizID
+
+        ExtendCarInsurancePolicy.GetPayLinkResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetPayLinkRequest, ExtendCarInsurancePolicy.GetPayLinkResponse>(get_pay_link, getPayLinkRequest).post();
+        // 验签
+        String str;
+        // TODO: 2018/3/29 返回我们的response
+        if (result.verify) {
+
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+        }
+
+        return "";
+    }
+
     /**
      * 手机号验证码接口
      */
-    private static final String get_phone_verify_code = CarInsuranceCommon.getServerHost() + "/assist/sendBjVerifyCode";
+    private static final String verify_phone_code = CarInsuranceCommon.getServerHost() + "/assist/sendBjVerifyCode";
+
+    public String verifyPhoneCode (ActionBean actionBean) {
+        ExtendCarInsurancePolicy.VerifyPhoneCodeRequest verifyPhoneCodeRequest = new ExtendCarInsurancePolicy.VerifyPhoneCodeRequest();
+
+        // TODO: 2018/3/29  从我们的request里面获取这个值
+//        verifyPhoneCodeRequest.bizID
+//        verifyPhoneCodeRequest.verificationCode
+
+        ExtendCarInsurancePolicy.VerifyPhoneCodeResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.VerifyPhoneCodeRequest, ExtendCarInsurancePolicy.VerifyPhoneCodeResponse>(verify_phone_code, verifyPhoneCodeRequest).post();
+        // 验签
+        String str;
+        // TODO: 2018/3/29 返回我们的response
+        if (result.verify) {
+
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+        }
+
+        return "";
+    }
 
     /**
      * 北京重新发送验证码接口
      */
     private static final String re_get_phone_verify_code = "http://api-mock.ztwltech.com/v2.0/assist/resendBjVerifyCode";
 
+    public String reGetPhoneVerifyCode (ActionBean actionBean) {
+        ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeRequest reGetPhoneVerifyCodeRequest = new ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeRequest();
+
+        // TODO: 2018/3/29  从我们的request里面获取这个值
+//        reGetPhoneVerifyCodeRequest.bizID
+
+        ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeRequest, ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeResponse>(re_get_phone_verify_code, reGetPhoneVerifyCodeRequest).post();
+        // 验签
+        String str;
+        // TODO: 2018/3/29 返回我们的response
+        if (result.verify) {
+
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+        }
+
+        return "";
+    }
+
     /**
      * 回写保单信息(回调接口)
      */
     private static final String get_insurance_policy = "";
+
+    public String getInsurancePolicy (ActionBean actionBean) {
+        // TODO: 2018/3/30  actionBean 就是我们的Request，处理数据，处理回执
+        ExtendCarInsurancePolicy.GetInsurancePolicyRequest request = JsonKit.json2Bean(actionBean.body, ExtendCarInsurancePolicy.GetInsurancePolicyRequest.class);
+
+        ExtendCarInsurancePolicy.GetInsurancePolicyResponse response = new ExtendCarInsurancePolicy.GetInsurancePolicyResponse();
+
+        return JsonKit.bean2Json(response);
+    }
 
     /**
      * 回写配送信息(回调接口)
      */
     private static final String get_express_info = "";
 
+    public String getExpressInfo (ActionBean actionBean) {
+        // TODO: 2018/3/30  actionBean 就是我们的Request，处理数据，处理回执
+        ExtendCarInsurancePolicy.GetExpressInfoRequest request = JsonKit.json2Bean(actionBean.body, ExtendCarInsurancePolicy.GetExpressInfoRequest.class);
+
+        ExtendCarInsurancePolicy.GetExpressInfoResponse response = new ExtendCarInsurancePolicy.GetExpressInfoResponse();
+
+        return JsonKit.bean2Json(response);
+    }
+
     /**
      * 保险公司投保声明
      */
     private static final String get_insurance_instruction = CarInsuranceCommon.getServerHost() + "/assist/statement";
 
+    public String getInsuranceInstruction (ActionBean actionBean) {
+        ExtendCarInsurancePolicy.GetInsuranceInstructionRequest getInsuranceInstructionRequest = new ExtendCarInsurancePolicy.GetInsuranceInstructionRequest();
+
+        // TODO: 2018/3/29  从我们的request里面获取这个值
+//        reGetPhoneVerifyCodeRequest.bizID
+
+        ExtendCarInsurancePolicy.GetInsuranceInstructionResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetInsuranceInstructionRequest, ExtendCarInsurancePolicy.GetInsuranceInstructionResponse>(get_insurance_instruction, getInsuranceInstructionRequest).post();
+        // 验签
+        String str;
+        // TODO: 2018/3/29 返回我们的response
+        if (result.verify) {
+
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+        }
+
+        return "";
+    }
 
 }

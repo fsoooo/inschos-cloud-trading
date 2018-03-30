@@ -25,11 +25,11 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
 
     public CarInsuranceHttpRequest(String url, Request request) {
         this.url = url;
-        this.request = new CarInsuranceRequestEntity();
+        this.request = new CarInsuranceRequestEntity<Request>();
 
         if (request != null) {
-            this.request.data = JsonKit.bean2Json(request);
-            this.request.sign = SignatureTools.sign(this.request.data);
+            this.request.data = request;
+            this.request.sign = SignatureTools.sign(JsonKit.bean2Json(request));
         }
 
         this.request.sendTime = sdf.format(new Date(System.currentTimeMillis()));

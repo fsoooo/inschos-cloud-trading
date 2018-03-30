@@ -5,11 +5,11 @@ package com.inschos.cloud.trading.extend.car;
  * 描述：
  * 作者：zhangyunhe
  */
-public class CarInsuranceRequestEntity {
+public class CarInsuranceRequestEntity<T> {
 
     public String msg;
     public String sendTime;
     public String sign;
-    public String data;
+    public T data;
 
 }
