@@ -21,16 +21,21 @@ public class SignatureTools {
     //签名算法
     public static final String CHARSET = "UTF-8";
 
-    private static final String CAR_RSA_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZuErBZ6HSxnCCkBnc7McR/1SFK7ArXAqxBVFiATJDN1HYfByAIuCdZiXJ6Eg4ES9RLbJLSB7BWpRxAASzk2lBRg8iZuSPTgEpVBBgiSEP4Xrd7J7mMoLqf1QcNylZp/EFL8iJzv1P04KZvcxKlDI49kdqaWJbx6aaBtdpbvhIAwIDAQAB";
-    private static final String CAR_RSA_PRIVATE_KEY = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJm4SsFnodLGcIKQGdzsxxH/VIUrsCtcCrEFUWIBMkM3Udh8HIAi4J1mJcnoSDgRL1EtsktIHsFalHEABLOTaUFGDyJm5I9OASlUEGCJIQ/het3snuYygup/VBw3KVmn8QUvyInO/U/Tgpm9zEqUMjj2R2ppYlvHppoG12lu+EgDAgMBAAECgYBzoqL5oo+lEwoH7YbHHocSDtTx6M95jp+sUqfJ5cR9s9up0pNOAO6e+PxsSoQpSSQjGREKeJJKOW15I95lh/qgqCPjOIe+bpcD2xkJ67L5rjVz6/snTb0DsfIPUnyYHzavD4GN+tkzZS6gsD3mUUPwAHyzNsSoWK3M3TW9VYtEwQJBANfGuP4F4jV2F412NECZZTVstFO9ou7WVYSDfbGhnktkbSWUklNh8zoUuZNhjKLsEuP59yn5XRxWqCIsdcw9MXsCQQC2YB1S9kb0KoOcCco4eC9uzofOWUe0ZUS0vvUcuKIwNbKoGW9JYypCY5rr924VR2NtG9nhAe9Kt4qlksg1KWkZAkB4J3KwEXqrpnzrCx2Bs2mGXGf2Ea1/Ld8lEUuW9JZ/CQc2XAs3X13fw9aq2TFFMAw84t7dgrx0oVSy4usdth2tAkBUpwB1hcMhiqpUP2cSFxdNQ6hd66sQ3QCrNQfpMPp3jjVDOasiUVlIP5ulc9AxKFXKS2cyvgcok1FT0XIE2xfhAkEAz4KuQHhxkfKrMV/4RSpAduB2V+6fP8X2UJgMeils8jUpNyRl3Y5ttI5vXs0bfcztAZ0qW+go1zylp05EAcDndg==";
+    public static final String CAR_RSA_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZuErBZ6HSxnCCkBnc7McR/1SFK7ArXAqxBVFiATJDN1HYfByAIuCdZiXJ6Eg4ES9RLbJLSB7BWpRxAASzk2lBRg8iZuSPTgEpVBBgiSEP4Xrd7J7mMoLqf1QcNylZp/EFL8iJzv1P04KZvcxKlDI49kdqaWJbx6aaBtdpbvhIAwIDAQAB";
+    public static final String CAR_RSA_PRIVATE_KEY = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJm4SsFnodLGcIKQGdzsxxH/VIUrsCtcCrEFUWIBMkM3Udh8HIAi4J1mJcnoSDgRL1EtsktIHsFalHEABLOTaUFGDyJm5I9OASlUEGCJIQ/het3snuYygup/VBw3KVmn8QUvyInO/U/Tgpm9zEqUMjj2R2ppYlvHppoG12lu+EgDAgMBAAECgYBzoqL5oo+lEwoH7YbHHocSDtTx6M95jp+sUqfJ5cR9s9up0pNOAO6e+PxsSoQpSSQjGREKeJJKOW15I95lh/qgqCPjOIe+bpcD2xkJ67L5rjVz6/snTb0DsfIPUnyYHzavD4GN+tkzZS6gsD3mUUPwAHyzNsSoWK3M3TW9VYtEwQJBANfGuP4F4jV2F412NECZZTVstFO9ou7WVYSDfbGhnktkbSWUklNh8zoUuZNhjKLsEuP59yn5XRxWqCIsdcw9MXsCQQC2YB1S9kb0KoOcCco4eC9uzofOWUe0ZUS0vvUcuKIwNbKoGW9JYypCY5rr924VR2NtG9nhAe9Kt4qlksg1KWkZAkB4J3KwEXqrpnzrCx2Bs2mGXGf2Ea1/Ld8lEUuW9JZ/CQc2XAs3X13fw9aq2TFFMAw84t7dgrx0oVSy4usdth2tAkBUpwB1hcMhiqpUP2cSFxdNQ6hd66sQ3QCrNQfpMPp3jjVDOasiUVlIP5ulc9AxKFXKS2cyvgcok1FT0XIE2xfhAkEAz4KuQHhxkfKrMV/4RSpAduB2V+6fP8X2UJgMeils8jUpNyRl3Y5ttI5vXs0bfcztAZ0qW+go1zylp05EAcDndg==";
+
+    public static final String SIGN_CAR_RSA_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDnL1VkXh2prC6akgL9wYnhx6hDo8tqQ3AuA4k7Tr5qSIakli4vKonNunMO3AZ6J/P4ZmWAo1xHMBLlvBAAN0YoTayeKszHu+o30kUv5HCZdZiVtNCWXux0h0MhV962s91+vshUOg8eFj/RWM41iNd1LpXx0W3isZUK6eMOXftWuwIDAQAB";
+    public static final String SIGN_CAR_RSA_PRIVATE_KEY = "MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBAOcvVWReHamsLpqSAv3BieHHqEOjy2pDcC4DiTtOvmpIhqSWLi8qic26cw7cBnon8/hmZYCjXEcwEuW8EAA3RihNrJ4qzMe76jfSRS/kcJl1mJW00JZe7HSHQyFX3raz3X6+yFQ6Dx4WP9FYzjWI13UulfHRbeKxlQrp4w5d+1a7AgMBAAECgYEAmBq1dS7TF2J42yv8GdbvkARb+fzXhhfOxAeBj+rUL3t+UuWYh2HWfuwQbZNoE5Eb3LAKUmOpABFqLYrZgDrdxcB/Mh4rBBfMMs/N/uR12M1UJVvAM7Jna4cG8We5RdKZsXiMCXwZqoe9bIO0kev6cazbOmnzgaoWPw4kdVUwHRECQQD32gAsk7qoehSvggU4nCladGrys04xPH2ntl1hQPLVRvHYBQ3B/8IQM5hgoxGDz4uBif1JsbEJ0tSblUUhrXyTAkEA7skPj5XBtkcmbkt1p06uLUqKQyu65w82hZOvfo2VWPKiPN7xF+D2q3FMp+qzvBkRJ9ZmvYZ9V+TUjMbGSXU+OQJAedI4y7BAypZWnH03u79lxAP8nRXslN66lDhaZXba5GFedWLmhDgFVplFiBoefb8BPsZoLFSeQ8nQnjgcJpVy6QJBAIOVBCApdA+P8ZuBtZm2f8CxfLM7G8lL1s2Q7nocZxoWylQkvlJcQ1GCI628ZcLXRV7ghMkXnWab0Iyq1IWSN/ECQQDNjQXKhvk7f/zmHR/I8YuK/R2o0MsVjB9AvbECzupdaKIXDwvcxj1ygoqG6CpEkcPedsoM5MuneR35IQ8qZ7Tp";
+
 
     /**
      * 获取私钥对象
+     *
      * @return PrivateKey
      */
-    private static PrivateKey getPrivateKey() {
+    private static PrivateKey getPrivateKey(String key) {
         try {
-            byte[] keyBytes = new BASE64Decoder().decodeBuffer(CAR_RSA_PRIVATE_KEY);
+            byte[] keyBytes = new BASE64Decoder().decodeBuffer(key);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
             return keyFactory.generatePrivate(keySpec);
@@ -42,11 +47,12 @@ public class SignatureTools {
 
     /**
      * 获取公钥对象
+     *
      * @return PublicKey
      */
-    private static PublicKey getPublicKey() {
+    private static PublicKey getPublicKey(String key) {
         try {
-            byte[] keyBytes = new BASE64Decoder().decodeBuffer(CAR_RSA_PUBLIC_KEY);
+            byte[] keyBytes = new BASE64Decoder().decodeBuffer(key);
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
             return keyFactory.generatePublic(keySpec);
@@ -58,13 +64,14 @@ public class SignatureTools {
 
     /**
      * 签名
+     *
      * @param content 签名内容，即请求报文中的data节点
      * @return 签名字符串
      */
-    public static String sign(String content) {
+    public static String sign(String content, String key) {
         try {
             Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
-            signature.initSign(getPrivateKey());
+            signature.initSign(getPrivateKey(key));
             signature.update(content.getBytes(CHARSET));
             return new BASE64Encoder().encodeBuffer(signature.sign());
         } catch (Exception ex) {
@@ -75,14 +82,15 @@ public class SignatureTools {
 
     /**
      * 验签
+     *
      * @param content 签名内容，即返回报文中的data节点
-     * @param sign 签名字符串
+     * @param sign    签名字符串
      * @return true-验签通过
      */
-    public static boolean verify(String content, String sign) {
+    public static boolean verify(String content, String sign, String key) {
         try {
             Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
-            signature.initVerify(getPublicKey());
+            signature.initVerify(getPublicKey(key));
             signature.update(content.getBytes(CHARSET));
             return signature.verify(new BASE64Decoder().decodeBuffer(sign));
         } catch (Exception ex) {

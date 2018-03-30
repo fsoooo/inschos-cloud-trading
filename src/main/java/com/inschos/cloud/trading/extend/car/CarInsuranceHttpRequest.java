@@ -29,7 +29,7 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
 
         if (request != null) {
             this.request.data = request;
-            this.request.sign = SignatureTools.sign(JsonKit.bean2Json(request));
+            this.request.sign = SignatureTools.sign(JsonKit.bean2Json(request), SignatureTools.CAR_RSA_PRIVATE_KEY);
         }
 
         this.request.sendTime = sdf.format(new Date(System.currentTimeMillis()));
@@ -52,8 +52,12 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
 
             return response;
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            // e.printStackTrace();
+            response = (Response) new CarInsuranceResponse();
+            response.state = CarInsuranceResponse.RESULT_FAIL;
+            response.msg = "请求失败";
+            response.verify = false;
+            return response;
         }
     }
 
@@ -69,7 +73,7 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
             JsonNode signNode = jsonNode.get("sign");
             String sign = signNode.textValue();
             String content = jsonNode.get("data").toString();
-            flag = SignatureTools.verify(content, sign);
+            flag = SignatureTools.verify(content, sign, SignatureTools.CAR_RSA_PUBLIC_KEY);
         }
         return flag;
     }

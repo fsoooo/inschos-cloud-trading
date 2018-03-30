@@ -15,12 +15,16 @@ public class ExtendCarInsurancePolicy {
     }
 
     public static class GetProvinceCodeResponse extends CarInsuranceResponse {
-        public List<ProvinceCode> data;
+        public List<ProvinceCodeDetail> data;
     }
 
     public static class ProvinceCode {
         public String provinceCode;
         public String provinceName;
+    }
+
+    public static class ProvinceCodeDetail extends ProvinceCode {
+        public List<ExtendCarInsurancePolicy.CityCode> city;
     }
 
     public static class GetCityCodeRequest extends CarInsuranceRequest {
@@ -32,14 +36,19 @@ public class ExtendCarInsurancePolicy {
     }
 
     public static class CityCode {
+        // 市级代码
         public String cityCode;
+        // 城市名称
         public String cityName;
+        // 车牌号字段
         public String cityPlate;
         public List<AreaCode> countyList;
     }
 
     public static class AreaCode {
+        // 地区代码
         public String countyCode;
+        // 地区名称
         public String countyName;
     }
 
@@ -111,6 +120,8 @@ public class ExtendCarInsurancePolicy {
 
     public static class CarModel {
         public String vehicleFgwCode;
+        public String vehicleFgwName;
+        public String parentVehName;
         public String brandCode;
         public String brandName;
         public String engineDesc;
@@ -123,6 +134,7 @@ public class ExtendCarInsurancePolicy {
         public String purchasePrice;
         public String seat;
         public String standardName;
+        public String showText;
     }
 
     public static class GetCarModelInfoRequest extends CarInsuranceRequest {
