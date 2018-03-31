@@ -52,8 +52,7 @@ public class CarInsurance {
         // 0-不是，1-是
         public String isNew;
 
-//        public String row;
-//        public String page;
+        public String brandName;
     }
 
     public static class GetCarModelResponse extends BaseResponse {
@@ -68,5 +67,106 @@ public class CarInsurance {
         public ExtendCarInsurancePolicy.CarModelInfo data;
         public String signToken;
     }
+
+    public static class GetInsuranceCompanyRequest extends BaseRequest {
+        public String provinceCode;
+    }
+
+    public static class GetInsuranceCompanyResponse extends BaseResponse {
+        public List<ExtendCarInsurancePolicy.InsuranceCompany> data;
+    }
+
+    public static class GetInsuranceStartTimeRequest extends BaseRequest {
+        public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
+        public String cityCode;
+        public String signToken;
+
+        // 非必传
+        public ExtendCarInsurancePolicy.VehicleOwnerInfo personInfo;
+    }
+
+    public static class GetInsuranceStartTimeResponse extends BaseResponse {
+        public ExtendCarInsurancePolicy.InsuranceStartTime data;
+    }
+
+    public static class GetPremiumRequest extends BaseRequest {
+        public String cityCode;
+        public String insurerCode;
+        public String signToken;
+        public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
+
+        // 非必传
+        public ExtendCarInsurancePolicy.VehicleOwnerInfo personInfo;
+        public List<ExtendCarInsurancePolicy.InsuranceInfoDetail> coverageList;
+    }
+
+    public static class GetPremiumResponse extends BaseResponse {
+        public List<ExtendCarInsurancePolicy.InsurancePolicy> data;
+    }
+
+    public static class GetInsuranceInfoRequest extends BaseRequest {
+    }
+
+    public static class GetInsuranceInfoResponse extends BaseResponse {
+        public List<ExtendCarInsurancePolicy.InsuranceInfo> data;
+    }
+
+    public static class GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest extends BaseRequest {
+        public String cityCode;
+        public String provinceCode;
+        public String signToken;
+        public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
+
+        // 非必传
+        public ExtendCarInsurancePolicy.VehicleOwnerInfo personInfo;
+
+        // 接口自动赋值
+        public String insurerCode;
+        public List<ExtendCarInsurancePolicy.InsuranceInfoDetail> coverageList;
+    }
+
+    public static class GetInsuranceCompanyAndInsuranceStartTimeAndPremiumResponse extends BaseResponse {
+        public InsuranceCompanyAndInsuranceStartTimeAndPremiumResponse data;
+    }
+
+    public static class InsuranceCompanyAndInsuranceStartTimeAndPremiumResponse {
+        // 保险公司信息
+        public List<ExtendCarInsurancePolicy.InsuranceCompany> insuranceCompanies;
+        // 起保时间信息
+        public ExtendCarInsurancePolicy.InsuranceStartTime startTimeInfo;
+        // 参考报价信息
+        public List<ExtendCarInsurancePolicy.InsurancePolicy> premiumInfo;
+    }
+
+
+    public static class GetPremiumCalibrateRequest extends BaseRequest {
+        // 非必传
+        public String refId;
+        // 非必传，代理人手机号（如果在平台申请的代理人模式，这个必传）
+        public String agentMobile;
+        // 非必传，1-微信（移动端） 2-非微信（移动端） 3-PC端 4-POS机刷卡支付（只支持安盛天平） （人太平只支持微信、POS刷卡）
+        public String payType;
+        // 非必传，0或null纸质发票，1-电子发票，2-无需打印发票
+        public String invoiceType;
+        // 非必传，是否代缴车船税 1-不代缴，null-代缴，目前只支持人保、太保、平安
+        public String remittingTax;
+
+        public String signToken;
+        public String thpBizID;
+        public String cityCode;
+        public String biBeginDate;
+        public String ciBeginDate;
+        public String insurerCode;
+        public String responseNo;
+        public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
+        public ExtendCarInsurancePolicy.InsuranceParticipant personInfo;
+        public List<ExtendCarInsurancePolicy.InsurancePolicyInfo> coverageList;
+    }
+
+    public static class GetPremiumCalibrateResponse extends BaseResponse {
+        public List<ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail> data;
+    }
+
+
 
 }

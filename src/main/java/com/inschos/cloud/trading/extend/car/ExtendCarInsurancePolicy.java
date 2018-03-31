@@ -1,5 +1,7 @@
 package com.inschos.cloud.trading.extend.car;
 
+import com.inschos.cloud.trading.assist.kit.StringKit;
+
 import java.util.List;
 
 /**
@@ -169,8 +171,8 @@ public class ExtendCarInsurancePolicy {
     }
 
     public static class InsuranceStartTime {
-        public String ciLastEffectiveDate;
-        public String biLastEffectiveDate;
+        //        public String ciLastEffectiveDate;
+//        public String biLastEffectiveDate;
         public String ciStartDateFlag;
         public String biStartDateFlag;
         public String biStartTime;
@@ -195,7 +197,6 @@ public class ExtendCarInsurancePolicy {
         public String brandCode;
         public String isTrans;
         public String transDate;
-        public String firstRegisterDate;
         public String sourceCertificateNo;
     }
 
@@ -214,9 +215,10 @@ public class ExtendCarInsurancePolicy {
         public String insurerCode;
         public String biBeginDate;
         public String biPremium;
-        public String state;
-        public String msg;
-        public String msgCode;
+        public String integral;
+        public String ciBeginDate;
+        public String ciPremium;
+        public String carshipTax;
         public List<InsurancePolicyInfo> coverageList;
     }
 
@@ -254,6 +256,18 @@ public class ExtendCarInsurancePolicy {
         public String applicantName;
         public String applicantID;
         public String applicantMobile;
+
+        public boolean isEnable() {
+            return !StringKit.isEmpty(this.ownerName) &&
+                    !StringKit.isEmpty(this.ownerID) &&
+                    !StringKit.isEmpty(this.ownerMobile) &&
+                    !StringKit.isEmpty(this.insuredName) &&
+                    !StringKit.isEmpty(this.insuredID) &&
+                    !StringKit.isEmpty(this.insuredMobile) &&
+                    !StringKit.isEmpty(this.applicantName) &&
+                    !StringKit.isEmpty(this.applicantID) &&
+                    !StringKit.isEmpty(this.applicantMobile);
+        }
     }
 
     public static class InsurancePolicyPremiumDetail {

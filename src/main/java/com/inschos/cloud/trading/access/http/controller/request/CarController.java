@@ -58,6 +58,54 @@ public class CarController {
     }
 
 
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_car_model_by_key")
+    @ResponseBody
+    public String getCarModelByKey(ActionBean actionBean) {
+        return carAction.getCarModelByKey(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_insurance_by_area")
+    @ResponseBody
+    public String getInsuranceByArea(ActionBean actionBean) {
+        return carAction.getInsuranceByArea(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_insurance_start_time")
+    @ResponseBody
+    public String getInsuranceStartTime(ActionBean actionBean) {
+        return carAction.getInsuranceStartTime(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_premium")
+    @ResponseBody
+    public String getPremium(ActionBean actionBean) {
+        return carAction.getPremium(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_insurance_info")
+    @ResponseBody
+    public String getInsuranceInfo(ActionBean actionBean) {
+        return carAction.getInsuranceInfo(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/prepare_take_insure")
+    @ResponseBody
+    public String getInsuranceCompanyAndInsuranceStartTimeAndPremium(ActionBean actionBean) {
+        return carAction.getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoAndPremium(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_premium_calibrate")
+    @ResponseBody
+    public String getPremiumCalibrate(ActionBean actionBean) {
+        return carAction.getPremiumCalibrate(actionBean);
+    }
 
 
 }
