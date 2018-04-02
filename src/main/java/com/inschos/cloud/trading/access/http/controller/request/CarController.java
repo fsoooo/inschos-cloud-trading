@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/trade/")
 public class CarController {
 
-
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private CarAction carAction;
@@ -107,5 +106,46 @@ public class CarController {
         return carAction.getPremiumCalibrate(actionBean);
     }
 
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_premium_factor")
+    @ResponseBody
+    public String getPremiumFactor(ActionBean actionBean) {
+        return carAction.getPremiumFactor(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/apply_underwriting")
+    @ResponseBody
+    public String applyUnderwriting(ActionBean actionBean) {
+        return carAction.applyUnderwriting(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_pay_link")
+    @ResponseBody
+    public String getPayLink(ActionBean actionBean) {
+        return carAction.getPayLink(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/verify_phone_code")
+    @ResponseBody
+    public String verifyPhoneCode(ActionBean actionBean) {
+        return carAction.verifyPhoneCode(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_phone_verify_code")
+    @ResponseBody
+    public String getPhoneVerifyCode(ActionBean actionBean) {
+        return carAction.getPhoneVerifyCode(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/direct_insure")
+    @ResponseBody
+    public String getPremiumCalibrateAndApplyUnderwriting(ActionBean actionBean) {
+        return carAction.getPremiumCalibrateAndApplyUnderwriting(actionBean);
+    }
 
 }

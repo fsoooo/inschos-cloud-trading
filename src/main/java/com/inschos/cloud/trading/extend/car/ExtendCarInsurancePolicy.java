@@ -323,6 +323,10 @@ public class ExtendCarInsurancePolicy {
     }
 
     public static class GetPremiumFactorResponse extends CarInsuranceResponse {
+        public PremiumFactor data;
+    }
+
+    public static class PremiumFactor {
         public String centile;
         public String ecompensationRate;
         public String totalEcompensationRate;
@@ -352,12 +356,22 @@ public class ExtendCarInsurancePolicy {
         public String addresseeCounty;
         public String addresseeCity;
         public String addresseeProvince;
-        public String verificationCode;
-        public String refereeMobile;
+
+        // 非必传，支付成功后跳转地址
+        public String applicantUrl;
+        // 非必传，支付方式
         public String payType;
+        // 非必传，推荐人手机号
+        public String refereeMobile;
+        // 北京验证码
+        public String verificationCode;
     }
 
     public static class ApplyUnderwritingResponse extends CarInsuranceResponse {
+        public ApplyUnderwriting data;
+    }
+
+    public static class ApplyUnderwriting {
         public String biProposalNo;
         public String ciProposalNo;
         public String payLink;
@@ -372,7 +386,6 @@ public class ExtendCarInsurancePolicy {
         public String operType;
         public String uploadType;
         public String billNo;
-
     }
 
     /**
@@ -413,6 +426,10 @@ public class ExtendCarInsurancePolicy {
     }
 
     public static class GetPayLinkResponse extends CarInsuranceResponse {
+        public PayLink data;
+    }
+
+    public static class PayLink {
         public String biProposalNo;
         public String ciProposalNo;
         public String payLink;
@@ -427,6 +444,10 @@ public class ExtendCarInsurancePolicy {
     }
 
     public static class VerifyPhoneCodeResponse extends CarInsuranceResponse {
+        public PhoneCode data;
+    }
+
+    public static class PhoneCode {
         public String biProposalNo;
         public String ciProposalNo;
         public String payLink;
