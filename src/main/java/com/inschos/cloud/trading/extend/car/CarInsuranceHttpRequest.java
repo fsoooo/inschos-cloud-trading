@@ -43,8 +43,12 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
 
             if (response != null) {
                 response.verify = verifySignature(result);
+            } else {
+                response = (Response) new CarInsuranceResponse();
+                response.state = CarInsuranceResponse.RESULT_FAIL;
+                response.msg = "请求失败";
+                response.verify = false;
             }
-
             return response;
         } catch (IOException e) {
             // e.printStackTrace();
