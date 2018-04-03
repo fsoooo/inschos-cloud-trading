@@ -148,4 +148,18 @@ public class CarController {
         return carAction.getPremiumCalibrateAndApplyUnderwriting(actionBean);
     }
 
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/resolve_identity_card")
+    @ResponseBody
+    public String resolveIdentityCard(ActionBean actionBean) {
+        return carAction.resolveIdentityCard(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/resolve_driving_license")
+    @ResponseBody
+    public String resolveDrivingLicense(ActionBean actionBean) {
+        return carAction.resolveDrivingLicense(actionBean);
+    }
+
 }

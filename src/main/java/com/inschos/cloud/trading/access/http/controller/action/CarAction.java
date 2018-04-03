@@ -6,6 +6,7 @@ import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.*;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Date;
  * 描述：
  * 作者：zhangyunhe
  */
+@Component
 public class CarAction extends BaseAction {
 
     /**
@@ -34,7 +36,7 @@ public class CarAction extends BaseAction {
 
         ExtendCarInsurancePolicy.GetProvinceCodeRequest getProvinceCodeRequest = new ExtendCarInsurancePolicy.GetProvinceCodeRequest();
 
-        ExtendCarInsurancePolicy.GetProvinceCodeResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetProvinceCodeRequest, ExtendCarInsurancePolicy.GetProvinceCodeResponse>(get_province_code, getProvinceCodeRequest).post();
+        ExtendCarInsurancePolicy.GetProvinceCodeResponse result = new CarInsuranceHttpRequest<>(get_province_code, getProvinceCodeRequest, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -62,11 +64,13 @@ public class CarAction extends BaseAction {
                         response.data = result.data;
                         response.data.get(0).city = getCityCodeResponse.data.city;
                         str = json(BaseResponse.CODE_SUCCESS, "获取省级列表成功", response);
+                        // TODO: 2018/4/3  记得给自己的系统存数据
                     } else {
                         str = json(BaseResponse.CODE_FAILURE, "获取省级列表失败", response);
                     }
                 } else {
                     str = json(BaseResponse.CODE_SUCCESS, "获取省级列表成功", response);
+                    // TODO: 2018/4/3  记得给自己的系统存数据
                 }
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
@@ -96,7 +100,7 @@ public class CarAction extends BaseAction {
         ExtendCarInsurancePolicy.GetCityCodeRequest getCityCodeRequest = new ExtendCarInsurancePolicy.GetCityCodeRequest();
         getCityCodeRequest.provinceCode = request.provinceCode;
 
-        ExtendCarInsurancePolicy.GetCityCodeResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetCityCodeRequest, ExtendCarInsurancePolicy.GetCityCodeResponse>(get_city_code, getCityCodeRequest).post();
+        ExtendCarInsurancePolicy.GetCityCodeResponse result = new CarInsuranceHttpRequest<>(get_city_code, getCityCodeRequest, ExtendCarInsurancePolicy.GetCityCodeResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -105,6 +109,8 @@ public class CarAction extends BaseAction {
                 response.data.provinceCode = request.provinceCode;
                 response.data.city = result.data;
                 str = json(BaseResponse.CODE_SUCCESS, "获取市级列表成功", response);
+
+                // TODO: 2018/4/3  记得给自己的系统存数据
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
             }
@@ -126,7 +132,7 @@ public class CarAction extends BaseAction {
         // TODO: 2018/3/29  从我们的request里面获取这个值
         // getProvinceCodeRequest.insurerCode
 
-        ExtendCarInsurancePolicy.GetProvinceCodeResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetProvinceCodeRequest, ExtendCarInsurancePolicy.GetProvinceCodeResponse>(get_area_by_insurance, getProvinceCodeRequest).post();
+        ExtendCarInsurancePolicy.GetProvinceCodeResponse result = new CarInsuranceHttpRequest<>(get_area_by_insurance, getProvinceCodeRequest, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class).post();
         // 验签
         String str;
         // TODO: 2018/3/29 返回我们的response
@@ -157,13 +163,15 @@ public class CarAction extends BaseAction {
 
         getInsuranceCompanyRequest.provinceCode = request.provinceCode;
 
-        ExtendCarInsurancePolicy.GetInsuranceCompanyResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetInsuranceCompanyRequest, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse>(get_insurance_by_area, getInsuranceCompanyRequest).post();
+        ExtendCarInsurancePolicy.GetInsuranceCompanyResponse result = new CarInsuranceHttpRequest<>(get_insurance_by_area, getInsuranceCompanyRequest, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
                 str = json(BaseResponse.CODE_SUCCESS, "获取市级列表成功", response);
+
+                // TODO: 2018/4/3  记得给自己的系统存保险公司
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
             }
@@ -190,7 +198,7 @@ public class CarAction extends BaseAction {
 
         ExtendCarInsurancePolicy.GetInsuranceInfoRequest getInsuranceInfoRequest = new ExtendCarInsurancePolicy.GetInsuranceInfoRequest();
 
-        ExtendCarInsurancePolicy.GetInsuranceInfoResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetInsuranceInfoRequest, ExtendCarInsurancePolicy.GetInsuranceInfoResponse>(get_insurance_info, getInsuranceInfoRequest).post();
+        ExtendCarInsurancePolicy.GetInsuranceInfoResponse result = new CarInsuranceHttpRequest<>(get_insurance_info, getInsuranceInfoRequest, ExtendCarInsurancePolicy.GetInsuranceInfoResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -225,7 +233,7 @@ public class CarAction extends BaseAction {
         ExtendCarInsurancePolicy.GetCarInfoRequest getCarInfoRequest = new ExtendCarInsurancePolicy.GetCarInfoRequest();
         getCarInfoRequest.licenseNo = request.licenseNo;
 
-        ExtendCarInsurancePolicy.GetCarInfoResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetCarInfoRequest, ExtendCarInsurancePolicy.GetCarInfoResponse>(get_car_info_licence_number, getCarInfoRequest).post();
+        ExtendCarInsurancePolicy.GetCarInfoResponse result = new CarInsuranceHttpRequest<>(get_car_info_licence_number, getCarInfoRequest, ExtendCarInsurancePolicy.GetCarInfoResponse.class).post();
 
         return dealResultAndResponse(response, result);
     }
@@ -249,7 +257,7 @@ public class CarAction extends BaseAction {
         ExtendCarInsurancePolicy.GetCarInfoRequest getCarInfoRequest = new ExtendCarInsurancePolicy.GetCarInfoRequest();
         getCarInfoRequest.frameNo = request.frameNo;
 
-        ExtendCarInsurancePolicy.GetCarInfoResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetCarInfoRequest, ExtendCarInsurancePolicy.GetCarInfoResponse>(get_car_info_frame_number, getCarInfoRequest).post();
+        ExtendCarInsurancePolicy.GetCarInfoResponse result = new CarInsuranceHttpRequest<>(get_car_info_frame_number, getCarInfoRequest, ExtendCarInsurancePolicy.GetCarInfoResponse.class).post();
 
         return dealResultAndResponse(response, result);
     }
@@ -298,7 +306,7 @@ public class CarAction extends BaseAction {
         // TODO: 2018/3/29  从我们的request里面获取这个值
         // correctCarInfoRequest.licenseNo
 
-        ExtendCarInsurancePolicy.CorrectCarInfoResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.CorrectCarInfoRequest, ExtendCarInsurancePolicy.CorrectCarInfoResponse>(correct_car_info, correctCarInfoRequest).post();
+        ExtendCarInsurancePolicy.CorrectCarInfoResponse result = new CarInsuranceHttpRequest<>(correct_car_info, correctCarInfoRequest, ExtendCarInsurancePolicy.CorrectCarInfoResponse.class).post();
         // 验签
         String str;
         // TODO: 2018/3/29 返回我们的response
@@ -361,12 +369,17 @@ public class CarAction extends BaseAction {
         getCarModelRequest.frameNo = request.carInfo.frameNo;
         getCarModelRequest.responseNo = request.carInfo.responseNo;
 
-        ExtendCarInsurancePolicy.GetCarModelResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetCarModelRequest, ExtendCarInsurancePolicy.GetCarModelResponse>(get_car_model, getCarModelRequest).post();
+        ExtendCarInsurancePolicy.GetCarModelResponse result = new CarInsuranceHttpRequest<>(get_car_model, getCarModelRequest, ExtendCarInsurancePolicy.GetCarModelResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
+
+                for (ExtendCarInsurancePolicy.CarModel datum : response.data) {
+                    datum.showText = datum.createShowText();
+                }
+
                 str = json(BaseResponse.CODE_SUCCESS, "获取车型信息成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
@@ -427,7 +440,7 @@ public class CarAction extends BaseAction {
 
         getCarModelInfoRequest.licenseNo = request.licenseNo;
 
-        ExtendCarInsurancePolicy.GetCarModelInfoResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetCarModelInfoRequest, ExtendCarInsurancePolicy.GetCarModelInfoResponse>(get_car_model_info, getCarModelInfoRequest).post();
+        ExtendCarInsurancePolicy.GetCarModelInfoResponse result = new CarInsuranceHttpRequest<>(get_car_model_info, getCarModelInfoRequest, ExtendCarInsurancePolicy.GetCarModelInfoResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -436,7 +449,18 @@ public class CarAction extends BaseAction {
                 if (result.data.frameNo == null) {
                     result.data.frameNo = "null";
                 }
-                response.signToken = SignatureTools.sign(result.data.frameNo, SignatureTools.SIGN_CAR_RSA_PRIVATE_KEY);
+
+                if (result.data.engineNo == null) {
+                    result.data.engineNo = "null";
+                }
+
+                if (response.data.vehicleList != null) {
+                    for (ExtendCarInsurancePolicy.CarModel datum : response.data.vehicleList) {
+                        datum.showText = datum.createShowText();
+                    }
+                }
+
+                response.signToken = SignatureTools.sign(result.data.frameNo + result.data.engineNo, SignatureTools.SIGN_CAR_RSA_PRIVATE_KEY);
                 str = json(BaseResponse.CODE_SUCCESS, "获取车辆号码与车型信息成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
@@ -479,7 +503,7 @@ public class CarAction extends BaseAction {
 
         getCarModelRequest.page = request.pageNum;
 
-        ExtendCarInsurancePolicy.GetCarModelResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetCarModelRequest, ExtendCarInsurancePolicy.GetCarModelResponse>(get_car_model_by_key, getCarModelRequest).post();
+        ExtendCarInsurancePolicy.GetCarModelResponse result = new CarInsuranceHttpRequest<>(get_car_model_by_key, getCarModelRequest, ExtendCarInsurancePolicy.GetCarModelResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -639,7 +663,7 @@ public class CarAction extends BaseAction {
             }
         }
 
-        ExtendCarInsurancePolicy.GetInsuranceStartTimeResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetInsuranceStartTimeRequest, ExtendCarInsurancePolicy.GetInsuranceStartTimeResponse>(get_insurance_start_time, getInsuranceStartTimeRequest).post();
+        ExtendCarInsurancePolicy.GetInsuranceStartTimeResponse result = new CarInsuranceHttpRequest<>(get_insurance_start_time, getInsuranceStartTimeRequest, ExtendCarInsurancePolicy.GetInsuranceStartTimeResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -737,7 +761,7 @@ public class CarAction extends BaseAction {
 //            carInfo.coverageList.add(insuranceInfoDetail);
 //        }
 
-        ExtendCarInsurancePolicy.GetPremiumResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetPremiumRequest, ExtendCarInsurancePolicy.GetPremiumResponse>(get_premium, getPremiumRequest).post();
+        ExtendCarInsurancePolicy.GetPremiumResponse result = new CarInsuranceHttpRequest<>(get_premium, getPremiumRequest, ExtendCarInsurancePolicy.GetPremiumResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -863,7 +887,7 @@ public class CarAction extends BaseAction {
 
         getPremiumCalibrateRequest.coverageList = request.coverageList;
 
-        ExtendCarInsurancePolicy.GetPremiumCalibrateResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetPremiumCalibrateRequest, ExtendCarInsurancePolicy.GetPremiumCalibrateResponse>(get_premium_calibrate, getPremiumCalibrateRequest).post();
+        ExtendCarInsurancePolicy.GetPremiumCalibrateResponse result = new CarInsuranceHttpRequest<>(get_premium_calibrate, getPremiumCalibrateRequest, ExtendCarInsurancePolicy.GetPremiumCalibrateResponse.class).post();
         // 验签
         String str;
         // TODO: 2018/3/29 返回我们的response
@@ -923,12 +947,16 @@ public class CarAction extends BaseAction {
         applyUnderwritingRequest.addresseeCity = request.addresseeCity;
         applyUnderwritingRequest.addresseeProvince = request.addresseeProvince;
 
-        ExtendCarInsurancePolicy.ApplyUnderwritingResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.ApplyUnderwritingRequest, ExtendCarInsurancePolicy.ApplyUnderwritingResponse>(apply_underwriting, applyUnderwritingRequest).post();
+        ExtendCarInsurancePolicy.ApplyUnderwritingResponse result = new CarInsuranceHttpRequest<>(apply_underwriting, applyUnderwritingRequest, ExtendCarInsurancePolicy.ApplyUnderwritingResponse.class).post();
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
                 str = json(BaseResponse.CODE_SUCCESS, "申请核保成功", response);
+
+                // TODO: 2018/4/3  记得给自己的系统存保单
+
+
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
             }
@@ -1013,7 +1041,7 @@ public class CarAction extends BaseAction {
 
         getPremiumFactorRequest.bizID = request.bizID;
 
-        ExtendCarInsurancePolicy.GetPremiumFactorResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetPremiumFactorRequest, ExtendCarInsurancePolicy.GetPremiumFactorResponse>(get_premium_factor, getPremiumFactorRequest).post();
+        ExtendCarInsurancePolicy.GetPremiumFactorResponse result = new CarInsuranceHttpRequest<>(get_premium_factor, getPremiumFactorRequest, ExtendCarInsurancePolicy.GetPremiumFactorResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -1050,7 +1078,7 @@ public class CarAction extends BaseAction {
 
         getPayLinkRequest.bizID = request.bizID;
 
-        ExtendCarInsurancePolicy.GetPayLinkResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetPayLinkRequest, ExtendCarInsurancePolicy.GetPayLinkResponse>(get_pay_link, getPayLinkRequest).post();
+        ExtendCarInsurancePolicy.GetPayLinkResponse result = new CarInsuranceHttpRequest<>(get_pay_link, getPayLinkRequest, ExtendCarInsurancePolicy.GetPayLinkResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -1087,7 +1115,7 @@ public class CarAction extends BaseAction {
         verifyPhoneCodeRequest.bizID = request.bizID;
         verifyPhoneCodeRequest.verificationCode = request.verificationCode;
 
-        ExtendCarInsurancePolicy.VerifyPhoneCodeResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.VerifyPhoneCodeRequest, ExtendCarInsurancePolicy.VerifyPhoneCodeResponse>(verify_phone_code, verifyPhoneCodeRequest).post();
+        ExtendCarInsurancePolicy.VerifyPhoneCodeResponse result = new CarInsuranceHttpRequest<>(verify_phone_code, verifyPhoneCodeRequest, ExtendCarInsurancePolicy.VerifyPhoneCodeResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -1123,7 +1151,7 @@ public class CarAction extends BaseAction {
 
         reGetPhoneVerifyCodeRequest.bizID = request.bizID;
 
-        ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeRequest, ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeResponse>(get_phone_verify_code, reGetPhoneVerifyCodeRequest).post();
+        ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeResponse result = new CarInsuranceHttpRequest<>(get_phone_verify_code, reGetPhoneVerifyCodeRequest, ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeResponse.class).post();
         // 验签
         String str;
         if (result.verify) {
@@ -1178,7 +1206,7 @@ public class CarAction extends BaseAction {
         // TODO: 2018/3/29  从我们的request里面获取这个值
 //        reGetPhoneVerifyCodeRequest.bizID
 
-        ExtendCarInsurancePolicy.GetInsuranceInstructionResponse result = new CarInsuranceHttpRequest<ExtendCarInsurancePolicy.GetInsuranceInstructionRequest, ExtendCarInsurancePolicy.GetInsuranceInstructionResponse>(get_insurance_instruction, getInsuranceInstructionRequest).post();
+        ExtendCarInsurancePolicy.GetInsuranceInstructionResponse result = new CarInsuranceHttpRequest<>(get_insurance_instruction, getInsuranceInstructionRequest, ExtendCarInsurancePolicy.GetInsuranceInstructionResponse.class).post();
         // 验签
         String str;
         // TODO: 2018/3/29 返回我们的response
@@ -1190,6 +1218,107 @@ public class CarAction extends BaseAction {
 
         return "";
     }
+
+    /**
+     * 解析身份证
+     */
+    private static final String resolve_identity_card = CarInsuranceCommon.getServerHost() + "/valueadd/analyzingDriving";
+
+    // FINISH: 2018/4/3
+    public String resolveIdentityCard(ActionBean actionBean) {
+        CarInsurance.ResolveIdentityCardRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ResolveIdentityCardRequest.class);
+        CarInsurance.ResolveIdentityCardResponse response = new CarInsurance.ResolveIdentityCardResponse();
+
+        String errorMessage = checkParam(request);
+        if (!StringKit.isEmpty(errorMessage)) {
+            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        }
+
+        ExtendCarInsurancePolicy.ResolveIdentityCardRequest resolveIdentityCardRequest = new ExtendCarInsurancePolicy.ResolveIdentityCardRequest();
+
+        if (!StringKit.isEmpty(resolveIdentityCardRequest.frontCardUrl) || !StringKit.isEmpty(resolveIdentityCardRequest.frontCardBase64)) {
+            resolveIdentityCardRequest.frontCardUrl = request.frontCardUrl;
+            resolveIdentityCardRequest.frontCardBase64 = request.frontCardBase64;
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "缺少正面信息", new BaseResponse());
+        }
+
+        if (!StringKit.isEmpty(resolveIdentityCardRequest.backCardUrl) || !StringKit.isEmpty(resolveIdentityCardRequest.backCardBase64)) {
+            resolveIdentityCardRequest.backCardUrl = request.backCardUrl;
+            resolveIdentityCardRequest.backCardBase64 = request.backCardBase64;
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "缺少背面信息", new BaseResponse());
+        }
+
+        ExtendCarInsurancePolicy.ResolveIdentityCardResponse result = new CarInsuranceHttpRequest<>(resolve_driving_license, resolveIdentityCardRequest, ExtendCarInsurancePolicy.ResolveIdentityCardResponse.class).post();
+
+        // TODO: 2018/4/3 记得存咱们的服务器
+
+        // 验签
+        String str;
+        if (result.verify) {
+            if (result.state == CarInsuranceResponse.RESULT_OK) {
+                str = json(BaseResponse.CODE_SUCCESS, "身份证信息获取成功", response);
+            } else {
+                str = json(BaseResponse.CODE_FAILURE, result.msg, response);
+            }
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+        }
+
+        return str;
+    }
+
+    /**
+     * 解析行驶本
+     */
+    private static final String resolve_driving_license = CarInsuranceCommon.getServerHost() + "/valueadd/analyzingDriving";
+
+    // FINISH: 2018/4/3
+    public String resolveDrivingLicense(ActionBean actionBean) {
+        CarInsurance.ResolveDrivingLicenseRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ResolveDrivingLicenseRequest.class);
+        CarInsurance.ResolveDrivingLicenseResponse response = new CarInsurance.ResolveDrivingLicenseResponse();
+
+        String errorMessage = checkParam(request);
+        if (!StringKit.isEmpty(errorMessage)) {
+            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        }
+
+        ExtendCarInsurancePolicy.ResolveDrivingLicenseRequest resolveDrivingLicenseRequest = new ExtendCarInsurancePolicy.ResolveDrivingLicenseRequest();
+
+        if (!StringKit.isEmpty(resolveDrivingLicenseRequest.imgJustUrl) || !StringKit.isEmpty(resolveDrivingLicenseRequest.imgJustBase64)) {
+            resolveDrivingLicenseRequest.imgJustUrl = request.imgJustUrl;
+            resolveDrivingLicenseRequest.imgJustBase64 = request.imgJustBase64;
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "缺少正面信息", new BaseResponse());
+        }
+
+        if (!StringKit.isEmpty(resolveDrivingLicenseRequest.imgBackUrl) || !StringKit.isEmpty(resolveDrivingLicenseRequest.imgBackBase64)) {
+            resolveDrivingLicenseRequest.imgBackUrl = request.imgBackUrl;
+            resolveDrivingLicenseRequest.imgJustBase64 = request.imgJustBase64;
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "缺少背面信息", new BaseResponse());
+        }
+
+        ExtendCarInsurancePolicy.ResolveDrivingLicenseResponse result = new CarInsuranceHttpRequest<>(resolve_driving_license, resolveDrivingLicenseRequest, ExtendCarInsurancePolicy.ResolveDrivingLicenseResponse.class).post();
+
+        // TODO: 2018/4/3 记得存咱们的服务器
+
+        // 验签
+        String str;
+        if (result.verify) {
+            if (result.state == CarInsuranceResponse.RESULT_OK) {
+                str = json(BaseResponse.CODE_SUCCESS, "行驶证信息获取成功", response);
+            } else {
+                str = json(BaseResponse.CODE_FAILURE, result.msg, response);
+            }
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+        }
+
+        return str;
+    }
+
 
     /**
      * 返回long时间戳

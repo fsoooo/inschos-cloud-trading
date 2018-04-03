@@ -13,6 +13,7 @@ import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.InsurancePreservationModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
  * 描述：
  * 作者：zhangyunhe
  */
+@Component
 public class InsurancePolicyAction extends BaseAction {
 
     @Autowired
@@ -332,10 +334,6 @@ public class InsurancePolicyAction extends BaseAction {
 
     }
 
-    // TODO: 2018/3/28 车险投保
-    private void insureCar() {
-
-    }
 
 
 }

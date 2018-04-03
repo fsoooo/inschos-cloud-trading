@@ -1,13 +1,11 @@
 package com.inschos.cloud.trading.extend.car;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inschos.cloud.trading.assist.kit.HttpClientKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -21,12 +19,13 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private CarInsuranceRequestEntity request;
+    private Class<Response> cls;
     private String url;
 
-    public CarInsuranceHttpRequest(String url, Request request) {
+    public CarInsuranceHttpRequest(String url, Request request, Class<Response> cls) {
         this.url = url;
         this.request = new CarInsuranceRequestEntity<Request>();
-
+        this.cls = cls;
         if (request != null) {
             this.request.data = request;
             this.request.sign = SignatureTools.sign(JsonKit.bean2Json(request), SignatureTools.CAR_RSA_PRIVATE_KEY);
@@ -36,15 +35,11 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
     }
 
     public Response post() {
-        Response response = null;
+        Response response;
         try {
             String result = HttpClientKit.post(url, JsonKit.bean2Json(request));
-            response = JsonKit.json2Bean(result, new TypeReference<Response>() {
-                @Override
-                public Type getType() {
-                    return super.getType();
-                }
-            });
+
+            response = JsonKit.json2Bean(result, cls);
 
             if (response != null) {
                 response.verify = verifySignature(result);

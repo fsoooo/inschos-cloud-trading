@@ -293,4 +293,27 @@ public class CarInsurance {
 
     public static class ReGetPhoneVerifyCodeResponse extends BaseResponse {
     }
+
+    public static class ResolveIdentityCardRequest extends BaseRequest {
+        public String frontCardUrl;
+        public String backCardUrl;
+        public String frontCardBase64;
+        public String backCardBase64;
+    }
+
+    public static class ResolveIdentityCardResponse extends BaseResponse {
+        public ExtendCarInsurancePolicy.ResolveIdentityCard data;
+    }
+
+    public static class ResolveDrivingLicenseRequest extends BaseRequest {
+        public String imgJustUrl;
+        public String imgJustBase64;
+        public String imgBackUrl;
+        public String imgBackBase64;
+    }
+
+    public static class ResolveDrivingLicenseResponse extends BaseResponse {
+        public ExtendCarInsurancePolicy.ResolveDrivingLicense data;
+    }
+
 }

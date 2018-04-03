@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.inschos.cloud.trading.model.InsurancePreservationModel">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.InsurancePreservationMapper">
 
     <sql id="Base_Column_List">
         `id`,`private_code`,`cust_id`,`cust_type`,`apply_time`,`event`,`ip_address`,`old_content`,`content`,`describe`,`type`,`status`,`remark`,`created_at`,`updated_at`

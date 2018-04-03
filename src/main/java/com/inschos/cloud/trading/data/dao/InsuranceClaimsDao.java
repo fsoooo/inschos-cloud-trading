@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.data.dao;
 import com.inschos.cloud.trading.data.mapper.InsuranceClaimsMapper;
 import com.inschos.cloud.trading.model.InsuranceClaimsModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * 描述：
  * 作者：zhangyunhe
  */
+@Component
 public class InsuranceClaimsDao extends BaseDao{
 
     @Autowired

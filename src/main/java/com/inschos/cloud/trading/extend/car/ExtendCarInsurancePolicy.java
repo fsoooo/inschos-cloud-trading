@@ -137,6 +137,10 @@ public class ExtendCarInsurancePolicy {
         public String seat;
         public String standardName;
         public String showText;
+
+        public String createShowText() {
+            return brandName + familyName + engineDesc + parentVehName + remark;
+        }
     }
 
     public static class GetCarModelInfoRequest extends CarInsuranceRequest {
@@ -542,6 +546,64 @@ public class ExtendCarInsurancePolicy {
     public static class InsuranceInstruction {
         public String insurerCode;
         public String statementContent;
+    }
+
+    public static class ResolveIdentityCardRequest extends CarInsuranceRequest {
+        public String frontCardUrl;
+        public String backCardUrl;
+        public String frontCardBase64;
+        public String backCardBase64;
+    }
+
+    public static class ResolveIdentityCardResponse extends CarInsuranceResponse {
+        public ResolveIdentityCard data;
+    }
+
+    public static class ResolveIdentityCard {
+        public String name;
+        public String cardNo;
+        public String sex;
+        public String folk;
+        public String birthday;
+        public String address;
+        public String issueAuthority;
+        public String certStartDate;
+        public String certEndDate;
+    }
+
+    public static class ResolveDrivingLicenseRequest extends CarInsuranceRequest {
+        public String imgJustUrl;
+        public String imgJustBase64;
+        public String imgBackUrl;
+        public String imgBackBase64;
+    }
+
+    public static class ResolveDrivingLicenseResponse extends CarInsuranceResponse {
+        public ResolveDrivingLicense data;
+    }
+
+    public static class ResolveDrivingLicense {
+        public String licenseNo;
+        public String fileNumber;
+        public String seat;
+        public String curbWeight;
+        public String totalMass;
+        public String overallSize;
+        public String vehicleTpye;
+        public String owner;
+        public String address;
+        public String useCharacter;
+        public String brandName;
+        public String frameNo;
+        public String engineNo;
+        public String firstRegisterDate;
+        public String issueDate;
+        public String showText;
+
+        public String createShowText () {
+            // return brandName + familyName + engineDesc + parentVehName + remark;
+             return "";
+        }
     }
 
 }
