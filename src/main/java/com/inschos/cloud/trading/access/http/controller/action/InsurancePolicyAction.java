@@ -60,7 +60,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyBaseBean.user_id = insurancePolicyInsureForPersonRequest.userId;
         insurancePolicyBaseBean.product_id = insurancePolicyInsureForPersonRequest.productId;
-        insurancePolicyBaseBean.private_code = insurancePolicyBaseBean.createPrivateCode();
+        insurancePolicyBaseBean.warranty_uuid = insurancePolicyBaseBean.createPrivateCode();
 
         insurancePolicyBaseBean.start_time = insurancePolicyInsureForPersonRequest.startTime;
         insurancePolicyBaseBean.end_time = insurancePolicyInsureForPersonRequest.endTime;
@@ -173,7 +173,7 @@ public class InsurancePolicyAction extends BaseAction {
         InsurancePreservationModel insurancePreservationModel = new InsurancePreservationModel();
 
         insurancePreservationModel.cust_id = insurancePolicyInsureForPersonRequest.userId;
-        insurancePreservationModel.private_code = insurancePolicyBaseBean.private_code;
+        insurancePreservationModel.private_code = insurancePolicyBaseBean.warranty_uuid;
         insurancePreservationModel.event = String.valueOf(InsurancePreservationModel.EVENT_TYPE_INSURE);
         insurancePreservationModel.apply_time = String.valueOf(time);
         insurancePreservationModel.created_at = String.valueOf(time);
@@ -236,8 +236,9 @@ public class InsurancePolicyAction extends BaseAction {
         // 企业
 
 
+
         // 个人
-        List<InsuranceParticipantModel> insuranceParticipantByPrivateCode = insuranceParticipantDao.findInsuranceParticipantByPrivateCode(insurancePolicyModel.private_code);
+        List<InsuranceParticipantModel> insuranceParticipantByPrivateCode = insuranceParticipantDao.findInsuranceParticipantByPrivateCode(insurancePolicyModel.warranty_uuid);
 
         return "";
     }

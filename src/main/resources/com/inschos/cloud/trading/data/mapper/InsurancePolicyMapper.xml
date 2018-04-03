@@ -3,7 +3,7 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper">
 
     <sql id="Base_Column_List">
-        `id`,`union_order_code`,`warranty_code`,`private_code`,`user_id`,`user_type`,`agent_id`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`company_name`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`parameter`,`is_settlement`,`warranty_url`,`warranty_image`,`warranty_from`,`car_code`,`type`,`status`,`created_at`,`updated_at`,`state`
+        `id`,`union_order_code`,`warranty_code`,`warranty_uuid`,`company_id`,`user_id`,`user_type`,`agent_id`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`created_at`,`updated_at`,`state`
     </sql>
 
     <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" useGeneratedKeys="true"
@@ -11,13 +11,13 @@
         insert into cust_warranty
         <include refid="Base_Column_List" />
         values
-        #{id},#{union_order_code},#{warranty_code},#{private_code},#{user_id},#{user_type},#{agent_id},#{ditch_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{company_name},#{count},#{pay_time},#{pay_way},#{by_stages_way},#{parameter},#{is_settlement},#{warranty_url},#{warranty_image},#{warranty_from},#{car_code},#{type},#{status},#{created_at},#{updated_at},#{state}
+        #{id},#{union_order_code},#{warranty_code},#{warranty_uuid},#{company_id},#{user_id},#{user_type},#{agent_id},#{ditch_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{ins_company_id},#{count},#{pay_time},#{pay_way},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{check_status},#{pay_status},#{warranty_status},#{created_at},#{updated_at},#{state}
     </insert>
 
     <select id="findInsurancePolicyDetailByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
         <include refid="Base_Column_List" />
-        from cust_warranty where private_code=#{_parameter} AND state = 1
+        from cust_warranty where warranty_code=#{_parameter} AND state = 1
     </select>
 
     <select id="findInsurancePolicyPrivateCodeByUnionOrderCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">

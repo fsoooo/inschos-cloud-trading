@@ -23,6 +23,8 @@ public class ActionBean {
 
 	public int userId = 1;
 
+	public int userType;
+
 	public static final RC4Kit rc4 = new RC4Kit("Inschos@2018@token");
 
 	public static String getSalt() {
