@@ -211,7 +211,7 @@
   </profiles>
 
   <build>
-    <finalName>cloudTrading</finalName>
+    <finalName>trading</finalName>
     <defaultGoal>compile</defaultGoal>
     <plugins>
       <plugin>
