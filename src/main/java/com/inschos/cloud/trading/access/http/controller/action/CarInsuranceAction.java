@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
+import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.*;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 创建日期：2018/3/29 on 14:27
@@ -17,7 +19,7 @@ import java.util.Date;
  * 作者：zhangyunhe
  */
 @Component
-public class CarAction extends BaseAction {
+public class CarInsuranceAction extends BaseAction {
 
     /**
      * 查询省代码
@@ -29,9 +31,9 @@ public class CarAction extends BaseAction {
         CarInsurance.GetProvinceCodeRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetProvinceCodeRequest.class);
         CarInsurance.GetProvinceCodeResponse response = new CarInsurance.GetProvinceCodeResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.GetProvinceCodeRequest getProvinceCodeRequest = new ExtendCarInsurancePolicy.GetProvinceCodeRequest();
@@ -92,9 +94,9 @@ public class CarAction extends BaseAction {
         CarInsurance.GetCityCodeRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCityCodeRequest.class);
         CarInsurance.GetCityCodeResponse response = new CarInsurance.GetCityCodeResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.GetCityCodeRequest getCityCodeRequest = new ExtendCarInsurancePolicy.GetCityCodeRequest();
@@ -124,25 +126,25 @@ public class CarAction extends BaseAction {
     /**
      * 保险公司支持的地区
      */
-    private static final String get_area_by_insurance = CarInsuranceCommon.getServerHost() + "/mdata/areas";
-
-    public String getAreaByInsurance(ActionBean actionBean) {
-        ExtendCarInsurancePolicy.GetProvinceCodeRequest getProvinceCodeRequest = new ExtendCarInsurancePolicy.GetProvinceCodeRequest();
-
-        // TODO: 2018/3/29  从我们的request里面获取这个值
-        // getProvinceCodeRequest.insurerCode
-
-        ExtendCarInsurancePolicy.GetProvinceCodeResponse result = new CarInsuranceHttpRequest<>(get_area_by_insurance, getProvinceCodeRequest, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class).post();
-        // 验签
-        String str;
-        // TODO: 2018/3/29 返回我们的response
-        if (result.verify) {
-
-        } else {
-            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
-        }
-        return "";
-    }
+//    private static final String get_area_by_insurance = CarInsuranceCommon.getServerHost() + "/mdata/areas";
+//
+//    public String getAreaByInsurance(ActionBean actionBean) {
+//        ExtendCarInsurancePolicy.GetProvinceCodeRequest getProvinceCodeRequest = new ExtendCarInsurancePolicy.GetProvinceCodeRequest();
+//
+//        // TODO: 2018/3/29  从我们的request里面获取这个值
+//        // getProvinceCodeRequest.insurerCode
+//
+//        ExtendCarInsurancePolicy.GetProvinceCodeResponse result = new CarInsuranceHttpRequest<>(get_area_by_insurance, getProvinceCodeRequest, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class).post();
+//        // 验签
+//        String str;
+//        // TODO: 2018/3/29 返回我们的response
+//        if (result.verify) {
+//
+//        } else {
+//            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+//        }
+//        return "";
+//    }
 
     /**
      * 地区支持的保险公司
@@ -154,9 +156,9 @@ public class CarAction extends BaseAction {
         CarInsurance.GetInsuranceCompanyRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceCompanyRequest.class);
         CarInsurance.GetInsuranceCompanyResponse response = new CarInsurance.GetInsuranceCompanyResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.GetInsuranceCompanyRequest getInsuranceCompanyRequest = new ExtendCarInsurancePolicy.GetInsuranceCompanyRequest();
@@ -191,9 +193,9 @@ public class CarAction extends BaseAction {
         CarInsurance.GetInsuranceInfoRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceInfoRequest.class);
         CarInsurance.GetInsuranceInfoResponse response = new CarInsurance.GetInsuranceInfoResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.GetInsuranceInfoRequest getInsuranceInfoRequest = new ExtendCarInsurancePolicy.GetInsuranceInfoRequest();
@@ -225,9 +227,9 @@ public class CarAction extends BaseAction {
         CarInsurance.GetCarInfoRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarInfoRequest.class);
         CarInsurance.GetCarInfoResponse response = new CarInsurance.GetCarInfoResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.GetCarInfoRequest getCarInfoRequest = new ExtendCarInsurancePolicy.GetCarInfoRequest();
@@ -245,13 +247,12 @@ public class CarAction extends BaseAction {
 
     // FINISH: 2018/3/30
     public String getCarInfoFrameNumber(ActionBean actionBean) {
-
         CarInsurance.GetCarInfoRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarInfoRequest.class);
         CarInsurance.GetCarInfoResponse response = new CarInsurance.GetCarInfoResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.GetCarInfoRequest getCarInfoRequest = new ExtendCarInsurancePolicy.GetCarInfoRequest();
@@ -335,14 +336,14 @@ public class CarAction extends BaseAction {
         CarInsurance.GetCarModelRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarModelRequest.class);
         CarInsurance.GetCarModelResponse response = new CarInsurance.GetCarModelResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        if (request.carInfo == null) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
-        }
+//        if (request.carInfo == null) {
+//            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+//        }
 
         if (request.carInfo.frameNo == null) {
             request.carInfo.frameNo = "null";
@@ -427,13 +428,14 @@ public class CarAction extends BaseAction {
     private static final String get_car_model_info = CarInsuranceCommon.getServerHost() + "/auto/vehicleAndModel";
 
     // FINISH: 2018/3/31
+    // NOTENABLED: 2018/4/3 目前的接口都是客户端单独请求
     public String getCarModelInfo(ActionBean actionBean) {
         CarInsurance.GetCarModelInfoRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarModelInfoRequest.class);
         CarInsurance.GetCarModelInfoResponse response = new CarInsurance.GetCarModelInfoResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.GetCarModelInfoRequest getCarModelInfoRequest = new ExtendCarInsurancePolicy.GetCarModelInfoRequest();
@@ -482,9 +484,9 @@ public class CarAction extends BaseAction {
         CarInsurance.GetCarModelRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarModelRequest.class);
         CarInsurance.GetCarModelResponse response = new CarInsurance.GetCarModelResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         if (StringKit.isEmpty(request.pageNum)) {
@@ -526,6 +528,7 @@ public class CarAction extends BaseAction {
      * @param actionBean 请求体
      * @return 响应json
      */
+    // NOTENABLED: 2018/4/3 目前的接口都是客户端单独请求
     public String getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoAndPremium(ActionBean actionBean) {
         CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest.class);
         CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumResponse response = new CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumResponse();
@@ -599,14 +602,14 @@ public class CarAction extends BaseAction {
         CarInsurance.GetInsuranceStartTimeRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceStartTimeRequest.class);
         CarInsurance.GetInsuranceStartTimeResponse response = new CarInsurance.GetInsuranceStartTimeResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        if (request.carInfo == null) {
-            return json(BaseResponse.CODE_FAILURE, "缺少车辆信息", response);
-        }
+//        if (request.carInfo == null) {
+//            return json(BaseResponse.CODE_FAILURE, "缺少车辆信息", response);
+//        }
 
         // 是否过户车
         boolean isTrans = StringKit.equals(request.carInfo.isTrans, "1");
@@ -692,14 +695,14 @@ public class CarAction extends BaseAction {
         CarInsurance.GetPremiumRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetPremiumRequest.class);
         CarInsurance.GetPremiumResponse response = new CarInsurance.GetPremiumResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        if (request.carInfo == null) {
-            return json(BaseResponse.CODE_FAILURE, "缺少车辆信息", response);
-        }
+//        if (request.carInfo == null) {
+//            return json(BaseResponse.CODE_FAILURE, "缺少车辆信息", response);
+//        }
 
         // 是否新车
         boolean isTrans = StringKit.equals(request.carInfo.isTrans, "1");
@@ -787,9 +790,9 @@ public class CarAction extends BaseAction {
         CarInsurance.GetPremiumCalibrateRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetPremiumCalibrateRequest.class);
         CarInsurance.GetPremiumCalibrateResponse response = new CarInsurance.GetPremiumCalibrateResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.GetPremiumCalibrateRequest getPremiumCalibrateRequest = new ExtendCarInsurancePolicy.GetPremiumCalibrateRequest();
@@ -915,9 +918,9 @@ public class CarAction extends BaseAction {
         CarInsurance.ApplyUnderwritingRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ApplyUnderwritingRequest.class);
         CarInsurance.ApplyUnderwritingResponse response = new CarInsurance.ApplyUnderwritingResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         if (request.isNeedVerificationCode() && StringKit.isEmpty(request.verificationCode)) {
@@ -978,9 +981,9 @@ public class CarAction extends BaseAction {
         CarInsurance.PremiumCalibrateAndApplyUnderwritingRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.PremiumCalibrateAndApplyUnderwritingRequest.class);
         CarInsurance.PremiumCalibrateAndApplyUnderwritingResponse response = new CarInsurance.PremiumCalibrateAndApplyUnderwritingResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         if (request.premiumCalibrate == null) {
@@ -1032,9 +1035,9 @@ public class CarAction extends BaseAction {
         CarInsurance.GetPremiumFactorRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetPremiumFactorRequest.class);
         CarInsurance.GetPremiumFactorResponse response = new CarInsurance.GetPremiumFactorResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.GetPremiumFactorRequest getPremiumFactorRequest = new ExtendCarInsurancePolicy.GetPremiumFactorRequest();
@@ -1069,9 +1072,9 @@ public class CarAction extends BaseAction {
         CarInsurance.GetPayLinkRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetPayLinkRequest.class);
         CarInsurance.GetPayLinkResponse response = new CarInsurance.GetPayLinkResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.GetPayLinkRequest getPayLinkRequest = new ExtendCarInsurancePolicy.GetPayLinkRequest();
@@ -1105,9 +1108,9 @@ public class CarAction extends BaseAction {
         CarInsurance.VerifyPhoneCodeRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.VerifyPhoneCodeRequest.class);
         CarInsurance.VerifyPhoneCodeResponse response = new CarInsurance.VerifyPhoneCodeResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.VerifyPhoneCodeRequest verifyPhoneCodeRequest = new ExtendCarInsurancePolicy.VerifyPhoneCodeRequest();
@@ -1142,9 +1145,9 @@ public class CarAction extends BaseAction {
         CarInsurance.ReGetPhoneVerifyCodeRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ReGetPhoneVerifyCodeRequest.class);
         CarInsurance.ReGetPhoneVerifyCodeResponse response = new CarInsurance.ReGetPhoneVerifyCodeResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeRequest reGetPhoneVerifyCodeRequest = new ExtendCarInsurancePolicy.ReGetPhoneVerifyCodeRequest();
@@ -1229,9 +1232,9 @@ public class CarAction extends BaseAction {
         CarInsurance.ResolveIdentityCardRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ResolveIdentityCardRequest.class);
         CarInsurance.ResolveIdentityCardResponse response = new CarInsurance.ResolveIdentityCardResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.ResolveIdentityCardRequest resolveIdentityCardRequest = new ExtendCarInsurancePolicy.ResolveIdentityCardRequest();
@@ -1279,9 +1282,9 @@ public class CarAction extends BaseAction {
         CarInsurance.ResolveDrivingLicenseRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ResolveDrivingLicenseRequest.class);
         CarInsurance.ResolveDrivingLicenseResponse response = new CarInsurance.ResolveDrivingLicenseResponse();
 
-        String errorMessage = checkParam(request);
-        if (!StringKit.isEmpty(errorMessage)) {
-            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
         ExtendCarInsurancePolicy.ResolveDrivingLicenseRequest resolveDrivingLicenseRequest = new ExtendCarInsurancePolicy.ResolveDrivingLicenseRequest();
