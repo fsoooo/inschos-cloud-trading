@@ -217,7 +217,7 @@ public class CarInsuranceAction extends BaseAction {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
 //                List<ExtendCarInsurancePolicy.InsuranceInfo> infoList = new ArrayList<>();
 //                for (ExtendCarInsurancePolicy.InsuranceInfo datum : result.data) {
-//                    datum.coverageCode.contains("M")
+//                    datum.coverageCode.contains("M");
 //                }
 
                 response.data = result.data;
