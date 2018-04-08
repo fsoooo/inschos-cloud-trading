@@ -9,7 +9,9 @@ import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.*;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -94,6 +96,10 @@ public class CarInsuranceAction extends BaseAction {
         CarInsurance.GetCityCodeRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCityCodeRequest.class);
         CarInsurance.GetCityCodeResponse response = new CarInsurance.GetCityCodeResponse();
 
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
@@ -123,9 +129,9 @@ public class CarInsuranceAction extends BaseAction {
         return str;
     }
 
-    /**
-     * 保险公司支持的地区
-     */
+//    /**
+//     * 保险公司支持的地区
+//     */
 //    private static final String get_area_by_insurance = CarInsuranceCommon.getServerHost() + "/mdata/areas";
 //
 //    public String getAreaByInsurance(ActionBean actionBean) {
@@ -156,6 +162,10 @@ public class CarInsuranceAction extends BaseAction {
         CarInsurance.GetInsuranceCompanyRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceCompanyRequest.class);
         CarInsurance.GetInsuranceCompanyResponse response = new CarInsurance.GetInsuranceCompanyResponse();
 
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
@@ -171,9 +181,9 @@ public class CarInsuranceAction extends BaseAction {
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
-                str = json(BaseResponse.CODE_SUCCESS, "获取市级列表成功", response);
+                str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
 
-                // TODO: 2018/4/3  记得给自己的系统存保险公司
+                // TODO: 2018/4/8 验证这个保险公司的车险产品是否上架，可售
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
             }
@@ -205,6 +215,11 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
+//                List<ExtendCarInsurancePolicy.InsuranceInfo> infoList = new ArrayList<>();
+//                for (ExtendCarInsurancePolicy.InsuranceInfo datum : result.data) {
+//                    datum.coverageCode.contains("M")
+//                }
+
                 response.data = result.data;
                 str = json(BaseResponse.CODE_SUCCESS, "获取险别列表成功", response);
             } else {
@@ -218,6 +233,43 @@ public class CarInsuranceAction extends BaseAction {
     }
 
     /**
+     * 自动判断根据车架号还是车牌号获取{@link #getCarInfoByLicenceNumber}{@link #getCarInfoByFrameNumber}
+     *
+     * @param actionBean 请求体
+     * @return 响应json
+     */
+    public String getCarInfoByLicenceNumberOrFrameNumber(ActionBean actionBean) {
+        CarInsurance.GetCarInfoRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarInfoRequest.class);
+
+        if (request == null || (StringKit.isEmpty(request.frameNo) && StringKit.isEmpty(request.licenseNo))) {
+            List<CheckParamsKit.Entry<String, String>> list = new ArrayList<>();
+
+            CheckParamsKit.Entry<String, String> defaultEntry = CheckParamsKit.getDefaultEntry();
+            defaultEntry.details = CheckParamsKit.FAIL;
+            list.add(defaultEntry);
+
+            CheckParamsKit.Entry<String, String> frameNo = new CheckParamsKit.Entry<>();
+            frameNo.digest = "frameNo";
+            frameNo.details = "frameNo与licenseNo至少存在一个";
+            list.add(frameNo);
+
+            CheckParamsKit.Entry<String, String> licenseNo = new CheckParamsKit.Entry<>();
+            licenseNo.digest = "licenseNo";
+            licenseNo.details = "frameNo与licenseNo至少存在一个";
+            list.add(licenseNo);
+
+            return json(BaseResponse.CODE_PARAM_ERROR, list, new BaseResponse());
+        }
+
+        if (!StringKit.isEmpty(request.frameNo)) {
+            return getCarInfoByFrameNumber(actionBean);
+        } else {
+            return getCarInfoByLicenceNumber(actionBean);
+        }
+
+    }
+
+    /**
      * 车辆号码信息(根据车牌号查询)
      */
     private static final String get_car_info_licence_number = CarInsuranceCommon.getServerHost() + "/auto/vehicleInfoByLicenseNo";
@@ -226,6 +278,10 @@ public class CarInsuranceAction extends BaseAction {
     public String getCarInfoByLicenceNumber(ActionBean actionBean) {
         CarInsurance.GetCarInfoRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarInfoRequest.class);
         CarInsurance.GetCarInfoResponse response = new CarInsurance.GetCarInfoResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
 
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
@@ -246,9 +302,13 @@ public class CarInsuranceAction extends BaseAction {
     private static final String get_car_info_frame_number = CarInsuranceCommon.getServerHost() + "/auto/vehicleInfoByFrameNo";
 
     // FINISH: 2018/3/30
-    public String getCarInfoFrameNumber(ActionBean actionBean) {
+    public String getCarInfoByFrameNumber(ActionBean actionBean) {
         CarInsurance.GetCarInfoRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarInfoRequest.class);
         CarInsurance.GetCarInfoResponse response = new CarInsurance.GetCarInfoResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
 
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
@@ -264,7 +324,7 @@ public class CarInsuranceAction extends BaseAction {
     }
 
     /**
-     * 车辆信息(结果处理方法){@link #getCarInfoByLicenceNumber} {@link #getCarInfoFrameNumber}
+     * 车辆信息(结果处理方法){@link #getCarInfoByLicenceNumber} {@link #getCarInfoByFrameNumber}
      * FINISH: 2018/3/31
      *
      * @param response 给我们的接口返回的response
@@ -276,15 +336,31 @@ public class CarInsuranceAction extends BaseAction {
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
-                if (result.data.frameNo == null) {
-                    result.data.frameNo = "null";
+                String frameNo = "null";
+                if (result.data.frameNo != null) {
+                    frameNo = result.data.frameNo;
                 }
 
-                if (result.data.engineNo == null) {
-                    result.data.engineNo = "null";
+                String engineNo = "null";
+                if (result.data.engineNo != null) {
+                    engineNo = result.data.engineNo;
                 }
-                response.signToken = SignatureTools.sign(result.data.frameNo + result.data.engineNo, SignatureTools.SIGN_CAR_RSA_PRIVATE_KEY);
-                str = json(BaseResponse.CODE_SUCCESS, "获取车辆号码信息成功", new BaseResponse());
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String calculateDateByShowDate = getCalculateDateByShowDate(sdf, result.data.firstRegisterDate);
+
+                if (calculateDateByShowDate == null) {
+                    result.data.firstRegisterDate = "";
+                    result.data.firstRegisterDateValue = "";
+                } else {
+                    result.data.firstRegisterDateValue = calculateDateByShowDate;
+                }
+
+                String sign1 = SignatureTools.sign(frameNo, SignatureTools.SIGN_CAR_RSA_PRIVATE_KEY);
+                String sign2 = SignatureTools.sign(engineNo, SignatureTools.SIGN_CAR_RSA_PRIVATE_KEY);
+                response.signToken = sign1 + "*" + sign2;
+
+                str = json(BaseResponse.CODE_SUCCESS, "获取车辆号码信息成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
             }
@@ -294,31 +370,31 @@ public class CarInsuranceAction extends BaseAction {
         return str;
     }
 
-    /**
-     * 一键修正车辆信息
-     * <p>一键修正接口成本很高，所以限制的调用次数很少，默认10次，可根据实际成单量调整，此接口用于车辆信息接口带出的车架号、发动机号或者初等日期不对的情况，所以要在通过车辆信息接口获取到的信息不准的情况下再调用这个接口。
-     * </p>
-     */
-    private static final String correct_car_info = CarInsuranceCommon.getServerHost() + "/auto/vehicleInfoRevision";
-
-    public String correctCarInfo(ActionBean actionBean) {
-        ExtendCarInsurancePolicy.CorrectCarInfoRequest correctCarInfoRequest = new ExtendCarInsurancePolicy.CorrectCarInfoRequest();
-
-        // TODO: 2018/3/29  从我们的request里面获取这个值
-        // correctCarInfoRequest.licenseNo
-
-        ExtendCarInsurancePolicy.CorrectCarInfoResponse result = new CarInsuranceHttpRequest<>(correct_car_info, correctCarInfoRequest, ExtendCarInsurancePolicy.CorrectCarInfoResponse.class).post();
-        // 验签
-        String str;
-        // TODO: 2018/3/29 返回我们的response
-        if (result.verify) {
-
-        } else {
-            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
-        }
-
-        return "";
-    }
+//    /**
+//     * 一键修正车辆信息
+//     * <p>一键修正接口成本很高，所以限制的调用次数很少，默认10次，可根据实际成单量调整，此接口用于车辆信息接口带出的车架号、发动机号或者初等日期不对的情况，所以要在通过车辆信息接口获取到的信息不准的情况下再调用这个接口。
+//     * </p>
+//     */
+//    private static final String correct_car_info = CarInsuranceCommon.getServerHost() + "/auto/vehicleInfoRevision";
+//
+//    public String correctCarInfo(ActionBean actionBean) {
+//        ExtendCarInsurancePolicy.CorrectCarInfoRequest correctCarInfoRequest = new ExtendCarInsurancePolicy.CorrectCarInfoRequest();
+//
+//        // TODO: 2018/3/29  从我们的request里面获取这个值
+//        // correctCarInfoRequest.licenseNo
+//
+//        ExtendCarInsurancePolicy.CorrectCarInfoResponse result = new CarInsuranceHttpRequest<>(correct_car_info, correctCarInfoRequest, ExtendCarInsurancePolicy.CorrectCarInfoResponse.class).post();
+//        // 验签
+//        String str;
+//        // TODO: 2018/3/29 返回我们的response
+//        if (result.verify) {
+//
+//        } else {
+//            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+//        }
+//
+//        return "";
+//    }
 
     /**
      * 车型信息
@@ -336,14 +412,14 @@ public class CarInsuranceAction extends BaseAction {
         CarInsurance.GetCarModelRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarModelRequest.class);
         CarInsurance.GetCarModelResponse response = new CarInsurance.GetCarModelResponse();
 
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
-
-//        if (request.carInfo == null) {
-//            return json(BaseResponse.CODE_FAILURE, errorMessage, response);
-//        }
 
         if (request.carInfo.frameNo == null) {
             request.carInfo.frameNo = "null";
@@ -353,12 +429,8 @@ public class CarInsuranceAction extends BaseAction {
             request.carInfo.engineNo = "null";
         }
 
-        // 是否新车
-        boolean isNew = StringKit.equals(request.isNew, "1");
-        // 是否更改车架号与发动机号
-        boolean verify = SignatureTools.verify(request.carInfo.frameNo + request.carInfo.engineNo, request.signToken, SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
-
-        String s = dealCarInfoResponseNo(isNew, verify, request.carInfo);
+        boolean notLicenseNo = StringKit.equals(request.notLicenseNo, "1");
+        String s = dealCarInfoResponseNo(request.signToken, notLicenseNo, request.carInfo);
 
         if (!StringKit.isEmpty(s)) {
             return json(BaseResponse.CODE_FAILURE, s, response);
@@ -395,14 +467,22 @@ public class CarInsuranceAction extends BaseAction {
     /**
      * 处理响应码，如果返回null，则正常处理，如果返回非null，就需要返回以String为message的response
      *
-     * @param isNew   是否新车
-     * @param verify  是否修改过发动机号或车架号
-     * @param carInfo 车辆信息
+     * @param signToken    验证signToken
+     * @param notLicenseNo 是否未上牌
+     * @param carInfo      车辆信息
      * @return 错误信息
      */
-    private String dealCarInfoResponseNo(boolean isNew, boolean verify, ExtendCarInsurancePolicy.CarInfo carInfo) {
+    private String dealCarInfoResponseNo(String signToken, boolean notLicenseNo, ExtendCarInsurancePolicy.CarInfo carInfo) {
+        String[] split = signToken.split("\\*");
+
+        boolean verify = false;
+        if (split.length == 2) {
+            boolean frameNo = SignatureTools.verify(carInfo.frameNo, split[0], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+            boolean engineNo = SignatureTools.verify(carInfo.engineNo, split[1], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+            verify = frameNo || engineNo;
+        }
+
         if (!verify) {
-            carInfo.responseNo = "";
             if (StringKit.isEmpty(carInfo.frameNo) || StringKit.equals(carInfo.frameNo, "null")) {
                 return "请输入车架号";
             }
@@ -410,11 +490,12 @@ public class CarInsuranceAction extends BaseAction {
             if (StringKit.isEmpty(carInfo.engineNo) || StringKit.equals(carInfo.engineNo, "null")) {
                 return "请输入发动机号";
             }
+
+            carInfo.responseNo = "";
         }
 
-        if (isNew) {
+        if (notLicenseNo) {
             carInfo.licenseNo = "新车";
-            carInfo.responseNo = "";
             if (StringKit.isEmpty(carInfo.frameNo) || StringKit.equals(carInfo.frameNo, "null")) {
                 return "请输入车架号";
             }
@@ -428,10 +509,13 @@ public class CarInsuranceAction extends BaseAction {
     private static final String get_car_model_info = CarInsuranceCommon.getServerHost() + "/auto/vehicleAndModel";
 
     // FINISH: 2018/3/31
-    // NOTENABLED: 2018/4/3 目前的接口都是客户端单独请求
     public String getCarModelInfo(ActionBean actionBean) {
         CarInsurance.GetCarModelInfoRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarModelInfoRequest.class);
         CarInsurance.GetCarModelInfoResponse response = new CarInsurance.GetCarModelInfoResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
 
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
@@ -456,6 +540,16 @@ public class CarInsuranceAction extends BaseAction {
                     result.data.engineNo = "null";
                 }
 
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String calculateDateByShowDate = getCalculateDateByShowDate(sdf, result.data.firstRegisterDate);
+
+                if (calculateDateByShowDate == null) {
+                    result.data.firstRegisterDate = "";
+                    result.data.firstRegisterDateValue = "";
+                } else {
+                    result.data.firstRegisterDateValue = calculateDateByShowDate;
+                }
+
                 if (response.data.vehicleList != null) {
                     for (ExtendCarInsurancePolicy.CarModel datum : response.data.vehicleList) {
                         datum.showText = datum.createShowText();
@@ -468,10 +562,24 @@ public class CarInsuranceAction extends BaseAction {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
             }
         } else {
-            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", response);
         }
 
         return str;
+    }
+
+    private String getCalculateDateByShowDate(SimpleDateFormat sdf, String showDate) {
+        if (!StringKit.isEmpty(showDate)) {
+            try {
+                Date parse = sdf.parse(showDate);
+                return String.valueOf(parse.getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -481,8 +589,12 @@ public class CarInsuranceAction extends BaseAction {
 
     // FINISH: 2018/3/31
     public String getCarModelByKey(ActionBean actionBean) {
-        CarInsurance.GetCarModelRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetCarModelRequest.class);
+        CarInsurance.SearchCarModelRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.SearchCarModelRequest.class);
         CarInsurance.GetCarModelResponse response = new CarInsurance.GetCarModelResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
 
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
@@ -490,7 +602,7 @@ public class CarInsuranceAction extends BaseAction {
         }
 
         if (StringKit.isEmpty(request.pageNum)) {
-            return json(BaseResponse.CODE_FAILURE, "缺少页码", new BaseResponse());
+            return json(BaseResponse.CODE_FAILURE, "缺少页码", response);
         }
 
         ExtendCarInsurancePolicy.GetCarModelRequest getCarModelRequest = new ExtendCarInsurancePolicy.GetCarModelRequest();
@@ -516,14 +628,56 @@ public class CarInsuranceAction extends BaseAction {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
             }
         } else {
-            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", new BaseResponse());
+            str = json(BaseResponse.CODE_FAILURE, "获取数据错误", response);
         }
 
         return str;
     }
 
     /**
-     * 将获取保险公司、获取起保时间、获取险别列表、获取参考价格合并为一个请求
+     * 将获取保险公司、获取起保时间、获取险别列表合并为一个请求
+     *
+     * @param actionBean 请求体
+     * @return 响应json
+     */
+    public String getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoActionBean(ActionBean actionBean) {
+        // CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoRequest.class);
+        CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoResponse response = new CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoResponse();
+
+        String insuranceByArea = getInsuranceByArea(actionBean);
+        CarInsurance.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, CarInsurance.GetInsuranceCompanyResponse.class);
+
+        if (getInsuranceCompanyResponse == null || getInsuranceCompanyResponse.code != BaseResponse.CODE_SUCCESS) {
+            return insuranceByArea;
+        }
+
+        response.data = new CarInsurance.InsuranceCompanyAndInsuranceStartTimeAndInsuranceInfo();
+
+        response.data.insuranceCompanies = getInsuranceCompanyResponse.data;
+
+        String insuranceStartTime = getInsuranceStartTime(actionBean);
+        CarInsurance.GetInsuranceStartTimeResponse getInsuranceStartTimeResponse = JsonKit.json2Bean(insuranceStartTime, CarInsurance.GetInsuranceStartTimeResponse.class);
+
+        if (getInsuranceStartTimeResponse == null || getInsuranceStartTimeResponse.code != BaseResponse.CODE_SUCCESS) {
+            return insuranceStartTime;
+        }
+
+        response.data.startTimeInfo = getInsuranceStartTimeResponse.data;
+
+        String insuranceInfo = getInsuranceInfo(actionBean);
+        CarInsurance.GetInsuranceInfoResponse getInsuranceInfoResponse = JsonKit.json2Bean(insuranceInfo, CarInsurance.GetInsuranceInfoResponse.class);
+
+        if (getInsuranceInfoResponse == null || getInsuranceInfoResponse.code != BaseResponse.CODE_SUCCESS) {
+            return insuranceInfo;
+        }
+
+        response.data.insuranceInfo = getInsuranceInfoResponse.data;
+
+        return json(BaseResponse.CODE_SUCCESS, "获取数据成功", response);
+    }
+
+    /**
+     * 将获取保险公司、获取起保时间、获取险别列表、参考报价合并为一个请求
      *
      * @param actionBean 请求体
      * @return 响应json
@@ -532,7 +686,6 @@ public class CarInsuranceAction extends BaseAction {
     public String getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoAndPremium(ActionBean actionBean) {
         CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest.class);
         CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumResponse response = new CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumResponse();
-
 
         String insuranceByArea = getInsuranceByArea(actionBean);
         CarInsurance.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, CarInsurance.GetInsuranceCompanyResponse.class);
@@ -602,21 +755,20 @@ public class CarInsuranceAction extends BaseAction {
         CarInsurance.GetInsuranceStartTimeRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceStartTimeRequest.class);
         CarInsurance.GetInsuranceStartTimeResponse response = new CarInsurance.GetInsuranceStartTimeResponse();
 
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-//        if (request.carInfo == null) {
-//            return json(BaseResponse.CODE_FAILURE, "缺少车辆信息", response);
-//        }
-
         // 是否过户车
         boolean isTrans = StringKit.equals(request.carInfo.isTrans, "1");
-        // 是否更改车架号与发动机号
-        boolean verify = SignatureTools.verify(request.carInfo.frameNo + request.carInfo.engineNo, request.signToken, SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+        boolean notLicenseNo = StringKit.equals(request.notLicenseNo, "1");
 
-        String s = dealCarInfoResponseNo(!isTrans, verify, request.carInfo);
+        String s = dealCarInfoResponseNo(request.signToken, notLicenseNo, request.carInfo);
 
         if (!StringKit.isEmpty(s)) {
             return json(BaseResponse.CODE_FAILURE, s, response);
@@ -636,14 +788,14 @@ public class CarInsuranceAction extends BaseAction {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         if (isTrans) {
-            Long aLong = formatterDate(request.carInfo.transDate);
+            Long aLong = formatterDate(request.carInfo.transDateValue);
             if (aLong == null) {
                 return json(BaseResponse.CODE_FAILURE, "过户日期格式错误", response);
             }
             getInsuranceStartTimeRequest.transDate = simpleDateFormat.format(new Date(aLong));
         }
 
-        Long aLong = formatterDate(request.carInfo.firstRegisterDate);
+        Long aLong = formatterDate(request.carInfo.firstRegisterDateValue);
         if (aLong == null) {
             return json(BaseResponse.CODE_FAILURE, "初登日期格式错误", response);
         }
@@ -706,10 +858,9 @@ public class CarInsuranceAction extends BaseAction {
 
         // 是否新车
         boolean isTrans = StringKit.equals(request.carInfo.isTrans, "1");
-        // 是否更改车架号与发动机号
-        boolean verify = SignatureTools.verify(request.carInfo.frameNo + request.carInfo.engineNo, request.signToken, SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+        boolean notLicenseNo = StringKit.equals(request.notLicenseNo, "1");
 
-        String s = dealCarInfoResponseNo(!isTrans, verify, request.carInfo);
+        String s = dealCarInfoResponseNo(request.signToken, notLicenseNo, request.carInfo);
 
         if (!StringKit.isEmpty(s)) {
             return json(BaseResponse.CODE_FAILURE, s, response);
@@ -840,10 +991,9 @@ public class CarInsuranceAction extends BaseAction {
 
         // 是否过户车
         boolean isTrans = StringKit.equals(request.carInfo.isTrans, "1");
-        // 是否更改车架号与发动机号
-        boolean verify = SignatureTools.verify(request.carInfo.frameNo + request.carInfo.engineNo, request.signToken, SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+        boolean notLicenseNo = StringKit.equals(request.notLicenseNo, "1");
 
-        String s = dealCarInfoResponseNo(!isTrans, verify, request.carInfo);
+        String s = dealCarInfoResponseNo(request.signToken, notLicenseNo, request.carInfo);
 
         if (!StringKit.isEmpty(s)) {
             return json(BaseResponse.CODE_FAILURE, s, response);
@@ -958,6 +1108,7 @@ public class CarInsuranceAction extends BaseAction {
                 str = json(BaseResponse.CODE_SUCCESS, "申请核保成功", response);
 
                 // TODO: 2018/4/3  记得给自己的系统存保单
+                // TODO: 2018/4/8 利用保险公司简称代码，获取产品id与保险公司id
 
 
             } else {

@@ -41,7 +41,7 @@ public class HttpAopDefine {
             if (ConstantKit.IS_PRODUCT && !isValidVersion(buildCode, platform)) {
                 response.code = BaseResponse.CODE_VERSION_FAILURE;
                 CheckParamsKit.Entry<String, String> entry = CheckParamsKit.getDefaultEntry();
-                entry.value = "版本过低或无效，请安装最新版本";
+                entry.details = "版本过低或无效，请安装最新版本";
                 List<CheckParamsKit.Entry<String, String>> list = new ArrayList<>();
                 list.add(entry);
                 response.message = list;
@@ -57,7 +57,7 @@ public class HttpAopDefine {
             if (false && !isAccess(joinPoint, bean)) {
                 response.code = BaseResponse.CODE_ACCESS_FAILURE;
                 CheckParamsKit.Entry<String, String> entry = CheckParamsKit.getDefaultEntry();
-                entry.value = "未登录";
+                entry.details = "未登录";
                 List<CheckParamsKit.Entry<String, String>> list = new ArrayList<>();
                 list.add(entry);
                 response.message = list;

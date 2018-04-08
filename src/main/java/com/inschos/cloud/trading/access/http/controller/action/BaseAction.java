@@ -22,7 +22,7 @@ public class BaseAction {
         }
         response.code = code;
         CheckParamsKit.Entry<String, String> defaultEntry = CheckParamsKit.getDefaultEntry();
-        defaultEntry.value = message;
+        defaultEntry.details = message;
         List<CheckParamsKit.Entry<String, String>> list = new ArrayList<>();
         list.add(defaultEntry);
         response.message = list;
@@ -87,9 +87,9 @@ public class BaseAction {
 //					if (maxLength > -1) {
 //						Object object = field.get(obj);
 //						if (object != null && field.getType() == String.class) {
-//							String value = String.valueOf(object);
-//							if (!StringKit.isEmpty(value)) {
-//								if (value.length() > maxLength) {
+//							String details = String.valueOf(object);
+//							if (!StringKit.isEmpty(details)) {
+//								if (details.length() > maxLength) {
 //									result = name + "长度大于有效长度";
 //								}
 //							}
@@ -99,9 +99,9 @@ public class BaseAction {
 //					if (minLength > -1) {
 //						Object object = field.get(obj);
 //						if (object != null && field.getType() == String.class) {
-//							String value = String.valueOf(object);
-//							if (!StringKit.isEmpty(value)) {
-//								if (value.length() < minLength) {
+//							String details = String.valueOf(object);
+//							if (!StringKit.isEmpty(details)) {
+//								if (details.length() < minLength) {
 //									result = name + "长度小于有效长度";
 //								}
 //							}
@@ -113,8 +113,8 @@ public class BaseAction {
 //						if (object == null) {
 //							result = name + "不能为空";
 //						} else if (field.getType() == String.class) {
-//							String value = String.valueOf(object);
-//							if (StringKit.isEmpty(value)) {
+//							String details = String.valueOf(object);
+//							if (StringKit.isEmpty(details)) {
 //								result = name + "不能为空";
 //							}
 //						}
@@ -125,8 +125,8 @@ public class BaseAction {
 //						if (object == null) {
 //							result = name + "参数类型需要整数";
 //						} else {
-//							String value = String.valueOf(object);
-//							if (!StringKit.isInteger(value)) {
+//							String details = String.valueOf(object);
+//							if (!StringKit.isInteger(details)) {
 //								result = name + "参数类型需要整数";
 //							}
 //						}
@@ -137,8 +137,8 @@ public class BaseAction {
 //						if (object == null) {
 //							result = name + "参数类型需要数字";
 //						} else {
-//							String value = String.valueOf(object);
-//							if (!StringKit.isNumeric(value)) {
+//							String details = String.valueOf(object);
+//							if (!StringKit.isNumeric(details)) {
 //								result = name + "参数类型需要数字";
 //							}
 //						}
@@ -158,7 +158,7 @@ public class BaseAction {
 
         if (obj == null) {
             CheckParamsKit.Entry<String, String> anEntry = CheckParamsKit.getDefaultEntry();
-            anEntry.value = "解析错误";
+            anEntry.details = "解析错误";
             list.add(anEntry);
             return list;
         }

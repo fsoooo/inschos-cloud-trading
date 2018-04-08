@@ -231,16 +231,16 @@ public class CheckParamsKit {
 
 //        Entry<String, String> defaultEntry = getDefaultEntry();
 //        if (flag) {
-//            defaultEntry.value = OK;
+//            defaultEntry.details = OK;
 //        } else {
-//            defaultEntry.value = FAIL;
+//            defaultEntry.details = FAIL;
 //        }
 //        result.add(0, defaultEntry);
 
 
         if (!flag) {
             Entry<String, String> defaultEntry = getDefaultEntry();
-            defaultEntry.value = FAIL;
+            defaultEntry.details = FAIL;
             result.add(0, defaultEntry);
         }
     }
@@ -283,7 +283,7 @@ public class CheckParamsKit {
             Character v = (Character) value;
             return checkLong(name, v, chk.min(), chk.max());
         }
-//        else if (value instanceof Boolean) {
+//        else if (details instanceof Boolean) {
 //
 //        }
         else if (value instanceof Float) {
@@ -398,12 +398,12 @@ public class CheckParamsKit {
                     Object o2 = o11.get(i);
                     Entry<String, String> stringStringEntry = checkObject(o2);
                     if (stringStringEntry != null) {
-                        stringStringEntry.value = "参数" +
+                        stringStringEntry.details = "参数" +
                                 name +
                                 "第" +
                                 (i + 1) +
                                 "个元素，" +
-                                stringStringEntry.value;
+                                stringStringEntry.details;
                         return stringStringEntry;
                     }
                 }
@@ -499,27 +499,27 @@ public class CheckParamsKit {
     }
 
     public final static class Entry<K, V> {
-        public K key;
-        public V value;
+        public K digest;
+        public V details;
 
         public Entry() {
 
         }
 
-        public Entry(K key) {
-            this.key = key;
+        public Entry(K digest) {
+            this.digest = digest;
         }
 
-        public Entry(K key, V value) {
-            this.key = key;
-            this.value = value;
+        public Entry(K digest, V details) {
+            this.digest = digest;
+            this.details = details;
         }
 
         @Override
         public String toString() {
             return "Entry{" +
-                    "key=" + key +
-                    ", value=" + value +
+                    "digest=" + digest +
+                    ", details=" + details +
                     '}';
         }
     }

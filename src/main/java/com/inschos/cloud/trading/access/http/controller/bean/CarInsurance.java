@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
+import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 
@@ -25,6 +26,7 @@ public class CarInsurance {
     // 获取市级信息
     public static class GetCityCodeRequest extends BaseRequest {
         // 省级代码
+        @CheckParams
         public String provinceCode;
     }
 
@@ -48,11 +50,22 @@ public class CarInsurance {
     }
 
     public static class GetCarModelRequest extends BaseRequest {
+        @CheckParams
         public ExtendCarInsurancePolicy.CarInfo carInfo;
+        @CheckParams
         public String signToken;
         // 0-不是，1-是
-        public String isNew;
+        @CheckParams
+        public String isTrans;
+        // 0-不是，1-是
+        @CheckParams
+        public String notLicenseNo;
 
+        public String brandName;
+    }
+
+    public static class SearchCarModelRequest extends BaseRequest {
+        @CheckParams
         public String brandName;
     }
 
@@ -61,6 +74,7 @@ public class CarInsurance {
     }
 
     public static class GetCarModelInfoRequest extends BaseRequest {
+        @CheckParams
         public String licenseNo;
     }
 
@@ -70,6 +84,7 @@ public class CarInsurance {
     }
 
     public static class GetInsuranceCompanyRequest extends BaseRequest {
+        @CheckParams
         public String provinceCode;
     }
 
@@ -78,9 +93,14 @@ public class CarInsurance {
     }
 
     public static class GetInsuranceStartTimeRequest extends BaseRequest {
+        @CheckParams
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
+        @CheckParams
         public String cityCode;
+        @CheckParams
         public String signToken;
+        @CheckParams
+        public String notLicenseNo;
 
         // 非必传
         public ExtendCarInsurancePolicy.VehicleOwnerInfo personInfo;
@@ -91,9 +111,15 @@ public class CarInsurance {
     }
 
     public static class GetPremiumRequest extends BaseRequest {
+        @CheckParams
         public String cityCode;
+        @CheckParams
         public String insurerCode;
+        @CheckParams
         public String signToken;
+        @CheckParams
+        public String notLicenseNo;
+        @CheckParams
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
 
         // 非必传
@@ -112,10 +138,57 @@ public class CarInsurance {
         public List<ExtendCarInsurancePolicy.InsuranceInfo> data;
     }
 
-    public static class GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest extends BaseRequest {
+    public static class InsuranceInfo extends ExtendCarInsurancePolicy.InsuranceInfo {
+        public String hasExcessOption;
+        public List<String> insuredAmountList;
+
+        // 玻璃破碎险 1-国产，2-进口
+        public List<String> source;
+
+        // 修理期间费用补偿险
+        public String day;
+        public String amount;
+        public List<String> days;
+        public List<String> amounts;
+    }
+
+    public static class GetInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoRequest extends BaseRequest {
+        @CheckParams
         public String cityCode;
+        @CheckParams
         public String provinceCode;
+        @CheckParams
         public String signToken;
+        @CheckParams
+        public String notLicenseNo;
+        @CheckParams
+        public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
+
+    }
+
+    public static class GetInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoResponse extends BaseResponse {
+        public InsuranceCompanyAndInsuranceStartTimeAndInsuranceInfo data;
+    }
+
+    public static class InsuranceCompanyAndInsuranceStartTimeAndInsuranceInfo {
+        // 保险公司信息
+        public List<ExtendCarInsurancePolicy.InsuranceCompany> insuranceCompanies;
+        // 起保时间信息
+        public ExtendCarInsurancePolicy.InsuranceStartTime startTimeInfo;
+        // 险别列表
+        public List<ExtendCarInsurancePolicy.InsuranceInfo> insuranceInfo;
+    }
+
+    public static class GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest extends BaseRequest {
+        @CheckParams
+        public String cityCode;
+        @CheckParams
+        public String provinceCode;
+        @CheckParams
+        public String signToken;
+        @CheckParams
+        public String notLicenseNo;
+        @CheckParams
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
 
         // 非必传
@@ -127,10 +200,10 @@ public class CarInsurance {
     }
 
     public static class GetInsuranceCompanyAndInsuranceStartTimeAndPremiumResponse extends BaseResponse {
-        public InsuranceCompanyAndInsuranceStartTimeAndPremiumResponse data;
+        public InsuranceCompanyAndInsuranceStartTimeAndPremium data;
     }
 
-    public static class InsuranceCompanyAndInsuranceStartTimeAndPremiumResponse {
+    public static class InsuranceCompanyAndInsuranceStartTimeAndPremium {
         // 保险公司信息
         public List<ExtendCarInsurancePolicy.InsuranceCompany> insuranceCompanies;
         // 起保时间信息
@@ -152,15 +225,27 @@ public class CarInsurance {
         // 非必传，是否代缴车船税 1-不代缴，null-代缴，目前只支持人保、太保、平安
         public String remittingTax;
 
+        @CheckParams
         public String signToken;
+        @CheckParams
         public String thpBizID;
+        @CheckParams
         public String cityCode;
+        @CheckParams
         public String biBeginDate;
+        @CheckParams
         public String ciBeginDate;
+        @CheckParams
         public String insurerCode;
+        @CheckParams
         public String responseNo;
+        @CheckParams
+        public String notLicenseNo;
+        @CheckParams
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
+        @CheckParams
         public ExtendCarInsurancePolicy.InsuranceParticipant personInfo;
+        @CheckParams
         public List<ExtendCarInsurancePolicy.InsurancePolicyInfo> coverageList;
     }
 

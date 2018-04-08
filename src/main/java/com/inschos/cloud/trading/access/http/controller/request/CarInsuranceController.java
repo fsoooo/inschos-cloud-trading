@@ -36,10 +36,10 @@ public class CarInsuranceController {
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_car_info_licence_number")
+    @RequestMapping("car_insurance/get_car_info")
     @ResponseBody
-    public String getCarInfoByLicenceNumber(ActionBean actionBean) {
-        return carInsuranceAction.getCarInfoByLicenceNumber(actionBean);
+    public String getCarInfoByLicenceNumberOrFrameNumber(ActionBean actionBean) {
+        return carInsuranceAction.getCarInfoByLicenceNumberOrFrameNumber(actionBean);
     }
 
     @GetActionBeanAnnotation
@@ -49,13 +49,12 @@ public class CarInsuranceController {
         return carInsuranceAction.getCarModel(actionBean);
     }
 
-//    @GetActionBeanAnnotation
-//    @RequestMapping("car_insurance/get_car_model_info")
-//    @ResponseBody
-//    // NOTENABLED: 2018/4/3 目前的接口都是客户端单独请求
-//    public String getCarModelInfo(ActionBean actionBean) {
-//        return carAction.getCarModelInfo(actionBean);
-//    }
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_car_model_info")
+    @ResponseBody
+    public String getCarModelInfo(ActionBean actionBean) {
+        return carInsuranceAction.getCarModelInfo(actionBean);
+    }
 
     @GetActionBeanAnnotation
     @RequestMapping("car_insurance/get_car_model_by_key")
@@ -99,6 +98,13 @@ public class CarInsuranceController {
 //    public String getInsuranceCompanyAndInsuranceStartTimeAndPremium(ActionBean actionBean) {
 //        return carAction.getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoAndPremium(actionBean);
 //    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/prepare_take_insure")
+    @ResponseBody
+    public String getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfo(ActionBean actionBean) {
+        return carInsuranceAction.getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoActionBean(actionBean);
+    }
 
     @GetActionBeanAnnotation
     @RequestMapping("car_insurance/get_premium_calibrate")

@@ -19,7 +19,7 @@ public class ListKit {
                     K key = keyMapper.apply(value);
                     map.put(key, value);
                 } catch (Exception e) {
-                    L.log.error("field can't match the key!",e);
+                    L.log.error("field can't match the digest!",e);
                 }
 
             }
@@ -41,7 +41,7 @@ public class ListKit {
                     K k = (K) ReflectKit.getter(value,fieldKey);
                     map.put(k, value);
                 } catch (Exception e) {
-                    L.log.error("field can't match the key!",e);
+                    L.log.error("field can't match the digest!",e);
                 }
 
             }
@@ -68,7 +68,7 @@ public class ListKit {
                         map.put(k,vList);
                     }
                 } catch (Exception e) {
-                    L.log.error("field can't match the key!",e);
+                    L.log.error("field can't match the digest!",e);
                 }
 
             }
@@ -94,7 +94,7 @@ public class ListKit {
                         map.put(key,vList);
                     }
                 } catch (Exception e) {
-                    L.log.error("field can't match the key!",e);
+                    L.log.error("field can't match the digest!",e);
                 }
 
             }
@@ -113,7 +113,7 @@ public class ListKit {
                     E e = (E) ReflectKit.getter(t, fieldKey);
                     arrayList.add(e);
                 } catch (Exception e) {
-                    L.log.error("field can't match the key!", e);
+                    L.log.error("field can't match the digest!", e);
                 }
             return arrayList;
         }
@@ -127,7 +127,7 @@ public class ListKit {
                     E e = keyMapper.apply(t);
                     arrayList.add(e);
                 } catch (Exception e) {
-                    L.log.error("field can't match the key!", e);
+                    L.log.error("field can't match the digest!", e);
                 }
             return arrayList;
         }

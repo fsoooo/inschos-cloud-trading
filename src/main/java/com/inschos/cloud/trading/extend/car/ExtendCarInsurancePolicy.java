@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.extend.car;
 
+import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 
 import java.util.List;
@@ -92,10 +93,16 @@ public class ExtendCarInsurancePolicy {
 
     public static class CarInfo {
         public String responseNo;
+        @CheckParams
         public String engineNo;
+        @CheckParams
         public String licenseNo;
+        @CheckParams
         public String frameNo;
+
         public String firstRegisterDate;
+
+        public String firstRegisterDateValue;
     }
 
     public static class CorrectCarInfoRequest extends CarInsuranceRequest {
@@ -198,15 +205,24 @@ public class ExtendCarInsurancePolicy {
     }
 
     public static class CarInfoDetail extends CarInfo {
+        @CheckParams
         public String brandCode;
+        @CheckParams
         public String isTrans;
+
         public String transDate;
+
+        public String transDateValue;
+
         public String sourceCertificateNo;
     }
 
     public static class VehicleOwnerInfo {
+        @CheckParams
         public String ownerName;
+        @CheckParams
         public String ownerID;
+        @CheckParams
         public String ownerMobile;
     }
 
@@ -254,11 +270,17 @@ public class ExtendCarInsurancePolicy {
     }
 
     public static class InsuranceParticipant extends VehicleOwnerInfo {
+        @CheckParams
         public String insuredName;
+        @CheckParams
         public String insuredID;
+        @CheckParams
         public String insuredMobile;
+        @CheckParams
         public String applicantName;
+        @CheckParams
         public String applicantID;
+        @CheckParams
         public String applicantMobile;
 
         public boolean isEnable() {
@@ -600,9 +622,9 @@ public class ExtendCarInsurancePolicy {
         public String issueDate;
         public String showText;
 
-        public String createShowText () {
+        public String createShowText() {
             // return brandName + familyName + engineDesc + parentVehName + remark;
-             return "";
+            return "";
         }
     }
 
