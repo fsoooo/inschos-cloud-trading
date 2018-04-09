@@ -15,19 +15,19 @@ public class InsurancePolicyModel {
     public String id;
 
     /**
-     * 预投保编号，由保险公司返回
+     * 内部保单唯一标识
      */
-    public String union_order_code;
+    public String warranty_uuid;
+
+    /**
+     * 投保单号
+     */
+    public String pro_policy_no;
 
     /**
      * 保单号
      */
     public String warranty_code;
-
-    /**
-     * 内部保单唯一标识
-     */
-    public String warranty_uuid;
 
     /**
      * 公司ID
@@ -95,7 +95,7 @@ public class InsurancePolicyModel {
     public String pay_time;
 
     /**
-     * 支付方式
+     * 支付方式 1 银联 2 支付宝 3 微信 4现金
      */
     public String pay_way;
 
@@ -103,11 +103,6 @@ public class InsurancePolicyModel {
      * 分期方式
      */
     public String by_stages_way;
-
-    /**
-     * 投保参数
-     */
-    public String parameter;
 
     /**
      * 佣金 0表示未结算，1表示已结算
@@ -129,43 +124,18 @@ public class InsurancePolicyModel {
      */
     public String type;
 
-    // 待核保
-    public static final int ORDER_STATUS_WAITING_UNDERWRITING = 1;
-    // 核保失败
-    public static final int ORDER_STATUS_UNDERWRITING_FAIL = 2;
-
     /**
-     * 核保状态 1待核保，2核保失败
+     * 核保状态（01核保中 2核保失败，3核保成功
      */
     public String check_status;
 
-    // 未支付-核保成功
-    public static final int ORDER_STATUS_UNDERWRITING_UNPAID = 0;
-    // 支付中
-    public static final int ORDER_STATUS_PAYING = 1;
-    // 支付失败
-    public static final int ORDER_STATUS_PAYMENT_FAIL = 2;
-    // 支付成功
-    public static final int ORDER_STATUS_PAYMENT_SUCCESS = 3;
-
     /**
-     * 支付状态 0未支付-核保成功，1支付中,2支付失败,3支付成功
+     * 支付状态 0，1支付中2支付失败3支付成功，
      */
     public String pay_status;
 
-    // 保障中
-    public static final int ORDER_STATUS_PROTECTING = 1;
-    // 待生效
-    public static final int ORDER_STATUS_WAITING_EFFECTIVE = 2;
-    // 待续保
-    public static final int ORDER_STATUS_WAITING_RENEWAL = 3;
-    // 已失效
-    public static final int ORDER_STATUS_FAILURE = 4;
-    // 已退保
-    public static final int ORDER_STATUS_SURRENDER = 5;
-
     /**
-     * 保单状态 1保障中,2待生效,3待续保，4已失效，5已退保
+     * 保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保
      */
     public String warranty_status;
 
@@ -184,7 +154,33 @@ public class InsurancePolicyModel {
      */
     public String state;
 
-    public Page page;
+
+    // 待核保
+    public static final int ORDER_STATUS_WAITING_UNDERWRITING = 1;
+    // 核保失败
+    public static final int ORDER_STATUS_UNDERWRITING_FAIL = 2;
+
+
+    // 未支付-核保成功
+    public static final int ORDER_STATUS_UNDERWRITING_UNPAID = 0;
+    // 支付中
+    public static final int ORDER_STATUS_PAYING = 1;
+    // 支付失败
+    public static final int ORDER_STATUS_PAYMENT_FAIL = 2;
+    // 支付成功
+    public static final int ORDER_STATUS_PAYMENT_SUCCESS = 3;
+
+
+    // 保障中
+    public static final int ORDER_STATUS_PROTECTING = 1;
+    // 待生效
+    public static final int ORDER_STATUS_WAITING_EFFECTIVE = 2;
+    // 待续保
+    public static final int ORDER_STATUS_WAITING_RENEWAL = 3;
+    // 已失效
+    public static final int ORDER_STATUS_FAILURE = 4;
+    // 已退保
+    public static final int ORDER_STATUS_SURRENDER = 5;
 
     public String createPrivateCode() {
         return "";
@@ -217,7 +213,7 @@ public class InsurancePolicyModel {
         return true;
     }
 
-    public String getCheckStatusText () {
+    public String getCheckStatusText() {
         String statusText = null;
         int s = Integer.valueOf(check_status);
         switch (s) {
@@ -231,7 +227,7 @@ public class InsurancePolicyModel {
         return statusText;
     }
 
-    public String getPayStatusText () {
+    public String getPayStatusText() {
         String statusText = null;
         int s = Integer.valueOf(pay_status);
         switch (s) {
@@ -251,7 +247,7 @@ public class InsurancePolicyModel {
         return statusText;
     }
 
-    public String getWarrantyStatusText () {
+    public String getWarrantyStatusText() {
         String statusText = null;
         int s = Integer.valueOf(warranty_status);
         switch (s) {

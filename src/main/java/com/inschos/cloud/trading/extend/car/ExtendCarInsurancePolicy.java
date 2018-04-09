@@ -187,7 +187,9 @@ public class ExtendCarInsurancePolicy {
         public String ciStartDateFlag;
         public String biStartDateFlag;
         public String biStartTime;
+        public String biStartTimeValue;
         public String ciStartTime;
+        public String ciStartTimeValue;
     }
 
 
@@ -250,6 +252,10 @@ public class ExtendCarInsurancePolicy {
         public String ciBeginDate;
         public String ciPremium;
         public String carshipTax;
+
+        public String totalPremium;
+        public String totalPremiumText;
+
         public List<InsurancePolicyInfo> coverageList;
     }
 
@@ -328,7 +334,7 @@ public class ExtendCarInsurancePolicy {
         public String showSumIntegral;
         public String bjCodeFlag;
         public DiscountInfo discountInfo;
-        public SpAgreement spAgreement;
+        public List<SpAgreement> spAgreement;
         public VehicleInfo vehicleInfo;
         public List<InsurancePolicyInfo> coverageList;
     }

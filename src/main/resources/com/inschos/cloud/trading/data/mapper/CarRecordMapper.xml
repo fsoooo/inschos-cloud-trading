@@ -11,7 +11,7 @@
         insert into cust_car
         (`id`,`car_code`,`name`,`code`,`phone`,`frame_no`,`engine_no`,`vehicle_fgw_code`,`vehicle_fgw_name`,`parent_veh_name`,`brand_code`,`brand_name`,`engine_desc`,`new_car_price`,`purchase_price_tax`,`import_flag`,`seat`,`standard_name`,`is_trans`,`remark`,`created_at`,`updated_at`,`response_no`)
         values
-        `id`=#{id},`car_code`=#{car_code},`name`=#{name},`code`=#{code},`phone`=#{phone},`frame_no`=#{frame_no},`engine_no`=#{engine_no},`vehicle_fgw_code`=#{vehicle_fgw_code},`vehicle_fgw_name`=#{vehicle_fgw_name},`parent_veh_name`=#{parent_veh_name},`brand_code`=#{brand_code},`brand_name`=#{brand_name},`engine_desc`=#{engine_desc},`new_car_price`=#{new_car_price},`purchase_price_tax`=#{purchase_price_tax},`import_flag`=#{import_flag},`seat`=#{seat},`standard_name`=#{standard_name},`is_trans`=#{is_trans},`remark`=#{remark},`created_at`=#{created_at},`updated_at`=#{updated_at},`response_no`=#{response_no}
+        (#{id},#{car_code},#{name},#{code},#{phone},#{frame_no},#{engine_no},#{vehicle_fgw_code},#{vehicle_fgw_name},#{parent_veh_name},#{brand_code},#{brand_name},#{engine_desc},#{new_car_price},#{purchase_price_tax},#{import_flag},#{seat},#{standard_name},#{is_trans},#{remark},#{created_at},#{updated_at},#{response_no})
     </insert>
 
     <update id="updateCarRecord" parameterType="com.inschos.cloud.trading.model.CarRecordModel">

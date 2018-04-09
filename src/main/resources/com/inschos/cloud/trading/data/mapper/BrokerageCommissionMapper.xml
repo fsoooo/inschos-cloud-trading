@@ -11,7 +11,7 @@
         insert into cust_warranty_brokerage
         (`id`,`private_code`,`product_rate`,`ditch_rate`,`agent_rate`,`product_money`,`ditch_money`,`agent_money`)
         values
-        #{id},#{private_code},#{product_rate},#{ditch_rate},#{agent_rate},#{product_money},#{ditch_money},#{agent_money}
+        (#{id},#{private_code},#{product_rate},#{ditch_rate},#{agent_rate},#{product_money},#{ditch_money},#{agent_money})
     </insert>
 
 

@@ -129,7 +129,13 @@ public class CarInsurance {
     }
 
     public static class GetPremiumResponse extends BaseResponse {
-        public List<ExtendCarInsurancePolicy.InsurancePolicy> data;
+        public GetPremiumDetail data;
+    }
+
+    public static class GetPremiumDetail {
+        public String totalInsuredPremium;
+        public String totalInsuredPremiumText;
+        public List<ExtendCarInsurancePolicy.InsurancePolicy> insurancePolicies;
     }
 
     public static class GetInsuranceInfoRequest extends BaseRequest {
@@ -139,7 +145,7 @@ public class CarInsurance {
         public List<InsuranceInfo> data;
     }
 
-    public static class InsuranceInfo extends ExtendCarInsurancePolicy.InsuranceInfo {
+    public static class InsuranceInfo extends ExtendCarInsurancePolicy.InsurancePolicyInfo {
         @CheckParams
         public String hasExcessOption;
         @CheckParams
@@ -147,20 +153,21 @@ public class CarInsurance {
         public List<String> insuredAmountList;
 
         // 玻璃破碎险 1-国产，2-进口
-        @CheckParams
         public String source;
         public List<String> sourceOption;
 
         // 修理期间费用补偿险
-        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        @CheckParams(stringType = CheckParams.StringType.NUMBER, isNecessity = false)
         public String day;
 
-        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        @CheckParams(stringType = CheckParams.StringType.NUMBER, isNecessity = false)
         public String amount;
         public String maxDay;
         public String minDay;
         public String maxAmount;
         public String minAmount;
+
+
     }
 
     public static class GetInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoRequest extends BaseRequest {
@@ -242,10 +249,12 @@ public class CarInsurance {
         public String thpBizID;
         @CheckParams
         public String cityCode;
-        @CheckParams
         public String biBeginDate;
-        @CheckParams
         public String ciBeginDate;
+        @CheckParams
+        public String biBeginDateValue;
+        @CheckParams
+        public String ciBeginDateValue;
         @CheckParams
         public String insurerCode;
         @CheckParams
@@ -261,7 +270,15 @@ public class CarInsurance {
     }
 
     public static class GetPremiumCalibrateResponse extends BaseResponse {
-        public List<ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail> data;
+        public GetPremiumCalibrateDetail data;
+    }
+
+    public static class GetPremiumCalibrateDetail {
+        public String ciInsuredPremium;
+        public String ciInsuredPremiumText;
+        public String biInsuredPremium;
+        public String biInsuredPremiumText;
+        public List<InsuranceInfo> insurancePolicyPremiumDetails;
     }
 
     public static class GetPremiumFactorRequest extends BaseRequest {
@@ -274,16 +291,34 @@ public class CarInsurance {
 
 
     public static class ApplyUnderwritingRequest extends BaseRequest {
+        @CheckParams
         public String channelCode;
+        @CheckParams
         public String insurerCode;
+        @CheckParams
         public String bizID;
+        @CheckParams
         public String addresseeName;
+        @CheckParams
         public String addresseeMobile;
+        @CheckParams
         public String addresseeDetails;
+        @CheckParams
         public String policyEmail;
+        @CheckParams
         public String addresseeCounty;
+        @CheckParams
         public String addresseeCity;
+        @CheckParams
         public String addresseeProvince;
+        @CheckParams
+        public String ciInsuredPremium;
+        @CheckParams
+        public String biInsuredPremium;
+        @CheckParams
+        public String ciStartTime;
+        @CheckParams
+        public String biStartTime;
 
         // 非必传，支付成功后跳转地址
         public String applicantUrl;

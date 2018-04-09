@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inschos.cloud.trading.assist.kit.HttpClientKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
+import com.inschos.cloud.trading.assist.kit.L;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -37,6 +38,7 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
     public Response post() {
         Response response;
         try {
+            L.log.debug(JsonKit.bean2Json(request));
             String result = HttpClientKit.post(url, JsonKit.bean2Json(request));
 
             response = JsonKit.json2Bean(result, cls);
@@ -44,19 +46,29 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
             if (response != null) {
                 response.verify = verifySignature(result);
             } else {
-                response = (Response) new CarInsuranceResponse();
-                response.state = CarInsuranceResponse.RESULT_FAIL;
-                response.msg = "请求失败";
-                response.verify = false;
+                try {
+                    response = cls.newInstance();
+                    response.state = CarInsuranceResponse.RESULT_FAIL;
+                    response.msg = "请求失败";
+                    response.verify = false;
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
             return response;
         } catch (IOException e) {
             // e.printStackTrace();
-            response = (Response) new CarInsuranceResponse();
-            response.state = CarInsuranceResponse.RESULT_FAIL;
-            response.msg = "请求失败";
-            response.verify = false;
-            return response;
+            try {
+                response = cls.newInstance();
+                response.state = CarInsuranceResponse.RESULT_FAIL;
+                response.msg = "请求失败";
+                response.verify = false;
+                return response;
+            } catch (InstantiationException | IllegalAccessException ex) {
+                ex.printStackTrace();
+                return null;
+            }
         }
     }
 
