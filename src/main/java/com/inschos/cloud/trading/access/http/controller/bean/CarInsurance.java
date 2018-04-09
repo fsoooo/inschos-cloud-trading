@@ -121,10 +121,11 @@ public class CarInsurance {
         public String notLicenseNo;
         @CheckParams
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
+        @CheckParams
+        public List<InsuranceInfo> coverageList;
 
         // 非必传
         public ExtendCarInsurancePolicy.VehicleOwnerInfo personInfo;
-        public List<ExtendCarInsurancePolicy.InsuranceInfoDetail> coverageList;
     }
 
     public static class GetPremiumResponse extends BaseResponse {
@@ -135,21 +136,31 @@ public class CarInsurance {
     }
 
     public static class GetInsuranceInfoResponse extends BaseResponse {
-        public List<ExtendCarInsurancePolicy.InsuranceInfo> data;
+        public List<InsuranceInfo> data;
     }
 
     public static class InsuranceInfo extends ExtendCarInsurancePolicy.InsuranceInfo {
+        @CheckParams
         public String hasExcessOption;
+        @CheckParams
+        public String isExcessOption;
         public List<String> insuredAmountList;
 
         // 玻璃破碎险 1-国产，2-进口
-        public List<String> source;
+        @CheckParams
+        public String source;
+        public List<String> sourceOption;
 
         // 修理期间费用补偿险
+        @CheckParams(stringType = CheckParams.StringType.NUMBER)
         public String day;
+
+        @CheckParams(stringType = CheckParams.StringType.NUMBER)
         public String amount;
-        public List<String> days;
-        public List<String> amounts;
+        public String maxDay;
+        public String minDay;
+        public String maxAmount;
+        public String minAmount;
     }
 
     public static class GetInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoRequest extends BaseRequest {
@@ -176,7 +187,7 @@ public class CarInsurance {
         // 起保时间信息
         public ExtendCarInsurancePolicy.InsuranceStartTime startTimeInfo;
         // 险别列表
-        public List<ExtendCarInsurancePolicy.InsuranceInfo> insuranceInfo;
+        public List<InsuranceInfo> insuranceInfo;
     }
 
     public static class GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest extends BaseRequest {
@@ -246,7 +257,7 @@ public class CarInsurance {
         @CheckParams
         public ExtendCarInsurancePolicy.InsuranceParticipant personInfo;
         @CheckParams
-        public List<ExtendCarInsurancePolicy.InsurancePolicyInfo> coverageList;
+        public List<InsuranceInfo> coverageList;
     }
 
     public static class GetPremiumCalibrateResponse extends BaseResponse {

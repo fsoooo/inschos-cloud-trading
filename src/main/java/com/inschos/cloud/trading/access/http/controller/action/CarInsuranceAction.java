@@ -6,14 +6,15 @@ import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.data.dao.CarRecordDao;
 import com.inschos.cloud.trading.extend.car.*;
+import com.inschos.cloud.trading.model.CarRecordModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 创建日期：2018/3/29 on 14:27
@@ -22,6 +23,9 @@ import java.util.List;
  */
 @Component
 public class CarInsuranceAction extends BaseAction {
+
+    @Autowired
+    private CarRecordDao carRecordDao;
 
     /**
      * 查询省代码
@@ -215,12 +219,7 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
-//                List<ExtendCarInsurancePolicy.InsuranceInfo> infoList = new ArrayList<>();
-//                for (ExtendCarInsurancePolicy.InsuranceInfo datum : result.data) {
-//                    datum.coverageCode.contains("M");
-//                }
-
-                response.data = result.data;
+                response.data = dealCoverageList(result.data);
                 str = json(BaseResponse.CODE_SUCCESS, "获取险别列表成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg, response);
@@ -230,6 +229,62 @@ public class CarInsuranceAction extends BaseAction {
         }
 
         return str;
+    }
+
+    private List<CarInsurance.InsuranceInfo> dealCoverageList(List<ExtendCarInsurancePolicy.InsuranceInfo> data) {
+        List<CarInsurance.InsuranceInfo> list = new ArrayList<>();
+        Map<String, String> map = new HashMap<>();
+
+        for (int i = 0; i < data.size(); i++) {
+            ExtendCarInsurancePolicy.InsuranceInfo datum = data.get(i);
+            if (datum.coverageCode.startsWith("M")) {
+                map.put(datum.coverageCode.substring(1), datum.coverageCode);
+                data.remove(i);
+                i--;
+            }
+        }
+
+        for (ExtendCarInsurancePolicy.InsuranceInfo datum : data) {
+            CarInsurance.InsuranceInfo insuranceInfo = new CarInsurance.InsuranceInfo();
+            insuranceInfo.coverageCode = datum.coverageCode;
+            insuranceInfo.coverageName = datum.coverageName;
+
+            if (map.get(datum.coverageCode) != null) {
+                insuranceInfo.hasExcessOption = "1";
+            } else {
+                insuranceInfo.hasExcessOption = "0";
+            }
+
+            if (!StringKit.isEmpty(datum.insuredAmount) && !StringKit.equals(datum.insuredAmount, "Y")) {
+                insuranceInfo.insuredAmountList = Arrays.asList(datum.insuredAmount.split(","));
+                if (insuranceInfo.insuredAmountList.isEmpty()) {
+                    insuranceInfo.insuredAmount = "";
+                } else {
+                    insuranceInfo.insuredAmount = insuranceInfo.insuredAmountList.get(0);
+                }
+            } else {
+                insuranceInfo.insuredAmount = datum.insuredAmount;
+            }
+
+            if (StringKit.equals(datum.coverageCode, "F")) {
+                insuranceInfo.sourceOption = new ArrayList<>();
+                insuranceInfo.sourceOption.add("进口");
+                insuranceInfo.sourceOption.add("国产");
+            }
+
+            if (StringKit.equals(datum.coverageCode, "Z2")) {
+                insuranceInfo.day = "30";
+                insuranceInfo.minDay = String.valueOf(Z2_MIN_DAY);
+                insuranceInfo.maxDay = String.valueOf(Z2_MAX_DAY);
+                insuranceInfo.amount = "50";
+                insuranceInfo.minAmount = String.valueOf(Z2_MIN_AMOUNT);
+                insuranceInfo.maxAmount = String.valueOf(Z2_MAX_AMOUNT);
+            }
+
+            list.add(insuranceInfo);
+        }
+
+        return list;
     }
 
     /**
@@ -568,6 +623,13 @@ public class CarInsuranceAction extends BaseAction {
         return str;
     }
 
+    /**
+     * 格式化时间戳用
+     *
+     * @param sdf      格式
+     * @param showDate 时间
+     * @return showDate指定sdf的格式
+     */
     private String getCalculateDateByShowDate(SimpleDateFormat sdf, String showDate) {
         if (!StringKit.isEmpty(showDate)) {
             try {
@@ -676,71 +738,71 @@ public class CarInsuranceAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取数据成功", response);
     }
 
-    /**
-     * 将获取保险公司、获取起保时间、获取险别列表、参考报价合并为一个请求
-     *
-     * @param actionBean 请求体
-     * @return 响应json
-     */
+//    /**
+//     * 将获取保险公司、获取起保时间、获取险别列表、参考报价合并为一个请求
+//     *
+//     * @param actionBean 请求体
+//     * @return 响应json
+//     */
     // NOTENABLED: 2018/4/3 目前的接口都是客户端单独请求
-    public String getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoAndPremium(ActionBean actionBean) {
-        CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest.class);
-        CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumResponse response = new CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumResponse();
-
-        String insuranceByArea = getInsuranceByArea(actionBean);
-        CarInsurance.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, CarInsurance.GetInsuranceCompanyResponse.class);
-
-        if (getInsuranceCompanyResponse == null || getInsuranceCompanyResponse.code != BaseResponse.CODE_SUCCESS) {
-            return insuranceByArea;
-        }
-
-        response.data.insuranceCompanies = getInsuranceCompanyResponse.data;
-
-        String insuranceStartTime = getInsuranceStartTime(actionBean);
-        CarInsurance.GetInsuranceStartTimeResponse getInsuranceStartTimeResponse = JsonKit.json2Bean(insuranceStartTime, CarInsurance.GetInsuranceStartTimeResponse.class);
-
-        if (getInsuranceStartTimeResponse == null || getInsuranceStartTimeResponse.code != BaseResponse.CODE_SUCCESS) {
-            return insuranceStartTime;
-        }
-
-        response.data.startTimeInfo = getInsuranceStartTimeResponse.data;
-
-        String insuranceInfo = getInsuranceInfo(actionBean);
-        CarInsurance.GetInsuranceInfoResponse getInsuranceInfoResponse = JsonKit.json2Bean(insuranceInfo, CarInsurance.GetInsuranceInfoResponse.class);
-
-        if (getInsuranceInfoResponse == null || getInsuranceInfoResponse.code != BaseResponse.CODE_SUCCESS) {
-            return insuranceInfo;
-        }
-
-        // TODO: 2018/3/31 需要知道险别列表是否必传  getInsuranceInfoResponse.data == null || getInsuranceInfoResponse.data.isEmpty()
-
-        String str;
-        if (getInsuranceCompanyResponse.data == null || getInsuranceCompanyResponse.data.isEmpty()) {
-            response.data.premiumInfo = null;
-            str = json(BaseResponse.CODE_SUCCESS, "获取成功", response);
-        } else {
-
-            ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany = getInsuranceCompanyResponse.data.get(0);
-
-            request.insurerCode = insuranceCompany.insurerCode;
-
-            // TODO: 2018/3/31 处理险别列表
-            // request.coverageList
-
-            actionBean.body = JsonKit.bean2Json(request);
-
-            String premium = getPremium(actionBean);
-            CarInsurance.GetPremiumResponse getPremiumResponse = JsonKit.json2Bean(premium, CarInsurance.GetPremiumResponse.class);
-
-            if (getPremiumResponse == null || getPremiumResponse.code != BaseResponse.CODE_SUCCESS) {
-                return premium;
-            } else {
-                str = json(BaseResponse.CODE_SUCCESS, "获取成功", response);
-            }
-        }
-
-        return str;
-    }
+//    public String getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoAndPremium(ActionBean actionBean) {
+//        CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest.class);
+//        CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumResponse response = new CarInsurance.GetInsuranceCompanyAndInsuranceStartTimeAndPremiumResponse();
+//
+//        String insuranceByArea = getInsuranceByArea(actionBean);
+//        CarInsurance.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, CarInsurance.GetInsuranceCompanyResponse.class);
+//
+//        if (getInsuranceCompanyResponse == null || getInsuranceCompanyResponse.code != BaseResponse.CODE_SUCCESS) {
+//            return insuranceByArea;
+//        }
+//
+//        response.data.insuranceCompanies = getInsuranceCompanyResponse.data;
+//
+//        String insuranceStartTime = getInsuranceStartTime(actionBean);
+//        CarInsurance.GetInsuranceStartTimeResponse getInsuranceStartTimeResponse = JsonKit.json2Bean(insuranceStartTime, CarInsurance.GetInsuranceStartTimeResponse.class);
+//
+//        if (getInsuranceStartTimeResponse == null || getInsuranceStartTimeResponse.code != BaseResponse.CODE_SUCCESS) {
+//            return insuranceStartTime;
+//        }
+//
+//        response.data.startTimeInfo = getInsuranceStartTimeResponse.data;
+//
+//        String insuranceInfo = getInsuranceInfo(actionBean);
+//        CarInsurance.GetInsuranceInfoResponse getInsuranceInfoResponse = JsonKit.json2Bean(insuranceInfo, CarInsurance.GetInsuranceInfoResponse.class);
+//
+//        if (getInsuranceInfoResponse == null || getInsuranceInfoResponse.code != BaseResponse.CODE_SUCCESS) {
+//            return insuranceInfo;
+//        }
+//
+//        // TODO: 2018/3/31 需要知道险别列表是否必传  getInsuranceInfoResponse.data == null || getInsuranceInfoResponse.data.isEmpty()
+//
+//        String str;
+//        if (getInsuranceCompanyResponse.data == null || getInsuranceCompanyResponse.data.isEmpty()) {
+//            response.data.premiumInfo = null;
+//            str = json(BaseResponse.CODE_SUCCESS, "获取成功", response);
+//        } else {
+//
+//            ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany = getInsuranceCompanyResponse.data.get(0);
+//
+//            request.insurerCode = insuranceCompany.insurerCode;
+//
+//            // TODO: 2018/3/31 处理险别列表
+//            // request.coverageList
+//
+//            actionBean.body = JsonKit.bean2Json(request);
+//
+//            String premium = getPremium(actionBean);
+//            CarInsurance.GetPremiumResponse getPremiumResponse = JsonKit.json2Bean(premium, CarInsurance.GetPremiumResponse.class);
+//
+//            if (getPremiumResponse == null || getPremiumResponse.code != BaseResponse.CODE_SUCCESS) {
+//                return premium;
+//            } else {
+//                str = json(BaseResponse.CODE_SUCCESS, "获取成功", response);
+//            }
+//        }
+//
+//        return str;
+//    }
 
     /**
      * 获取投保起期
@@ -847,14 +909,14 @@ public class CarInsuranceAction extends BaseAction {
         CarInsurance.GetPremiumRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetPremiumRequest.class);
         CarInsurance.GetPremiumResponse response = new CarInsurance.GetPremiumResponse();
 
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
-
-//        if (request.carInfo == null) {
-//            return json(BaseResponse.CODE_FAILURE, "缺少车辆信息", response);
-//        }
 
         // 是否新车
         boolean isTrans = StringKit.equals(request.carInfo.isTrans, "1");
@@ -868,14 +930,48 @@ public class CarInsuranceAction extends BaseAction {
 
         ExtendCarInsurancePolicy.GetPremiumRequest getPremiumRequest = new ExtendCarInsurancePolicy.GetPremiumRequest();
 
-        // TODO: 2018/3/29  从我们的request里面获取这个值
         getPremiumRequest.cityCode = request.cityCode;
-        getPremiumRequest.insurerCode = request.cityCode;
+        getPremiumRequest.insurerCode = request.insurerCode;
         getPremiumRequest.responseNo = request.carInfo.responseNo;
         ExtendCarInsurancePolicy.CarInfoDetail carInfo = new ExtendCarInsurancePolicy.CarInfoDetail();
         carInfo.engineNo = request.carInfo.engineNo;
         carInfo.licenseNo = request.carInfo.licenseNo;
         carInfo.frameNo = request.carInfo.frameNo;
+
+        long time = System.currentTimeMillis();
+
+        // 将车辆信息存入我们自己的数据库
+        CarRecordModel oneByResponseNo = carRecordDao.findOneByResponseNo(request.carInfo.responseNo);
+
+        CarRecordModel carRecordModel = new CarRecordModel();
+        carRecordModel.car_code = request.carInfo.licenseNo;
+        carRecordModel.name = request.personInfo.ownerName;
+        carRecordModel.code = request.personInfo.ownerID;
+        carRecordModel.phone = request.personInfo.ownerMobile;
+        carRecordModel.frame_no = request.carInfo.frameNo;
+        carRecordModel.engine_no = request.carInfo.engineNo;
+        carRecordModel.vehicle_fgw_code = request.carInfo.vehicleFgwCode;
+        carRecordModel.vehicle_fgw_name = request.carInfo.vehicleFgwName;
+        carRecordModel.parent_veh_name = request.carInfo.parentVehName;
+        carRecordModel.brand_code = request.carInfo.brandCode;
+        carRecordModel.brand_name = request.carInfo.brandName;
+        carRecordModel.engine_desc = request.carInfo.engineDesc;
+        carRecordModel.new_car_price = request.carInfo.newCarPrice;
+        carRecordModel.purchase_price_tax = request.carInfo.purchasePriceTax;
+        carRecordModel.import_flag = request.carInfo.importFlag;
+        carRecordModel.seat = request.carInfo.seat;
+        carRecordModel.standard_name = request.carInfo.standardName;
+        carRecordModel.is_trans = request.carInfo.isTrans;
+        carRecordModel.remark = request.carInfo.remark;
+        carRecordModel.response_no = request.carInfo.responseNo;
+        carRecordModel.updated_at = String.valueOf(time);
+
+        if (oneByResponseNo == null) {
+            carRecordModel.created_at = String.valueOf(time);
+            carRecordDao.addCarRecord(carRecordModel);
+        } else {
+            carRecordDao.updateCarRecord(carRecordModel);
+        }
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -903,17 +999,21 @@ public class CarInsuranceAction extends BaseAction {
             personInfo.ownerMobile = request.personInfo.ownerMobile;
         }
 
-        // TODO: 2018/3/31 处理险别列表
-//        getPremiumRequest.coverageList = new ArrayList<>();
+        // 处理险别列表，险别列表要单独验证一下，是否符合规则
+        String insuranceInfo = getInsuranceInfo(actionBean);
+        CarInsurance.GetInsuranceInfoResponse getInsuranceInfoResponse = JsonKit.json2Bean(insuranceInfo, CarInsurance.GetInsuranceInfoResponse.class);
 
-//        for () {
-//            ExtendCarInsurancePolicy.InsuranceInfoDetail insuranceInfoDetail = new ExtendCarInsurancePolicy.InsuranceInfoDetail();
-//            insuranceInfoDetail.coverageCode;
-//            insuranceInfoDetail.coverageName;
-//            insuranceInfoDetail.insuredAmount;
-//            insuranceInfoDetail.flag
-//            carInfo.coverageList.add(insuranceInfoDetail);
-//        }
+        if (getInsuranceInfoResponse == null || getInsuranceInfoResponse.code != BaseResponse.CODE_SUCCESS) {
+            return insuranceInfo;
+        }
+
+        CheckCoverageListResult checkCoverageListResult = checkCoverageList(getInsuranceInfoResponse.data, request.coverageList);
+
+        if (!checkCoverageListResult.result) {
+            return json(BaseResponse.CODE_FAILURE, checkCoverageListResult.message, response);
+        }
+
+        getPremiumRequest.coverageList = checkCoverageListResult.coverageList;
 
         ExtendCarInsurancePolicy.GetPremiumResponse result = new CarInsuranceHttpRequest<>(get_premium, getPremiumRequest, ExtendCarInsurancePolicy.GetPremiumResponse.class).post();
         // 验签
@@ -940,6 +1040,10 @@ public class CarInsuranceAction extends BaseAction {
     public String getPremiumCalibrate(ActionBean actionBean) {
         CarInsurance.GetPremiumCalibrateRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetPremiumCalibrateRequest.class);
         CarInsurance.GetPremiumCalibrateResponse response = new CarInsurance.GetPremiumCalibrateResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
 
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
@@ -1038,7 +1142,20 @@ public class CarInsuranceAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "缺少险别", response);
         }
 
-        getPremiumCalibrateRequest.coverageList = request.coverageList;
+        String insuranceInfo = getInsuranceInfo(actionBean);
+        CarInsurance.GetInsuranceInfoResponse getInsuranceInfoResponse = JsonKit.json2Bean(insuranceInfo, CarInsurance.GetInsuranceInfoResponse.class);
+
+        if (getInsuranceInfoResponse == null || getInsuranceInfoResponse.code != BaseResponse.CODE_SUCCESS) {
+            return insuranceInfo;
+        }
+
+        CheckCoverageListResult checkCoverageListResult = checkCoverageList(getInsuranceInfoResponse.data, request.coverageList);
+
+        if (!checkCoverageListResult.result) {
+            return json(BaseResponse.CODE_FAILURE, checkCoverageListResult.message, response);
+        }
+
+        getPremiumCalibrateRequest.coverageList = checkCoverageListResult.coverageList;
 
         ExtendCarInsurancePolicy.GetPremiumCalibrateResponse result = new CarInsuranceHttpRequest<>(get_premium_calibrate, getPremiumCalibrateRequest, ExtendCarInsurancePolicy.GetPremiumCalibrateResponse.class).post();
         // 验签
@@ -1056,6 +1173,150 @@ public class CarInsuranceAction extends BaseAction {
         }
 
         return str;
+    }
+
+    private CheckCoverageListResult checkCoverageList(List<CarInsurance.InsuranceInfo> source, List<CarInsurance.InsuranceInfo> checkList) {
+        CheckCoverageListResult checkCoverageListResult = new CheckCoverageListResult();
+        checkCoverageListResult.coverageList = new ArrayList<>();
+        Map<String, CarInsurance.InsuranceInfo> map = new LinkedHashMap<>();
+
+        for (CarInsurance.InsuranceInfo insuranceInfo : source) {
+            map.put(insuranceInfo.coverageCode, insuranceInfo);
+            if (StringKit.equals(insuranceInfo.hasExcessOption, "1")) {
+                map.put("M" + insuranceInfo.coverageCode, insuranceInfo);
+            }
+        }
+
+
+        for (CarInsurance.InsuranceInfo insuranceInfo : checkList) {
+            // 校验提交的数据的选项是否符合规定
+            ExtendCarInsurancePolicy.InsuranceInfoDetail insuranceInfoDetail = new ExtendCarInsurancePolicy.InsuranceInfoDetail();
+            insuranceInfoDetail.coverageCode = insuranceInfo.coverageCode;
+
+            // 是否可以不计免赔
+            if (StringKit.equals(map.get(insuranceInfo.coverageCode).coverageCode, "1")) {
+                ExtendCarInsurancePolicy.InsuranceInfoDetail excess = new ExtendCarInsurancePolicy.InsuranceInfoDetail();
+                excess.coverageCode = "M" + insuranceInfo.coverageCode;
+
+                if (StringKit.equals(insuranceInfo.isExcessOption, "1")) {
+                    excess.insuredAmount = "Y";
+                } else {
+                    excess.insuredAmount = "";
+                }
+                checkCoverageListResult.coverageList.add(excess);
+            }
+
+            // 保额是否符合规则
+            List<String> insuredAmountList = map.get(insuranceInfo.coverageCode).insuredAmountList;
+            if (insuredAmountList != null && !insuredAmountList.isEmpty()) {
+                boolean flag = false;
+                for (String s : insuredAmountList) {
+                    flag = StringKit.equals(s, insuranceInfo.insuredAmount);
+                    if (flag) {
+                        break;
+                    }
+                }
+
+                if (flag) {
+                    insuranceInfoDetail.insuredAmount = insuranceInfo.insuredAmount;
+                } else {
+                    checkCoverageListResult.result = false;
+                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额非法";
+                    checkCoverageListResult.coverageList = null;
+                    break;
+                }
+
+            } else {
+                if (StringKit.equals(insuranceInfo.insuredAmount, "N") || StringKit.equals(insuranceInfo.insuredAmount, "Y") || StringKit.isNumeric(insuranceInfo.insuredAmount)) {
+                    if (StringKit.equals(insuranceInfo.insuredAmount, "N")) {
+                        insuranceInfoDetail.insuredAmount = "";
+                    } else {
+                        insuranceInfoDetail.insuredAmount = insuranceInfo.insuredAmount;
+                    }
+                } else {
+                    checkCoverageListResult.result = false;
+                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字，Y或者N";
+                    checkCoverageListResult.coverageList = null;
+                    break;
+                }
+            }
+
+            // 修理期间费用补偿险Z2，校验天数和每天的保额
+            if (StringKit.equals(insuranceInfoDetail.coverageCode, "Z2") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
+                if (StringKit.isInteger(insuranceInfo.day)) {
+                    Integer integer = Integer.valueOf(insuranceInfo.day);
+                    if (integer > Z2_MAX_DAY || integer < Z2_MIN_DAY) {
+                        checkCoverageListResult.result = false;
+                        checkCoverageListResult.message = insuranceInfo.coverageName + "的天数非法";
+                        checkCoverageListResult.coverageList = null;
+                        break;
+                    }
+                } else {
+                    checkCoverageListResult.result = false;
+                    checkCoverageListResult.message = insuranceInfo.coverageName + "的天数必须是正整数";
+                    checkCoverageListResult.coverageList = null;
+                    break;
+                }
+
+                if (StringKit.isNumeric(insuranceInfo.amount)) {
+                    Double aDouble = Double.valueOf(insuranceInfo.amount);
+                    if (aDouble > Z2_MAX_AMOUNT || aDouble < Z2_MIN_AMOUNT) {
+                        checkCoverageListResult.result = false;
+                        checkCoverageListResult.message = insuranceInfo.coverageName + "的保额非法";
+                        checkCoverageListResult.coverageList = null;
+                        break;
+                    }
+                } else {
+                    checkCoverageListResult.result = false;
+                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字";
+                    checkCoverageListResult.coverageList = null;
+                    break;
+                }
+
+                insuranceInfoDetail.flag = insuranceInfo.day + "," + insuranceInfo.amount;
+            }
+
+            // 玻璃险破碎险F，校验是否国产、进口
+            if (StringKit.equals(insuranceInfoDetail.coverageCode, "F") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
+                boolean flag = false;
+                for (String s : insuranceInfo.sourceOption) {
+                    flag = StringKit.equals(s, insuranceInfo.source);
+                    if (flag) {
+                        break;
+                    }
+                }
+
+                if (flag) {
+                    insuranceInfoDetail.flag = insuranceInfo.source;
+                } else {
+                    checkCoverageListResult.result = false;
+                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字";
+                    checkCoverageListResult.coverageList = null;
+                    break;
+                }
+            }
+
+            checkCoverageListResult.coverageList.add(insuranceInfoDetail);
+        }
+
+        checkCoverageListResult.result = true;
+        checkCoverageListResult.message = "";
+
+        return checkCoverageListResult;
+    }
+
+    private static final int Z2_MIN_DAY = 1;
+    private static final int Z2_MAX_DAY = 90;
+    private static final double Z2_MIN_AMOUNT = 50;
+    private static final double Z2_MAX_AMOUNT = 500;
+
+    private static class CheckCoverageListResult {
+
+        public boolean result;
+
+        public String message;
+
+        public List<ExtendCarInsurancePolicy.InsuranceInfoDetail> coverageList;
     }
 
     /**

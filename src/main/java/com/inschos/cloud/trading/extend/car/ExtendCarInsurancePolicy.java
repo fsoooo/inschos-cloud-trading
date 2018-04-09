@@ -209,6 +209,17 @@ public class ExtendCarInsurancePolicy {
         public String brandCode;
         @CheckParams
         public String isTrans;
+        public String vehicleFgwCode;
+        public String vehicleFgwName;
+        public String parentVehName;
+        public String brandName;
+        public String engineDesc;
+        public String newCarPrice;
+        public String purchasePriceTax;
+        public String importFlag;
+        public String seat;
+        public String standardName;
+        public String remark;
 
         public String transDate;
 
@@ -262,7 +273,7 @@ public class ExtendCarInsurancePolicy {
         public String responseNo;
         public CarInfoDetail carInfo;
         public InsuranceParticipant personInfo;
-        public List<InsurancePolicyInfo> coverageList;
+        public List<InsuranceInfoDetail> coverageList;
     }
 
     public static class GetPremiumCalibrateResponse extends CarInsuranceResponse {
