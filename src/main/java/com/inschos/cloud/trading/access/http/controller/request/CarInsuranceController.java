@@ -113,12 +113,12 @@ public class CarInsuranceController {
         return carInsuranceAction.getPremiumCalibrate(actionBean);
     }
 
-    @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_premium_factor")
-    @ResponseBody
-    public String getPremiumFactor(ActionBean actionBean) {
-        return carInsuranceAction.getPremiumFactor(actionBean);
-    }
+//    @GetActionBeanAnnotation
+//    @RequestMapping("car_insurance/get_premium_factor")
+//    @ResponseBody
+//    public String getPremiumFactor(ActionBean actionBean) {
+//        return carInsuranceAction.getPremiumFactor(actionBean);
+//    }
 
     @GetActionBeanAnnotation
     @RequestMapping("car_insurance/apply_underwriting")

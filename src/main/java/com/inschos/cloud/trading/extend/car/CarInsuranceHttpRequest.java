@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inschos.cloud.trading.assist.kit.HttpClientKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.L;
+import com.inschos.cloud.trading.assist.kit.StringKit;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -38,6 +39,7 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
     public Response post() {
         Response response;
         try {
+            L.log.debug("=============================================================================================================================");
             L.log.debug(JsonKit.bean2Json(request));
             String result = HttpClientKit.post(url, JsonKit.bean2Json(request));
 
@@ -52,7 +54,7 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
                     response.msg = "请求失败";
                     response.verify = false;
                 } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
+                    // e.printStackTrace();
                     return null;
                 }
             }
@@ -66,7 +68,7 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
                 response.verify = false;
                 return response;
             } catch (InstantiationException | IllegalAccessException ex) {
-                ex.printStackTrace();
+                // ex.printStackTrace();
                 return null;
             }
         }
@@ -83,8 +85,12 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
         if (jsonNode != null) {
             JsonNode signNode = jsonNode.get("sign");
             String sign = signNode.textValue();
-            String content = jsonNode.get("data").toString();
-            flag = SignatureTools.verify(content, sign, SignatureTools.CAR_RSA_PUBLIC_KEY);
+            if (StringKit.isEmpty(sign)) {
+                flag = true;
+            } else {
+                String content = jsonNode.get("data").toString();
+                flag = SignatureTools.verify(content, sign, SignatureTools.CAR_RSA_PUBLIC_KEY);
+            }
         }
         return flag;
     }

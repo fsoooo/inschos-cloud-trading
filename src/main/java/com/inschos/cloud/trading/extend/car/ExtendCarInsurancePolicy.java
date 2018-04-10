@@ -73,7 +73,7 @@ public class ExtendCarInsurancePolicy {
     }
 
     public static class GetInsuranceInfoResponse extends CarInsuranceResponse {
-        public List<InsuranceInfo> data;
+        public List<InsuranceInfoDetail> data;
     }
 
     public static class InsuranceInfo {

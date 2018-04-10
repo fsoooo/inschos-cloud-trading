@@ -274,11 +274,13 @@ public class CarInsurance {
     }
 
     public static class GetPremiumCalibrateDetail {
+        public String totalInsuredPremium;
+        public String totalInsuredPremiumText;
         public String ciInsuredPremium;
         public String ciInsuredPremiumText;
         public String biInsuredPremium;
         public String biInsuredPremiumText;
-        public List<InsuranceInfo> insurancePolicyPremiumDetails;
+        public List<ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail> insurancePolicyPremiumDetails;
     }
 
     public static class GetPremiumFactorRequest extends BaseRequest {
@@ -291,11 +293,9 @@ public class CarInsurance {
 
 
     public static class ApplyUnderwritingRequest extends BaseRequest {
-        @CheckParams
         public String channelCode;
         @CheckParams
         public String insurerCode;
-        @CheckParams
         public String bizID;
         @CheckParams
         public String addresseeName;
@@ -311,13 +311,9 @@ public class CarInsurance {
         public String addresseeCity;
         @CheckParams
         public String addresseeProvince;
-        @CheckParams
         public String ciInsuredPremium;
-        @CheckParams
         public String biInsuredPremium;
-        @CheckParams
         public String ciStartTime;
-        @CheckParams
         public String biStartTime;
 
         // 非必传，支付成功后跳转地址
@@ -341,8 +337,9 @@ public class CarInsurance {
     }
 
     public static class PremiumCalibrateAndApplyUnderwritingRequest extends BaseRequest {
-
+        @CheckParams
         public GetPremiumCalibrateRequest premiumCalibrate;
+        @CheckParams
         public ApplyUnderwritingRequest applyUnderwriting;
 
 
