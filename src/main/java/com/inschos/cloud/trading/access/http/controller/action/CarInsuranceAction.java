@@ -1781,17 +1781,18 @@ public class CarInsuranceAction extends BaseAction {
 
         for (CarInsurance.InsuranceInfo insuranceInfo : checkList) {
             // 校验提交的数据的选项是否符合规定
+            CarInsurance.InsuranceInfo sourceInfo = map.get(insuranceInfo.coverageCode);
             ExtendCarInsurancePolicy.InsuranceInfoDetail insuranceInfoDetail = new ExtendCarInsurancePolicy.InsuranceInfoDetail();
             insuranceInfoDetail.coverageCode = insuranceInfo.coverageCode;
 
             // 是否可以不计免赔
-            if (StringKit.equals(map.get(insuranceInfo.coverageCode).hasExcessOption, "1")) {
+            if (StringKit.equals(sourceInfo.hasExcessOption, "1")) {
                 ExtendCarInsurancePolicy.InsuranceInfoDetail excess = new ExtendCarInsurancePolicy.InsuranceInfoDetail();
 
                 if (StringKit.equals(insuranceInfo.isExcessOption, "1")) {
                     if (StringKit.equals(insuranceInfo.insuredAmount, "N")) {
                         checkCoverageListResult.result = false;
-                        checkCoverageListResult.message = insuranceInfo.coverageName + "主险未投保，不能仅投保不计免赔责任！";
+                        checkCoverageListResult.message = sourceInfo.coverageName + "主险未投保，不能仅投保不计免赔责任！";
                         checkCoverageListResult.coverageList = null;
                         break;
                     } else {
@@ -1805,7 +1806,7 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             // 保额是否符合规则
-            List<String> insuredAmountList = map.get(insuranceInfo.coverageCode).insuredAmountList;
+            List<String> insuredAmountList = sourceInfo.insuredAmountList;
             if (insuredAmountList != null && !insuredAmountList.isEmpty()) {
                 boolean flag = StringKit.equals("N", insuranceInfo.insuredAmount);
                 if (flag) {
@@ -1822,7 +1823,7 @@ public class CarInsuranceAction extends BaseAction {
                         insuranceInfoDetail.insuredAmount = insuranceInfo.insuredAmount;
                     } else {
                         checkCoverageListResult.result = false;
-                        checkCoverageListResult.message = insuranceInfo.coverageName + "的保额非法";
+                        checkCoverageListResult.message = sourceInfo.coverageName + "的保额非法";
                         checkCoverageListResult.coverageList = null;
                         break;
                     }
@@ -1836,7 +1837,7 @@ public class CarInsuranceAction extends BaseAction {
                     }
                 } else {
                     checkCoverageListResult.result = false;
-                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字，Y或者N";
+                    checkCoverageListResult.message = sourceInfo.coverageName + "的保额必须是数字，Y或者N";
                     checkCoverageListResult.coverageList = null;
                     break;
                 }
@@ -1848,13 +1849,13 @@ public class CarInsuranceAction extends BaseAction {
                     Integer integer = Integer.valueOf(insuranceInfo.day);
                     if (integer > Z2_MAX_DAY || integer < Z2_MIN_DAY) {
                         checkCoverageListResult.result = false;
-                        checkCoverageListResult.message = insuranceInfo.coverageName + "的天数非法";
+                        checkCoverageListResult.message = sourceInfo.coverageName + "的天数非法";
                         checkCoverageListResult.coverageList = null;
                         break;
                     }
                 } else {
                     checkCoverageListResult.result = false;
-                    checkCoverageListResult.message = insuranceInfo.coverageName + "的天数必须是正整数";
+                    checkCoverageListResult.message = sourceInfo.coverageName + "的天数必须是正整数";
                     checkCoverageListResult.coverageList = null;
                     break;
                 }
@@ -1863,13 +1864,13 @@ public class CarInsuranceAction extends BaseAction {
                     Double aDouble = Double.valueOf(insuranceInfo.amount);
                     if (aDouble > Z2_MAX_AMOUNT || aDouble < Z2_MIN_AMOUNT) {
                         checkCoverageListResult.result = false;
-                        checkCoverageListResult.message = insuranceInfo.coverageName + "的保额非法";
+                        checkCoverageListResult.message = sourceInfo.coverageName + "的保额非法";
                         checkCoverageListResult.coverageList = null;
                         break;
                     }
                 } else {
                     checkCoverageListResult.result = false;
-                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字";
+                    checkCoverageListResult.message = sourceInfo.coverageName + "的保额必须是数字";
                     checkCoverageListResult.coverageList = null;
                     break;
                 }
@@ -1891,7 +1892,7 @@ public class CarInsuranceAction extends BaseAction {
                     insuranceInfoDetail.flag = checkCoverageListResult.getFType(insuranceInfo.source);
                 } else {
                     checkCoverageListResult.result = false;
-                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字";
+                    checkCoverageListResult.message = sourceInfo.coverageName + "的保额必须是数字";
                     checkCoverageListResult.coverageList = null;
                     break;
                 }
