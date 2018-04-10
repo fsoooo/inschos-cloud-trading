@@ -1765,6 +1765,9 @@ public class CarInsuranceAction extends BaseAction {
      */
     private CheckCoverageListResult checkCoverageList(List<CarInsurance.InsuranceInfo> source, List<CarInsurance.InsuranceInfo> checkList) {
         CheckCoverageListResult checkCoverageListResult = new CheckCoverageListResult();
+        checkCoverageListResult.result = true;
+        checkCoverageListResult.message = "";
+
         checkCoverageListResult.coverageList = new ArrayList<>();
         Map<String, CarInsurance.InsuranceInfo> map = new LinkedHashMap<>();
 
@@ -1782,38 +1785,48 @@ public class CarInsuranceAction extends BaseAction {
             insuranceInfoDetail.coverageCode = insuranceInfo.coverageCode;
 
             // 是否可以不计免赔
-            if (StringKit.equals(map.get(insuranceInfo.coverageCode).coverageCode, "1")) {
+            if (StringKit.equals(map.get(insuranceInfo.coverageCode).hasExcessOption, "1")) {
                 ExtendCarInsurancePolicy.InsuranceInfoDetail excess = new ExtendCarInsurancePolicy.InsuranceInfoDetail();
-                excess.coverageCode = "M" + insuranceInfo.coverageCode;
 
                 if (StringKit.equals(insuranceInfo.isExcessOption, "1")) {
-                    excess.insuredAmount = "Y";
+                    if (StringKit.equals(insuranceInfo.insuredAmount, "N")) {
+                        checkCoverageListResult.result = false;
+                        checkCoverageListResult.message = insuranceInfo.coverageName + "主险未投保，不能仅投保不计免赔责任！";
+                        checkCoverageListResult.coverageList = null;
+                        break;
+                    } else {
+                        excess.coverageCode = "M" + insuranceInfo.coverageCode;
+                        excess.insuredAmount = "Y";
+                        checkCoverageListResult.coverageList.add(excess);
+                    }
                 } else {
                     excess.insuredAmount = "";
                 }
-                checkCoverageListResult.coverageList.add(excess);
             }
 
             // 保额是否符合规则
             List<String> insuredAmountList = map.get(insuranceInfo.coverageCode).insuredAmountList;
             if (insuredAmountList != null && !insuredAmountList.isEmpty()) {
-                boolean flag = false;
-                for (String s : insuredAmountList) {
-                    flag = StringKit.equals(s, insuranceInfo.insuredAmount);
+                boolean flag = StringKit.equals("N", insuranceInfo.insuredAmount);
+                if (flag) {
+                    insuranceInfoDetail.insuredAmount = "";
+                } else {
+                    for (String s : insuredAmountList) {
+                        flag = StringKit.equals(s, insuranceInfo.insuredAmount);
+                        if (flag) {
+                            break;
+                        }
+                    }
+
                     if (flag) {
+                        insuranceInfoDetail.insuredAmount = insuranceInfo.insuredAmount;
+                    } else {
+                        checkCoverageListResult.result = false;
+                        checkCoverageListResult.message = insuranceInfo.coverageName + "的保额非法";
+                        checkCoverageListResult.coverageList = null;
                         break;
                     }
                 }
-
-                if (flag) {
-                    insuranceInfoDetail.insuredAmount = insuranceInfo.insuredAmount;
-                } else {
-                    checkCoverageListResult.result = false;
-                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额非法";
-                    checkCoverageListResult.coverageList = null;
-                    break;
-                }
-
             } else {
                 if (StringKit.equals(insuranceInfo.insuredAmount, "N") || StringKit.equals(insuranceInfo.insuredAmount, "Y") || StringKit.isNumeric(insuranceInfo.insuredAmount)) {
                     if (StringKit.equals(insuranceInfo.insuredAmount, "N")) {
@@ -1884,11 +1897,10 @@ public class CarInsuranceAction extends BaseAction {
                 }
             }
 
-            checkCoverageListResult.coverageList.add(insuranceInfoDetail);
+            if (!StringKit.equals(insuranceInfo.insuredAmount, "N")) {
+                checkCoverageListResult.coverageList.add(insuranceInfoDetail);
+            }
         }
-
-        checkCoverageListResult.result = true;
-        checkCoverageListResult.message = "";
 
         return checkCoverageListResult;
     }
