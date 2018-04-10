@@ -5,62 +5,63 @@ import com.inschos.cloud.trading.assist.kit.*;
 
 public class ActionBean {
 
-	private final static String SALT_VALUE_TEST = "InschosTest";
-	private final static String SALT_VALUE_ONLINE = "InschosOnLine";
+    private final static String SALT_VALUE_TEST = "InschosTest";
+    private final static String SALT_VALUE_ONLINE = "InschosOnLine";
 
-	public String salt;
+    public String salt;
 
-	public String url;
-	public String body;
+    public String url;
+    public String body;
 
-	public int buildCode;
+    public int buildCode;
 
-	public String platform;
+    public String platform;
 
-	public int apiCode;
+    public int apiCode;
 
-	public int companyId=1;
+    public int companyId = 1;
 
-	public int userId = 1;
+    public int userId = 1;
 
-	public int userType;
+    // 1-个人，2-企业客户，3-业管，4-代理
+    public int userType;
 
-	public static final RC4Kit rc4 = new RC4Kit("Inschos@2018@token");
+    public static final RC4Kit rc4 = new RC4Kit("Inschos@2018@token");
 
-	public static String getSalt() {
-		if (ConstantKit.IS_PRODUCT) {
-			return SALT_VALUE_ONLINE;
-		} else {
-			return SALT_VALUE_TEST;
-		}
-	}
+    public static String getSalt() {
+        if (ConstantKit.IS_PRODUCT) {
+            return SALT_VALUE_ONLINE;
+        } else {
+            return SALT_VALUE_TEST;
+        }
+    }
 
-	public static String packageToken(ActionBean bean) {
-		if (bean != null) {
-			String token = JsonKit.bean2Json(bean);
-			if (!StringKit.isEmpty(token)) {
-				return rc4.encry_RC4_base64(token);
-			}
-		}
-		return "";
-	}
+    public static String packageToken(ActionBean bean) {
+        if (bean != null) {
+            String token = JsonKit.bean2Json(bean);
+            if (!StringKit.isEmpty(token)) {
+                return rc4.encry_RC4_base64(token);
+            }
+        }
+        return "";
+    }
 
-	public static ActionBean parseToken(String token) {
-		ActionBean bean = null;
-		try {
-			if (!StringKit.isEmpty(token)) {
-				String tokenString = rc4.decry_RC4_base64(token);
+    public static ActionBean parseToken(String token) {
+        ActionBean bean = null;
+        try {
+            if (!StringKit.isEmpty(token)) {
+                String tokenString = rc4.decry_RC4_base64(token);
 
-				if (!StringKit.isEmpty(tokenString)) {
-					bean = JsonKit.json2Bean(tokenString, ActionBean.class);
-				}
-			}
-		} catch (Exception e) {
-			L.log.debug("token parse error:{}", e);
-		}
-		if (bean == null) {
-			bean = new ActionBean();
-		}
-		return bean;
-	}
+                if (!StringKit.isEmpty(tokenString)) {
+                    bean = JsonKit.json2Bean(tokenString, ActionBean.class);
+                }
+            }
+        } catch (Exception e) {
+            L.log.debug("token parse error:{}", e);
+        }
+        if (bean == null) {
+            bean = new ActionBean();
+        }
+        return bean;
+    }
 }
