@@ -605,44 +605,6 @@ public class CarInsuranceAction extends BaseAction {
         return str;
     }
 
-    /**
-     * 处理响应码，如果返回null，则正常处理，如果返回非null，就需要返回以String为message的response
-     *
-     * @param signToken    验证signToken
-     * @param notLicenseNo 是否未上牌
-     * @param carInfo      车辆信息
-     * @return 错误信息
-     */
-    private String dealCarInfoResponseNo(String signToken, boolean notLicenseNo, ExtendCarInsurancePolicy.CarInfo carInfo) {
-        String[] split = signToken.split("\\*");
-
-        boolean verify = false;
-        if (split.length == 2) {
-            boolean frameNo = SignatureTools.verify(carInfo.frameNo, split[0], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
-            boolean engineNo = SignatureTools.verify(carInfo.engineNo, split[1], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
-            verify = frameNo || engineNo;
-        }
-
-        if (!verify) {
-            if (StringKit.isEmpty(carInfo.frameNo) || StringKit.equals(carInfo.frameNo, "null")) {
-                return "请输入车架号";
-            }
-
-            if (StringKit.isEmpty(carInfo.engineNo) || StringKit.equals(carInfo.engineNo, "null")) {
-                return "请输入发动机号";
-            }
-
-            carInfo.responseNo = "";
-        }
-
-        if (notLicenseNo) {
-            carInfo.licenseNo = "新车";
-            if (StringKit.isEmpty(carInfo.frameNo) || StringKit.equals(carInfo.frameNo, "null")) {
-                return "请输入车架号";
-            }
-        }
-        return null;
-    }
 
     /**
      * 搜索车型信息
@@ -705,6 +667,7 @@ public class CarInsuranceAction extends BaseAction {
 
     /**
      * 将获取保险公司、获取起保时间、获取险别列表合并为一个请求
+     * FINISH: 2018/4/10
      *
      * @param actionBean 请求体
      * @return 响应json
@@ -745,10 +708,9 @@ public class CarInsuranceAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取数据成功", response);
     }
 
-    // FINISH: 2018/4/10
-
     /**
      * 获取起保时间 {@link #dealCarInfoResponseNo}
+     * FINISH: 2018/4/10
      *
      * @param actionBean 请求体
      * @return 响应json
@@ -846,10 +808,9 @@ public class CarInsuranceAction extends BaseAction {
         return str;
     }
 
-    // FINISH: 2018/4/10
-
     /**
-     * 获取参考保费 {@link #dealCarInfoResponseNo}
+     * 获取参考保费 {@link #dealCarInfoResponseNo}{@link #checkCoverageList}
+     * FINISH: 2018/4/10
      *
      * @param actionBean 请求体
      * @return 响应json
@@ -1018,7 +979,8 @@ public class CarInsuranceAction extends BaseAction {
     }
 
     /**
-     * 获取精准保费
+     * 获取精准保费{@link #checkCoverageList}
+     * FINISH: 2018/4/10
      *
      * @param actionBean 请求体
      * @return 响应json
@@ -1182,179 +1144,8 @@ public class CarInsuranceAction extends BaseAction {
     }
 
     /**
-     * 检查提交的险别列表是否合法
-     *
-     * @param source    正确的险别列表
-     * @param checkList 提交的险别列表
-     * @return 校验结果，{@link CheckCoverageListResult}
-     */
-    private CheckCoverageListResult checkCoverageList(List<CarInsurance.InsuranceInfo> source, List<CarInsurance.InsuranceInfo> checkList) {
-        CheckCoverageListResult checkCoverageListResult = new CheckCoverageListResult();
-        checkCoverageListResult.coverageList = new ArrayList<>();
-        Map<String, CarInsurance.InsuranceInfo> map = new LinkedHashMap<>();
-
-        for (CarInsurance.InsuranceInfo insuranceInfo : source) {
-            map.put(insuranceInfo.coverageCode, insuranceInfo);
-            if (StringKit.equals(insuranceInfo.hasExcessOption, "1")) {
-                map.put("M" + insuranceInfo.coverageCode, insuranceInfo);
-            }
-        }
-
-
-        for (CarInsurance.InsuranceInfo insuranceInfo : checkList) {
-            // 校验提交的数据的选项是否符合规定
-            ExtendCarInsurancePolicy.InsuranceInfoDetail insuranceInfoDetail = new ExtendCarInsurancePolicy.InsuranceInfoDetail();
-            insuranceInfoDetail.coverageCode = insuranceInfo.coverageCode;
-
-            // 是否可以不计免赔
-            if (StringKit.equals(map.get(insuranceInfo.coverageCode).coverageCode, "1")) {
-                ExtendCarInsurancePolicy.InsuranceInfoDetail excess = new ExtendCarInsurancePolicy.InsuranceInfoDetail();
-                excess.coverageCode = "M" + insuranceInfo.coverageCode;
-
-                if (StringKit.equals(insuranceInfo.isExcessOption, "1")) {
-                    excess.insuredAmount = "Y";
-                } else {
-                    excess.insuredAmount = "";
-                }
-                checkCoverageListResult.coverageList.add(excess);
-            }
-
-            // 保额是否符合规则
-            List<String> insuredAmountList = map.get(insuranceInfo.coverageCode).insuredAmountList;
-            if (insuredAmountList != null && !insuredAmountList.isEmpty()) {
-                boolean flag = false;
-                for (String s : insuredAmountList) {
-                    flag = StringKit.equals(s, insuranceInfo.insuredAmount);
-                    if (flag) {
-                        break;
-                    }
-                }
-
-                if (flag) {
-                    insuranceInfoDetail.insuredAmount = insuranceInfo.insuredAmount;
-                } else {
-                    checkCoverageListResult.result = false;
-                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额非法";
-                    checkCoverageListResult.coverageList = null;
-                    break;
-                }
-
-            } else {
-                if (StringKit.equals(insuranceInfo.insuredAmount, "N") || StringKit.equals(insuranceInfo.insuredAmount, "Y") || StringKit.isNumeric(insuranceInfo.insuredAmount)) {
-                    if (StringKit.equals(insuranceInfo.insuredAmount, "N")) {
-                        insuranceInfoDetail.insuredAmount = "";
-                    } else {
-                        insuranceInfoDetail.insuredAmount = insuranceInfo.insuredAmount;
-                    }
-                } else {
-                    checkCoverageListResult.result = false;
-                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字，Y或者N";
-                    checkCoverageListResult.coverageList = null;
-                    break;
-                }
-            }
-
-            // 修理期间费用补偿险Z2，校验天数和每天的保额
-            if (StringKit.equals(insuranceInfoDetail.coverageCode, "Z2") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
-                if (StringKit.isInteger(insuranceInfo.day)) {
-                    Integer integer = Integer.valueOf(insuranceInfo.day);
-                    if (integer > Z2_MAX_DAY || integer < Z2_MIN_DAY) {
-                        checkCoverageListResult.result = false;
-                        checkCoverageListResult.message = insuranceInfo.coverageName + "的天数非法";
-                        checkCoverageListResult.coverageList = null;
-                        break;
-                    }
-                } else {
-                    checkCoverageListResult.result = false;
-                    checkCoverageListResult.message = insuranceInfo.coverageName + "的天数必须是正整数";
-                    checkCoverageListResult.coverageList = null;
-                    break;
-                }
-
-                if (StringKit.isNumeric(insuranceInfo.amount)) {
-                    Double aDouble = Double.valueOf(insuranceInfo.amount);
-                    if (aDouble > Z2_MAX_AMOUNT || aDouble < Z2_MIN_AMOUNT) {
-                        checkCoverageListResult.result = false;
-                        checkCoverageListResult.message = insuranceInfo.coverageName + "的保额非法";
-                        checkCoverageListResult.coverageList = null;
-                        break;
-                    }
-                } else {
-                    checkCoverageListResult.result = false;
-                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字";
-                    checkCoverageListResult.coverageList = null;
-                    break;
-                }
-
-                insuranceInfoDetail.flag = insuranceInfo.day + "," + insuranceInfo.amount;
-            }
-
-            // 玻璃险破碎险F，校验是否国产、进口
-            if (StringKit.equals(insuranceInfoDetail.coverageCode, "F") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
-                boolean flag = false;
-                for (String s : insuranceInfo.sourceOption) {
-                    flag = StringKit.equals(s, insuranceInfo.source);
-                    if (flag) {
-                        break;
-                    }
-                }
-
-                if (flag) {
-                    insuranceInfoDetail.flag = checkCoverageListResult.getFType(insuranceInfo.source);
-                } else {
-                    checkCoverageListResult.result = false;
-                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字";
-                    checkCoverageListResult.coverageList = null;
-                    break;
-                }
-            }
-
-            checkCoverageListResult.coverageList.add(insuranceInfoDetail);
-        }
-
-        checkCoverageListResult.result = true;
-        checkCoverageListResult.message = "";
-
-        return checkCoverageListResult;
-    }
-
-    // 维修期间补偿险，最小投保天数
-    private static final int Z2_MIN_DAY = 1;
-    // 维修期间补偿险，最小大投保天数
-    private static final int Z2_MAX_DAY = 90;
-    // 维修期间补偿险，最低保额
-    private static final double Z2_MIN_AMOUNT = 50;
-    // 维修期间补偿险，最高保额
-    private static final double Z2_MAX_AMOUNT = 500;
-
-    private static class CheckCoverageListResult {
-
-        // 是否有效
-        public boolean result;
-
-        // 错误信息
-        String message;
-
-        // 校验正常后的实际提交险别列表
-        List<ExtendCarInsurancePolicy.InsuranceInfoDetail> coverageList;
-
-        // 获取玻璃险的对应type，只有确定玻璃险提交数据正确才有意义
-        String getFType(String text) {
-            switch (text) {
-                case "国产":
-                    return "1";
-                case "进口":
-                    return "2";
-                default:
-                    return "";
-            }
-        }
-    }
-
-    // FINISH: 2018/4/2
-
-    /**
      * 申请核保
+     * FINISH: 2018/4/10
      *
      * @param actionBean 请求体
      * @return 响应json
@@ -1555,10 +1346,9 @@ public class CarInsuranceAction extends BaseAction {
         return str;
     }
 
-    // FINISH: 2018/4/10
-
     /**
-     * 将精准报价与申请核保合并为一个接口
+     * 将精准报价与申请核保合并为一个接口(投保接口){@link #getPremiumCalibrate}{@link #applyUnderwriting}
+     * FINISH: 2018/4/10
      *
      * @param actionBean 请求参数
      * @return 响应json
@@ -1941,6 +1731,215 @@ public class CarInsuranceAction extends BaseAction {
     }
 
     // ========================================================== 其他方法 ===========================================================
+
+    /**
+     * 处理响应码，如果返回null，则正常处理，如果返回非null，就需要返回以String为message的response
+     *
+     * @param signToken    验证signToken
+     * @param notLicenseNo 是否未上牌
+     * @param carInfo      车辆信息
+     * @return 错误信息
+     */
+    private String dealCarInfoResponseNo(String signToken, boolean notLicenseNo, ExtendCarInsurancePolicy.CarInfo carInfo) {
+        String[] split = signToken.split("\\*");
+
+        boolean verify = false;
+        if (split.length == 2) {
+            boolean frameNo = SignatureTools.verify(carInfo.frameNo, split[0], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+            boolean engineNo = SignatureTools.verify(carInfo.engineNo, split[1], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+            verify = frameNo || engineNo;
+        }
+
+        if (!verify) {
+            if (StringKit.isEmpty(carInfo.frameNo) || StringKit.equals(carInfo.frameNo, "null")) {
+                return "请输入车架号";
+            }
+
+            if (StringKit.isEmpty(carInfo.engineNo) || StringKit.equals(carInfo.engineNo, "null")) {
+                return "请输入发动机号";
+            }
+
+            carInfo.responseNo = "";
+        }
+
+        if (notLicenseNo) {
+            carInfo.licenseNo = "新车";
+            if (StringKit.isEmpty(carInfo.frameNo) || StringKit.equals(carInfo.frameNo, "null")) {
+                return "请输入车架号";
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 检查提交的险别列表是否合法
+     *
+     * @param source    正确的险别列表
+     * @param checkList 提交的险别列表
+     * @return 校验结果，{@link CheckCoverageListResult}
+     */
+    private CheckCoverageListResult checkCoverageList(List<CarInsurance.InsuranceInfo> source, List<CarInsurance.InsuranceInfo> checkList) {
+        CheckCoverageListResult checkCoverageListResult = new CheckCoverageListResult();
+        checkCoverageListResult.coverageList = new ArrayList<>();
+        Map<String, CarInsurance.InsuranceInfo> map = new LinkedHashMap<>();
+
+        for (CarInsurance.InsuranceInfo insuranceInfo : source) {
+            map.put(insuranceInfo.coverageCode, insuranceInfo);
+            if (StringKit.equals(insuranceInfo.hasExcessOption, "1")) {
+                map.put("M" + insuranceInfo.coverageCode, insuranceInfo);
+            }
+        }
+
+
+        for (CarInsurance.InsuranceInfo insuranceInfo : checkList) {
+            // 校验提交的数据的选项是否符合规定
+            ExtendCarInsurancePolicy.InsuranceInfoDetail insuranceInfoDetail = new ExtendCarInsurancePolicy.InsuranceInfoDetail();
+            insuranceInfoDetail.coverageCode = insuranceInfo.coverageCode;
+
+            // 是否可以不计免赔
+            if (StringKit.equals(map.get(insuranceInfo.coverageCode).coverageCode, "1")) {
+                ExtendCarInsurancePolicy.InsuranceInfoDetail excess = new ExtendCarInsurancePolicy.InsuranceInfoDetail();
+                excess.coverageCode = "M" + insuranceInfo.coverageCode;
+
+                if (StringKit.equals(insuranceInfo.isExcessOption, "1")) {
+                    excess.insuredAmount = "Y";
+                } else {
+                    excess.insuredAmount = "";
+                }
+                checkCoverageListResult.coverageList.add(excess);
+            }
+
+            // 保额是否符合规则
+            List<String> insuredAmountList = map.get(insuranceInfo.coverageCode).insuredAmountList;
+            if (insuredAmountList != null && !insuredAmountList.isEmpty()) {
+                boolean flag = false;
+                for (String s : insuredAmountList) {
+                    flag = StringKit.equals(s, insuranceInfo.insuredAmount);
+                    if (flag) {
+                        break;
+                    }
+                }
+
+                if (flag) {
+                    insuranceInfoDetail.insuredAmount = insuranceInfo.insuredAmount;
+                } else {
+                    checkCoverageListResult.result = false;
+                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额非法";
+                    checkCoverageListResult.coverageList = null;
+                    break;
+                }
+
+            } else {
+                if (StringKit.equals(insuranceInfo.insuredAmount, "N") || StringKit.equals(insuranceInfo.insuredAmount, "Y") || StringKit.isNumeric(insuranceInfo.insuredAmount)) {
+                    if (StringKit.equals(insuranceInfo.insuredAmount, "N")) {
+                        insuranceInfoDetail.insuredAmount = "";
+                    } else {
+                        insuranceInfoDetail.insuredAmount = insuranceInfo.insuredAmount;
+                    }
+                } else {
+                    checkCoverageListResult.result = false;
+                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字，Y或者N";
+                    checkCoverageListResult.coverageList = null;
+                    break;
+                }
+            }
+
+            // 修理期间费用补偿险Z2，校验天数和每天的保额
+            if (StringKit.equals(insuranceInfoDetail.coverageCode, "Z2") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
+                if (StringKit.isInteger(insuranceInfo.day)) {
+                    Integer integer = Integer.valueOf(insuranceInfo.day);
+                    if (integer > Z2_MAX_DAY || integer < Z2_MIN_DAY) {
+                        checkCoverageListResult.result = false;
+                        checkCoverageListResult.message = insuranceInfo.coverageName + "的天数非法";
+                        checkCoverageListResult.coverageList = null;
+                        break;
+                    }
+                } else {
+                    checkCoverageListResult.result = false;
+                    checkCoverageListResult.message = insuranceInfo.coverageName + "的天数必须是正整数";
+                    checkCoverageListResult.coverageList = null;
+                    break;
+                }
+
+                if (StringKit.isNumeric(insuranceInfo.amount)) {
+                    Double aDouble = Double.valueOf(insuranceInfo.amount);
+                    if (aDouble > Z2_MAX_AMOUNT || aDouble < Z2_MIN_AMOUNT) {
+                        checkCoverageListResult.result = false;
+                        checkCoverageListResult.message = insuranceInfo.coverageName + "的保额非法";
+                        checkCoverageListResult.coverageList = null;
+                        break;
+                    }
+                } else {
+                    checkCoverageListResult.result = false;
+                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字";
+                    checkCoverageListResult.coverageList = null;
+                    break;
+                }
+
+                insuranceInfoDetail.flag = insuranceInfo.day + "," + insuranceInfo.amount;
+            }
+
+            // 玻璃险破碎险F，校验是否国产、进口
+            if (StringKit.equals(insuranceInfoDetail.coverageCode, "F") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
+                boolean flag = false;
+                for (String s : insuranceInfo.sourceOption) {
+                    flag = StringKit.equals(s, insuranceInfo.source);
+                    if (flag) {
+                        break;
+                    }
+                }
+
+                if (flag) {
+                    insuranceInfoDetail.flag = checkCoverageListResult.getFType(insuranceInfo.source);
+                } else {
+                    checkCoverageListResult.result = false;
+                    checkCoverageListResult.message = insuranceInfo.coverageName + "的保额必须是数字";
+                    checkCoverageListResult.coverageList = null;
+                    break;
+                }
+            }
+
+            checkCoverageListResult.coverageList.add(insuranceInfoDetail);
+        }
+
+        checkCoverageListResult.result = true;
+        checkCoverageListResult.message = "";
+
+        return checkCoverageListResult;
+    }
+
+    // 维修期间补偿险，最小投保天数
+    private static final int Z2_MIN_DAY = 1;
+    // 维修期间补偿险，最小大投保天数
+    private static final int Z2_MAX_DAY = 90;
+    // 维修期间补偿险，最低保额
+    private static final double Z2_MIN_AMOUNT = 50;
+    // 维修期间补偿险，最高保额
+    private static final double Z2_MAX_AMOUNT = 500;
+
+    private static class CheckCoverageListResult {
+
+        // 是否有效
+        public boolean result;
+
+        // 错误信息
+        String message;
+
+        // 校验正常后的实际提交险别列表
+        List<ExtendCarInsurancePolicy.InsuranceInfoDetail> coverageList;
+
+        // 获取玻璃险的对应type，只有确定玻璃险提交数据正确才有意义
+        String getFType(String text) {
+            switch (text) {
+                case "国产":
+                    return "1";
+                case "进口":
+                    return "2";
+                default:
+                    return "";
+            }
+        }
+    }
 
     /**
      * 格式化时间戳用
