@@ -15,7 +15,7 @@
     </insert>
 
     <update id="updateInsurancePolicyProPolicyNoByWarrantyId" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
-        update com_agents set
+        update cust_warranty set
         `pro_policy_no`=#{pro_policy_no},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>

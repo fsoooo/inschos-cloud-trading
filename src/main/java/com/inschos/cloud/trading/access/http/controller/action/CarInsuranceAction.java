@@ -1494,7 +1494,7 @@ public class CarInsuranceAction extends BaseAction {
                 if (response.data != null) {
                     if (!StringKit.isEmpty(response.data.biProposalNo) || !StringKit.isEmpty(response.data.ciProposalNo)) {
                         UpdateInsurancePolicyProPolicyNoForCarInsurance insurance = new UpdateInsurancePolicyProPolicyNoForCarInsurance();
-                        insurance.bizId = result.data.bizID;
+                        insurance.bizId = request.bizID;
                         insurance.biProposalNo = result.data.biProposalNo;
                         insurance.ciProposalNo = result.data.ciProposalNo;
                         update = insurancePolicyDao.updateInsurancePolicyProPolicyNoForCarInsurance(insurance);
