@@ -3,27 +3,27 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.InsuranceParticipantMapper">
 
     <sql id="Base_Column_List">
-      `id`,`private_code`,`type`,`relation_name`,`name`,`car_code`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`out_order_code`,`start_time`,`end_time`
+        `id`,`warranty_uuid`,`type`,`relation_name`,`out_order_no`,`name`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`age`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`,`created_at`,`updated_at`
     </sql>
 
     <insert id="addInsuranceParticipant" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel" useGeneratedKeys="true"
             keyProperty="id">
-        insert into cust_warranty_policy
-        <include refid="Base_Column_List" />
+        insert into cust_warranty_person
+        (`id`,`warranty_uuid`,`type`,`relation_name`,`out_order_no`,`name`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`age`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`,`created_at`,`updated_at`)
         values
-        (#{id},#{private_code},#{type},#{relation_name},#{name},#{car_code},#{card_type},#{card_code},#{phone},#{occupation},#{birthday},#{sex},#{email},#{nationality},#{annual_income},#{height},#{weight},#{area},#{address},#{start_time},#{end_time})
+        (#{id},#{warranty_uuid},#{type},#{relation_name},#{out_order_no},#{name},#{card_type},#{card_code},#{phone},#{occupation},#{birthday},#{sex},#{age},#{email},#{nationality},#{annual_income},#{height},#{weight},#{area},#{address},#{start_time},#{end_time},#{created_at},#{updated_at})
     </insert>
 
     <select id="findInsuranceParticipantByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         <include refid="Base_Column_List" />
-        from cust_warranty_policy where private_code=#{_parameter} AND state = 1
+        from cust_warranty_person where warranty_uuid=#{_parameter} AND state = 1
     </select>
 
     <select id="findInsuranceParticipantInsuredByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         <include refid="Base_Column_List" />
-        from cust_warranty_policy where private_code=#{_parameter} AND `type`=2 AND state=1
+        from cust_warranty_person where warranty_uuid=#{_parameter} AND `type`=2 AND state=1
     </select>
 
 </mapper>

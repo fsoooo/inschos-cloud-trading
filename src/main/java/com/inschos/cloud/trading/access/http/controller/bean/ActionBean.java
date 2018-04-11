@@ -23,6 +23,9 @@ public class ActionBean {
 
     public int userId = 1;
 
+    public String accountUuid = "2";
+    public String buyerAuuid = "1";
+
     // 1-个人，2-企业客户，3-业管，4-代理
     public int userType;
 

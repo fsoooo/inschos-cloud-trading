@@ -13,6 +13,26 @@ public class CarInfoModel {
     public String id;
 
     /**
+     * 流水号
+     */
+    public String biz_id;
+
+    /**
+     * 第三方业务号
+     */
+    public String thp_biz_id;
+
+    /**
+     * 车险类型，1-强险，2-商业险
+     */
+    public String insurance_type;
+
+    /**
+     * 内部保单唯一标识
+     */
+    public String warranty_uuid;
+
+    /**
      * 车牌号
      */
     public String car_code;
@@ -53,59 +73,19 @@ public class CarInfoModel {
     public String vehicle_fgw_name;
 
     /**
-     * 年份款式
-     */
-    public String parent_veh_name;
-
-    /**
      * 品牌型号编码
      */
     public String brand_code;
 
     /**
-     * 品牌型号名称
+     * 投保时是否未上牌（0:否 1:是）
      */
-    public String brand_name;
-
-    /**
-     * 排量
-     */
-    public String engine_desc;
-
-    /**
-     * 新车购置价
-     */
-    public String new_car_price;
-
-    /**
-     * 含税价格
-     */
-    public String purchase_price_tax;
-
-    /**
-     * 进口标识（0:国产，1:合资，2:进口）
-     */
-    public String import_flag;
-
-    /**
-     * 座位数
-     */
-    public String seat;
-
-    /**
-     * 款型名称
-     */
-    public String standard_name;
+    public String is_not_car_code;
 
     /**
      * 是否过户车（0:否 1:是）
      */
     public String is_trans;
-
-    /**
-     * 备注
-     */
-    public String remark;
 
     /**
      * 创建时间
@@ -116,6 +96,5 @@ public class CarInfoModel {
      * 结束时间
      */
     public String updated_at;
-
 
 }

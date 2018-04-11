@@ -283,13 +283,13 @@ public class CarInsurance {
         public List<ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail> insurancePolicyPremiumDetails;
     }
 
-    public static class GetPremiumFactorRequest extends BaseRequest {
-        public String bizID;
-    }
-
-    public static class GetPremiumFactorResponse extends BaseResponse {
-        public ExtendCarInsurancePolicy.PremiumFactor data;
-    }
+//    public static class GetPremiumFactorRequest extends BaseRequest {
+//        public String bizID;
+//    }
+//
+//    public static class GetPremiumFactorResponse extends BaseResponse {
+//        public ExtendCarInsurancePolicy.PremiumFactor data;
+//    }
 
 
     public static class ApplyUnderwritingRequest extends BaseRequest {
@@ -313,8 +313,8 @@ public class CarInsurance {
         public String addresseeProvince;
         public String ciInsuredPremium;
         public String biInsuredPremium;
-        public String ciStartTime;
-        public String biStartTime;
+        public String ciBeginDateValue;
+        public String biBeginDateValue;
 
         // 非必传，支付成功后跳转地址
         public String applicantUrl;

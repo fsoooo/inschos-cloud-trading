@@ -3,16 +3,22 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper">
 
     <sql id="Base_Column_List">
-        '`id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`company_id`,`user_id`,`user_type`,`agent_id`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`created_at`,`updated_at`,`state`'
+        `id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`account_uuid`,`buyer_auuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`created_at`,`updated_at`,`state`
     </sql>
 
     <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" useGeneratedKeys="true"
             keyProperty="id">
         insert into cust_warranty
-        <include refid="Base_Column_List" />
+        (`id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`account_uuid`,`buyer_auuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`created_at`,`updated_at`,`state`)
         values
-        (#{id},#{warranty_uuid},#{pro_policy_no},#{warranty_code},#{company_id},#{user_id},#{user_type},#{agent_id},#{ditch_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{ins_company_id},#{count},#{pay_time},#{pay_way},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{check_status},#{pay_status},#{warranty_status},#{created_at},#{updated_at},#{state})
+        (#{id},#{warranty_uuid},#{pro_policy_no},#{warranty_code},#{account_uuid},#{buyer_auuid},#{agent_auuid},#{ditch_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{ins_company_id},#{count},#{pay_time},#{pay_way},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{check_status},#{pay_status},#{warranty_status},#{created_at},#{updated_at},#{state})
     </insert>
+
+    <update id="updateInsurancePolicyProPolicyNoByWarrantyId" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        update com_agents set
+        `pro_policy_no`=#{pro_policy_no},`updated_at`=#{updated_at}
+        where `warranty_uuid`=#{warranty_uuid}
+    </update>
 
     <select id="findInsurancePolicyDetailByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
@@ -22,7 +28,7 @@
 
     <select id="findInsurancePolicyPrivateCodeByUnionOrderCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
-        `private_code`
+        `warranty_uuid`
         from cust_warranty where pro_policy_no=#{_parameter} AND state = 1
     </select>
 

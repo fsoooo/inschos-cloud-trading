@@ -21,12 +21,12 @@ public class InsuranceParticipantModel {
     /**
      * 内部保单唯一标识
      */
-    public String private_code;
+    public String warranty_uuid;
 
     /**
      * 人员类型: 1投保人 2被保人 3受益人
      */
-    public int type;
+    public String type;
 
     /**
      * 被保人 投保人的（关系）
@@ -34,14 +34,14 @@ public class InsuranceParticipantModel {
     public String relation_name;
 
     /**
-     * 被保人姓名
+     * 被保人单号
      */
-    public String name;
+    public String out_order_no;
 
     /**
-     * 被保车牌号
+     * 姓名
      */
-    public String car_code;
+    public String name;
 
     /**
      * 证件类型（1为身份证，2为护照，3为军官证）
@@ -72,6 +72,11 @@ public class InsuranceParticipantModel {
      * 性别 1 男 2 女
      */
     public String sex;
+
+    /**
+     * 年龄
+     */
+    public String age;
 
     /**
      * 邮箱
@@ -109,11 +114,6 @@ public class InsuranceParticipantModel {
     public String address;
 
     /**
-     * 被保险人单号
-     */
-    public String out_order_code;
-
-    /**
      * 开始时间
      */
     public String start_time;
@@ -122,6 +122,17 @@ public class InsuranceParticipantModel {
      * 结束时间
      */
     public String end_time;
+
+    /**
+     * 创建时间
+     */
+    public String created_at;
+
+    /**
+     * 修改时间
+     */
+    public String updated_at;
+
 
     public boolean setCardType(int cardType) {
         if (cardType != CardCodeKit.CARD_TYPE_ID_CARD && cardType != CardCodeKit.CARD_TYPE_PASSPORT && cardType != CardCodeKit.CARD_TYPE_MILITARY_CERTIFICATE) {

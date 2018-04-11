@@ -8,12 +8,18 @@ import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
+import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.extend.car.CarInsuranceHttpRequest;
 import com.inschos.cloud.trading.extend.car.CarInsuranceResponse;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 import com.inschos.cloud.trading.extend.car.SignatureTools;
+import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.cloud.trading.model.CarRecordModel;
+import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.model.fordao.InsurancePolicyAndParticipantForCarInsurance;
+import com.inschos.cloud.trading.model.fordao.UpdateInsurancePolicyProPolicyNoForCarInsurance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,8 +40,12 @@ public class CarInsuranceAction extends BaseAction {
 
     @Autowired
     private CarRecordDao carRecordDao;
+
     @Autowired
     private InsurancePolicyDao insurancePolicyDao;
+
+    @Autowired
+    private InsuranceParticipantDao insuranceParticipantDao;
 
     /**
      * 获取省级区域代码
@@ -365,7 +375,7 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String calculateDateByShowDate = getCalculateDateByShowDate(sdf, result.data.firstRegisterDate);
+                String calculateDateByShowDate = parseMillisecondByShowDate(sdf, result.data.firstRegisterDate);
 
                 if (calculateDateByShowDate == null) {
                     result.data.firstRegisterDate = "";
@@ -628,8 +638,8 @@ public class CarInsuranceAction extends BaseAction {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                response.data.biStartTimeValue = getCalculateDateByShowDate(sdf, result.data.biStartTime);
-                response.data.ciStartTimeValue = getCalculateDateByShowDate(sdf, result.data.ciStartTime);
+                response.data.biStartTimeValue = parseMillisecondByShowDate(sdf, result.data.biStartTime);
+                response.data.ciStartTimeValue = parseMillisecondByShowDate(sdf, result.data.ciStartTime);
                 str = json(BaseResponse.CODE_SUCCESS, "获取日期成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
@@ -727,39 +737,38 @@ public class CarInsuranceAction extends BaseAction {
 
         long time = System.currentTimeMillis();
 
-        // TODO: 2018/4/9 建表后
         // 将车辆信息存入我们自己的数据库
-//        CarReconeByResponseNo = carRecordDao.findOneByResponseNo(request.carInfo.responseNo);
-//
-//        CarRecordModel carRecordModel = new CarRecordModel();
-//        carRecordModel.car_code = request.carInfo.licenseNo;
-//        carRecordModel.name = request.personInfo.ownerName;
-//        carRecordModel.code = request.personInfo.ownerID;
-//        carRecordModel.phone = request.personInfo.ownerMobile;
-//        carRecordModel.frame_no = request.carInfo.frameNo;
-//        carRecordModel.engine_no = request.carInfo.engineNo;
-//        carRecordModel.vehicle_fgw_code = request.carInfo.vehicleFgwCode;
-//        carRecordModel.vehicle_fgw_name = request.carInfo.vehicleFgwName;
-//        carRecordModel.parent_veh_name = request.carInfo.parentVehName;
-//        carRecordModel.brand_code = request.carInfo.brandCode;
-//        carRecordModel.brand_name = request.carInfo.brandName;
-//        carRecordModel.engine_desc = request.carInfo.engineDesc;
-//        carRecordModel.new_car_price = request.carInfo.newCarPrice;
-//        carRecordModel.purchase_price_tax = request.carInfo.purchasePriceTax;
-//        carRecordModel.import_flag = request.carInfo.importFlag;
-//        carRecordModel.seat = request.carInfo.seat;
-//        carRecordModel.standard_name = request.carInfo.standardName;
-//        carRecordModel.is_trans = request.carInfo.isTrans;
-//        carRecordModel.remark = request.carInfo.remark;
-//        carRecordModel.response_no = request.carInfo.responseNo;
-//        carRecordModel.updated_at = String.valueOf(time);
-//
-//        if (oneByResponseNo == null) {
-//            carRecordModel.created_at = String.valueOf(time);
-//            carRecordDao.addCarRecord(carRecordModel);
-//        } else {
-//            carRecordDao.updateCarRecord(carRecordModel);
-//        }
+        CarRecordModel oneByResponseNo = carRecordDao.findOneByResponseNo(request.carInfo.responseNo);
+
+        CarRecordModel carRecordModel = new CarRecordModel();
+        carRecordModel.car_code = request.carInfo.licenseNo;
+        carRecordModel.name = request.personInfo.ownerName;
+        carRecordModel.code = request.personInfo.ownerID;
+        carRecordModel.phone = request.personInfo.ownerMobile;
+        carRecordModel.frame_no = request.carInfo.frameNo;
+        carRecordModel.engine_no = request.carInfo.engineNo;
+        carRecordModel.vehicle_fgw_code = request.carInfo.vehicleFgwCode;
+        carRecordModel.vehicle_fgw_name = request.carInfo.vehicleFgwName;
+        carRecordModel.parent_veh_name = request.carInfo.parentVehName;
+        carRecordModel.brand_code = request.carInfo.brandCode;
+        carRecordModel.brand_name = request.carInfo.brandName;
+        carRecordModel.engine_desc = request.carInfo.engineDesc;
+        carRecordModel.new_car_price = request.carInfo.newCarPrice;
+        carRecordModel.purchase_price_tax = request.carInfo.purchasePriceTax;
+        carRecordModel.import_flag = request.carInfo.importFlag;
+        carRecordModel.seat = request.carInfo.seat;
+        carRecordModel.standard_name = request.carInfo.standardName;
+        carRecordModel.is_trans = request.carInfo.isTrans;
+        carRecordModel.remark = request.carInfo.remark;
+        carRecordModel.response_no = request.carInfo.responseNo;
+        carRecordModel.updated_at = String.valueOf(time);
+
+        if (oneByResponseNo == null) {
+            carRecordModel.created_at = String.valueOf(time);
+            carRecordDao.addCarRecord(carRecordModel);
+        } else {
+            carRecordDao.updateCarRecord(carRecordModel);
+        }
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -989,7 +998,11 @@ public class CarInsuranceAction extends BaseAction {
 
                 BigDecimal ci = new BigDecimal("0.0");
                 BigDecimal bi = new BigDecimal("0.0");
+                SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd");
                 for (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail datum : result.data) {
+                    datum.biBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
+                    datum.ciBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.ciBeginDate);
+
                     for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : datum.coverageList) {
                         if (StringKit.isNumeric(insurancePolicyInfo.insuredPremium)) {
                             if (StringKit.equals(insurancePolicyInfo.coverageCode, "FORCEPREMIUM")) {
@@ -1027,7 +1040,8 @@ public class CarInsuranceAction extends BaseAction {
      * @return 响应json
      */
     public String applyUnderwriting(ActionBean actionBean) {
-        CarInsurance.ApplyUnderwritingRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ApplyUnderwritingRequest.class);
+//        CarInsurance.ApplyUnderwritingRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ApplyUnderwritingRequest.class);
+        CarInsurance.PremiumCalibrateAndApplyUnderwritingRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.PremiumCalibrateAndApplyUnderwritingRequest.class);
         CarInsurance.ApplyUnderwritingResponse response = new CarInsurance.ApplyUnderwritingResponse();
 
         if (request == null) {
@@ -1039,32 +1053,32 @@ public class CarInsuranceAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        if (request.isNeedVerificationCode() && StringKit.isEmpty(request.verificationCode)) {
+        if (request.applyUnderwriting.isNeedVerificationCode() && StringKit.isEmpty(request.applyUnderwriting.verificationCode)) {
             return json(BaseResponse.CODE_VERIFY_CODE, "缺少验证码", response);
         }
 
         ExtendCarInsurancePolicy.ApplyUnderwritingRequest applyUnderwritingRequest = new ExtendCarInsurancePolicy.ApplyUnderwritingRequest();
 
         // 非必传
-        applyUnderwritingRequest.payType = request.payType;
-        applyUnderwritingRequest.applicantUrl = request.applicantUrl;
+        applyUnderwritingRequest.payType = request.applyUnderwriting.payType;
+        applyUnderwritingRequest.applicantUrl = request.applyUnderwriting.applicantUrl;
 
-        applyUnderwritingRequest.refereeMobile = request.refereeMobile;
+        applyUnderwritingRequest.refereeMobile = request.applyUnderwriting.refereeMobile;
 
-        if (request.isNeedVerificationCode()) {
-            applyUnderwritingRequest.verificationCode = request.verificationCode;
+        if (request.applyUnderwriting.isNeedVerificationCode()) {
+            applyUnderwritingRequest.verificationCode = request.applyUnderwriting.verificationCode;
         }
 
-        applyUnderwritingRequest.channelCode = request.channelCode;
-        applyUnderwritingRequest.insurerCode = request.insurerCode;
-        applyUnderwritingRequest.bizID = request.bizID;
-        applyUnderwritingRequest.addresseeName = request.addresseeName;
-        applyUnderwritingRequest.addresseeMobile = request.addresseeMobile;
-        applyUnderwritingRequest.addresseeDetails = request.addresseeDetails;
-        applyUnderwritingRequest.policyEmail = request.policyEmail;
-        applyUnderwritingRequest.addresseeCounty = request.addresseeCounty;
-        applyUnderwritingRequest.addresseeCity = request.addresseeCity;
-        applyUnderwritingRequest.addresseeProvince = request.addresseeProvince;
+        applyUnderwritingRequest.channelCode = request.applyUnderwriting.channelCode;
+        applyUnderwritingRequest.insurerCode = request.applyUnderwriting.insurerCode;
+        applyUnderwritingRequest.bizID = request.applyUnderwriting.bizID;
+        applyUnderwritingRequest.addresseeName = request.applyUnderwriting.addresseeName;
+        applyUnderwritingRequest.addresseeMobile = request.applyUnderwriting.addresseeMobile;
+        applyUnderwritingRequest.addresseeDetails = request.applyUnderwriting.addresseeDetails;
+        applyUnderwritingRequest.policyEmail = request.applyUnderwriting.policyEmail;
+        applyUnderwritingRequest.addresseeCounty = request.applyUnderwriting.addresseeCounty;
+        applyUnderwritingRequest.addresseeCity = request.applyUnderwriting.addresseeCity;
+        applyUnderwritingRequest.addresseeProvince = request.applyUnderwriting.addresseeProvince;
 
         ExtendCarInsurancePolicy.ApplyUnderwritingResponse result = new CarInsuranceHttpRequest<>(apply_underwriting, applyUnderwritingRequest, ExtendCarInsurancePolicy.ApplyUnderwritingResponse.class).post();
 
@@ -1077,142 +1091,246 @@ public class CarInsuranceAction extends BaseAction {
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
-                response.data.bjCodeFlag = request.bjCodeFlag;
-                str = json(BaseResponse.CODE_SUCCESS, "申请核保成功", response);
+                response.data.bjCodeFlag = request.applyUnderwriting.bjCodeFlag;
 
-                // TODO: 2018/4/9 存保单
-                // TODO: 2018/4/9 存保单车辆信息
-                // TODO: 2018/4/9 存保单人员信息
-                // FORCEPREMIUM 强险
-//                InsurancePolicyModel ciProposal = new InsurancePolicyModel();
-//                ciProposal.warranty_uuid = getThpBizID();
-//                ciProposal.pro_policy_no = result.data.ciProposalNo;
-//                ciProposal.premium = request.ciInsuredPremium;
-//                ciProposal.start_time = result.data.;
-//                start_time
-
-                // 商业险
-                InsurancePolicyModel biProposal = new InsurancePolicyModel();
-//                biProposal.warranty_uuid = getThpBizID();
-//                biProposal.pro_policy_no = result.data.biProposalNo;
-//                biProposal.premium = request.biInsuredPremium;
-
-
-                // public String warranty_code;
-
-//                public String company_id;
-
-//                public String user_id;
-
-//                public String user_type;
-
-//                public String agent_id;
-
-//                public String ditch_id;
-
-//                public String plan_id;
-
-//                public String product_id;
-
-//                public String start_time;
-
-//                /**
-//                 * 结束时间
-//                 */
-//                public String end_time;
-//
-//                /**
-//                 * 保险公司ID
-//                 */
-//                public String ins_company_id;
-//
-//                /**
-//                 * 购买份数
-//                 */
-//                public String count;
-//
-//                /**
-//                 * 支付时间
-//                 */
-//                public String pay_time;
-//
-//                /**
-//                 * 支付方式 1 银联 2 支付宝 3 微信 4现金
-//                 */
-//                public String pay_way;
-//
-//                /**
-//                 * 分期方式
-//                 */
-//                public String by_stages_way;
-//
-//                /**
-//                 * 佣金 0表示未结算，1表示已结算
-//                 */
-//                public String is_settlement;
-//
-//                /**
-//                 * 电子保单下载地址
-//                 */
-//                public String warranty_url;
-//
-//                /**
-//                 * 保单来源 1 自购 2线上成交 3线下成交 4导入
-//                 */
-//                public String warranty_from;
-//
-//                /**
-//                 * 保单类型1表示个人保单，2表示团险保单，3表示车险保单
-//                 */
-//                public String type;
-//
-//                /**
-//                 * 核保状态（01核保中 2核保失败，3核保成功
-//                 */
-//                public String check_status;
-//
-//                /**
-//                 * 支付状态 0，1支付中2支付失败3支付成功，
-//                 */
-//                public String pay_status;
-//
-//                /**
-//                 * 保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保
-//                 */
-//                public String warranty_status;
-//
-//                /**
-//                 * 创建时间
-//                 */
-//                public String created_at;
-//
-//                /**
-//                 * 结束时间
-//                 */
-//                public String updated_at;
-//
-//                /**
-//                 * 删除标识 0删除 1可用
-//                 */
-//                public String state;
-
-
-//                insurancePolicyDao.addInsurancePolicy();
-
+                String applyState = "";
                 if (StringKit.isInteger(result.data.synchFlag)) {
                     int synchFlag = Integer.valueOf(result.data.synchFlag);
                     if (synchFlag == 0) {
-
+                        applyState = "3";
                     } else if (synchFlag == 1) {
-
+                        applyState = "1";
+                    } else {
+                        applyState = "synchFlag = " + synchFlag;
                     }
                 }
+                InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance = new InsurancePolicyAndParticipantForCarInsurance();
+                String time = String.valueOf(System.currentTimeMillis());
 
-                // TODO: 2018/4/3 记得给自己的系统存保单
+                // TODO: 2018/4/11 记得获取这几个信息
                 // TODO: 2018/4/8 利用保险公司简称代码，获取产品id与保险公司id
-                // TODO: 2018/4/8 代理人ID，渠道ID为0则为用户自主购买，计划书ID为0则为用户自主购买，产品ID
+                // 代理人ID为null则为用户自主购买
+                // agent_auuid;
+                // 渠道ID为0则为用户自主购买
+                // ditch_id;
+                // 计划书ID为0则为用户自主购买
+                // plan_id;
+                // 产品ID
+                // product_id;
+                // 保险公司
+                // ins_company_id;
+                // 佣金 0表示未结算，1表示已结算
+                // is_settlement;
+
+                // FORCEPREMIUM 强险
+                InsurancePolicyModel ciProposal = new InsurancePolicyModel();
+                ciProposal.warranty_uuid = getThpBizID();
+                ciProposal.pro_policy_no = result.data.ciProposalNo;
+                ciProposal.premium = request.applyUnderwriting.ciInsuredPremium;
+                ciProposal.start_time = request.applyUnderwriting.ciBeginDateValue;
+
+                String ciEndDateValue = nextYearMillisecond(request.applyUnderwriting.ciBeginDateValue);
+                if (StringKit.isEmpty(ciEndDateValue)) {
+                    ciEndDateValue = "null";
+                }
+
+                ciProposal.end_time = ciEndDateValue;
+                ciProposal.account_uuid = actionBean.accountUuid;
+                ciProposal.buyer_auuid = actionBean.buyerAuuid;
+                ciProposal.count = "1";
+
+                if (actionBean.userType == 4) {
+                    ciProposal.warranty_from = "2";
+                } else {
+                    ciProposal.warranty_from = "1";
+                }
+
+                ciProposal.type = "3";
+                ciProposal.check_status = applyState;
+                ciProposal.pay_status = "0";
+                ciProposal.warranty_status = "2";
+                ciProposal.state = "1";
+                ciProposal.created_at = time;
+                ciProposal.updated_at = time;
+
+                // TODO: 2018/4/11 以下数据测试用
+                // agent_auuid;
+                // ditch_id;
+                // plan_id;
+                ciProposal.product_id = "0";
+                ciProposal.ins_company_id = "0";
+                ciProposal.is_settlement = "0";
+
+                insurancePolicyAndParticipantForCarInsurance.ciProposal = ciProposal;
+
+                // 商业险
+                InsurancePolicyModel biProposal = new InsurancePolicyModel();
+                biProposal.warranty_uuid = getThpBizID();
+                biProposal.pro_policy_no = result.data.biProposalNo;
+                biProposal.premium = request.applyUnderwriting.biInsuredPremium;
+                biProposal.start_time = request.applyUnderwriting.biBeginDateValue;
+
+                String biEndDateValue = nextYearMillisecond(request.applyUnderwriting.biBeginDateValue);
+                if (StringKit.isEmpty(biEndDateValue)) {
+                    biEndDateValue = "null";
+                }
+
+                biProposal.end_time = biEndDateValue;
+                biProposal.account_uuid = actionBean.accountUuid;
+                biProposal.buyer_auuid = actionBean.buyerAuuid;
+                biProposal.count = "1";
+
+                if (actionBean.userType == 4) {
+                    biProposal.warranty_from = "2";
+                } else {
+                    biProposal.warranty_from = "1";
+                }
+
+                biProposal.type = "3";
+                biProposal.check_status = applyState;
+                biProposal.pay_status = "0";
+                biProposal.warranty_status = "2";
+                biProposal.state = "1";
+                biProposal.created_at = time;
+                biProposal.updated_at = time;
+
+                // TODO: 2018/4/11 以下数据测试用
+                // agent_auuid;
+                // ditch_id;
+                // plan_id;
+                biProposal.product_id = "0";
+                biProposal.ins_company_id = "0";
+                biProposal.is_settlement = "0";
+
+                insurancePolicyAndParticipantForCarInsurance.biProposal = biProposal;
+
+                // 存保单车辆信息
+                CarInfoModel biCarInfoModel = new CarInfoModel();
+                biCarInfoModel.warranty_uuid = biProposal.warranty_uuid;
+                biCarInfoModel.biz_id = response.data.bizID;
+                biCarInfoModel.thp_biz_id = response.data.thpBizID;
+                biCarInfoModel.insurance_type = "2";
+                biCarInfoModel.car_code = request.premiumCalibrate.carInfo.licenseNo;
+                biCarInfoModel.name = request.premiumCalibrate.personInfo.ownerName;
+                biCarInfoModel.code = request.premiumCalibrate.personInfo.ownerID;
+                biCarInfoModel.phone = request.premiumCalibrate.personInfo.ownerMobile;
+                biCarInfoModel.frame_no = request.premiumCalibrate.carInfo.frameNo;
+                biCarInfoModel.engine_no = request.premiumCalibrate.carInfo.engineNo;
+                biCarInfoModel.vehicle_fgw_code = request.premiumCalibrate.carInfo.vehicleFgwCode;
+                biCarInfoModel.vehicle_fgw_name = request.premiumCalibrate.carInfo.vehicleFgwName;
+                biCarInfoModel.brand_code = request.premiumCalibrate.carInfo.brandCode;
+                biCarInfoModel.is_not_car_code = StringKit.isEmpty(biCarInfoModel.car_code) ? "1" : "0";
+                biCarInfoModel.is_trans = request.premiumCalibrate.carInfo.isTrans;
+                biCarInfoModel.created_at = time;
+                biCarInfoModel.updated_at = time;
+                insurancePolicyAndParticipantForCarInsurance.biCarInfoModel = biCarInfoModel;
+
+                CarInfoModel ciCarInfoModel = new CarInfoModel();
+                ciCarInfoModel.warranty_uuid = ciProposal.warranty_uuid;
+                ciCarInfoModel.biz_id = response.data.bizID;
+                ciCarInfoModel.thp_biz_id = response.data.thpBizID;
+                ciCarInfoModel.insurance_type = "1";
+                ciCarInfoModel.car_code = request.premiumCalibrate.carInfo.licenseNo;
+                ciCarInfoModel.name = request.premiumCalibrate.personInfo.ownerName;
+                ciCarInfoModel.code = request.premiumCalibrate.personInfo.ownerID;
+                ciCarInfoModel.phone = request.premiumCalibrate.personInfo.ownerMobile;
+                ciCarInfoModel.frame_no = request.premiumCalibrate.carInfo.frameNo;
+                ciCarInfoModel.engine_no = request.premiumCalibrate.carInfo.engineNo;
+                ciCarInfoModel.vehicle_fgw_code = request.premiumCalibrate.carInfo.vehicleFgwCode;
+                ciCarInfoModel.vehicle_fgw_name = request.premiumCalibrate.carInfo.vehicleFgwName;
+                ciCarInfoModel.brand_code = request.premiumCalibrate.carInfo.brandCode;
+                ciCarInfoModel.is_not_car_code = StringKit.isEmpty(biCarInfoModel.car_code) ? "1" : "0";
+                ciCarInfoModel.is_trans = request.premiumCalibrate.carInfo.isTrans;
+                ciCarInfoModel.created_at = time;
+                ciCarInfoModel.updated_at = time;
+                insurancePolicyAndParticipantForCarInsurance.ciCarInfoModel = ciCarInfoModel;
+
+                // 存保单人员信息
+                // 被保险人
+                String insuredAge = getAge(request.premiumCalibrate.personInfo.applicantBirthday);
+
+                InsuranceParticipantModel ciInsured = new InsuranceParticipantModel();
+                ciInsured.warranty_uuid = ciProposal.warranty_uuid;
+                ciInsured.type = "2";
+                ciInsured.relation_name = "1";
+                ciInsured.name = request.premiumCalibrate.personInfo.applicantName;
+                ciInsured.card_type = 1;
+                ciInsured.card_code = request.premiumCalibrate.personInfo.applicantID;
+                ciInsured.phone = request.premiumCalibrate.personInfo.applicantMobile;
+                ciInsured.birthday = request.premiumCalibrate.personInfo.applicantBirthday;
+                ciInsured.sex = request.premiumCalibrate.personInfo.applicantSex;
+                ciInsured.age = insuredAge;
+                ciInsured.start_time = request.applyUnderwriting.ciBeginDateValue;
+                ciInsured.end_time = ciEndDateValue;
+                ciInsured.created_at = time;
+                ciInsured.updated_at = time;
+                insurancePolicyAndParticipantForCarInsurance.ciInsured = ciInsured;
+
+                InsuranceParticipantModel biInsured = new InsuranceParticipantModel();
+                biInsured.warranty_uuid = biProposal.warranty_uuid;
+                biInsured.type = "2";
+                biInsured.relation_name = "1";
+                biInsured.name = request.premiumCalibrate.personInfo.applicantName;
+                biInsured.card_type = 1;
+                biInsured.card_code = request.premiumCalibrate.personInfo.applicantID;
+                biInsured.phone = request.premiumCalibrate.personInfo.applicantMobile;
+                biInsured.birthday = request.premiumCalibrate.personInfo.applicantBirthday;
+                biInsured.sex = request.premiumCalibrate.personInfo.applicantSex;
+                biInsured.age = insuredAge;
+                biInsured.start_time = request.applyUnderwriting.biBeginDateValue;
+                biInsured.end_time = biEndDateValue;
+                biInsured.created_at = time;
+                biInsured.updated_at = time;
+                insurancePolicyAndParticipantForCarInsurance.biInsured = biInsured;
+
+
+                // 投保人
+                String policyholderAge = getAge(request.premiumCalibrate.personInfo.insuredBirthday);
+
+                InsuranceParticipantModel ciPolicyholder = new InsuranceParticipantModel();
+                ciPolicyholder.warranty_uuid = ciProposal.warranty_uuid;
+                ciPolicyholder.type = "1";
+                ciPolicyholder.relation_name = "1";
+                ciPolicyholder.name = request.premiumCalibrate.personInfo.insuredName;
+                ciPolicyholder.card_type = 1;
+                ciPolicyholder.card_code = request.premiumCalibrate.personInfo.insuredID;
+                ciPolicyholder.phone = request.premiumCalibrate.personInfo.insuredMobile;
+                ciPolicyholder.birthday = request.premiumCalibrate.personInfo.insuredBirthday;
+                ciPolicyholder.sex = request.premiumCalibrate.personInfo.insuredSex;
+                ciPolicyholder.age = policyholderAge;
+                ciPolicyholder.start_time = request.applyUnderwriting.ciBeginDateValue;
+                ciPolicyholder.end_time = ciEndDateValue;
+                ciPolicyholder.created_at = time;
+                ciPolicyholder.updated_at = time;
+                insurancePolicyAndParticipantForCarInsurance.ciPolicyholder = ciPolicyholder;
+
+                InsuranceParticipantModel biPolicyholder = new InsuranceParticipantModel();
+                biPolicyholder.warranty_uuid = biProposal.warranty_uuid;
+                biPolicyholder.type = "1";
+                biPolicyholder.relation_name = "1";
+                biPolicyholder.name = request.premiumCalibrate.personInfo.insuredName;
+                biPolicyholder.card_type = 1;
+                biPolicyholder.card_code = request.premiumCalibrate.personInfo.insuredID;
+                biPolicyholder.phone = request.premiumCalibrate.personInfo.insuredMobile;
+                biPolicyholder.birthday = request.premiumCalibrate.personInfo.insuredBirthday;
+                biPolicyholder.sex = request.premiumCalibrate.personInfo.insuredSex;
+                biPolicyholder.age = policyholderAge;
+                biPolicyholder.start_time = request.applyUnderwriting.biBeginDateValue;
+                biPolicyholder.end_time = biEndDateValue;
+                biPolicyholder.created_at = time;
+                biPolicyholder.updated_at = time;
+                insurancePolicyAndParticipantForCarInsurance.biPolicyholder = biPolicyholder;
+
+                int i = insurancePolicyDao.addInsurancePolicyAndParticipantForCarInsurance(insurancePolicyAndParticipantForCarInsurance);
+
+                if (i <= 0) {
+                    str = json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
+                } else {
+                    str = json(BaseResponse.CODE_SUCCESS, "申请核保成功", response);
+                }
 
             } else {
+                // 核保失败
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
             }
         } else {
@@ -1259,6 +1377,8 @@ public class CarInsuranceAction extends BaseAction {
                     request.applyUnderwriting.bizID = insurancePolicyPremiumDetail.bizID;
                     request.applyUnderwriting.bjCodeFlag = insurancePolicyPremiumDetail.bjCodeFlag;
                     request.applyUnderwriting.channelCode = insurancePolicyPremiumDetail.channelCode;
+                    request.applyUnderwriting.biBeginDateValue = insurancePolicyPremiumDetail.biBeginDateValue;
+                    request.applyUnderwriting.ciBeginDateValue = insurancePolicyPremiumDetail.ciBeginDateValue;
                     flag = true;
                     break;
                 }
@@ -1266,7 +1386,7 @@ public class CarInsuranceAction extends BaseAction {
 
             if (flag) {
                 response.data = new CarInsurance.PremiumCalibrateAndApplyUnderwriting();
-                actionBean.body = JsonKit.bean2Json(request.applyUnderwriting);
+                actionBean.body = JsonKit.bean2Json(request);
                 CarInsurance.ApplyUnderwritingResponse applyUnderwritingResponse = JsonKit.json2Bean(applyUnderwriting(actionBean), CarInsurance.ApplyUnderwritingResponse.class);
 
                 if (applyUnderwritingResponse != null) {
@@ -1370,7 +1490,23 @@ public class CarInsuranceAction extends BaseAction {
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
-                str = json(BaseResponse.CODE_SUCCESS, "验证成功", response);
+                int update = 1;
+                if (response.data != null) {
+                    if (!StringKit.isEmpty(response.data.biProposalNo) || !StringKit.isEmpty(response.data.ciProposalNo)) {
+                        UpdateInsurancePolicyProPolicyNoForCarInsurance insurance = new UpdateInsurancePolicyProPolicyNoForCarInsurance();
+                        insurance.bizId = result.data.bizID;
+                        insurance.biProposalNo = result.data.biProposalNo;
+                        insurance.ciProposalNo = result.data.ciProposalNo;
+                        update = insurancePolicyDao.updateInsurancePolicyProPolicyNoForCarInsurance(insurance);
+                    }
+                }
+
+                if (update > 0) {
+                    str = json(BaseResponse.CODE_SUCCESS, "验证成功", response);
+                } else {
+                    str = json(BaseResponse.CODE_FAILURE, "验证失败", response);
+                }
+
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
             }
@@ -1617,7 +1753,7 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String calculateDateByShowDate = getCalculateDateByShowDate(sdf, result.data.firstRegisterDate);
+                String calculateDateByShowDate = parseMillisecondByShowDate(sdf, result.data.firstRegisterDate);
 
                 if (calculateDateByShowDate == null) {
                     result.data.firstRegisterDate = "";
@@ -1753,6 +1889,7 @@ public class CarInsuranceAction extends BaseAction {
                 return "请输入车架号";
             }
         }
+
         return null;
     }
 
@@ -1946,7 +2083,7 @@ public class CarInsuranceAction extends BaseAction {
      * @param showDate 时间
      * @return showDate指定sdf的格式
      */
-    private String getCalculateDateByShowDate(SimpleDateFormat sdf, String showDate) {
+    private String parseMillisecondByShowDate(SimpleDateFormat sdf, String showDate) {
         if (!StringKit.isEmpty(showDate)) {
             try {
                 Date parse = sdf.parse(showDate);
@@ -1958,6 +2095,46 @@ public class CarInsuranceAction extends BaseAction {
         } else {
             return "";
         }
+    }
+
+    /**
+     * 获取明年当天的00：00：00的时间戳
+     *
+     * @param time 时间戳
+     * @return 明年当天的00：00：00的时间戳
+     */
+    private String nextYearMillisecond(String time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String format = sdf.format(Long.valueOf(time));
+        String[] split = format.split("-");
+        if (split.length == 3) {
+            Integer integer = Integer.valueOf(split[0]);
+            integer += 1;
+            String date = integer + "-" + split[1] + "-" + split[2];
+            return parseMillisecondByShowDate(sdf, date);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 获取年龄
+     *
+     * @param birth 生日的时间戳
+     * @return 年龄
+     */
+    private String getAge(String birth) {
+        Date current = new Date(System.currentTimeMillis());
+        Date birthday = new Date(Long.valueOf(birth));
+        int year = current.getYear() - birthday.getYear();
+        if (current.getMonth() < birthday.getMonth()) {
+            year -= 1;
+        } else if (current.getMonth() == birthday.getMonth()) {
+            if (current.getDay() < birthday.getDay()) {
+                year -= 1;
+            }
+        }
+        return String.valueOf(year);
     }
 
     /**
@@ -1993,5 +2170,6 @@ public class CarInsuranceAction extends BaseAction {
         carInsuranceResponse.msgCode = "INSCHOS-1";
         carInsuranceResponse.verify = false;
     }
+
 
 }

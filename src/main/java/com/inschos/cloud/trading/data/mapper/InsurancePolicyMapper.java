@@ -13,6 +13,8 @@ public interface InsurancePolicyMapper {
 
     int addInsurancePolicy(InsurancePolicyModel insurancePolicyModel);
 
+    int updateInsurancePolicyProPolicyNoByWarrantyId (InsurancePolicyModel insurancePolicyModel);
+
     InsurancePolicyModel findInsurancePolicyDetailByPrivateCode(String privateCode);
 
     List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);

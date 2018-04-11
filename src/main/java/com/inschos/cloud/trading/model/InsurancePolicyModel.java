@@ -30,24 +30,19 @@ public class InsurancePolicyModel {
     public String warranty_code;
 
     /**
-     * 公司ID
+     * 归属账号uuid
      */
-    public String company_id;
+    public String account_uuid;
 
     /**
-     * 客户ID
+     * 买家uuid
      */
-    public String user_id;
+    public String buyer_auuid;
 
     /**
-     * 客户类型 1个人 2企业
+     * 代理人ID为null则为用户自主购买
      */
-    public String user_type;
-
-    /**
-     * 代理人ID为0则为用户自主购买
-     */
-    public String agent_id;
+    public String agent_auuid;
 
     /**
      * 渠道ID为0则为用户自主购买

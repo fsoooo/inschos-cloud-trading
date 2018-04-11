@@ -237,6 +237,12 @@ public class ExtendCarInsurancePolicy {
         public String ownerID;
         @CheckParams
         public String ownerMobile;
+        @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
+        public String ownerIdType;
+        @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
+        public String ownerBirthday;
+        @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
+        public String ownerSex;
     }
 
     public static class InsuranceInfoDetail extends InsuranceInfo {
@@ -291,12 +297,24 @@ public class ExtendCarInsurancePolicy {
         public String insuredName;
         @CheckParams
         public String insuredID;
+        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        public String insuredIdType;
+        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        public String insuredBirthday;
+        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        public String insuredSex;
         @CheckParams
         public String insuredMobile;
         @CheckParams
         public String applicantName;
         @CheckParams
         public String applicantID;
+        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        public String applicantIdType;
+        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        public String applicantBirthday;
+        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        public String applicantSex;
         @CheckParams
         public String applicantMobile;
 
@@ -322,8 +340,10 @@ public class ExtendCarInsurancePolicy {
         public String insurerCode;
         public String channelCode;
         public String biBeginDate;
+        public String biBeginDateValue;
         public String biPremium;
         public String ciBeginDate;
+        public String ciBeginDateValue;
         public String ciPremium;
         public String carshipTax;
         public String integral;
@@ -361,31 +381,31 @@ public class ExtendCarInsurancePolicy {
         public String standardName;
     }
 
-    public static class GetPremiumFactorRequest extends CarInsuranceRequest {
-        public String bizID;
-    }
-
-    public static class GetPremiumFactorResponse extends CarInsuranceResponse {
-        public PremiumFactor data;
-    }
-
-    public static class PremiumFactor {
-        public String centile;
-        public String ecompensationRate;
-        public String totalEcompensationRate;
-        public String ciApperNo;
-        public String biApperNo;
-        public DiscountInfo discountInfo;
-        public List<InsuranceClaims> lossInfoList;
-    }
-
-    public static class InsuranceClaims {
-        public String insurerCode;
-        public String payAmount;
-        public String endCaseTime;
-        public String lossTime;
-        public String kindCode;
-    }
+//    public static class GetPremiumFactorRequest extends CarInsuranceRequest {
+//        public String bizID;
+//    }
+//
+//    public static class GetPremiumFactorResponse extends CarInsuranceResponse {
+//        public PremiumFactor data;
+//    }
+//
+//    public static class PremiumFactor {
+//        public String centile;
+//        public String ecompensationRate;
+//        public String totalEcompensationRate;
+//        public String ciApperNo;
+//        public String biApperNo;
+//        public DiscountInfo discountInfo;
+//        public List<InsuranceClaims> lossInfoList;
+//    }
+//
+//    public static class InsuranceClaims {
+//        public String insurerCode;
+//        public String payAmount;
+//        public String endCaseTime;
+//        public String lossTime;
+//        public String kindCode;
+//    }
 
 
     public static class ApplyUnderwritingRequest extends CarInsuranceRequest {
@@ -491,6 +511,8 @@ public class ExtendCarInsurancePolicy {
     }
 
     public static class PhoneCode {
+        public String thpBizID;
+        public String bizID;
         public String biProposalNo;
         public String ciProposalNo;
         public String payLink;
