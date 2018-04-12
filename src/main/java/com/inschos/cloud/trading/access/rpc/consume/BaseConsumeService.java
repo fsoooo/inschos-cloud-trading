@@ -1,4 +1,4 @@
-package com.inschos.cloud.trading.access.rpc.service.consume;
+package com.inschos.cloud.trading.access.rpc.consume;
 
 import com.alibaba.dubbo.rpc.service.GenericService;
 import com.inschos.cloud.trading.assist.kit.JsonKit;

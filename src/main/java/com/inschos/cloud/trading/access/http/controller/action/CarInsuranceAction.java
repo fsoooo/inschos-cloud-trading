@@ -79,12 +79,10 @@ public class CarInsuranceAction extends BaseAction {
                 if (result.data != null && !result.data.isEmpty()) {
                     ActionBean bean = new ActionBean();
 
-                    bean.salt = actionBean.salt;
-                    bean.salt = actionBean.salt;
+
                     bean.buildCode = actionBean.buildCode;
                     bean.platform = actionBean.platform;
                     bean.apiCode = actionBean.apiCode;
-                    bean.companyId = actionBean.companyId;
                     bean.userId = actionBean.userId;
                     bean.url = actionBean.url;
 
@@ -1039,7 +1037,7 @@ public class CarInsuranceAction extends BaseAction {
      * @param actionBean 请求体
      * @return 响应json
      */
-    private String applyUnderwriting(ActionBean actionBean) {
+    public String applyUnderwriting(ActionBean actionBean) {
 //        CarInsurance.ApplyUnderwritingRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ApplyUnderwritingRequest.class);
         CarInsurance.PremiumCalibrateAndApplyUnderwritingRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.PremiumCalibrateAndApplyUnderwritingRequest.class);
         CarInsurance.ApplyUnderwritingResponse response = new CarInsurance.ApplyUnderwritingResponse();
@@ -1134,7 +1132,7 @@ public class CarInsuranceAction extends BaseAction {
 
             ciProposal.end_time = ciEndDateValue;
             ciProposal.account_uuid = actionBean.accountUuid;
-            ciProposal.buyer_auuid = actionBean.buyerAuuid;
+            ciProposal.buyer_auuid = actionBean.loginUuid;
             ciProposal.count = "1";
 
             if (actionBean.userType == 4) {
@@ -1175,7 +1173,7 @@ public class CarInsuranceAction extends BaseAction {
 
             biProposal.end_time = biEndDateValue;
             biProposal.account_uuid = actionBean.accountUuid;
-            biProposal.buyer_auuid = actionBean.buyerAuuid;
+            biProposal.buyer_auuid = actionBean.loginUuid;
             biProposal.count = "1";
 
             if (actionBean.userType == 4) {

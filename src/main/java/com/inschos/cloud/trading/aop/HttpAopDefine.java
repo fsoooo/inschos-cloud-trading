@@ -51,7 +51,8 @@ public class HttpAopDefine {
             String accessToken = request.getParameter(BaseRequest.FILEID_ACCESS_TOKEN);
 //			B.log.info("accessToken:{}", accessToken);
 
-            ActionBean bean = ActionBean.parseToken(accessToken);
+            ActionBean bean = null;
+//            ActionBean.parseToken(accessToken)
 
             // TODO: 2018/2/7
             if (false && !isAccess(joinPoint, bean)) {
@@ -103,13 +104,6 @@ public class HttpAopDefine {
                 isAuthCheck = annotation.isCheckAccess();
             }
         }
-
-        if (isAuthCheck) {
-            if (!ActionBean.getSalt().equals(bean.salt)) {
-                return false;
-            }
-        }
-
         return true;
     }
 }
