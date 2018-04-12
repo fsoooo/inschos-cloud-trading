@@ -1,9 +1,18 @@
 package com.inschos.cloud.trading.access.http.controller.action;
 
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
-import com.inschos.cloud.trading.data.dao.*;
+import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
+import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
+import com.inschos.cloud.trading.annotation.CheckParamsKit;
+import com.inschos.cloud.trading.assist.kit.JsonKit;
+import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
+import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 创建日期：2018/3/22 on 11:06
@@ -16,25 +25,48 @@ public class InsurancePolicyAction extends BaseAction {
     @Autowired
     private InsurancePolicyDao insurancePolicyDao;
 
-    @Autowired
-    private InsuranceParticipantDao insuranceParticipantDao;
+    public String getInsurancePolicyListForOnlineStore(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyListForOnlineStoreRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListForOnlineStoreRequest.class);
+        InsurancePolicy.GetInsurancePolicyListForOnlineStoreResponse response = new InsurancePolicy.GetInsurancePolicyListForOnlineStoreResponse();
 
-    @Autowired
-    private InsurancePreservationDao insurancePreservationDao;
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
 
-    @Autowired
-    private InsuranceClaimsDao insuranceClaimsDao;
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
 
-    @Autowired
-    private BrokerageCommissionDao brokerageCommissionDao;
+        String str;
 
+        if (!StringKit.isEmpty(request.searchKey) || !StringKit.isEmpty(request.warrantyStatus)) {
+            InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
 
-    public String getInsurancePolicyList(ActionBean actionBean) {
+            insurancePolicyModel.buyer_auuid = actionBean.loginUuid;
+            insurancePolicyModel.warranty_status = StringKit.isEmpty(request.warrantyStatus) ? "0" : request.warrantyStatus;
+            insurancePolicyModel.search = request.searchKey;
+            insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
+            long total = insurancePolicyDao.findInsurancePolicyCountByWarrantyStatus(insurancePolicyModel);
 
+            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusOrSearch(insurancePolicyModel);
+            response.data = new ArrayList<>();
 
+            if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
+                for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
+                    response.data.add(new InsurancePolicy.GetInsurancePolicy(policyListByWarrantyStatusOrSearch));
+                }
+            }
 
-        return "";
+            response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.size());
+
+            str = json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "searchKey与warrantyStatus至少存在一个", response);
+        }
+
+        return str;
     }
 //    public String insure(InsurancePolicy.InsurancePolicyInsureForPersonRequest insurancePolicyInsureForPersonRequest) {
 //

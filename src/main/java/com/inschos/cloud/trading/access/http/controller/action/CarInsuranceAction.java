@@ -8,7 +8,6 @@ import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
-import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.extend.car.CarInsuranceHttpRequest;
 import com.inschos.cloud.trading.extend.car.CarInsuranceResponse;
@@ -43,9 +42,6 @@ public class CarInsuranceAction extends BaseAction {
 
     @Autowired
     private InsurancePolicyDao insurancePolicyDao;
-
-    @Autowired
-    private InsuranceParticipantDao insuranceParticipantDao;
 
     /**
      * 获取省级区域代码
@@ -88,6 +84,7 @@ public class CarInsuranceAction extends BaseAction {
 
                     CarInsurance.GetCityCodeRequest getCityCodeRequest = new CarInsurance.GetCityCodeRequest();
                     getCityCodeRequest.provinceCode = result.data.get(0).provinceCode;
+                    getCityCodeRequest.type = "0";
 
                     bean.body = JsonKit.bean2Json(getCityCodeRequest);
 
@@ -96,7 +93,24 @@ public class CarInsuranceAction extends BaseAction {
                     if (getCityCodeResponse != null && getCityCodeResponse.data != null && getCityCodeResponse.code == BaseResponse.CODE_SUCCESS) {
                         response.data = result.data;
                         response.data.get(0).city = getCityCodeResponse.data.city;
+
+                        for (int i = 1; i < response.data.size(); i++) {
+                            response.data.get(i).city = new ArrayList<>();
+                        }
+
                         str = json(BaseResponse.CODE_SUCCESS, "获取省级列表成功", response);
+
+                        if (StringKit.equals(request.type,"1")) {
+                            str = str.replaceAll("provinceCode", "code");
+                            str = str.replaceAll("provinceName", "name");
+                            str = str.replaceAll("cityCode", "code");
+                            str = str.replaceAll("cityName", "name");
+                            str = str.replaceAll("countyCode", "code");
+                            str = str.replaceAll("countyName", "name");
+                            str = str.replaceAll("countyList", "children");
+                            str = str.replaceAll("city", "children");
+                        }
+
                         // TODO: 2018/4/3  记得给自己的系统存数据
                     } else {
                         str = json(BaseResponse.CODE_FAILURE, "获取省级列表失败", response);
@@ -153,6 +167,17 @@ public class CarInsuranceAction extends BaseAction {
                 response.data.provinceCode = request.provinceCode;
                 response.data.city = result.data;
                 str = json(BaseResponse.CODE_SUCCESS, "获取市级列表成功", response);
+
+                if (StringKit.equals(request.type,"1")) {
+                    str = str.replaceAll("provinceCode", "code");
+                    str = str.replaceAll("provinceName", "name");
+                    str = str.replaceAll("cityCode", "code");
+                    str = str.replaceAll("cityName", "name");
+                    str = str.replaceAll("countyCode", "code");
+                    str = str.replaceAll("countyName", "name");
+                    str = str.replaceAll("countyList", "children");
+                    str = str.replaceAll("city", "children");
+                }
 
                 // TODO: 2018/4/3  记得给自己的系统存数据
             } else {
@@ -449,6 +474,11 @@ public class CarInsuranceAction extends BaseAction {
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
+                if (response.data != null) {
+                    for (ExtendCarInsurancePolicy.CarModel datum : response.data) {
+                        datum.showText = datum.createShowText();
+                    }
+                }
                 str = json(BaseResponse.CODE_SUCCESS, "搜索车型信息成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
@@ -1395,6 +1425,9 @@ public class CarInsuranceAction extends BaseAction {
             return premiumCalibrate;
         }
 
+        request.applyUnderwriting.ciInsuredPremium = getPremiumCalibrateResponse.data.ciInsuredPremium;
+        request.applyUnderwriting.biInsuredPremium = getPremiumCalibrateResponse.data.biInsuredPremium;
+
         if (getPremiumCalibrateResponse.data != null && !getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails.isEmpty()) {
             // request.applyUnderwriting.bjCodeFlag = getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails.get(0).;
             boolean flag = false;
@@ -1403,8 +1436,8 @@ public class CarInsuranceAction extends BaseAction {
                     request.applyUnderwriting.bizID = insurancePolicyPremiumDetail.bizID;
                     request.applyUnderwriting.bjCodeFlag = insurancePolicyPremiumDetail.bjCodeFlag;
                     request.applyUnderwriting.channelCode = insurancePolicyPremiumDetail.channelCode;
-                    request.applyUnderwriting.biBeginDateValue = insurancePolicyPremiumDetail.biBeginDateValue;
                     request.applyUnderwriting.ciBeginDateValue = insurancePolicyPremiumDetail.ciBeginDateValue;
+                    request.applyUnderwriting.biBeginDateValue = insurancePolicyPremiumDetail.biBeginDateValue;
                     flag = true;
                     break;
                 }

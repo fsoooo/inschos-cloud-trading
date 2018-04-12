@@ -15,16 +15,26 @@ public interface InsurancePolicyMapper {
 
     int updateInsurancePolicyProPolicyNoByWarrantyId (InsurancePolicyModel insurancePolicyModel);
 
+    List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearch(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel);
+
+    // NOTENABLED: 2018/4/12
     InsurancePolicyModel findInsurancePolicyDetailByPrivateCode(String privateCode);
 
+    // NOTENABLED: 2018/4/12
     List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);
 
+    // NOTENABLED: 2018/4/12
     List<InsurancePolicyModel> findInsurancePolicyListByOtherInfo(InsurancePolicyModel insurancePolicyModel);
 
+    // NOTENABLED: 2018/4/12
     int updateInsurancePolicyUnionOrderCode(InsurancePolicyModel insurancePolicyModel);
 
+    // NOTENABLED: 2018/4/12
     int updateInsurancePolicyWarrantyCode(InsurancePolicyModel insurancePolicyModel);
 
+    // NOTENABLED: 2018/4/12
     String findInsurancePolicyPrivateCodeByUnionOrderCode(String unionOrderCode);
 
 }

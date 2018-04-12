@@ -149,6 +149,10 @@ public class InsurancePolicyModel {
      */
     public String state;
 
+    public String search;
+
+    public Page page;
+
 
     // 待核保
     public static final int ORDER_STATUS_WAITING_UNDERWRITING = 1;

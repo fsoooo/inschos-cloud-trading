@@ -1,6 +1,12 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
+import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.model.InsurancePolicyModel;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 创建日期：2018/3/22 on 14:03
@@ -9,31 +15,20 @@ import com.inschos.cloud.trading.annotation.CheckParams;
  */
 public class InsurancePolicy {
 
-    public static class GetInsurancePolicyListForBusinessManagerRequest extends BaseRequest {
+    public static class GetInsurancePolicyListForOnlineStoreRequest extends BaseRequest {
         // 保单状态
         public String warrantyStatus;
-        // 起保时间
-        @CheckParams
-        public String startTime;
-        // 结束时间
-        @CheckParams
-        public String endTime;
-        // 保单类型 1-个人保单，2-团险保单，3-车险保单
-        @CheckParams
-        public String type;
-        // 保单来源
-        public String warrantyFrom;
-        // 渠道
-        public String ditchId;
         // 搜索关键字
         public String searchKey;
     }
 
-    public static class GetInsurancePolicyListForBusinessManagerResponse extends BaseResponse {
-
+    public static class GetInsurancePolicyListForOnlineStoreResponse extends BaseResponse {
+        public List<GetInsurancePolicy> data;
     }
 
     public static class GetInsurancePolicy {
+
+        public String id;
 
         //内部保单唯一标识
         public String warrantyUuid;
@@ -143,11 +138,214 @@ public class InsurancePolicy {
         //更新时间（显示用）
         public String updatedAtText;
 
+        public GetInsurancePolicy() {
+
+        }
+
+        public GetInsurancePolicy(InsurancePolicyModel model) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            this.id = model.id;
+            this.warrantyUuid = model.warranty_uuid;
+            this.proPolicyNo = model.pro_policy_no;
+            this.warrantyCode = model.warranty_code;
+            this.accountUuid = model.account_uuid;
+            this.buyerAuuid = model.buyer_auuid;
+            this.agentAuuid = model.agent_auuid;
+            this.ditchId = model.ditch_id;
+            this.planId = model.plan_id;
+            this.productId = model.product_id;
+            this.premium = model.premium;
+            if (StringKit.isEmpty(model.premium)) {
+                this.premiumText = "¥0.00";
+            } else {
+                this.premiumText = "¥" + model.premium;
+            }
+            this.startTime = model.start_time;
+            if (StringKit.isInteger(model.start_time)) {
+                this.startTimeText = sdf.format(new Date(Long.valueOf(model.start_time)));
+            }
+            this.endTime = model.end_time;
+            if (StringKit.isInteger(model.end_time)) {
+                this.endTimeText = sdf.format(new Date(Long.valueOf(model.end_time)));
+            }
+            this.insCompanyId = model.ins_company_id;
+            this.count = model.count;
+            this.payTime = model.pay_time;
+            if (StringKit.isInteger(model.pay_time)) {
+                this.payTimeText = sdf.format(new Date(Long.valueOf(model.pay_time)));
+            }
+            this.payWay = model.pay_way;
+            this.payWayText = payWayText(payWay);
+            this.byStagesWay = model.by_stages_way;
+            this.isSettlement = model.is_settlement;
+            this.isSettlementText = isSettlementText(isSettlement);
+            this.warrantyUrl = model.warranty_url;
+            this.warrantyFrom = model.warranty_from;
+            this.warrantyFromText = warrantyFromText(warrantyFrom);
+            this.type = model.type;
+            this.checkStatus = model.check_status;
+            this.checkStatus = checkStatusText(checkStatus);
+            this.payStatus = model.pay_status;
+            this.payStatusText = payStatusText(payStatus);
+            this.warrantyStatus = model.warranty_status;
+            this.warrantyStatusText = warrantyStatusText(warrantyStatus);
+            this.updatedAt = model.updated_at;
+            if (StringKit.isInteger(model.updated_at)) {
+                this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
+            }
+        }
+
+        public String payWayText(String payWay) {
+            String str = "";
+            if (payWay == null) {
+                return str;
+            }
+            // 1 银联 2 支付宝 3 微信 4现金
+            switch (payWay) {
+                case "1":
+                    str = "银联";
+                    break;
+                case "2":
+                    str = "支付宝";
+                    break;
+                case "3":
+                    str = "微信";
+                    break;
+                case "4":
+                    str = "现金";
+                    break;
+            }
+            return str;
+        }
+
+        public String isSettlementText(String isSettlement) {
+            String str = "";
+            if (isSettlement == null) {
+                return str;
+            }
+            //佣金 0-未结算，1-已结算
+            switch (isSettlement) {
+                case "0":
+                    str = "未结算";
+                    break;
+                case "1":
+                    str = "已结算";
+                    break;
+            }
+            return str;
+        }
+
+        public String warrantyFromText(String warrantyFrom) {
+            String str = "";
+            if (warrantyFrom == null) {
+                return str;
+            }
+            // 1-自购 2-线上成交 3-线下成交 4-导入
+            switch (warrantyFrom) {
+                case "1":
+                    str = "自购";
+                    break;
+                case "2":
+                    str = "线上成交";
+                    break;
+                case "3":
+                    str = "线下成交";
+                    break;
+                case "4":
+                    str = "导入";
+                    break;
+            }
+            return str;
+        }
+
+        public String checkStatusText(String checkStatus) {
+            String str = "";
+            if (checkStatus == null) {
+                return str;
+            }
+            // 核保状态 01-核保中 2-核保失败，3-核保成功
+            switch (checkStatus) {
+                case "0":
+                case "1":
+                    str = "核保中";
+                    break;
+                case "2":
+                    str = "核保失败";
+                    break;
+                case "3":
+                    str = "核保成功";
+                    break;
+            }
+            return str;
+        }
+
+        public String payStatusText(String payStatus) {
+            String str = "";
+            if (payStatus == null) {
+                return str;
+            }
+            // 支付状态 0，1-支付中 2-支付失败 3-支付成功
+            switch (payStatus) {
+                case "0":
+                case "1":
+                    str = "支付中";
+                    break;
+                case "2":
+                    str = "支付失败";
+                    break;
+                case "3":
+                    str = "支付成功";
+                    break;
+            }
+            return str;
+        }
+
+        public String warrantyStatusText(String warrantyStatus) {
+            String str = "";
+            if (warrantyStatus == null) {
+                return str;
+            }
+            // 1-待处理 2-待支付 3-待生效 4-保障中 5-可续保 6-已失效 7-已退保 8-已过保
+            switch (warrantyStatus) {
+                case "1":
+                    str = "待处理";
+                    break;
+                case "2":
+                    str = "待支付";
+                    break;
+                case "3":
+                    str = "待生效";
+                    break;
+                case "4":
+                    str = "保障中";
+                    break;
+                case "5":
+                    str = "可续保";
+                    break;
+                case "6":
+                    str = "已失效";
+                    break;
+                case "7":
+                    str = "已退保";
+                    break;
+                case "8":
+                    str = "已过保";
+                    break;
+            }
+            return str;
+        }
 
     }
 
     public static class GetInsurancePolicyDetailForCarInsuranceRequest extends BaseRequest {
-
+        // 起保时间
+        public String startTime;
+        // 结束时间
+        @CheckParams
+        public String endTime;
+        // 保单类型 1-个人保单，2-团险保单，3-车险保单
+        @CheckParams
+        public String type;
     }
 
     public static class GetInsurancePolicyDetailForCarInsuranceResponse extends BaseResponse {

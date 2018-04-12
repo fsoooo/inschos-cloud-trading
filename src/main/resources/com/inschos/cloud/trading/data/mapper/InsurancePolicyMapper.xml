@@ -6,7 +6,8 @@
         `id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`account_uuid`,`buyer_auuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`created_at`,`updated_at`,`state`
     </sql>
 
-    <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" useGeneratedKeys="true"
+    <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            useGeneratedKeys="true"
             keyProperty="id">
         insert into cust_warranty
         (`id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`account_uuid`,`buyer_auuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`created_at`,`updated_at`,`state`)
@@ -14,64 +15,123 @@
         (#{id},#{warranty_uuid},#{pro_policy_no},#{warranty_code},#{account_uuid},#{buyer_auuid},#{agent_auuid},#{ditch_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{ins_company_id},#{count},#{pay_time},#{pay_way},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{check_status},#{pay_status},#{warranty_status},#{created_at},#{updated_at},#{state})
     </insert>
 
-    <update id="updateInsurancePolicyProPolicyNoByWarrantyId" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+    <update id="updateInsurancePolicyProPolicyNoByWarrantyId"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         update cust_warranty set
         `pro_policy_no`=#{pro_policy_no},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
-    <select id="findInsurancePolicyDetailByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+    <select id="findInsurancePolicyCountByWarrantyStatus"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="long">
+        select count(id)
+        from cust_warranty
+        WHERE buyer_auuid=#{buyer_auuid} AND state=1
+        <if test="search!=null and search!=''">
+            and `warranty_code` like concat("%",#{search},"%")
+        </if>
+        <if test="warranty_status!=0">
+            and `warranty_status`=#{warranty_status}
+        </if>
+    </select>
+
+    <select id="findInsurancePolicyListByWarrantyStatusOrSearch"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
+        from cust_warranty
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    id&gt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    id&gt;=(select id from cust_warranty where buyer_auuid=#{buyer_auuid} AND state=1
+                    <if test="search!=null and search!=''">
+                        and `warranty_code` like concat("%",#{search},"%")
+                    </if>
+                    <if test="warranty_status!=0">
+                        and `warranty_status`=#{warranty_status}
+                    </if>
+                    limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            and buyer_auuid=#{buyer_auuid} AND state = 1
+            <if test="search!=null and search!=''">
+                and `warranty_code` like concat("%",#{search},"%")
+            </if>
+            <if test="warranty_status!=0">
+                and `warranty_status`=#{warranty_status}
+            </if>
+            limit #{page.offset}
+        </where>
+
+    </select>
+
+
+    <select id="findInsurancePolicyDetailByPrivateCode" parameterType="String"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        <include refid="Base_Column_List"/>
         from cust_warranty where warranty_uuid=#{_parameter} AND state = 1
     </select>
 
-    <select id="findInsurancePolicyPrivateCodeByUnionOrderCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+    <select id="findInsurancePolicyPrivateCodeByUnionOrderCode" parameterType="String"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
         `warranty_uuid`
         from cust_warranty where pro_policy_no=#{_parameter} AND state = 1
     </select>
 
-    <select id="findInsurancePolicyListByUserIdAndStatus" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+    <select id="findInsurancePolicyListByUserIdAndStatus"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         <!--select-->
         <!--<include refid="Base_Column_List" />-->
         <!--from cust_warranty-->
         <!--<where>-->
-            <!--<choose>-->
-                <!--<when test="page.lastId>0">-->
-                    <!--id&gt;#{page.lastId}-->
-                <!--</when>-->
-                <!--<when test="page.start>0">-->
-                    <!--id&gt;=(select id from cust_warranty where company_id=#{company_id} AND state=1-->
-                    <!--<if test="search!=null and search!=''">-->
-                        <!--and `name` like concat("%",#{search},"%")-->
-                    <!--</if>-->
-                    <!--limit #{page.start},1-->
-                    <!--)-->
-                <!--</when>-->
-                <!--<otherwise>-->
-                    <!--1=1-->
-                <!--</otherwise>-->
-            <!--</choose>-->
-            <!--and user_id=#{user_id} AND state = 1-->
-            <!--<if test="search!=null and search!=''">-->
-                <!--and `name` like concat("%",#{search},"%")-->
-            <!--</if>-->
-            <!--limit #{page.offset}-->
+        <!--<choose>-->
+        <!--<when test="page.lastId>0">-->
+        <!--id&gt;#{page.lastId}-->
+        <!--</when>-->
+        <!--<when test="page.start>0">-->
+        <!--id&gt;=(select id from cust_warranty where company_id=#{company_id} AND state=1-->
+        <!--<if test="search!=null and search!=''">-->
+        <!--and `name` like concat("%",#{search},"%")-->
+        <!--</if>-->
+        <!--limit #{page.start},1-->
+        <!--)-->
+        <!--</when>-->
+        <!--<otherwise>-->
+        <!--1=1-->
+        <!--</otherwise>-->
+        <!--</choose>-->
+        <!--and user_id=#{user_id} AND state = 1-->
+        <!--<if test="search!=null and search!=''">-->
+        <!--and `name` like concat("%",#{search},"%")-->
+        <!--</if>-->
+        <!--limit #{page.offset}-->
         <!--</where>-->
         <!---->
         <!---->
         <!---->
         <!---->
         <!--<if test="status!=0">-->
-            <!---->
+        <!---->
         <!--</if>-->
     </select>
 
 
-    <select id="findInsurancePolicyListByOtherInfo" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+    <select id="findInsurancePolicyListByOtherInfo" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from cust_warranty where private_code=#{_parameter}
     </select>
 
