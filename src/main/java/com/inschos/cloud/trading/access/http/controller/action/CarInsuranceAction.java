@@ -96,19 +96,27 @@ public class CarInsuranceAction extends BaseAction {
 
                         for (int i = 1; i < response.data.size(); i++) {
                             response.data.get(i).city = new ArrayList<>();
+                            ExtendCarInsurancePolicy.CityCode cityCode = new ExtendCarInsurancePolicy.CityCode();
+                            cityCode.cityName = "";
+                            cityCode.cityCode = "";
+
+                            cityCode.countyList = new ArrayList<>();
+
+                            ExtendCarInsurancePolicy.AreaCode areaCode = new ExtendCarInsurancePolicy.AreaCode();
+
+                            areaCode.countyName = "";
+                            areaCode.countyCode = "";
+
+                            cityCode.countyList.add(areaCode);
+
+                            response.data.get(i).city.add(cityCode);
                         }
 
                         str = json(BaseResponse.CODE_SUCCESS, "获取省级列表成功", response);
-
-                        if (StringKit.equals(request.type,"1")) {
-                            str = str.replaceAll("provinceCode", "code");
-                            str = str.replaceAll("provinceName", "name");
-                            str = str.replaceAll("cityCode", "code");
-                            str = str.replaceAll("cityName", "name");
-                            str = str.replaceAll("countyCode", "code");
-                            str = str.replaceAll("countyName", "name");
-                            str = str.replaceAll("countyList", "children");
-                            str = str.replaceAll("city", "children");
+                        if (request == null) {
+                            str = dealFieldName("1", str);
+                        } else {
+                            str = dealFieldName(request.type, str);
                         }
 
                         // TODO: 2018/4/3  记得给自己的系统存数据
@@ -167,18 +175,7 @@ public class CarInsuranceAction extends BaseAction {
                 response.data.provinceCode = request.provinceCode;
                 response.data.city = result.data;
                 str = json(BaseResponse.CODE_SUCCESS, "获取市级列表成功", response);
-
-                if (StringKit.equals(request.type,"1")) {
-                    str = str.replaceAll("provinceCode", "code");
-                    str = str.replaceAll("provinceName", "name");
-                    str = str.replaceAll("cityCode", "code");
-                    str = str.replaceAll("cityName", "name");
-                    str = str.replaceAll("countyCode", "code");
-                    str = str.replaceAll("countyName", "name");
-                    str = str.replaceAll("countyList", "children");
-                    str = str.replaceAll("city", "children");
-                }
-
+                str = dealFieldName(request.type, str);
                 // TODO: 2018/4/3  记得给自己的系统存数据
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
@@ -2253,4 +2250,17 @@ public class CarInsuranceAction extends BaseAction {
     }
 
 
+    private String dealFieldName(String type, String str) {
+        if (StringKit.equals(type, "1")) {
+            str = str.replaceAll("provinceCode", "code");
+            str = str.replaceAll("provinceName", "name");
+            str = str.replaceAll("cityCode", "code");
+            str = str.replaceAll("cityName", "name");
+            str = str.replaceAll("countyCode", "code");
+            str = str.replaceAll("countyName", "name");
+            str = str.replaceAll("countyList", "children");
+            str = str.replaceAll("city", "children");
+        }
+        return str;
+    }
 }
