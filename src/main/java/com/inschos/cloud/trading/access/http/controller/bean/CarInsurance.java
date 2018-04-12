@@ -327,6 +327,8 @@ public class CarInsurance {
         // 必传
         public String bjCodeFlag;
 
+        public List<ExtendCarInsurancePolicy.InsurancePolicyInfo> coverageList;
+
         public boolean isNeedVerificationCode() {
             return StringKit.equals("1", bjCodeFlag);
         }
@@ -409,6 +411,7 @@ public class CarInsurance {
     public static class VerifyPhoneCodeRequest extends BaseRequest {
         public String verificationCode;
         public String bizID;
+        public String bjCodeFlag;
     }
 
     public static class VerifyPhoneCodeResponse extends BaseResponse {

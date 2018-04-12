@@ -123,6 +123,7 @@ public class InsurancePolicyDao extends BaseDao {
                 } else if (StringKit.equals(carInfoModel.insurance_type, "2")) {
                     insurancePolicyModel.pro_policy_no = updateInsurancePolicyProPolicyNoForCarInsurance.biProposalNo;
                 }
+                insurancePolicyModel.check_status = updateInsurancePolicyProPolicyNoForCarInsurance.check_status;
                 insurancePolicyModel.updated_at = time;
                 update = updateInsurancePolicyProPolicyNoByWarrantyId(insurancePolicyModel);
 

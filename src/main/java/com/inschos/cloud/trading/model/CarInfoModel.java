@@ -13,24 +13,24 @@ public class CarInfoModel {
     public String id;
 
     /**
+     * 内部保单唯一标识
+     */
+    public String warranty_uuid;
+
+    /**
      * 流水号
      */
     public String biz_id;
 
     /**
-     * 第三方业务号
+     * 第三方业务id
      */
     public String thp_biz_id;
 
     /**
-     * 车险类型，1-强险，2-商业险
+     * 车险类型 1-强险，2-商业险
      */
     public String insurance_type;
-
-    /**
-     * 内部保单唯一标识
-     */
-    public String warranty_uuid;
 
     /**
      * 车牌号
@@ -78,6 +78,21 @@ public class CarInfoModel {
     public String brand_code;
 
     /**
+     * 品牌名称
+     */
+    public String brand_name;
+
+    /**
+     * 年份款型
+     */
+    public String parent_veh_name;
+
+    /**
+     * 排量
+     */
+    public String engine_desc;
+
+    /**
      * 投保时是否未上牌（0:否 1:是）
      */
     public String is_not_car_code;
@@ -86,6 +101,66 @@ public class CarInfoModel {
      * 是否过户车（0:否 1:是）
      */
     public String is_trans;
+
+    /**
+     * 过户日期
+     */
+    public String trans_date;
+
+    /**
+     * 初登日期
+     */
+    public String first_register_date;
+
+    /**
+     * 车系名称
+     */
+    public String family_name;
+
+    /**
+     * 车挡类型
+     */
+    public String gearbox_type;
+
+    /**
+     * 备注
+     */
+    public String car_remark;
+
+    /**
+     * 新车购置价
+     */
+    public String new_car_price;
+
+    /**
+     * 含税价格
+     */
+    public String purchase_price_tax;
+
+    /**
+     * 进口标识，0：国产，1：合资，2：进口
+     */
+    public String import_flag;
+
+    /**
+     * 参考价
+     */
+    public String purchase_price;
+
+    /**
+     * 座位数
+     */
+    public String car_seat;
+
+    /**
+     * 款型名称
+     */
+    public String standard_name;
+
+    /**
+     * 险别列表json
+     */
+    public String coverage_list;
 
     /**
      * 创建时间

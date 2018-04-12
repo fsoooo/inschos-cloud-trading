@@ -222,6 +222,9 @@ public class ExtendCarInsurancePolicy {
         public String seat;
         public String standardName;
         public String remark;
+        public String familyName;
+        public String gearboxType;
+        public String purchasePrice;
 
         public String transDate;
 

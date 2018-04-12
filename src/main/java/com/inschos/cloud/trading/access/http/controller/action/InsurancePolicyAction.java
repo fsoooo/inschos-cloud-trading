@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.access.http.controller.action;
 
+import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.data.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,14 @@ public class InsurancePolicyAction extends BaseAction {
     @Autowired
     private BrokerageCommissionDao brokerageCommissionDao;
 
+
+    public String getInsurancePolicyList(ActionBean actionBean) {
+
+
+
+
+        return "";
+    }
 //    public String insure(InsurancePolicy.InsurancePolicyInsureForPersonRequest insurancePolicyInsureForPersonRequest) {
 //
 //        // 校验有效性后，重新计算保费，用重新计算的保费写数据库，并生成订单。
@@ -612,7 +621,6 @@ public class InsurancePolicyAction extends BaseAction {
 //    private void getInsurancePolicy() {
 //
 //    }
-
 
 
 }

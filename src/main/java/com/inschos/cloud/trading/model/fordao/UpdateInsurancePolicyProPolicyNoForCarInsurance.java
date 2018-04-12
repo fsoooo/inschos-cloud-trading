@@ -8,6 +8,7 @@ package com.inschos.cloud.trading.model.fordao;
 public class UpdateInsurancePolicyProPolicyNoForCarInsurance {
 
     public String bizId;
+    public String check_status;
     public String biProposalNo;
     public String ciProposalNo;
 
