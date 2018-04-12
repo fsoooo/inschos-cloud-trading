@@ -4,6 +4,8 @@ package com.inschos.cloud.trading.aop;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseRequest;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
+import com.inschos.cloud.trading.access.rpc.bean.AccountBean;
+import com.inschos.cloud.trading.access.rpc.consume.AccountConsumeService;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.annotation.GetActionBeanAnnotation;
 import com.inschos.cloud.trading.assist.kit.ConstantKit;
@@ -14,6 +16,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -26,6 +29,9 @@ import java.util.List;
 @Component
 @Aspect
 public class HttpAopDefine {
+
+    @Autowired
+    private AccountConsumeService accountConsumeService;
 
     @Around("@annotation(com.inschos.cloud.trading.annotation.GetActionBeanAnnotation)")
     public Object checkAuth(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -51,11 +57,11 @@ public class HttpAopDefine {
             String accessToken = request.getParameter(BaseRequest.FILEID_ACCESS_TOKEN);
 //			B.log.info("accessToken:{}", accessToken);
 
-            ActionBean bean = null;
-//            ActionBean.parseToken(accessToken)
+            ActionBean bean = new ActionBean();
 
-            // TODO: 2018/2/7
-            if (false && !isAccess(joinPoint, bean)) {
+            AccountBean accountBean = accountConsumeService.getAccount(accessToken);
+
+            if (!isAccess(joinPoint, bean,accountBean)) {
                 response.code = BaseResponse.CODE_ACCESS_FAILURE;
                 CheckParamsKit.Entry<String, String> entry = CheckParamsKit.getDefaultEntry();
                 entry.details = "未登录";
@@ -93,7 +99,7 @@ public class HttpAopDefine {
         return true;
     }
 
-    private boolean isAccess(ProceedingJoinPoint joinPoint, ActionBean bean) {
+    private boolean isAccess(ProceedingJoinPoint joinPoint, ActionBean bean,AccountBean accountBean) {
         boolean isAuthCheck = true;
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -104,6 +110,22 @@ public class HttpAopDefine {
                 isAuthCheck = annotation.isCheckAccess();
             }
         }
+
+        if(isAuthCheck){
+            if(accountBean!=null){
+                bean.accountUuid = accountBean.accountUuid;
+                bean.loginUuid = accountBean.loginUuid;
+                bean.userId = accountBean.userId;
+                bean.userType = accountBean.userType;
+                bean.username = accountBean.username;
+                bean.email = accountBean.email;
+                bean.phone = accountBean.phone;
+            }else{
+                return false;
+            }
+        }
+
+
         return true;
     }
 }

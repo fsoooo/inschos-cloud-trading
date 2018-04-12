@@ -13,14 +13,14 @@ public class ActionBean {
 
     public int apiCode;
 
-    public int userId = 1;
+    public long userId ;
 
     // 1-个人，2-企业客户，3-业管，4-代理
     public int userType;
 
-    public String accountUuid = "2";
+    public String accountUuid ;
 
-    public String loginUuid = "1";
+    public String loginUuid ;
 
     public String username ;
 

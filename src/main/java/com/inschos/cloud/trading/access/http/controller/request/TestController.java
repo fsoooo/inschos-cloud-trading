@@ -30,7 +30,7 @@ public class TestController {
         Area area = new Area();
         area.id=10;
         area.name = "特效";
-        return "test data :" + accountConsumeService.findOne("xx");
+        return "test data :" ;
     }
 
 
