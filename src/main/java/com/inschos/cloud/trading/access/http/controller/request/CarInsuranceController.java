@@ -120,12 +120,12 @@ public class CarInsuranceController {
 //        return carInsuranceAction.getPremiumFactor(actionBean);
 //    }
 
-    @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/apply_underwriting")
-    @ResponseBody
-    public String applyUnderwriting(ActionBean actionBean) {
-        return carInsuranceAction.applyUnderwriting(actionBean);
-    }
+//    @GetActionBeanAnnotation
+//    @RequestMapping("car_insurance/apply_underwriting")
+//    @ResponseBody
+//    public String applyUnderwriting(ActionBean actionBean) {
+//        return carInsuranceAction.applyUnderwriting(actionBean);
+//    }
 
     @GetActionBeanAnnotation
     @RequestMapping("car_insurance/get_pay_link")

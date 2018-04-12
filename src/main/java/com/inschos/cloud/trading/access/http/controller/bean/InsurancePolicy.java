@@ -1,5 +1,7 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
+import com.inschos.cloud.trading.annotation.CheckParams;
+
 /**
  * 创建日期：2018/3/22 on 14:03
  * 描述：
@@ -7,11 +9,140 @@ package com.inschos.cloud.trading.access.http.controller.bean;
  */
 public class InsurancePolicy {
 
-    public static class GetInsurancePolicyListRequest extends BaseRequest {
+    public static class GetInsurancePolicyListForBusinessManagerRequest extends BaseRequest {
+        // 保单状态
+        public String warrantyStatus;
+        // 起保时间
+        @CheckParams
+        public String startTime;
+        // 结束时间
+        @CheckParams
+        public String endTime;
+        // 保单类型 1-个人保单，2-团险保单，3-车险保单
+        @CheckParams
+        public String type;
+        // 保单来源
+        public String warrantyFrom;
+        // 渠道
+        public String ditchId;
+        // 搜索关键字
+        public String searchKey;
+    }
+
+    public static class GetInsurancePolicyListForBusinessManagerResponse extends BaseResponse {
 
     }
 
-    public static class GetInsurancePolicyListResponse extends BaseResponse {
+    public static class GetInsurancePolicy {
+
+        //内部保单唯一标识
+        public String warrantyUuid;
+
+        //投保单号
+        public String proPolicyNo;
+
+        //保单号
+        public String warrantyCode;
+
+        //归属账号uuid
+        public String accountUuid;
+
+        //买家uuid
+        public String buyerAuuid;
+
+        //代理人ID为null则为用户自主购买
+        public String agentAuuid;
+
+        //渠道ID为0则为用户自主购买
+        public String ditchId;
+
+        //计划书ID为0则为用户自主购买
+        public String planId;
+
+        //产品ID
+        public String productId;
+
+        //保单价格
+        public String premium;
+
+        //保单价格（显示用）
+        public String premiumText;
+
+        //起保时间
+        public String startTime;
+
+        //起保时间（显示用）
+        public String startTimeText;
+
+        //结束时间
+        public String endTime;
+
+        //结束时间（显示用）
+        public String endTimeText;
+
+        //保险公司ID
+        public String insCompanyId;
+
+        //购买份数
+        public String count;
+
+        //支付时间
+        public String payTime;
+
+        //支付时间（显示用）
+        public String payTimeText;
+
+        //支付方式 1 银联 2 支付宝 3 微信 4现金
+        public String payWay;
+
+        //支付方式 1 银联 2 支付宝 3 微信 4现金（显示用）
+        public String payWayText;
+
+        //分期方式
+        public String byStagesWay;
+
+        //佣金 0表示未结算，1表示已结算
+        public String isSettlement;
+
+        //佣金 0表示未结算，1表示已结算（显示用）
+        public String isSettlementText;
+
+        //电子保单下载地址
+        public String warrantyUrl;
+
+        //保单来源 1 自购 2线上成交 3线下成交 4导入
+        public String warrantyFrom;
+
+        //保单来源 1 自购 2线上成交 3线下成交 4导入（显示用）
+        public String warrantyFromText;
+
+        //保单类型1表示个人保单，2表示团险保单，3表示车险保单
+        public String type;
+
+        //核保状态（01核保中 2核保失败，3核保成功
+        public String checkStatus;
+
+        //核保状态（01核保中 2核保失败，3核保成功（显示用）
+        public String checkStatusText;
+
+        //支付状态 0，1支付中2支付失败3支付成功，
+        public String payStatus;
+
+        //支付状态 0，1支付中2支付失败3支付成功，（显示用）
+        public String payStatusText;
+
+        //保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保
+        public String warrantyStatus;
+
+        //保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保（显示用）
+        public String warrantyStatusText;
+
+        //更新时间
+        public String updatedAt;
+
+        //更新时间（显示用）
+        public String updatedAtText;
+
 
     }
 

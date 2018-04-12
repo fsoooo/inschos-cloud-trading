@@ -1614,14 +1614,14 @@ public class CarInsuranceAction extends BaseAction {
 
         ExtendCarInsurancePolicy.ResolveIdentityCardRequest resolveIdentityCardRequest = new ExtendCarInsurancePolicy.ResolveIdentityCardRequest();
 
-        if (!StringKit.isEmpty(resolveIdentityCardRequest.frontCardUrl) || !StringKit.isEmpty(resolveIdentityCardRequest.frontCardBase64)) {
+        if (!StringKit.isEmpty(request.frontCardUrl) || !StringKit.isEmpty(request.frontCardBase64)) {
             resolveIdentityCardRequest.frontCardUrl = request.frontCardUrl;
             resolveIdentityCardRequest.frontCardBase64 = request.frontCardBase64;
         } else {
             return json(BaseResponse.CODE_FAILURE, "缺少正面信息", new BaseResponse());
         }
 
-        if (!StringKit.isEmpty(resolveIdentityCardRequest.backCardUrl) || !StringKit.isEmpty(resolveIdentityCardRequest.backCardBase64)) {
+        if (!StringKit.isEmpty(request.backCardUrl) || !StringKit.isEmpty(request.backCardBase64)) {
             resolveIdentityCardRequest.backCardUrl = request.backCardUrl;
             resolveIdentityCardRequest.backCardBase64 = request.backCardBase64;
         } else {
@@ -1673,14 +1673,14 @@ public class CarInsuranceAction extends BaseAction {
 
         ExtendCarInsurancePolicy.ResolveDrivingLicenseRequest resolveDrivingLicenseRequest = new ExtendCarInsurancePolicy.ResolveDrivingLicenseRequest();
 
-        if (!StringKit.isEmpty(resolveDrivingLicenseRequest.imgJustUrl) || !StringKit.isEmpty(resolveDrivingLicenseRequest.imgJustBase64)) {
+        if (!StringKit.isEmpty(request.imgJustUrl) || !StringKit.isEmpty(request.imgJustBase64)) {
             resolveDrivingLicenseRequest.imgJustUrl = request.imgJustUrl;
             resolveDrivingLicenseRequest.imgJustBase64 = request.imgJustBase64;
         } else {
             return json(BaseResponse.CODE_FAILURE, "缺少正面信息", new BaseResponse());
         }
 
-        if (!StringKit.isEmpty(resolveDrivingLicenseRequest.imgBackUrl) || !StringKit.isEmpty(resolveDrivingLicenseRequest.imgBackBase64)) {
+        if (!StringKit.isEmpty(request.imgBackUrl) || !StringKit.isEmpty(request.imgBackBase64)) {
             resolveDrivingLicenseRequest.imgBackUrl = request.imgBackUrl;
             resolveDrivingLicenseRequest.imgJustBase64 = request.imgJustBase64;
         } else {
