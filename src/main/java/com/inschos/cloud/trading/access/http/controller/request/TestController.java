@@ -1,7 +1,7 @@
 package com.inschos.cloud.trading.access.http.controller.request;
 
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
-import com.inschos.cloud.trading.access.rpc.service.consume.AccountConsumeService;
+import com.inschos.cloud.trading.access.rpc.consume.AccountConsumeService;
 import com.inschos.cloud.trading.annotation.GetActionBeanAnnotation;
 import com.inschos.cloud.trading.data.dao.DemoDao;
 import com.inschos.cloud.trading.model.Area;
