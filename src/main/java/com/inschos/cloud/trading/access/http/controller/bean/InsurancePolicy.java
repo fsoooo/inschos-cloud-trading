@@ -175,181 +175,170 @@ public class InsurancePolicy {
                 this.payTimeText = sdf.format(new Date(Long.valueOf(model.pay_time)));
             }
             this.payWay = model.pay_way;
-            this.payWayText = payWayText(payWay);
+            this.payWayText = model.payWayText(payWay);
             this.byStagesWay = model.by_stages_way;
             this.isSettlement = model.is_settlement;
-            this.isSettlementText = isSettlementText(isSettlement);
+            this.isSettlementText = model.isSettlementText(isSettlement);
             this.warrantyUrl = model.warranty_url;
             this.warrantyFrom = model.warranty_from;
-            this.warrantyFromText = warrantyFromText(warrantyFrom);
+            this.warrantyFromText = model.warrantyFromText(warrantyFrom);
             this.type = model.type;
             this.checkStatus = model.check_status;
-            this.checkStatus = checkStatusText(checkStatus);
+            this.checkStatus = model.checkStatusText(checkStatus);
             this.payStatus = model.pay_status;
-            this.payStatusText = payStatusText(payStatus);
+            this.payStatusText = model.payStatusText(payStatus);
             this.warrantyStatus = model.warranty_status;
-            this.warrantyStatusText = warrantyStatusText(warrantyStatus);
+            this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
             this.updatedAt = model.updated_at;
             if (StringKit.isInteger(model.updated_at)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
             }
         }
 
-        public String payWayText(String payWay) {
-            String str = "";
-            if (payWay == null) {
-                return str;
-            }
-            // 1 银联 2 支付宝 3 微信 4现金
-            switch (payWay) {
-                case "1":
-                    str = "银联";
-                    break;
-                case "2":
-                    str = "支付宝";
-                    break;
-                case "3":
-                    str = "微信";
-                    break;
-                case "4":
-                    str = "现金";
-                    break;
-            }
-            return str;
-        }
-
-        public String isSettlementText(String isSettlement) {
-            String str = "";
-            if (isSettlement == null) {
-                return str;
-            }
-            //佣金 0-未结算，1-已结算
-            switch (isSettlement) {
-                case "0":
-                    str = "未结算";
-                    break;
-                case "1":
-                    str = "已结算";
-                    break;
-            }
-            return str;
-        }
-
-        public String warrantyFromText(String warrantyFrom) {
-            String str = "";
-            if (warrantyFrom == null) {
-                return str;
-            }
-            // 1-自购 2-线上成交 3-线下成交 4-导入
-            switch (warrantyFrom) {
-                case "1":
-                    str = "自购";
-                    break;
-                case "2":
-                    str = "线上成交";
-                    break;
-                case "3":
-                    str = "线下成交";
-                    break;
-                case "4":
-                    str = "导入";
-                    break;
-            }
-            return str;
-        }
-
-        public String checkStatusText(String checkStatus) {
-            String str = "";
-            if (checkStatus == null) {
-                return str;
-            }
-            // 核保状态 01-核保中 2-核保失败，3-核保成功
-            switch (checkStatus) {
-                case "0":
-                case "1":
-                    str = "核保中";
-                    break;
-                case "2":
-                    str = "核保失败";
-                    break;
-                case "3":
-                    str = "核保成功";
-                    break;
-            }
-            return str;
-        }
-
-        public String payStatusText(String payStatus) {
-            String str = "";
-            if (payStatus == null) {
-                return str;
-            }
-            // 支付状态 0，1-支付中 2-支付失败 3-支付成功
-            switch (payStatus) {
-                case "0":
-                case "1":
-                    str = "支付中";
-                    break;
-                case "2":
-                    str = "支付失败";
-                    break;
-                case "3":
-                    str = "支付成功";
-                    break;
-            }
-            return str;
-        }
-
-        public String warrantyStatusText(String warrantyStatus) {
-            String str = "";
-            if (warrantyStatus == null) {
-                return str;
-            }
-            // 1-待处理 2-待支付 3-待生效 4-保障中 5-可续保 6-已失效 7-已退保 8-已过保
-            switch (warrantyStatus) {
-                case "1":
-                    str = "待处理";
-                    break;
-                case "2":
-                    str = "待支付";
-                    break;
-                case "3":
-                    str = "待生效";
-                    break;
-                case "4":
-                    str = "保障中";
-                    break;
-                case "5":
-                    str = "可续保";
-                    break;
-                case "6":
-                    str = "已失效";
-                    break;
-                case "7":
-                    str = "已退保";
-                    break;
-                case "8":
-                    str = "已过保";
-                    break;
-            }
-            return str;
-        }
-
     }
 
-    public static class GetInsurancePolicyDetailForCarInsuranceRequest extends BaseRequest {
-        // 起保时间
+    public static class GetInsurancePolicyDetailForOnlineStoreRequestRequest extends BaseRequest {
+        // 保单唯一id
+        @CheckParams
+        public String warrantyUuid;
+    }
+
+    public static class GetInsurancePolicyDetailForOnlineStoreRequestResponse extends BaseResponse {
+        public GetInsurancePolicyDetail data;
+    }
+
+    public static class GetInsurancePolicyDetail extends GetInsurancePolicy {
+        public CarInsurancePolicyInfo carInsurancePolicyInfo;
+        // 投保人
+        public InsurancePolicyParticipant policyHolder;
+        // 被保险人
+        public List<InsurancePolicyParticipant> insuredList;
+    }
+
+    public static class CarInsurancePolicyInfo {
+        // 车主
+        public InsurancePolicyParticipant owner;
+
+        //主键
+        public String id;
+
+        //归属账号uuid
+        public String accountUuid;
+
+        //买家uuid
+        public String buyerAuuid;
+
+        //代理人ID为null则为用户自主购买
+        public String agentAuuid;
+
+        //渠道ID为0则为用户自主购买
+        public String ditchId;
+
+        //计划书ID为0则为用户自主购买
+        public String planId;
+
+        //产品ID
+        public String productId;
+
+        //保单价格
+        public String premium;
+
+        //起保时间
         public String startTime;
-        // 结束时间
-        @CheckParams
+
+        //结束时间
         public String endTime;
-        // 保单类型 1-个人保单，2-团险保单，3-车险保单
-        @CheckParams
+
+        //保险公司ID
+        public String insCompanyId;
+
+        //购买份数
+        public String count;
+
+        //支付时间
+        public String payTime;
+
+        //支付方式 1 银联 2 支付宝 3 微信 4现金
+        public String payWay;
+
+        //分期方式
+        public String byStagesWay;
+
+        //佣金 0表示未结算，1表示已结算
+        public String isSettlement;
+
+        //电子保单下载地址
+        public String warrantyUrl;
+
+        //保单来源 1 自购 2线上成交 3线下成交 4导入
+        public String warrantyFrom;
+
+        //保单类型1表示个人保单，2表示团险保单，3表示车险保单
         public String type;
+
+        //核保状态（01核保中 2核保失败，3核保成功
+        public String checkStatus;
+
+        //支付状态 0，1支付中2支付失败3支付成功，
+        public String payStatus;
+
+        //保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保
+        public String warrantyStatus;
+
+        //结束时间
+        public String updatedAt;
+
+
     }
 
-    public static class GetInsurancePolicyDetailForCarInsuranceResponse extends BaseResponse {
+    public static class InsurancePolicyParticipant {
+        public String name;
+        public String idCardNo;
+        public String idType;
+        public String idTypeText;
+        public String birthday;
+        public String birthdayText;
+        public String sex;
+        public String sexText;
+        public String mobile;
 
+        public String idTypeText(String idType) {
+            String str = "";
+            switch (idType) {
+                case "1":
+                    str = "身份证";
+                    break;
+                case "2":
+                    str = "护照";
+                    break;
+                case "3":
+                    str = "军官证";
+                    break;
+            }
+            return str;
+        }
+
+        public String birthdayText(String birthday) {
+            if (StringKit.isNumeric(birthday)) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                return sdf.format(new Date(Long.valueOf(birthday)));
+            } else {
+                return "";
+            }
+        }
+
+        public String sexText(String sex) {
+            String str = "";
+            switch (sex) {
+                case "1":
+                    str = "男";
+                    break;
+                case "2":
+                    str = "女";
+                    break;
+            }
+            return str;
+        }
     }
 
     public static class GetInsurancePolicyDetailForOtherInsuranceRequest extends BaseRequest {

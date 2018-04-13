@@ -19,8 +19,7 @@ public interface InsurancePolicyMapper {
 
     long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel);
 
-    // NOTENABLED: 2018/4/12
-    InsurancePolicyModel findInsurancePolicyDetailByPrivateCode(String privateCode);
+    InsurancePolicyModel findInsurancePolicyDetailByWarrantyCode(String warrantyCode);
 
     // NOTENABLED: 2018/4/12
     List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);

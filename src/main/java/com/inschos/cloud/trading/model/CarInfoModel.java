@@ -1,5 +1,11 @@
 package com.inschos.cloud.trading.model;
 
+import com.inschos.cloud.trading.assist.kit.CardCodeKit;
+import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
+
+import java.util.Date;
+
 /**
  * 创建日期：2018/3/26 on 11:59
  * 描述：
@@ -43,14 +49,34 @@ public class CarInfoModel {
     public String name;
 
     /**
-     * 车主身份证号
+     * 车主证件号
      */
-    public String code;
+    public String card_code;
+
+    /**
+     * 车主证件类型
+     */
+    public String card_type;
 
     /**
      * 车主手机号
      */
     public String phone;
+
+    /**
+     * 生日
+     */
+    public String birthday;
+
+    /**
+     * 性别
+     */
+    public String sex;
+
+    /**
+     * 年龄
+     */
+    public String age;
 
     /**
      * 车架号
@@ -171,5 +197,60 @@ public class CarInfoModel {
      * 结束时间
      */
     public String updated_at;
+
+    public static final String INSURANCE_TYPE_STRONG = "1";
+    public static final String INSURANCE_TYPE_COMMERCIAL = "2";
+
+    public CarInfoModel() {
+
+    }
+
+    public CarInfoModel(String warrantyUuid, String bizId, String thpBizId, String insuranceType, String time, String coverageList, ExtendCarInsurancePolicy.CarInfoDetail carInfoDetail, ExtendCarInsurancePolicy.InsuranceParticipant participant) {
+        this.warranty_uuid = warrantyUuid;
+        this.biz_id = bizId;
+        this.thp_biz_id = thpBizId;
+        this.insurance_type = insuranceType;
+        this.car_code = carInfoDetail.licenseNo;
+        this.name = participant.ownerName;
+        this.card_code = participant.ownerID;
+        this.card_type = participant.ownerIdType;
+        this.phone = participant.ownerMobile;
+        this.birthday = participant.ownerBirthday;
+        this.sex = participant.ownerSex;
+        if (StringKit.isInteger(participant.ownerIdType)) {
+            Date birthDayByCode = CardCodeKit.getBirthDayByCode(Integer.valueOf(participant.ownerIdType), participant.ownerID);
+            if (birthDayByCode == null) {
+                this.age = participant.getAge(birthday);
+            } else {
+                this.age = participant.getAge(birthDayByCode);
+            }
+        } else {
+            this.age = participant.getAge(birthday);
+        }
+        this.frame_no = carInfoDetail.frameNo;
+        this.engine_no = carInfoDetail.engineNo;
+        this.vehicle_fgw_code = carInfoDetail.vehicleFgwCode;
+        this.vehicle_fgw_name = carInfoDetail.vehicleFgwName;
+        this.brand_code = carInfoDetail.brandCode;
+        this.is_not_car_code = StringKit.isEmpty(this.car_code) ? "1" : "0";
+        this.is_trans = carInfoDetail.isTrans;
+        this.brand_name = carInfoDetail.brandName;
+        this.parent_veh_name = carInfoDetail.parentVehName;
+        this.engine_desc = carInfoDetail.engineDesc;
+        this.trans_date = carInfoDetail.transDateValue;
+        this.first_register_date = carInfoDetail.firstRegisterDateValue;
+        this.family_name = carInfoDetail.familyName;
+        this.gearbox_type = carInfoDetail.gearboxType;
+        this.car_remark = carInfoDetail.remark;
+        this.new_car_price = carInfoDetail.newCarPrice;
+        this.purchase_price_tax = carInfoDetail.purchasePriceTax;
+        this.import_flag = carInfoDetail.importFlag;
+        this.purchase_price = carInfoDetail.purchasePrice;
+        this.car_seat = carInfoDetail.seat;
+        this.standard_name = carInfoDetail.standardName;
+        this.coverage_list = coverageList;
+        this.created_at = time;
+        this.updated_at = time;
+    }
 
 }

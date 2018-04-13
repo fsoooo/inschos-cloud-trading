@@ -153,8 +153,8 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.updateInsurancePolicyProPolicyNoByWarrantyId(insurancePolicyModel);
     }
 
-    public InsurancePolicyModel findInsurancePolicyDetailByPrivateCode(String privateCode) {
-        return insurancePolicyMapper.findInsurancePolicyDetailByPrivateCode(privateCode);
+    public InsurancePolicyModel findInsurancePolicyDetailByWarrantyCode(String warrantyCode) {
+        return insurancePolicyMapper.findInsurancePolicyDetailByWarrantyCode(warrantyCode);
     }
 
     public int updateInsurancePolicyUnionOrderCode(InsurancePolicyModel insurancePolicyModel) {

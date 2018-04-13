@@ -36,6 +36,15 @@
         </if>
     </select>
 
+    <select id="findInsurancePolicyDetailByWarrantyCode"
+            parameterType="String"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty
+        WHERE warranty_uuid=#{_parameter} AND state=1
+    </select>
+
     <select id="findInsurancePolicyListByWarrantyStatusOrSearch"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">

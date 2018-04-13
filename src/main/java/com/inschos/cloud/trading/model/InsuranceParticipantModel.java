@@ -1,6 +1,8 @@
 package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
+import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 
 /**
  * 创建日期：2018/3/23 on 11:52
@@ -9,9 +11,9 @@ import com.inschos.cloud.trading.assist.kit.CardCodeKit;
  */
 public class InsuranceParticipantModel {
 
-    public final static int TYPE_POLICYHOLDER = 1;
-    public final static int TYPE_INSURED = 2;
-    public final static int TYPE_BENEFICIARY = 3;
+    public final static String TYPE_POLICYHOLDER = "1";
+    public final static String TYPE_INSURED = "2";
+    public final static String TYPE_BENEFICIARY = "3";
 
     /**
      * 主键
@@ -46,7 +48,7 @@ public class InsuranceParticipantModel {
     /**
      * 证件类型（1为身份证，2为护照，3为军官证）
      */
-    public int card_type;
+    public String card_type;
 
     /**
      * 证件号
@@ -133,9 +135,54 @@ public class InsuranceParticipantModel {
      */
     public String updated_at;
 
+    public InsuranceParticipantModel() {
 
-    public boolean setCardType(int cardType) {
-        if (cardType != CardCodeKit.CARD_TYPE_ID_CARD && cardType != CardCodeKit.CARD_TYPE_PASSPORT && cardType != CardCodeKit.CARD_TYPE_MILITARY_CERTIFICATE) {
+    }
+
+    /**
+     * 该构造只限车险使用
+     *
+     * @param warrantyUuid 内部保单标识
+     * @param type         人员类型
+     * @param relationName 默认为"1"
+     * @param time         时间戳
+     * @param startTime    开始时间
+     * @param endTime      结束时间
+     * @param personInfo   人员信息
+     */
+    public InsuranceParticipantModel(String warrantyUuid, String type, String relationName, String time, String startTime, String endTime, ExtendCarInsurancePolicy.InsuranceParticipant personInfo) {
+        this.warranty_uuid = warrantyUuid;
+        this.type = type;
+        this.relation_name = relationName;
+        switch (type) {
+            case TYPE_POLICYHOLDER:
+                this.name = personInfo.insuredName;
+                this.card_type = personInfo.insuredIdType;
+                this.card_code = personInfo.insuredID;
+                this.phone = personInfo.insuredMobile;
+                this.birthday = personInfo.insuredBirthday;
+                this.sex = personInfo.insuredSex;
+                this.age = personInfo.getAge(personInfo.insuredBirthday);
+                break;
+            case TYPE_INSURED:
+                this.name = personInfo.applicantName;
+                this.card_type = personInfo.applicantIdType;
+                this.card_code = personInfo.applicantID;
+                this.phone = personInfo.applicantMobile;
+                this.birthday = personInfo.applicantBirthday;
+                this.sex = personInfo.applicantSex;
+                this.age = personInfo.getAge(personInfo.applicantBirthday);
+                break;
+        }
+        this.start_time = startTime;
+        this.end_time = endTime;
+        this.created_at = time;
+        this.updated_at = time;
+    }
+
+
+    public boolean setCardType(String cardType) {
+        if (!StringKit.isInteger(cardType)) {
             return false;
         }
 
@@ -162,11 +209,11 @@ public class InsuranceParticipantModel {
 
     // 先设置证件类型
     public boolean setCardCode(String cardCode) {
-        if (card_type == 0) {
+        if (!StringKit.isInteger(cardCode)) {
             return false;
         }
 
-        if (!CardCodeKit.isLegal(card_type, cardCode)) {
+        if (!CardCodeKit.isLegal(Integer.valueOf(card_type), cardCode)) {
             return false;
         }
 

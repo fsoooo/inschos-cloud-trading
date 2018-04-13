@@ -68,6 +68,40 @@ public class InsurancePolicyAction extends BaseAction {
 
         return str;
     }
+
+
+    public String getInsurancePolicyDetailForOnlineStore(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestRequest.class);
+        InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse response = new InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        InsurancePolicyModel insurancePolicyDetailByWarrantyCode = insurancePolicyDao.findInsurancePolicyDetailByWarrantyCode(request.warrantyUuid);
+
+        String str;
+        if (insurancePolicyDetailByWarrantyCode != null) {
+            if (StringKit.equals(insurancePolicyDetailByWarrantyCode.type, "3")) {
+                // 车险
+
+                str = json(BaseResponse.CODE_FAILURE, "数据不存在", response);
+            } else {
+                // 其他险
+
+                str = json(BaseResponse.CODE_FAILURE, "数据不存在", response);
+            }
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "数据不存在", response);
+        }
+
+        return str;
+    }
 //    public String insure(InsurancePolicy.InsurancePolicyInsureForPersonRequest insurancePolicyInsureForPersonRequest) {
 //
 //        // 校验有效性后，重新计算保费，用重新计算的保费写数据库，并生成订单。

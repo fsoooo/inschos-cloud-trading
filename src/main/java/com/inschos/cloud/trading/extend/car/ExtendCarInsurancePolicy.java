@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.extend.car;
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -246,6 +247,39 @@ public class ExtendCarInsurancePolicy {
         public String ownerBirthday;
         @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
         public String ownerSex;
+
+        /**
+         * 获取年龄
+         *
+         * @param birth 生日的时间戳
+         * @return 年龄
+         */
+        public String getAge(String birth) {
+            if (StringKit.isInteger(birth)) {
+                return getAge(new Date(Long.valueOf(birth)));
+            } else {
+                return "";
+            }
+        }
+
+        /**
+         * 获取年龄
+         *
+         * @param date 生日
+         * @return 年龄
+         */
+        public String getAge(Date date) {
+            Date current = new Date(System.currentTimeMillis());
+            int year = current.getYear() - date.getYear();
+            if (current.getMonth() < date.getMonth()) {
+                year -= 1;
+            } else if (current.getMonth() == date.getMonth()) {
+                if (current.getDay() < date.getDay()) {
+                    year -= 1;
+                }
+            }
+            return String.valueOf(year);
+        }
     }
 
     public static class InsuranceInfoDetail extends InsuranceInfo {
