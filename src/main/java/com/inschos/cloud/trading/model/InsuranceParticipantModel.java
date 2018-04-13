@@ -11,10 +11,6 @@ import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
  */
 public class InsuranceParticipantModel {
 
-    public final static String TYPE_POLICYHOLDER = "1";
-    public final static String TYPE_INSURED = "2";
-    public final static String TYPE_BENEFICIARY = "3";
-
     /**
      * 主键
      */
@@ -180,34 +176,7 @@ public class InsuranceParticipantModel {
         this.updated_at = time;
     }
 
-
-    public boolean setCardType(String cardType) {
-        if (!StringKit.isInteger(cardType)) {
-            return false;
-        }
-
-        this.card_type = cardType;
-
-        return true;
-    }
-
-    public String getCardTypeText(int cardType) {
-        String cardTypeText = null;
-        switch (cardType) {
-            case CardCodeKit.CARD_TYPE_ID_CARD:
-                cardTypeText = "身份证";
-                break;
-            case CardCodeKit.CARD_TYPE_PASSPORT:
-                cardTypeText = "护照";
-                break;
-            case CardCodeKit.CARD_TYPE_MILITARY_CERTIFICATE:
-                cardTypeText = "军官证";
-                break;
-        }
-        return cardTypeText;
-    }
-
-    // 先设置证件类型
+    // 先设置证件类型（验证证件号码的有效性）
     public boolean setCardCode(String cardCode) {
         if (!StringKit.isInteger(cardCode)) {
             return false;
@@ -220,6 +189,59 @@ public class InsuranceParticipantModel {
         this.card_code = cardCode;
 
         return true;
+    }
+
+    public String cardTypeText(String cardType) {
+        return CardCodeKit.getCardTypeText(cardType);
+    }
+
+    // 投保人
+    public final static String TYPE_POLICYHOLDER = "1";
+    // 被保人
+    public final static String TYPE_INSURED = "2";
+    // 受益人
+    public final static String TYPE_BENEFICIARY = "3";
+
+    public String typeText(String type) {
+        String str = "";
+        if (type == null) {
+            return str;
+        }
+        // 人员类型: 1-投保人 2-被保人 3-受益人
+        switch (type) {
+            case TYPE_POLICYHOLDER:
+                str = "投保人";
+                break;
+            case TYPE_INSURED:
+                str = "被保人";
+                break;
+            case TYPE_BENEFICIARY:
+                str = "受益人";
+                break;
+        }
+        return str;
+    }
+
+    // 男
+    public final static String SEX_MAN = "1";
+    // 女
+    public final static String SEX_WOMAN = "2";
+
+    public String sexText(String sex) {
+        String str = "";
+        if (sex == null) {
+            return str;
+        }
+        // 性别: 1-男 2-女
+        switch (sex) {
+            case SEX_MAN:
+                str = "男";
+                break;
+            case SEX_WOMAN:
+                str = "女";
+                break;
+        }
+        return str;
     }
 
 }

@@ -13,7 +13,7 @@ public interface CarInfoMapper {
 
     int addCarInfo(CarInfoModel carInfoModel);
 
-    CarInfoModel findOneByCarCode(String carCode);
+    CarInfoModel findOneByWarrantyCode(String warrantyCode);
 
     List<CarInfoModel> findByBizId(String bizId);
 }

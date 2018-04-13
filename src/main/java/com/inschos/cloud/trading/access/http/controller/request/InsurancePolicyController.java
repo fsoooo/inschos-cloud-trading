@@ -28,5 +28,10 @@ public class InsurancePolicyController {
         return insurancePolicyAction.getInsurancePolicyListForOnlineStore(actionBean);
     }
 
-
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_insurance_policy_detail_for_online_store")
+    @ResponseBody
+    public String getInsurancePolicyDetailForOnlineStore(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyDetailForOnlineStore(actionBean);
+    }
 }

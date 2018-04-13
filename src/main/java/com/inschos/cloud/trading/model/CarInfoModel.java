@@ -1,10 +1,12 @@
 package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
+import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 创建日期：2018/3/26 on 11:59
@@ -198,9 +200,6 @@ public class CarInfoModel {
      */
     public String updated_at;
 
-    public static final String INSURANCE_TYPE_STRONG = "1";
-    public static final String INSURANCE_TYPE_COMMERCIAL = "2";
-
     public CarInfoModel() {
 
     }
@@ -251,6 +250,63 @@ public class CarInfoModel {
         this.coverage_list = coverageList;
         this.created_at = time;
         this.updated_at = time;
+    }
+
+
+    // 强险
+    public static final String INSURANCE_TYPE_STRONG = "1";
+    // 商业险
+    public static final String INSURANCE_TYPE_COMMERCIAL = "2";
+
+    public String insuranceTypeText(String insuranceType) {
+        String str = "";
+        if (insuranceType == null) {
+            return str;
+        }
+        // 车险类型 1-强险，2-商业险
+        switch (insuranceType) {
+            case INSURANCE_TYPE_STRONG:
+                str = "强险";
+                break;
+            case INSURANCE_TYPE_COMMERCIAL:
+                str = "商业险";
+                break;
+        }
+        return str;
+    }
+    public String cardTypeText(String cardType) {
+        return CardCodeKit.getCardTypeText(cardType);
+    }
+
+    // 国产
+    public static final String CAR_DOMESTIC = "1";
+    // 合资
+    public static final String CAR_JOINT_VENTURE = "2";
+    // 进口
+    public static final String CAR_IMPORT = "3";
+
+    public String importFlagText(String importFlag) {
+        String str = "";
+        if (importFlag == null) {
+            return str;
+        }
+        // 进口标识，0：国产，1：合资，2：进口
+        switch (importFlag) {
+            case CAR_DOMESTIC:
+                str = "国产";
+                break;
+            case CAR_JOINT_VENTURE:
+                str = "合资";
+                break;
+            case CAR_IMPORT:
+                str = "进口";
+                break;
+        }
+        return str;
+    }
+
+    public List parseCoverageList (String coverageList) {
+        return JsonKit.json2Bean(coverageList,List.class);
     }
 
 }

@@ -6,7 +6,8 @@
         `id`,`warranty_uuid`,`type`,`relation_name`,`out_order_no`,`name`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`age`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`,`created_at`,`updated_at`
     </sql>
 
-    <insert id="addInsuranceParticipant" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel" useGeneratedKeys="true"
+    <insert id="addInsuranceParticipant" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
+            useGeneratedKeys="true"
             keyProperty="id">
         insert into cust_warranty_person
         (`id`,`warranty_uuid`,`type`,`relation_name`,`out_order_no`,`name`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`age`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`,`created_at`,`updated_at`)
@@ -14,16 +15,18 @@
         (#{id},#{warranty_uuid},#{type},#{relation_name},#{out_order_no},#{name},#{card_type},#{card_code},#{phone},#{occupation},#{birthday},#{sex},#{age},#{email},#{nationality},#{annual_income},#{height},#{weight},#{area},#{address},#{start_time},#{end_time},#{created_at},#{updated_at})
     </insert>
 
-    <select id="findInsuranceParticipantByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
+    <select id="findInsuranceParticipantByWarrantyCode" parameterType="String"
+            resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
-        <include refid="Base_Column_List" />
-        from cust_warranty_person where warranty_uuid=#{_parameter} AND state = 1
+        <include refid="Base_Column_List"/>
+        from cust_warranty_person where warranty_uuid=#{_parameter}
     </select>
 
-    <select id="findInsuranceParticipantInsuredByPrivateCode" parameterType="String" resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
+    <select id="findInsuranceParticipantInsuredByPrivateCode" parameterType="String"
+            resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
-        <include refid="Base_Column_List" />
-        from cust_warranty_person where warranty_uuid=#{_parameter} AND `type`=2 AND state=1
+        <include refid="Base_Column_List"/>
+        from cust_warranty_person where warranty_uuid=#{_parameter} AND `type`=2
     </select>
 
 </mapper>

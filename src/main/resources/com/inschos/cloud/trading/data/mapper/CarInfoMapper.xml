@@ -14,10 +14,10 @@
         (#{id},#{warranty_uuid},#{biz_id},#{thp_biz_id},#{insurance_type},#{car_code},#{name},#{card_code},#{card_type},#{phone},#{birthday},#{sex},#{age},#{frame_no},#{engine_no},#{vehicle_fgw_code},#{vehicle_fgw_name},#{brand_code},#{brand_name},#{parent_veh_name},#{engine_desc},#{is_not_car_code},#{is_trans},#{trans_date},#{first_register_date},#{family_name},#{gearbox_type},#{car_remark},#{new_car_price},#{purchase_price_tax},#{import_flag},#{purchase_price},#{car_seat},#{standard_name},#{coverage_list},#{created_at},#{updated_at})
     </insert>
 
-    <select id="findOneByCarCode" parameterType="String" resultType="com.inschos.cloud.trading.model.CarInfoModel">
+    <select id="findOneByWarrantyCode" parameterType="String" resultType="com.inschos.cloud.trading.model.CarInfoModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty_car where car_code=#{_parameter}
+        from cust_warranty_car where warranty_uuid=#{_parameter}
     </select>
 
     <select id="findByBizId" parameterType="String" resultType="com.inschos.cloud.trading.model.CarInfoModel">

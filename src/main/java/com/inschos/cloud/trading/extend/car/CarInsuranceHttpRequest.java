@@ -42,6 +42,8 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
             L.log.debug("=============================================================================================================================");
             L.log.debug(JsonKit.bean2Json(request));
             String result = HttpClientKit.post(url, JsonKit.bean2Json(request));
+            L.log.debug("=============================================================================================================================");
+            L.log.debug(result);
 
             response = JsonKit.json2Bean(result, cls);
 

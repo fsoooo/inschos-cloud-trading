@@ -73,5 +73,30 @@ public class CardCodeKit {
         }
         return date;
     }
+    public static String getCardTypeText(String cardType) {
+        String str = "";
+        if (!StringKit.isInteger(cardType)) {
+            return str;
+        }
+        int type = Integer.valueOf(cardType);
+        return getCardTypeText(type);
+    }
+
+
+    public static String getCardTypeText(int cardType) {
+        String cardTypeText = null;
+        switch (cardType) {
+            case CardCodeKit.CARD_TYPE_ID_CARD:
+                cardTypeText = "身份证";
+                break;
+            case CardCodeKit.CARD_TYPE_PASSPORT:
+                cardTypeText = "护照";
+                break;
+            case CardCodeKit.CARD_TYPE_MILITARY_CERTIFICATE:
+                cardTypeText = "军官证";
+                break;
+        }
+        return cardTypeText;
+    }
 
 }

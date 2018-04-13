@@ -102,7 +102,7 @@ public class ExtendCarInsurancePolicy {
         public String frameNo;
 
         public String firstRegisterDate;
-
+        @CheckParams
         public String firstRegisterDateValue;
     }
 
@@ -217,7 +217,9 @@ public class ExtendCarInsurancePolicy {
         public String parentVehName;
         public String brandName;
         public String engineDesc;
+        @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
         public String newCarPrice;
+        @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
         public String purchasePriceTax;
         public String importFlag;
         public String seat;
@@ -225,6 +227,7 @@ public class ExtendCarInsurancePolicy {
         public String remark;
         public String familyName;
         public String gearboxType;
+        @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
         public String purchasePrice;
 
         public String transDate;
@@ -232,6 +235,11 @@ public class ExtendCarInsurancePolicy {
         public String transDateValue;
 
         public String sourceCertificateNo;
+
+        public CarInfoDetail() {
+
+        }
+
     }
 
     public static class VehicleOwnerInfo {

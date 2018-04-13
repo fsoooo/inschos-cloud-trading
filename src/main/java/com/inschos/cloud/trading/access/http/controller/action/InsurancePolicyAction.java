@@ -6,7 +6,11 @@ import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.data.dao.CarInfoDao;
+import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
+import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +28,12 @@ public class InsurancePolicyAction extends BaseAction {
 
     @Autowired
     private InsurancePolicyDao insurancePolicyDao;
+
+    @Autowired
+    private CarInfoDao carInfoDao;
+
+    @Autowired
+    private InsuranceParticipantDao insuranceParticipantDao;
 
     public String getInsurancePolicyListForOnlineStore(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyListForOnlineStoreRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListForOnlineStoreRequest.class);
@@ -84,17 +94,37 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         InsurancePolicyModel insurancePolicyDetailByWarrantyCode = insurancePolicyDao.findInsurancePolicyDetailByWarrantyCode(request.warrantyUuid);
+        List<InsuranceParticipantModel> insuranceParticipantByWarrantyCode = insuranceParticipantDao.findInsuranceParticipantByWarrantyCode(request.warrantyUuid);
+
+        response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode);
+        response.data.insuredList = new ArrayList<>();
+        response.data.beneficiaryList = new ArrayList<>();
+
+        if (insuranceParticipantByWarrantyCode != null && !insuranceParticipantByWarrantyCode.isEmpty()) {
+            for (InsuranceParticipantModel insuranceParticipantModel : insuranceParticipantByWarrantyCode) {
+                InsurancePolicy.InsurancePolicyParticipantInfo insurancePolicyParticipantInfo = new InsurancePolicy.InsurancePolicyParticipantInfo(insuranceParticipantModel);
+                if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_POLICYHOLDER)) {
+                    response.data.policyHolder = insurancePolicyParticipantInfo;
+                } else if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_INSURED)) {
+                    response.data.insuredList.add(insurancePolicyParticipantInfo);
+                } else if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_BENEFICIARY)) {
+                    response.data.beneficiaryList.add(insurancePolicyParticipantInfo);
+                }
+            }
+        }
 
         String str;
         if (insurancePolicyDetailByWarrantyCode != null) {
-            if (StringKit.equals(insurancePolicyDetailByWarrantyCode.type, "3")) {
+            if (StringKit.equals(insurancePolicyDetailByWarrantyCode.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
                 // 车险
+                CarInfoModel oneByWarrantyCode = carInfoDao.findOneByWarrantyCode(request.warrantyUuid);
+                response.data.carInfo = new InsurancePolicy.CarInfo(oneByWarrantyCode);
 
-                str = json(BaseResponse.CODE_FAILURE, "数据不存在", response);
+                str = json(BaseResponse.CODE_SUCCESS, "获取保单详情成功", response);
             } else {
                 // 其他险
 
-                str = json(BaseResponse.CODE_FAILURE, "数据不存在", response);
+                str = json(BaseResponse.CODE_SUCCESS, "获取保单详情成功", response);
             }
         } else {
             str = json(BaseResponse.CODE_FAILURE, "数据不存在", response);

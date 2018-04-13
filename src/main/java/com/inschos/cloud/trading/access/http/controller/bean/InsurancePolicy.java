@@ -2,6 +2,8 @@ package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 
 import java.text.SimpleDateFormat;
@@ -208,136 +210,340 @@ public class InsurancePolicy {
     }
 
     public static class GetInsurancePolicyDetail extends GetInsurancePolicy {
-        public CarInsurancePolicyInfo carInsurancePolicyInfo;
         // 投保人
-        public InsurancePolicyParticipant policyHolder;
+        public InsurancePolicyParticipantInfo policyHolder;
         // 被保险人
-        public List<InsurancePolicyParticipant> insuredList;
+        public List<InsurancePolicyParticipantInfo> insuredList;
+        // 受益人
+        public List<InsurancePolicyParticipantInfo> beneficiaryList;
+        // 车辆信息（仅车险有此信息）
+        public CarInfo carInfo;
+
+        public GetInsurancePolicyDetail () {
+            super();
+        }
+
+        public GetInsurancePolicyDetail (InsurancePolicyModel model) {
+            super(model);
+        }
     }
 
-    public static class CarInsurancePolicyInfo {
-        // 车主
-        public InsurancePolicyParticipant owner;
+    public static class CarInfo {
 
         //主键
         public String id;
 
-        //归属账号uuid
-        public String accountUuid;
+        //内部保单唯一标识
+        public String warrantyUuid;
 
-        //买家uuid
-        public String buyerAuuid;
+        //流水号
+        public String bizId;
 
-        //代理人ID为null则为用户自主购买
-        public String agentAuuid;
+        //第三方业务id
+        public String thpBizId;
 
-        //渠道ID为0则为用户自主购买
-        public String ditchId;
+        //车险类型 1-强险，2-商业险
+        public String insuranceType;
+        public String insuranceTypeText;
 
-        //计划书ID为0则为用户自主购买
-        public String planId;
+        //车牌号
+        public String carCode;
 
-        //产品ID
-        public String productId;
+        //车主姓名
+        public String name;
 
-        //保单价格
-        public String premium;
+        //车主身份证号
+        public String cardCode;
 
-        //起保时间
-        public String startTime;
+        //证件类型，1为身份证，2为护照，3为军官证
+        public String cardType;
+        public String cardTypeText;
 
-        //结束时间
-        public String endTime;
+        //车主手机号
+        public String phone;
 
-        //保险公司ID
-        public String insCompanyId;
+        //车主生日时间戳
+        public String birthday;
+        public String birthdayText;
 
-        //购买份数
-        public String count;
+        //车主性别 1-男，2-女
+        public String sex;
+        public String sexText;
 
-        //支付时间
-        public String payTime;
+        //
+        public String age;
 
-        //支付方式 1 银联 2 支付宝 3 微信 4现金
-        public String payWay;
+        //车架号
+        public String frameNo;
 
-        //分期方式
-        public String byStagesWay;
+        //发动机号
+        public String engineNo;
 
-        //佣金 0表示未结算，1表示已结算
-        public String isSettlement;
+        //发改委编码
+        public String vehicleFgwCode;
 
-        //电子保单下载地址
-        public String warrantyUrl;
+        //发改委名称
+        public String vehicleFgwName;
 
-        //保单来源 1 自购 2线上成交 3线下成交 4导入
-        public String warrantyFrom;
+        //品牌型号编码
+        public String brandCode;
 
-        //保单类型1表示个人保单，2表示团险保单，3表示车险保单
-        public String type;
+        //品牌名称
+        public String brandName;
 
-        //核保状态（01核保中 2核保失败，3核保成功
-        public String checkStatus;
+        //年份款型
+        public String parentVehName;
 
-        //支付状态 0，1支付中2支付失败3支付成功，
-        public String payStatus;
+        //排量
+        public String engineDesc;
 
-        //保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保
-        public String warrantyStatus;
+        //投保时是否未上牌（0:否 1:是）
+        public String isNotCarCode;
+
+        //是否过户车（0:否 1:是）
+        public String isTrans;
+
+        //过户日期
+        public String transDate;
+        public String transDateText;
+
+        //初登日期
+        public String firstRegisterDate;
+        public String firstRegisterDateText;
+
+        //车系名称
+        public String familyName;
+
+        //车挡类型
+        public String gearboxType;
+
+        //备注
+        public String carRemark;
+
+        //新车购置价
+        public String newCarPrice;
+        public String newCarPriceText;
+
+        //含税价格
+        public String purchasePriceTax;
+        public String purchasePriceTaxText;
+
+        //进口标识，0：国产，1：合资，2：进口
+        public String importFlag;
+        public String importFlagText;
+
+        //参考价
+        public String purchasePrice;
+        public String purchasePriceText;
+
+        //座位数
+        public String carSeat;
+
+        //款型名称
+        public String standardName;
+
+        //险别列表json
+        // public String coverageList;
+        public List<CarInsurance.InsuranceInfo> coverageList;
 
         //结束时间
         public String updatedAt;
+        public String updatedAtText;
 
+        public CarInfo () {
 
+        }
+
+        public CarInfo(CarInfoModel model) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            this.id = model.id;
+            this.warrantyUuid = model.warranty_uuid;
+            this.bizId = model.biz_id;
+            this.thpBizId = model.thp_biz_id;
+            this.insuranceType = model.insurance_type;
+            this.insuranceTypeText = model.insuranceTypeText(model.insurance_type);
+            this.carCode = model.car_code;
+            this.name = model.name;
+            this.cardCode = model.card_code;
+            this.cardType = model.card_type;
+            this.cardTypeText = model.cardTypeText(model.card_type);
+            this.phone = model.phone;
+            this.birthday = model.birthday;
+            if (StringKit.isInteger(model.birthday)) {
+                this.birthdayText = sdf.format(new Date(Long.valueOf(model.birthday)));
+            }
+            this.sex = model.sex;
+            this.sexText = new InsuranceParticipantModel().sexText(model.sex);
+            this.age = model.age;
+            this.frameNo = model.frame_no;
+            this.engineNo = model.engine_no;
+            this.vehicleFgwCode = model.vehicle_fgw_code;
+            this.vehicleFgwName = model.vehicle_fgw_name;
+            this.brandCode = model.brand_code;
+            this.brandName = model.brand_name;
+            this.parentVehName = model.parent_veh_name;
+            this.engineDesc = model.engine_desc;
+            this.isNotCarCode = model.is_not_car_code;
+            this.isTrans = model.is_trans;
+            this.transDate = model.trans_date;
+            if (StringKit.isInteger(model.trans_date)) {
+                this.transDateText = sdf.format(new Date(Long.valueOf(model.trans_date)));
+            }
+            this.firstRegisterDate = model.first_register_date;
+            if (StringKit.isInteger(model.first_register_date)) {
+                this.firstRegisterDateText = sdf.format(new Date(Long.valueOf(model.first_register_date)));
+            }
+            this.familyName = model.family_name;
+            this.gearboxType = model.gearbox_type;
+            this.carRemark = model.car_remark;
+            this.newCarPrice = model.new_car_price;
+            if (StringKit.isEmpty(model.new_car_price)) {
+                this.newCarPriceText = "¥0.00";
+            } else {
+                this.newCarPriceText = "¥" + model.new_car_price;
+            }
+            this.purchasePriceTax = model.purchase_price_tax;
+            if (StringKit.isEmpty(model.purchase_price_tax)) {
+                this.purchasePriceTaxText = "¥0.00";
+            } else {
+                this.purchasePriceTaxText = "¥" + model.purchase_price_tax;
+            }
+            this.importFlag = model.import_flag;
+            this.importFlagText = model.importFlagText(model.import_flag);
+            this.purchasePrice = model.purchase_price;
+            if (StringKit.isEmpty(model.purchase_price)) {
+                this.purchasePriceText = "¥0.00";
+            } else {
+                this.purchasePriceText = "¥" + model.purchase_price;
+            }
+            this.carSeat = model.car_seat;
+            this.standardName = model.standard_name;
+            coverageList = model.parseCoverageList(model.coverage_list);
+            this.updatedAt = model.updated_at;
+            if (StringKit.isInteger(model.updated_at)) {
+                this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
+            }
+        }
     }
 
-    public static class InsurancePolicyParticipant {
+    public static class InsurancePolicyParticipantInfo {
+
+        //内部保单唯一标识
+        public String warrantyUuid;
+
+        //人员类型: 1投保人 2被保人 3受益人
+        public String type;
+        public String typeText;
+
+        //被保人 投保人的（关系）
+        public String relationName;
+
+        //被保人单号
+        public String outOrderNo;
+
+        //姓名
         public String name;
-        public String idCardNo;
-        public String idType;
-        public String idTypeText;
+
+        //证件类型（1为身份证，2为护照，3为军官证）
+        public String cardType;
+        public String cardTypeText;
+
+        //证件号
+        public String cardCode;
+
+        //手机号
+        public String phone;
+
+        //职业
+        public String occupation;
+
+        //生日
         public String birthday;
         public String birthdayText;
+
+        //性别 1 男 2 女
         public String sex;
         public String sexText;
-        public String mobile;
 
-        public String idTypeText(String idType) {
-            String str = "";
-            switch (idType) {
-                case "1":
-                    str = "身份证";
-                    break;
-                case "2":
-                    str = "护照";
-                    break;
-                case "3":
-                    str = "军官证";
-                    break;
-            }
-            return str;
+        //年龄
+        public String age;
+
+        //邮箱
+        public String email;
+
+        //国籍
+        public String nationality;
+
+        //年收入
+        public String annualIncome;
+
+        //身高
+        public String height;
+
+        //体重
+        public String weight;
+
+        //地区
+        public String area;
+
+        //详细地址
+        public String address;
+
+        //开始时间
+        public String startTime;
+        public String startTimeText;
+
+        //结束时间
+        public String endTime;
+        public String endTimeText;
+
+        //修改时间
+        public String updatedAt;
+        public String updatedAtText;
+
+
+        public InsurancePolicyParticipantInfo() {
+
         }
 
-        public String birthdayText(String birthday) {
-            if (StringKit.isNumeric(birthday)) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                return sdf.format(new Date(Long.valueOf(birthday)));
-            } else {
-                return "";
+        public InsurancePolicyParticipantInfo(InsuranceParticipantModel model) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            this.warrantyUuid = model.warranty_uuid;
+            this.type = model.type;
+            this.relationName = model.relation_name;
+            this.outOrderNo = model.out_order_no;
+            this.name = model.name;
+            this.cardType = model.card_type;
+            this.cardTypeText = model.cardTypeText(model.card_type);
+            this.cardCode = model.card_code;
+            this.phone = model.phone;
+            this.occupation = model.occupation;
+            this.birthday = model.birthday;
+            if (StringKit.isInteger(model.birthday)) {
+                this.birthdayText = sdf.format(new Date(Long.valueOf(model.birthday)));
             }
-        }
-
-        public String sexText(String sex) {
-            String str = "";
-            switch (sex) {
-                case "1":
-                    str = "男";
-                    break;
-                case "2":
-                    str = "女";
-                    break;
+            this.sex = model.sex;
+            this.sexText = model.sexText(model.sex);
+            this.age = model.age;
+            this.email = model.email;
+            this.nationality = model.nationality;
+            this.annualIncome = model.annual_income;
+            this.height = model.height;
+            this.weight = model.weight;
+            this.area = model.area;
+            this.address = model.address;
+            this.startTime = model.start_time;
+            if (StringKit.isInteger(model.start_time)) {
+                this.startTimeText = sdf.format(new Date(Long.valueOf(model.start_time)));
             }
-            return str;
+            this.endTime = model.end_time;
+            if (StringKit.isInteger(model.end_time)) {
+                this.endTimeText = sdf.format(new Date(Long.valueOf(model.end_time)));
+            }
+            this.updatedAt = model.updated_at;
+            if (StringKit.isInteger(model.updated_at)) {
+                this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
+            }
         }
     }
 

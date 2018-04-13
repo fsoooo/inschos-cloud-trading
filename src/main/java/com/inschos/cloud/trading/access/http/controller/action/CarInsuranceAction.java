@@ -1235,7 +1235,7 @@ public class CarInsuranceAction extends BaseAction {
                     request.premiumCalibrate.carInfo,
                     request.premiumCalibrate.personInfo);
 
-            insurancePolicyAndParticipantForCarInsurance.ciCarInfoModel = new CarInfoModel(biProposal.warranty_uuid,
+            insurancePolicyAndParticipantForCarInsurance.ciCarInfoModel = new CarInfoModel(ciProposal.warranty_uuid,
                     response.data.bizID,
                     response.data.thpBizID,
                     CarInfoModel.INSURANCE_TYPE_STRONG,
@@ -1247,7 +1247,7 @@ public class CarInsuranceAction extends BaseAction {
             // 存保单人员信息
             // 被保险人
             insurancePolicyAndParticipantForCarInsurance.ciInsured = new InsuranceParticipantModel(
-                    biProposal.warranty_uuid,
+                    ciProposal.warranty_uuid,
                     InsuranceParticipantModel.TYPE_INSURED,
                     "1",
                     time,
@@ -1266,7 +1266,7 @@ public class CarInsuranceAction extends BaseAction {
 
             // 投保人
             insurancePolicyAndParticipantForCarInsurance.ciPolicyholder = new InsuranceParticipantModel(
-                    biProposal.warranty_uuid,
+                    ciProposal.warranty_uuid,
                     InsuranceParticipantModel.TYPE_POLICYHOLDER,
                     "1",
                     time,
@@ -1343,6 +1343,7 @@ public class CarInsuranceAction extends BaseAction {
                     request.applyUnderwriting.channelCode = insurancePolicyPremiumDetail.channelCode;
                     request.applyUnderwriting.ciBeginDateValue = insurancePolicyPremiumDetail.ciBeginDateValue;
                     request.applyUnderwriting.biBeginDateValue = insurancePolicyPremiumDetail.biBeginDateValue;
+                    // request.applyUnderwriting.coverageList = insurancePolicyPremiumDetail.coverageList;
                     flag = true;
                     break;
                 }
