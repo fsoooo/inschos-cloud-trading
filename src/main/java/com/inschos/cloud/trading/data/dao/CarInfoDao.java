@@ -5,6 +5,8 @@ import com.inschos.cloud.trading.model.CarInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * 创建日期：2018/3/26 on 12:00
  * 描述：
@@ -20,7 +22,15 @@ public class CarInfoDao {
         return carInfoMapper.addCarInfo(carInfoModel);
     }
 
-    public CarInfoModel findOneByWarrantyCode(String warrantyCode) {
-        return carInfoMapper.findOneByWarrantyCode(warrantyCode);
+    public CarInfoModel findOneByWarrantyUuid(String warrantyUuid) {
+        return carInfoMapper.findOneByWarrantyUuid(warrantyUuid);
+    }
+
+    public List<CarInfoModel> findWarrantyUuidByBizId(String bizId) {
+        return carInfoMapper.findWarrantyUuidByBizId(bizId);
+    }
+
+    public List<CarInfoModel> findWarrantyUuidByThpBizID(String thpBizID) {
+        return carInfoMapper.findWarrantyUuidByThpBizID(thpBizID);
     }
 }

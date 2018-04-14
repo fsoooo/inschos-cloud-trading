@@ -13,13 +13,19 @@ public interface InsurancePolicyMapper {
 
     int addInsurancePolicy(InsurancePolicyModel insurancePolicyModel);
 
-    int updateInsurancePolicyProPolicyNoByWarrantyId (InsurancePolicyModel insurancePolicyModel);
+    int updateInsurancePolicyProPolicyNoByWarrantyUuid(InsurancePolicyModel insurancePolicyModel);
+
+    int updateInsurancePolicyStatusForCarInsuranceWarrantyUuid(InsurancePolicyModel insurancePolicyModel);
+
+    int updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(InsurancePolicyModel insurancePolicyModel);
+
+    int updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid (InsurancePolicyModel insurancePolicyModel);
 
     List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearch(InsurancePolicyModel insurancePolicyModel);
 
     long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel);
 
-    InsurancePolicyModel findInsurancePolicyDetailByWarrantyCode(String warrantyCode);
+    InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(String warrantyUuid);
 
     // NOTENABLED: 2018/4/12
     List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);

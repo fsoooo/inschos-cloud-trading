@@ -1,5 +1,7 @@
 package com.inschos.cloud.trading.model;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -274,6 +276,7 @@ public class CarInfoModel {
         }
         return str;
     }
+
     public String cardTypeText(String cardType) {
         return CardCodeKit.getCardTypeText(cardType);
     }
@@ -305,8 +308,49 @@ public class CarInfoModel {
         return str;
     }
 
-    public List parseCoverageList (String coverageList) {
-        return JsonKit.json2Bean(coverageList,List.class);
+    public List<CarInsurance.InsuranceInfo> parseCoverageList(String coverageList) {
+        return JsonKit.json2Bean(coverageList, new TypeReference<List<CarInsurance.InsuranceInfo>>(){});
     }
+
+    public static final String COVERAGE_CODE_A = "A";
+    public static final String COVERAGE_CODE_B = "B";
+    public static final String COVERAGE_CODE_G1 = "G1";
+    public static final String COVERAGE_CODE_D3 = "D3";
+    public static final String COVERAGE_CODE_D4 = "D4";
+    public static final String COVERAGE_CODE_Q3 = "Q3";
+    public static final String COVERAGE_CODE_Z = "Z";
+    public static final String COVERAGE_CODE_F = "F";
+    public static final String COVERAGE_CODE_L = "L";
+    public static final String COVERAGE_CODE_X1 = "X1";
+    public static final String COVERAGE_CODE_R = "R";
+    public static final String COVERAGE_CODE_Z2 = "Z2";
+    public static final String COVERAGE_CODE_Z3 = "Z3";
+    public static final String COVERAGE_CODE_MG1 = "MG1";
+    public static final String COVERAGE_CODE_MA = "MA";
+    public static final String COVERAGE_CODE_MB = "MB";
+    public static final String COVERAGE_CODE_MD3 = "MD3";
+    public static final String COVERAGE_CODE_MD4 = "MD4";
+    public static final String COVERAGE_CODE_MZ = "MZ";
+    public static final String COVERAGE_CODE_MX1 = "MX1";
+    public static final String COVERAGE_CODE_MR = "MR";
+    public static final String COVERAGE_CODE_FORCEPREMIUM = "FORCEPREMIUM";
+
+    /**
+     * 从险别列表中获取符合车险类型的险别
+     *
+     * @param insuranceType 车险类型
+     * @param coverageCode  险别代码
+     * @return 是否符合
+     */
+    public boolean insuranceType(String insuranceType, String coverageCode) {
+        switch (insuranceType) {
+            case CarInfoModel.INSURANCE_TYPE_STRONG:
+                return StringKit.equals(CarInfoModel.COVERAGE_CODE_FORCEPREMIUM, coverageCode);
+            case CarInfoModel.INSURANCE_TYPE_COMMERCIAL:
+                return !StringKit.equals(CarInfoModel.COVERAGE_CODE_FORCEPREMIUM, coverageCode);
+        }
+        return false;
+    }
+
 
 }

@@ -6,8 +6,7 @@ import com.inschos.cloud.trading.data.mapper.InsuranceParticipantMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
 import com.inschos.cloud.trading.model.CarInfoModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
-import com.inschos.cloud.trading.model.fordao.InsurancePolicyAndParticipantForCarInsurance;
-import com.inschos.cloud.trading.model.fordao.UpdateInsurancePolicyProPolicyNoForCarInsurance;
+import com.inschos.cloud.trading.model.fordao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -150,21 +149,139 @@ public class InsurancePolicyDao extends BaseDao {
 
 
     public int updateInsurancePolicyProPolicyNoByWarrantyId(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.updateInsurancePolicyProPolicyNoByWarrantyId(insurancePolicyModel);
+        return insurancePolicyMapper.updateInsurancePolicyProPolicyNoByWarrantyUuid(insurancePolicyModel);
     }
 
+    public List<CarInfoModel> getCarInfoList(String bizId, String thpBizID) {
+        if (!StringKit.isEmpty(bizId)) {
+            return carInfoMapper.findWarrantyUuidByBizId(bizId);
+        } else if (!StringKit.isEmpty(thpBizID)) {
+            return carInfoMapper.findWarrantyUuidByThpBizID(thpBizID);
+        }
+        return null;
+    }
+
+    public int updateInsurancePolicyStatusForCarInsurance(UpdateInsurancePolicyStatusForCarInsurance updateInsurancePolicyStatusForCarInsurance) {
+        int update = 1;
+        List<CarInfoModel> carInfoModels = getCarInfoList(updateInsurancePolicyStatusForCarInsurance.bizId, updateInsurancePolicyStatusForCarInsurance.thpBizID);
+        if (carInfoModels == null || carInfoModels.isEmpty()) {
+            return -1;
+        }
+
+        String time = String.valueOf(System.currentTimeMillis());
+        for (CarInfoModel carInfoModel : carInfoModels) {
+            InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+            insurancePolicyModel.warranty_uuid = carInfoModel.warranty_uuid;
+            if (StringKit.equals(carInfoModel.insurance_type, "1")) {
+                insurancePolicyModel.pro_policy_no = updateInsurancePolicyStatusForCarInsurance.ciProposalNo;
+            } else if (StringKit.equals(carInfoModel.insurance_type, "2")) {
+                insurancePolicyModel.pro_policy_no = updateInsurancePolicyStatusForCarInsurance.biProposalNo;
+            }
+            insurancePolicyModel.check_status = updateInsurancePolicyStatusForCarInsurance.check_status;
+            insurancePolicyModel.pay_status = updateInsurancePolicyStatusForCarInsurance.pay_status;
+            insurancePolicyModel.warranty_status = updateInsurancePolicyStatusForCarInsurance.warranty_status;
+
+            insurancePolicyModel.updated_at = time;
+
+            update = updateInsurancePolicyStatusForCarInsuranceWarrantyUuid(insurancePolicyModel);
+
+            if (update <= 0) {
+                rollBack();
+                break;
+            }
+        }
+
+        return update;
+    }
+
+    public int updateInsurancePolicyStatusForCarInsuranceWarrantyUuid(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.updateInsurancePolicyStatusForCarInsuranceWarrantyUuid(insurancePolicyModel);
+    }
+
+    public int updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance(UpdateInsurancePolicyStatusAndWarrantyCodeForCarInsurance updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance) {
+        int update = 1;
+        List<CarInfoModel> carInfoModels = getCarInfoList(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.bizId, updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.thpBizID);
+        if (carInfoModels == null || carInfoModels.isEmpty()) {
+            return -1;
+        }
+
+        String time = String.valueOf(System.currentTimeMillis());
+        for (CarInfoModel carInfoModel : carInfoModels) {
+            InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+            insurancePolicyModel.warranty_uuid = carInfoModel.warranty_uuid;
+            if (StringKit.equals(carInfoModel.insurance_type, "1")) {
+                insurancePolicyModel.warranty_code = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo;
+            } else if (StringKit.equals(carInfoModel.insurance_type, "2")) {
+                insurancePolicyModel.warranty_code = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo;
+            }
+            insurancePolicyModel.pay_status = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status;
+            insurancePolicyModel.warranty_status = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status;
+
+            insurancePolicyModel.updated_at = time;
+
+            update = updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(insurancePolicyModel);
+
+            if (update <= 0) {
+                rollBack();
+                break;
+            }
+        }
+
+        return update;
+    }
+
+    public int updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(insurancePolicyModel);
+    }
+
+    public int updateInsurancePolicyExpressInfoForCarInsurance (UpdateInsurancePolicyExpressInfoForCarInsurance updateInsurancePolicyExpressInfoForCarInsurance) {
+        int update = 1;
+        List<CarInfoModel> carInfoModels = getCarInfoList(updateInsurancePolicyExpressInfoForCarInsurance.bizId, updateInsurancePolicyExpressInfoForCarInsurance.thpBizID);
+        if (carInfoModels == null || carInfoModels.isEmpty()) {
+            return -1;
+        }
+
+        String time = String.valueOf(System.currentTimeMillis());
+        for (CarInfoModel carInfoModel : carInfoModels) {
+            InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+            insurancePolicyModel.warranty_uuid = carInfoModel.warranty_uuid;
+            insurancePolicyModel.express_no = updateInsurancePolicyExpressInfoForCarInsurance.expressNo;
+            insurancePolicyModel.express_company_name = updateInsurancePolicyExpressInfoForCarInsurance.expressCompanyName;
+            insurancePolicyModel.delivery_dype = updateInsurancePolicyExpressInfoForCarInsurance.deliveryType;
+
+            insurancePolicyModel.updated_at = time;
+
+            update = updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid(insurancePolicyModel);
+
+            if (update <= 0) {
+                rollBack();
+                break;
+            }
+        }
+
+        return update;
+    }
+
+    public int updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid (InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid(insurancePolicyModel);
+    }
+
+    // NOTENABLED: 2018/4/14
     public InsurancePolicyModel findInsurancePolicyDetailByWarrantyCode(String warrantyCode) {
-        return insurancePolicyMapper.findInsurancePolicyDetailByWarrantyCode(warrantyCode);
+        return insurancePolicyMapper.findInsurancePolicyDetailByWarrantyUuid(warrantyCode);
     }
 
+    // NOTENABLED: 2018/4/14
     public int updateInsurancePolicyUnionOrderCode(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.updateInsurancePolicyUnionOrderCode(insurancePolicyModel);
     }
 
+    // NOTENABLED: 2018/4/14
     public int updateInsurancePolicyWarrantyCode(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.updateInsurancePolicyWarrantyCode(insurancePolicyModel);
     }
 
+    // NOTENABLED: 2018/4/14
     public String findInsurancePolicyPrivateCodeByUnionOrderCode(String unionOrderCode) {
         return insurancePolicyMapper.findInsurancePolicyPrivateCodeByUnionOrderCode(unionOrderCode);
     }

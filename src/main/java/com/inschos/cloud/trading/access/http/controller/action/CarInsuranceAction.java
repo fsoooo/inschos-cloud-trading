@@ -9,16 +9,12 @@ import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
-import com.inschos.cloud.trading.extend.car.CarInsuranceHttpRequest;
-import com.inschos.cloud.trading.extend.car.CarInsuranceResponse;
-import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
-import com.inschos.cloud.trading.extend.car.SignatureTools;
+import com.inschos.cloud.trading.extend.car.*;
 import com.inschos.cloud.trading.model.CarInfoModel;
 import com.inschos.cloud.trading.model.CarRecordModel;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
-import com.inschos.cloud.trading.model.fordao.InsurancePolicyAndParticipantForCarInsurance;
-import com.inschos.cloud.trading.model.fordao.UpdateInsurancePolicyProPolicyNoForCarInsurance;
+import com.inschos.cloud.trading.model.fordao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -1112,16 +1108,28 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             String applyState = "";
+            String payState = "";
+            String warrantyStatus = "";
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
                 response.data.bjCodeFlag = request.applyUnderwriting.bjCodeFlag;
                 applyState = getApplyUnderwritingState(response.data.synchFlag);
+                payState = InsurancePolicyModel.PAY_STATUS_PROCESSING_1;
             } else {
                 // 核保失败
                 applyState = InsurancePolicyModel.APPLY_UNDERWRITING_FAILURE;
+                payState = InsurancePolicyModel.PAY_STATUS_FAILURE;
                 if (response.data == null) {
                     response.data = new ExtendCarInsurancePolicy.ApplyUnderwriting();
                 }
+            }
+
+            if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_PROCESSING_1)) {
+                warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
+            } else if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_SUCCESS)) {
+                warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PAYING;
+            } else {
+                warrantyStatus = InsurancePolicyModel.POLICY_STATUS_INVALID;
             }
 
             InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance = new InsurancePolicyAndParticipantForCarInsurance();
@@ -1167,8 +1175,8 @@ public class CarInsuranceAction extends BaseAction {
 
             ciProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
             ciProposal.check_status = applyState;
-            ciProposal.pay_status = InsurancePolicyModel.PAY_STATUS_PROCESSING_1;
-            ciProposal.warranty_status = InsurancePolicyModel.POLICY_STATUS_PAYING;
+            ciProposal.pay_status = payState;
+            ciProposal.warranty_status = warrantyStatus;
             ciProposal.by_stages_way = "趸缴";
             ciProposal.state = "1";
             ciProposal.created_at = time;
@@ -1209,8 +1217,8 @@ public class CarInsuranceAction extends BaseAction {
 
             biProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
             biProposal.check_status = applyState;
-            biProposal.pay_status = InsurancePolicyModel.PAY_STATUS_PROCESSING_1;
-            biProposal.warranty_status = InsurancePolicyModel.POLICY_STATUS_PAYING;
+            biProposal.pay_status = payState;
+            biProposal.warranty_status = warrantyStatus;
             biProposal.by_stages_way = "趸缴";
             biProposal.state = "1";
             biProposal.created_at = time;
@@ -1619,7 +1627,7 @@ public class CarInsuranceAction extends BaseAction {
 
         if (!StringKit.isEmpty(request.imgBackUrl) || !StringKit.isEmpty(request.imgBackBase64)) {
             resolveDrivingLicenseRequest.imgBackUrl = request.imgBackUrl;
-            resolveDrivingLicenseRequest.imgJustBase64 = request.imgJustBase64;
+            resolveDrivingLicenseRequest.imgBackBase64 = request.imgBackBase64;
         } else {
             return json(BaseResponse.CODE_FAILURE, "缺少背面信息", new BaseResponse());
         }
@@ -1648,43 +1656,128 @@ public class CarInsuranceAction extends BaseAction {
     }
 
     /**
-     * 回写核保信息（回调接口）
+     * 回调接口：获取保单核保结果
+     * FINISH: 2018/4/14
+     *
+     * @param actionBean 请求体
+     * @return 响应json
      */
-    private static final String get_apply_underwriting_result = "";
-
-    public String getApplyUnderwritingResult(ActionBean actionBean) {
-        // TODO: 2018/3/30  actionBean 就是我们的Request，处理数据，处理回执
+    public String sendApplyUnderwritingResult(ActionBean actionBean) {
         ExtendCarInsurancePolicy.GetApplyUnderwritingResultRequest request = JsonKit.json2Bean(actionBean.body, ExtendCarInsurancePolicy.GetApplyUnderwritingResultRequest.class);
-
         ExtendCarInsurancePolicy.GetApplyUnderwritingResultResponse response = new ExtendCarInsurancePolicy.GetApplyUnderwritingResultResponse();
 
+        String s = dealCallBackRequestError(request);
+        if (!StringKit.isEmpty(s)) {
+            return s;
+        }
+
+        assert request != null;
+        String applyState = StringKit.equals(request.state, "1") ? InsurancePolicyModel.APPLY_UNDERWRITING_SUCCESS : InsurancePolicyModel.APPLY_UNDERWRITING_FAILURE;
+
+        UpdateInsurancePolicyStatusForCarInsurance insurance = new UpdateInsurancePolicyStatusForCarInsurance();
+
+        insurance.check_status = applyState;
+        if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_FAILURE)) {
+            insurance.pay_status = InsurancePolicyModel.PAY_STATUS_FAILURE;
+            insurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_INVALID;
+        } else {
+            insurance.pay_status = InsurancePolicyModel.PAY_STATUS_PROCESSING_1;
+            insurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_PAYING;
+        }
+        insurance.biProposalNo = request.data.biProposalNo;
+        insurance.ciProposalNo = request.data.ciProposalNo;
+        insurance.bizId = request.data.bizID;
+        insurance.thpBizID = request.data.thpBizID;
+        if (!StringKit.isEmpty(request.data.bizID) || !StringKit.isEmpty(request.data.thpBizID)) {
+            int update = 1;
+            update = insurancePolicyDao.updateInsurancePolicyStatusForCarInsurance(insurance);
+            dealCallBackParamsIllegal(update, response);
+        } else {
+            response.msg = "未返回bizID或thpBizID";
+            response.state = String.valueOf(CarInsuranceResponse.RESULT_FAIL);
+            response.msgCode = "error_4";
+        }
+
         return JsonKit.bean2Json(response);
     }
 
     /**
-     * 回写保单信息(回调接口)
+     * 回调接口：获取保单的付款信息
+     * FINISH: 2018/4/14
+     *
+     * @param actionBean 请求体
+     * @return 响应json
      */
-    private static final String get_insurance_policy = "";
-
-    public String getInsurancePolicy(ActionBean actionBean) {
-        // TODO: 2018/3/30  actionBean 就是我们的Request，处理数据，处理回执
+    public String sendInsurancePolicy(ActionBean actionBean) {
         ExtendCarInsurancePolicy.GetInsurancePolicyRequest request = JsonKit.json2Bean(actionBean.body, ExtendCarInsurancePolicy.GetInsurancePolicyRequest.class);
-
         ExtendCarInsurancePolicy.GetInsurancePolicyResponse response = new ExtendCarInsurancePolicy.GetInsurancePolicyResponse();
 
+        String s = dealCallBackRequestError(request);
+        if (!StringKit.isEmpty(s)) {
+            return s;
+        }
+
+        assert request != null;
+        if (!StringKit.isEmpty(request.data.bizID) || !StringKit.isEmpty(request.data.thpBizID)) {
+            UpdateInsurancePolicyStatusAndWarrantyCodeForCarInsurance updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance = new UpdateInsurancePolicyStatusAndWarrantyCodeForCarInsurance();
+            updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.bizId = request.data.bizID;
+            updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.thpBizID = request.data.thpBizID;
+
+            if (StringKit.equals(request.data.payState, "0")) {
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status = InsurancePolicyModel.PAY_STATUS_FAILURE;
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.premium = "0.00";
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = "";
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = "";
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_INVALID;
+            } else {
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status = InsurancePolicyModel.PAY_STATUS_SUCCESS;
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.premium = request.data.payMoney;
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = request.data.ciPolicyNo;
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = request.data.biPolicyNo;
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_WAITING;
+            }
+
+            int update = insurancePolicyDao.updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance);
+
+            dealCallBackParamsIllegal(update, response);
+
+        } else {
+            response.msg = "未返回bizID或thpBizID";
+            response.state = String.valueOf(CarInsuranceResponse.RESULT_FAIL);
+            response.msgCode = "error_4";
+        }
+
         return JsonKit.bean2Json(response);
     }
 
     /**
-     * 回写配送信息(回调接口)
+     * 回调接口：获取保单的配送信息
+     * FINISH: 2018/4/14
+     *
+     * @param actionBean 请求体
+     * @return 响应json
      */
-    private static final String get_express_info = "";
-
-    public String getExpressInfo(ActionBean actionBean) {
-        // TODO: 2018/3/30  actionBean 就是我们的Request，处理数据，处理回执
+    public String sendExpressInfo(ActionBean actionBean) {
         ExtendCarInsurancePolicy.GetExpressInfoRequest request = JsonKit.json2Bean(actionBean.body, ExtendCarInsurancePolicy.GetExpressInfoRequest.class);
-
         ExtendCarInsurancePolicy.GetExpressInfoResponse response = new ExtendCarInsurancePolicy.GetExpressInfoResponse();
+
+        String s = dealCallBackRequestError(request);
+        if (!StringKit.isEmpty(s)) {
+            return s;
+        }
+
+        assert request != null;
+        UpdateInsurancePolicyExpressInfoForCarInsurance updateInsurancePolicyExpressInfoForCarInsurance = new UpdateInsurancePolicyExpressInfoForCarInsurance();
+
+        updateInsurancePolicyExpressInfoForCarInsurance.bizId = request.data.bizID;
+        updateInsurancePolicyExpressInfoForCarInsurance.thpBizID = request.data.thpBizID;
+        updateInsurancePolicyExpressInfoForCarInsurance.expressNo = request.data.expressNo;
+        updateInsurancePolicyExpressInfoForCarInsurance.expressCompanyName = request.data.expressCompanyName;
+        updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.deliveryType;
+
+        int update = insurancePolicyDao.updateInsurancePolicyExpressInfoForCarInsurance(updateInsurancePolicyExpressInfoForCarInsurance);
+
+        dealCallBackParamsIllegal(update, response);
 
         return JsonKit.bean2Json(response);
     }
@@ -1740,6 +1833,50 @@ public class CarInsuranceAction extends BaseAction {
             str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
         }
         return str;
+    }
+
+    /**
+     * 处理回调接口，request的参数缺失
+     *
+     * @param request 请求体
+     * @return 校验结果
+     */
+    private String dealCallBackRequestError(CallBackCarInsuranceRequest request) {
+        if (request == null) {
+            CallBackCarInsuranceResponse response = new CallBackCarInsuranceResponse();
+            response.msg = "解析错误";
+            response.state = String.valueOf(CarInsuranceResponse.RESULT_FAIL);
+            response.msgCode = "error_1";
+            return JsonKit.bean2Json(response);
+        }
+
+        if (request.data == null) {
+            CallBackCarInsuranceResponse response = new CallBackCarInsuranceResponse();
+            response.msg = "缺少data";
+            response.state = String.valueOf(CarInsuranceResponse.RESULT_FAIL);
+            response.msgCode = "error_2";
+            return JsonKit.bean2Json(response);
+        }
+        return null;
+    }
+
+    /**
+     * 处理回调接口，参数非法
+     *
+     * @param update 数据库操作结果
+     * @return 校验结果Response
+     */
+    private CallBackCarInsuranceResponse dealCallBackParamsIllegal(int update, CallBackCarInsuranceResponse response) {
+        if (update > 0) {
+            response.msg = "";
+            response.state = String.valueOf(CarInsuranceResponse.RESULT_OK);
+            response.msgCode = "0";
+        } else {
+            response.msg = "bizID或thpBizID不存在或无效";
+            response.state = String.valueOf(CarInsuranceResponse.RESULT_FAIL);
+            response.msgCode = "error_3";
+        }
+        return response;
     }
 
     /**
@@ -2128,9 +2265,9 @@ public class CarInsuranceAction extends BaseAction {
         if (StringKit.isInteger(mSynchFlag)) {
             int synchFlag = Integer.valueOf(mSynchFlag);
             if (synchFlag == 0) {
-                applyState = InsurancePolicyModel.APPLY_UNDERWRITING_PROCESSING_1;
-            } else if (synchFlag == 1) {
                 applyState = InsurancePolicyModel.APPLY_UNDERWRITING_SUCCESS;
+            } else if (synchFlag == 1) {
+                applyState = InsurancePolicyModel.APPLY_UNDERWRITING_PROCESSING_1;
             } else {
                 applyState = "synchFlag = " + synchFlag;
             }

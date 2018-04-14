@@ -135,6 +135,21 @@ public class InsurancePolicyModel {
     public String warranty_status;
 
     /**
+     * 快递单号
+     */
+    public String express_no;
+
+    /**
+     * 快递公司名称
+     */
+    public String express_company_name;
+
+    /**
+     * 快递方式，0-自取，1-快递
+     */
+    public String delivery_dype;
+
+    /**
      * 创建时间
      */
     public String created_at;
@@ -176,7 +191,7 @@ public class InsurancePolicyModel {
     // 已结算
     public static final String COMMISSION_SETTLED = "1";
 
-    public boolean setIsSettlement (String isSettlement) {
+    public boolean setIsSettlement(String isSettlement) {
         if (!StringKit.isInteger(isSettlement) || Integer.valueOf(isSettlement) > 1 || Integer.valueOf(isSettlement) < 0) {
             return false;
         }
@@ -194,7 +209,7 @@ public class InsurancePolicyModel {
     // 导入
     public static final String SOURCE_COPY = "4";
 
-    public boolean setWarrantyFrom (String warrantyFrom) {
+    public boolean setWarrantyFrom(String warrantyFrom) {
         if (!StringKit.isInteger(warrantyFrom) || Integer.valueOf(warrantyFrom) > 4 || Integer.valueOf(warrantyFrom) < 1) {
             return false;
         }

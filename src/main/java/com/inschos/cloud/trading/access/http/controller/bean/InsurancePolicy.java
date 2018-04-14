@@ -7,6 +7,7 @@ import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -145,6 +146,9 @@ public class InsurancePolicy {
         }
 
         public GetInsurancePolicy(InsurancePolicyModel model) {
+            if (model == null) {
+                return;
+            }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             this.id = model.id;
             this.warrantyUuid = model.warranty_uuid;
@@ -219,11 +223,11 @@ public class InsurancePolicy {
         // 车辆信息（仅车险有此信息）
         public CarInfo carInfo;
 
-        public GetInsurancePolicyDetail () {
+        public GetInsurancePolicyDetail() {
             super();
         }
 
-        public GetInsurancePolicyDetail (InsurancePolicyModel model) {
+        public GetInsurancePolicyDetail(InsurancePolicyModel model) {
             super(model);
         }
     }
@@ -350,11 +354,14 @@ public class InsurancePolicy {
         public String updatedAt;
         public String updatedAtText;
 
-        public CarInfo () {
+        public CarInfo() {
 
         }
 
         public CarInfo(CarInfoModel model) {
+            if (model == null) {
+                return;
+            }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             this.id = model.id;
             this.warrantyUuid = model.warranty_uuid;
@@ -418,12 +425,28 @@ public class InsurancePolicy {
             }
             this.carSeat = model.car_seat;
             this.standardName = model.standard_name;
-            coverageList = model.parseCoverageList(model.coverage_list);
+            List list = model.parseCoverageList(model.coverage_list);
+            this.coverageList = new ArrayList<>();
+            if (list != null && !list.isEmpty()) {
+                for (Object o : list) {
+                    if (o instanceof CarInsurance.InsuranceInfo) {
+                        if (model.insuranceType(insuranceType,((CarInsurance.InsuranceInfo) o).coverageCode)) {
+                            if (StringKit.equals(((CarInsurance.InsuranceInfo) o).hasExcessOption, "1") && StringKit.equals(((CarInsurance.InsuranceInfo) o).isExcessOption, "1")) {
+                                ((CarInsurance.InsuranceInfo) o).coverageName = ((CarInsurance.InsuranceInfo) o).coverageName + "（不计免赔）";
+                            }
+                            this.coverageList.add((CarInsurance.InsuranceInfo) o);
+                        }
+                    }
+                }
+            }
+
+
             this.updatedAt = model.updated_at;
             if (StringKit.isInteger(model.updated_at)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
             }
         }
+
     }
 
     public static class InsurancePolicyParticipantInfo {
@@ -507,6 +530,9 @@ public class InsurancePolicy {
         }
 
         public InsurancePolicyParticipantInfo(InsuranceParticipantModel model) {
+            if (model == null) {
+                return;
+            }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             this.warrantyUuid = model.warranty_uuid;
             this.type = model.type;

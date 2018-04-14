@@ -117,13 +117,11 @@ public class InsurancePolicyAction extends BaseAction {
         if (insurancePolicyDetailByWarrantyCode != null) {
             if (StringKit.equals(insurancePolicyDetailByWarrantyCode.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
                 // 车险
-                CarInfoModel oneByWarrantyCode = carInfoDao.findOneByWarrantyCode(request.warrantyUuid);
+                CarInfoModel oneByWarrantyCode = carInfoDao.findOneByWarrantyUuid(request.warrantyUuid);
                 response.data.carInfo = new InsurancePolicy.CarInfo(oneByWarrantyCode);
-
                 str = json(BaseResponse.CODE_SUCCESS, "获取保单详情成功", response);
             } else {
                 // 其他险
-
                 str = json(BaseResponse.CODE_SUCCESS, "获取保单详情成功", response);
             }
         } else {

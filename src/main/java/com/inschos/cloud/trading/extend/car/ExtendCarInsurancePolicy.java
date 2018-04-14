@@ -496,39 +496,6 @@ public class ExtendCarInsurancePolicy {
         public String billNo;
     }
 
-    /**
-     * 回调接口
-     */
-    public static class GetApplyUnderwritingResultRequest {
-        public String msg;
-        public String sendTime;
-        public String state;
-        public UnderwritingInfo data;
-    }
-
-    /**
-     * 回调接口
-     */
-    public static class GetApplyUnderwritingResultResponse {
-        public String state;
-        public String msg;
-        public String msgCode;
-    }
-
-    /**
-     * 回调接口
-     */
-    public static class UnderwritingInfo {
-        public String operType;
-        public String thpBizID;
-        public String bizID;
-        public String biProposalNo;
-        public String ciProposalNo;
-        public String payLink;
-        public String expiredTime;
-        public String uploadType;
-    }
-
     public static class GetPayLinkRequest extends CarInsuranceRequest {
         public String bizID;
     }
@@ -575,20 +542,42 @@ public class ExtendCarInsurancePolicy {
     /**
      * 回调接口
      */
-    public static class GetInsurancePolicyRequest {
-        public String msg;
-        public String sendTime;
-        public String state;
-        public InsurancePolicyByCallback data;
+    public static class GetApplyUnderwritingResultRequest extends CallBackCarInsuranceRequest<UnderwritingInfo> {
+        // public UnderwritingInfo data;
     }
 
     /**
      * 回调接口
      */
-    public static class GetInsurancePolicyResponse {
-        public String state;
-        public String msg;
-        public String msgCode;
+    public static class GetApplyUnderwritingResultResponse extends CallBackCarInsuranceResponse {
+    }
+
+    /**
+     * 回调接口
+     */
+    public static class UnderwritingInfo {
+        public String operType;
+        public String thpBizID;
+        public String bizID;
+        public String biProposalNo;
+        public String ciProposalNo;
+        public String payLink;
+        public String expiredTime;
+        public String uploadType;
+    }
+
+
+    /**
+     * 回调接口
+     */
+    public static class GetInsurancePolicyRequest extends CallBackCarInsuranceRequest<InsurancePolicyByCallback> {
+        // public InsurancePolicyByCallback data;
+    }
+
+    /**
+     * 回调接口
+     */
+    public static class GetInsurancePolicyResponse extends CallBackCarInsuranceResponse {
     }
 
     /**
@@ -608,20 +597,14 @@ public class ExtendCarInsurancePolicy {
     /**
      * 回调接口
      */
-    public static class GetExpressInfoRequest {
-        public String msg;
-        public String sendTime;
-        public String state;
-        public ExpressInfoByCallback data;
+    public static class GetExpressInfoRequest extends CallBackCarInsuranceRequest<ExpressInfoByCallback> {
+        // public ExpressInfoByCallback data;
     }
 
     /**
      * 回调接口
      */
-    public static class GetExpressInfoResponse {
-        public String state;
-        public String msg;
-        public String msgCode;
+    public static class GetExpressInfoResponse extends CallBackCarInsuranceResponse {
     }
 
     public static class ExpressInfoByCallback {
