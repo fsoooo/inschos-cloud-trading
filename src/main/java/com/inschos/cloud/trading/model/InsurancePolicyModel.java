@@ -147,7 +147,7 @@ public class InsurancePolicyModel {
     /**
      * 快递方式，0-自取，1-快递
      */
-    public String delivery_dype;
+    public String delivery_type;
 
     /**
      * 创建时间
@@ -429,6 +429,26 @@ public class InsurancePolicyModel {
                 break;
             case POLICY_STATUS_EXPIRED:
                 str = "已过保";
+                break;
+        }
+        return str;
+    }
+
+    public static final String DELIVERY_TYPE_SELF = "0";
+    public static final String DELIVERY_TYPE_EXPRESS = "1";
+
+    public String deliveryTypeText(String deliveryType) {
+        String str = "";
+        if (deliveryType == null) {
+            return str;
+        }
+        // 0-自取，1-快递
+        switch (deliveryType) {
+            case DELIVERY_TYPE_SELF:
+                str = "自取";
+                break;
+            case DELIVERY_TYPE_EXPRESS:
+                str = "快递";
                 break;
         }
         return str;

@@ -135,6 +135,16 @@ public class InsurancePolicy {
         //保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保（显示用）
         public String warrantyStatusText;
 
+        // 快递单号
+        public String expressNo;
+
+        // 快递公司名称
+        public String expressCompanyName;
+
+        // 快递方式，0-自取，1-快递
+        public String deliveryType;
+        public String deliveryTypeText;
+
         //更新时间
         public String updatedAt;
 
@@ -195,6 +205,10 @@ public class InsurancePolicy {
             this.payStatusText = model.payStatusText(payStatus);
             this.warrantyStatus = model.warranty_status;
             this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
+            this.expressNo = model.express_no;
+            this.expressCompanyName = model.express_company_name;
+            this.deliveryType = model.delivery_type;
+            this.deliveryTypeText = model.deliveryTypeText(deliveryType);
             this.updatedAt = model.updated_at;
             if (StringKit.isInteger(model.updated_at)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
@@ -425,21 +439,18 @@ public class InsurancePolicy {
             }
             this.carSeat = model.car_seat;
             this.standardName = model.standard_name;
-            List list = model.parseCoverageList(model.coverage_list);
+            List<CarInsurance.InsuranceInfo> list = model.parseCoverageList(model.coverage_list);
             this.coverageList = new ArrayList<>();
             if (list != null && !list.isEmpty()) {
-                for (Object o : list) {
-                    if (o instanceof CarInsurance.InsuranceInfo) {
-                        if (model.insuranceType(insuranceType,((CarInsurance.InsuranceInfo) o).coverageCode)) {
-                            if (StringKit.equals(((CarInsurance.InsuranceInfo) o).hasExcessOption, "1") && StringKit.equals(((CarInsurance.InsuranceInfo) o).isExcessOption, "1")) {
-                                ((CarInsurance.InsuranceInfo) o).coverageName = ((CarInsurance.InsuranceInfo) o).coverageName + "（不计免赔）";
-                            }
-                            this.coverageList.add((CarInsurance.InsuranceInfo) o);
+                for (CarInsurance.InsuranceInfo o : list) {
+                    if (model.insuranceType(insuranceType, o.coverageCode)) {
+                        if (StringKit.equals(o.hasExcessOption, "1") && StringKit.equals(o.isExcessOption, "1")) {
+                            o.coverageName = String.format("%s（不计免赔）", o.coverageName);
                         }
+                        this.coverageList.add(o);
                     }
                 }
             }
-
 
             this.updatedAt = model.updated_at;
             if (StringKit.isInteger(model.updated_at)) {

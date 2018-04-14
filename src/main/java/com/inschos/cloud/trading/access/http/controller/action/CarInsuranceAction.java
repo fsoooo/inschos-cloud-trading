@@ -403,7 +403,9 @@ public class CarInsuranceAction extends BaseAction {
                     }
                 }
 
-                response.signToken = SignatureTools.sign(result.data.frameNo + result.data.engineNo, SignatureTools.SIGN_CAR_RSA_PRIVATE_KEY);
+                String frameNo = SignatureTools.sign(result.data.frameNo, SignatureTools.SIGN_CAR_RSA_PRIVATE_KEY);
+                String engineNo = SignatureTools.sign(result.data.engineNo, SignatureTools.SIGN_CAR_RSA_PRIVATE_KEY);
+                response.signToken = frameNo + "*" + engineNo;
                 str = json(BaseResponse.CODE_SUCCESS, "获取车辆号码与车型信息成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
@@ -1728,12 +1730,15 @@ public class CarInsuranceAction extends BaseAction {
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.premium = "0.00";
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = "";
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = "";
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_time = String.valueOf(System.currentTimeMillis());
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_INVALID;
             } else {
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status = InsurancePolicyModel.PAY_STATUS_SUCCESS;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.premium = request.data.payMoney;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = request.data.ciPolicyNo;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = request.data.biPolicyNo;
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_time = parseMillisecondByShowDate(sdf, request.data.payTime);
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_WAITING;
             }
 
@@ -1868,9 +1873,9 @@ public class CarInsuranceAction extends BaseAction {
      */
     private CallBackCarInsuranceResponse dealCallBackParamsIllegal(int update, CallBackCarInsuranceResponse response) {
         if (update > 0) {
-            response.msg = "";
+            response.msg = "成功";
             response.state = String.valueOf(CarInsuranceResponse.RESULT_OK);
-            response.msgCode = "0";
+            response.msgCode = "";
         } else {
             response.msg = "bizID或thpBizID不存在或无效";
             response.state = String.valueOf(CarInsuranceResponse.RESULT_FAIL);

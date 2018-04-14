@@ -209,6 +209,7 @@ public class InsurancePolicyDao extends BaseDao {
         for (CarInfoModel carInfoModel : carInfoModels) {
             InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
             insurancePolicyModel.warranty_uuid = carInfoModel.warranty_uuid;
+            insurancePolicyModel.pay_time = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_time;
             if (StringKit.equals(carInfoModel.insurance_type, "1")) {
                 insurancePolicyModel.warranty_code = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo;
             } else if (StringKit.equals(carInfoModel.insurance_type, "2")) {
@@ -247,7 +248,7 @@ public class InsurancePolicyDao extends BaseDao {
             insurancePolicyModel.warranty_uuid = carInfoModel.warranty_uuid;
             insurancePolicyModel.express_no = updateInsurancePolicyExpressInfoForCarInsurance.expressNo;
             insurancePolicyModel.express_company_name = updateInsurancePolicyExpressInfoForCarInsurance.expressCompanyName;
-            insurancePolicyModel.delivery_dype = updateInsurancePolicyExpressInfoForCarInsurance.deliveryType;
+            insurancePolicyModel.delivery_type = updateInsurancePolicyExpressInfoForCarInsurance.deliveryType;
 
             insurancePolicyModel.updated_at = time;
 
