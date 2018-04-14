@@ -1109,9 +1109,9 @@ public class CarInsuranceAction extends BaseAction {
 
         String str;
         if (result.verify) {
-            String applyState = "";
-            String payState = "";
-            String warrantyStatus = "";
+            String applyState;
+            String payState;
+            String warrantyStatus;
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
                 response.data.bjCodeFlag = request.applyUnderwriting.bjCodeFlag;
