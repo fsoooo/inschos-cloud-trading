@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
+import com.inschos.cloud.trading.access.rpc.service.PhpTestClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -2293,5 +2294,12 @@ public class CarInsuranceAction extends BaseAction {
             str = str.replaceAll("city", "children");
         }
         return str;
+    }
+
+    @Autowired
+    private PhpTestClient phpTestClient;
+
+    public String rpc (ActionBean actionBean) {
+        return "javaTest action id:" + phpTestClient.getPhpTest().toString();
     }
 }
