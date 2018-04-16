@@ -32,7 +32,7 @@
     <update id="updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         update cust_warranty set
-        `warranty_code`=#{warranty_code},`pay_status`=#{pay_status},`pay_time`=#{pay_time},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
+        `warranty_code`=#{warranty_code},`pay_status`=#{pay_status},`pay_time`=#{pay_time},`pay_money`=#{pay_money},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 

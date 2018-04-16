@@ -206,14 +206,25 @@ public class InsurancePolicyDao extends BaseDao {
             return -1;
         }
 
+        String ciUuid = null;
+        String biUuid = null;
+
+        for (CarInfoModel carInfoModel : carInfoModels) {
+            if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_STRONG)) {
+                ciUuid = carInfoModel.warranty_uuid;
+            } else if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_COMMERCIAL)) {
+                biUuid = carInfoModel.warranty_uuid;
+            }
+        }
+
         BigDecimal ciPremium = new BigDecimal("0.00");
-        if (!StringKit.isEmpty(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo)) {
-            ciPremium = getBigDecimal(insurancePolicyMapper.findInsurancePolicyPremiumByWarrantyUuid(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo));
+        if (!StringKit.isEmpty(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo) && !StringKit.isEmpty(ciUuid)) {
+            ciPremium = getBigDecimal(insurancePolicyMapper.findInsurancePolicyPremiumByWarrantyUuid(ciUuid));
         }
 
         BigDecimal biPremium = new BigDecimal("0.00");
-        if (!StringKit.isEmpty(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo)) {
-            biPremium = getBigDecimal(insurancePolicyMapper.findInsurancePolicyPremiumByWarrantyUuid(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo));
+        if (!StringKit.isEmpty(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo) && !StringKit.isEmpty(biUuid)) {
+            biPremium = getBigDecimal(insurancePolicyMapper.findInsurancePolicyPremiumByWarrantyUuid(biUuid));
         }
 
         BigDecimal ciMoney = new BigDecimal("0.00");
@@ -221,9 +232,16 @@ public class InsurancePolicyDao extends BaseDao {
         BigDecimal total = new BigDecimal(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.payMoney);
 
         if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium != null && biPremium.compareTo(BigDecimal.ZERO) != 0) {
-            BigDecimal k = biPremium.divide(ciPremium, BigDecimal.ROUND_HALF_UP);
-            ciMoney = total.divide(k.add(new BigDecimal(1)), BigDecimal.ROUND_HALF_UP);
-            biMoney = total.subtract(ciMoney);
+            BigDecimal add1 = ciPremium.add(biPremium);
+            if (add1.compareTo(total) == 0) {
+                ciMoney = ciPremium;
+                biMoney = biPremium;
+            } else {
+                BigDecimal k = biPremium.divide(ciPremium, BigDecimal.ROUND_HALF_UP);
+                BigDecimal add = k.add(new BigDecimal(1));
+                ciMoney = total.divide(add, BigDecimal.ROUND_HALF_UP);
+                biMoney = total.subtract(ciMoney);
+            }
         } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) == 0 && biPremium != null && biPremium.compareTo(BigDecimal.ZERO) != 0) {
             biMoney = total;
         } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium != null && biPremium.compareTo(BigDecimal.ZERO) == 0) {

@@ -127,8 +127,7 @@ public class CarInsurance {
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
         @CheckParams
         public List<InsuranceInfo> coverageList;
-
-        // 非必传
+        @CheckParams
         public ExtendCarInsurancePolicy.VehicleOwnerInfo personInfo;
     }
 
