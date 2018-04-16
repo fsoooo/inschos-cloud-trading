@@ -1612,6 +1612,7 @@ public class CarInsuranceAction extends BaseAction {
 
         ExtendCarInsurancePolicy.ResolveIdentityCardRequest resolveIdentityCardRequest = new ExtendCarInsurancePolicy.ResolveIdentityCardRequest();
 
+
         if (!StringKit.isEmpty(request.frontCardUrl) || !StringKit.isEmpty(request.frontCardBase64)) {
             resolveIdentityCardRequest.frontCardUrl = request.frontCardUrl;
             resolveIdentityCardRequest.frontCardBase64 = request.frontCardBase64;

@@ -23,9 +23,6 @@ public class InsurancePolicyAction extends BaseAction {
     private InsurancePreservationDao insurancePreservationDao;
 
     @Autowired
-    private InsuranceClaimsDao insuranceClaimsDao;
-
-    @Autowired
     private BrokerageCommissionDao brokerageCommissionDao;
 
 

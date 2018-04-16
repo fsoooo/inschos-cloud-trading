@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.CustWarrantyClaimsMapper">
+
+    <sql id="Base_Column_List">
+        `id`,`warranty_uuid`,`account_uuid`,`buyer_auuid`,`warranty_person_id`,`car_code`,`claim_type`,`material`,`product_name`,`premium`,`bank_card_number`,`link_name`,`link_phone`,`link_email`,`status`,`created_at`,`updated_at`
+    </sql>
+
+    <insert id="insert" parameterType="CustWarrantyClaims">
+        insert into  cust_warranty_claims(
+          `id`,`warranty_uuid`,`account_uuid`,`buyer_auuid`,`warranty_person_id`,`car_code`,`claim_type`,`material`,`product_name`,`premium`,
+          `bank_card_number`,`link_name`,`link_phone`,`link_email`,`status`,`created_at`,`updated_at`
+        )
+        values(#{id},#{warranty_uuid},#{account_uuid},#{buyer_auuid},#{warranty_person_id},#{car_code},#{claim_type},#{material},#{product_name},#{premium},
+          #{bank_card_number},#{link_name},#{link_phone},#{link_email},#{status},#{created_at},#{updated_at})
+    </insert>
+
+    <select id="findOne" parameterType="int" resultType="CustWarrantyClaims" >
+        select
+          <include refid="Base_Column_List"/>
+        from
+          cust_warranty_claims
+        where
+          `id`=#{id}
+    </select>
+
+    <select id="findListByUserId" parameterType="com.inschos.cloud.trading.model.CustWarrantyClaims"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyClaims">
+
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty_claims
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    id&lt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    id&lt;=(select id from cust_warranty_claims where user_id=#{user_id} AND state=1
+                    <if test="search!=null and search!=''">
+ --                       and `name` like concat("%",#{search},"%")
+                    </if>
+
+                    <if test="status!=0">
+                        and status=#{status}
+                    </if>
+                    limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            and user_id=#{user_id} AND state = 1
+            <if test="search!=null and search!=''">
+--                 and `name` like concat("%",#{search},"%")
+            </if>
+
+            <if test="status!=0">
+                and status=#{status}
+            </if>
+
+            limit #{page.offset}
+        </where>
+
+    </select>
+
+</mapper>
