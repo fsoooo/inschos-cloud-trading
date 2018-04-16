@@ -193,4 +193,12 @@ public class CarInsuranceController {
         return carInsuranceAction.sendExpressInfo(actionBean);
     }
 
+    // 回调接口
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/rpc")
+    @ResponseBody
+    public String rpc(ActionBean actionBean) {
+        return carInsuranceAction.rpc(actionBean);
+    }
+
 }

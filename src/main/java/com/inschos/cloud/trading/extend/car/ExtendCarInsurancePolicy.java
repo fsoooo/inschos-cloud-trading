@@ -276,6 +276,7 @@ public class ExtendCarInsurancePolicy {
          * @param date 生日
          * @return 年龄
          */
+        @SuppressWarnings("Unchecked")
         public String getAge(Date date) {
             Date current = new Date(System.currentTimeMillis());
             int year = current.getYear() - date.getYear();
