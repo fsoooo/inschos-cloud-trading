@@ -35,6 +35,7 @@ public class InsurancePolicyAction extends BaseAction {
     @Autowired
     private InsuranceParticipantDao insuranceParticipantDao;
 
+
     public String getInsurancePolicyListForOnlineStore(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyListForOnlineStoreRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListForOnlineStoreRequest.class);
         InsurancePolicy.GetInsurancePolicyListForOnlineStoreResponse response = new InsurancePolicy.GetInsurancePolicyListForOnlineStoreResponse();
@@ -53,7 +54,7 @@ public class InsurancePolicyAction extends BaseAction {
         if (!StringKit.isEmpty(request.searchKey) || !StringKit.isEmpty(request.warrantyStatus)) {
             InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
 
-            insurancePolicyModel.buyer_auuid = actionBean.loginUuid;
+            insurancePolicyModel.account_uuid = actionBean.accountUuid;
             insurancePolicyModel.warranty_status = StringKit.isEmpty(request.warrantyStatus) ? "0" : request.warrantyStatus;
             insurancePolicyModel.search = request.searchKey;
             insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
@@ -87,6 +88,7 @@ public class InsurancePolicyAction extends BaseAction {
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
         }
+
 
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {

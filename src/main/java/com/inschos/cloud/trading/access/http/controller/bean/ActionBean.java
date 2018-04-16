@@ -18,9 +18,9 @@ public class ActionBean {
     // 1-个人，2-企业客户，3-业管，4-代理
     public int userType;
 
-    public String accountUuid;
+    public String managerUuid;
 
-    public String loginUuid;
+    public String accountUuid;
 
     public String username;
 

@@ -1166,8 +1166,8 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             ciProposal.end_time = ciEndDateValue;
+            ciProposal.manager_uuid = actionBean.managerUuid;
             ciProposal.account_uuid = actionBean.accountUuid;
-            ciProposal.buyer_auuid = actionBean.loginUuid;
             ciProposal.count = "1";
 
             if (actionBean.userType == 4) {
@@ -1208,8 +1208,8 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             biProposal.end_time = biEndDateValue;
+            biProposal.manager_uuid = actionBean.managerUuid;
             biProposal.account_uuid = actionBean.accountUuid;
-            biProposal.buyer_auuid = actionBean.loginUuid;
             biProposal.count = "1";
 
             if (actionBean.userType == 4) {
@@ -1561,6 +1561,7 @@ public class CarInsuranceAction extends BaseAction {
         }
 
         ExtendCarInsurancePolicy.ResolveIdentityCardRequest resolveIdentityCardRequest = new ExtendCarInsurancePolicy.ResolveIdentityCardRequest();
+
 
         if (!StringKit.isEmpty(request.frontCardUrl) || !StringKit.isEmpty(request.frontCardBase64)) {
             resolveIdentityCardRequest.frontCardUrl = request.frontCardUrl;

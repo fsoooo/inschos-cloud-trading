@@ -30,14 +30,14 @@ public class InsurancePolicyModel {
     public String warranty_code;
 
     /**
-     * 归属账号uuid
+     * 归属业管uuid
      */
-    public String account_uuid;
+    public String manager_uuid;
 
     /**
-     * 买家uuid
+     * 账号uuid
      */
-    public String buyer_auuid;
+    public String account_uuid;
 
     /**
      * 代理人ID为null则为用户自主购买

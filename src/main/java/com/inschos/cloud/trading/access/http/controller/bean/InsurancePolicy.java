@@ -164,8 +164,8 @@ public class InsurancePolicy {
             this.warrantyUuid = model.warranty_uuid;
             this.proPolicyNo = model.pro_policy_no;
             this.warrantyCode = model.warranty_code;
-            this.accountUuid = model.account_uuid;
-            this.buyerAuuid = model.buyer_auuid;
+            this.accountUuid = model.manager_uuid;
+            this.buyerAuuid = model.account_uuid;
             this.agentAuuid = model.agent_auuid;
             this.ditchId = model.ditch_id;
             this.planId = model.plan_id;
