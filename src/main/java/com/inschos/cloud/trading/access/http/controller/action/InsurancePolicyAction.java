@@ -130,6 +130,20 @@ public class InsurancePolicyAction extends BaseAction {
 
         return str;
     }
+
+
+
+    public String getInsurancePolicyListForManagerSystem (ActionBean actionBean) {
+
+        return null;
+    }
+
+    public String getInsurancePolicyDetailForManagerSystem (ActionBean actionBean) {
+
+        return null;
+    }
+
+
 //    public String insure(InsurancePolicy.InsurancePolicyInsureForPersonRequest insurancePolicyInsureForPersonRequest) {
 //
 //        // 校验有效性后，重新计算保费，用重新计算的保费写数据库，并生成订单。
