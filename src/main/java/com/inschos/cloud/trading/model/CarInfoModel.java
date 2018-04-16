@@ -193,6 +193,11 @@ public class CarInfoModel {
     public String coverage_list;
 
     /**
+     * 特约条款json
+     */
+    public String sp_agreement;
+
+    /**
      * 创建时间
      */
     public String created_at;
@@ -206,7 +211,7 @@ public class CarInfoModel {
 
     }
 
-    public CarInfoModel(String warrantyUuid, String bizId, String thpBizId, String insuranceType, String time, String coverageList, ExtendCarInsurancePolicy.CarInfoDetail carInfoDetail, ExtendCarInsurancePolicy.InsuranceParticipant participant) {
+    public CarInfoModel(String warrantyUuid, String bizId, String thpBizId, String insuranceType, String time, String coverageList, String spAgreement, ExtendCarInsurancePolicy.CarInfoDetail carInfoDetail, ExtendCarInsurancePolicy.InsuranceParticipant participant) {
         this.warranty_uuid = warrantyUuid;
         this.biz_id = bizId;
         this.thp_biz_id = thpBizId;
@@ -250,6 +255,7 @@ public class CarInfoModel {
         this.car_seat = carInfoDetail.seat;
         this.standard_name = carInfoDetail.standardName;
         this.coverage_list = coverageList;
+        this.sp_agreement = spAgreement;
         this.created_at = time;
         this.updated_at = time;
     }
@@ -309,7 +315,8 @@ public class CarInfoModel {
     }
 
     public List<CarInsurance.InsuranceInfo> parseCoverageList(String coverageList) {
-        return JsonKit.json2Bean(coverageList, new TypeReference<List<CarInsurance.InsuranceInfo>>(){});
+        return JsonKit.json2Bean(coverageList, new TypeReference<List<CarInsurance.InsuranceInfo>>() {
+        });
     }
 
     public static final String COVERAGE_CODE_A = "A";

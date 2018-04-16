@@ -11,6 +11,10 @@ public class UpdateInsurancePolicyExpressInfoForCarInsurance {
     public String thpBizID;
     public String expressNo;
     public String expressCompanyName;
+    public String addresseeDetails;
+    public String addresseeProvince;
+    public String addresseeCity;
+    public String addresseeCounty;
     public String deliveryType;
 
 }

@@ -1235,6 +1235,7 @@ public class CarInsuranceAction extends BaseAction {
             biProposal.ins_company_id = "0";
             biProposal.is_settlement = "0";
 
+
             insurancePolicyAndParticipantForCarInsurance.biProposal = biProposal;
 
             // 存保单车辆信息
@@ -1242,7 +1243,8 @@ public class CarInsuranceAction extends BaseAction {
                     response.data.bizID,
                     response.data.thpBizID,
                     CarInfoModel.INSURANCE_TYPE_COMMERCIAL,
-                    time, JsonKit.bean2Json(request.premiumCalibrate.coverageList),
+                    time, JsonKit.bean2Json(request.applyUnderwriting.coverageList),
+                    JsonKit.bean2Json(request.applyUnderwriting.spAgreements),
                     request.premiumCalibrate.carInfo,
                     request.premiumCalibrate.personInfo);
 
@@ -1250,7 +1252,8 @@ public class CarInsuranceAction extends BaseAction {
                     response.data.bizID,
                     response.data.thpBizID,
                     CarInfoModel.INSURANCE_TYPE_STRONG,
-                    time, JsonKit.bean2Json(request.premiumCalibrate.coverageList),
+                    time, JsonKit.bean2Json(request.applyUnderwriting.coverageList),
+                    JsonKit.bean2Json(request.applyUnderwriting.spAgreements),
                     request.premiumCalibrate.carInfo,
                     request.premiumCalibrate.personInfo);
 
@@ -1354,7 +1357,8 @@ public class CarInsuranceAction extends BaseAction {
                     request.applyUnderwriting.channelCode = insurancePolicyPremiumDetail.channelCode;
                     request.applyUnderwriting.ciBeginDateValue = insurancePolicyPremiumDetail.ciBeginDateValue;
                     request.applyUnderwriting.biBeginDateValue = insurancePolicyPremiumDetail.biBeginDateValue;
-                    // request.applyUnderwriting.coverageList = insurancePolicyPremiumDetail.coverageList;
+                    request.applyUnderwriting.coverageList = insurancePolicyPremiumDetail.coverageList;
+                    request.applyUnderwriting.spAgreements = insurancePolicyPremiumDetail.spAgreement;
                     flag = true;
                     break;
                 }
@@ -1729,14 +1733,14 @@ public class CarInsuranceAction extends BaseAction {
 
             if (StringKit.equals(request.data.payState, "0")) {
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status = InsurancePolicyModel.PAY_STATUS_FAILURE;
-                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.premium = "0.00";
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.payMoney = "0.00";
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = "";
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = "";
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_time = String.valueOf(System.currentTimeMillis());
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_INVALID;
             } else {
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status = InsurancePolicyModel.PAY_STATUS_SUCCESS;
-                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.premium = request.data.payMoney;
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.payMoney = request.data.payMoney;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = request.data.ciPolicyNo;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = request.data.biPolicyNo;
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1781,6 +1785,10 @@ public class CarInsuranceAction extends BaseAction {
         updateInsurancePolicyExpressInfoForCarInsurance.expressNo = request.data.expressNo;
         updateInsurancePolicyExpressInfoForCarInsurance.expressCompanyName = request.data.expressCompanyName;
         updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.deliveryType;
+        updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.addresseeDetails;
+        updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.addresseeProvince;
+        updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.addresseeCity;
+        updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.addresseeCounty;
 
         int update = insurancePolicyDao.updateInsurancePolicyExpressInfoForCarInsurance(updateInsurancePolicyExpressInfoForCarInsurance);
 
@@ -2300,7 +2308,7 @@ public class CarInsuranceAction extends BaseAction {
     @Autowired
     private PhpTestClient phpTestClient;
 
-    public String rpc (ActionBean actionBean) {
+    public String rpc(ActionBean actionBean) {
         return "javaTest action id:" + phpTestClient.getPhpTest().toString();
     }
 }

@@ -42,8 +42,7 @@ public class CheckParamsKit {
         final Class<?> objClass = o.getClass();
         Field[] farray = objClass.getDeclaredFields();//获取所有字段  包括private 不包括父类字段
         Class<CheckParams> chkString = CheckParams.class;//CheckString的class
-        for (int i = 0; i < farray.length; i++) {
-            Field field = farray[i];//获取其中字段
+        for (Field field : farray) {
             String fieldName = field.getName();//获取字段名称
             if (field.isAnnotationPresent(chkString)) {//判断是否被chkstring注解所标识
                 //如果被标识
@@ -150,11 +149,11 @@ public class CheckParamsKit {
             return;
         }
         final Class<?> objClass = o.getClass();
+
         Field[] farray = objClass.getDeclaredFields();//获取所有字段  包括private 不包括父类字段
         Class<CheckParams> chkString = CheckParams.class;//CheckString的class
         boolean flag = true;
-        for (int i = 0; i < farray.length; i++) {
-            Field field = farray[i];//获取其中字段
+        for (Field field : farray) {
             String fieldName = field.getName();//获取字段名称
             if (field.isAnnotationPresent(chkString)) {//判断是否被chkstring注解所标识
                 //如果被标识
