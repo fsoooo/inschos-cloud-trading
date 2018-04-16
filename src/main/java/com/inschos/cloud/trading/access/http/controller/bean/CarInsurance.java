@@ -17,6 +17,8 @@ public class CarInsurance {
     public static class GetProvinceCodeRequest extends BaseRequest {
         // 指定保险公司，不传代表全部
         public String insurerCode;
+        // 自己用，0-不处理，1-处理一下字段名
+        public String type = "1";
     }
 
     public static class GetProvinceCodeResponse extends BaseResponse {
@@ -28,6 +30,8 @@ public class CarInsurance {
         // 省级代码
         @CheckParams
         public String provinceCode;
+        // 自己用，0-不处理，1-处理一下字段名
+        public String type = "1";
     }
 
     public static class GetCityCodeResponse extends BaseResponse {

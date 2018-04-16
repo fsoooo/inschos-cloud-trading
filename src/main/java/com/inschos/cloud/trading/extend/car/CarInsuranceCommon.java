@@ -8,6 +8,7 @@ package com.inschos.cloud.trading.extend.car;
 public class CarInsuranceCommon {
 
     private static final String SERVER_HOST = "http://api-mock.ztwltech.com/apply-mock/v2.0";
+    private static final String RECEIVER_SERVER_HOST = "http://http://59.110.136.249:9200/trading/trade/";
 
     /**
      * 查询省代码
@@ -99,8 +100,27 @@ public class CarInsuranceCommon {
      */
     public static final String resolve_driving_license = CarInsuranceCommon.getServerHost() + "/valueadd/analyzingDriving";
 
+    /**
+     * 回写核保信息（回调接口）
+     */
+    private static final String get_apply_underwriting_result = getReceiverServerHost() + "/send_apply_underwriting_result";
+
+    /**
+     * 回写保单信息(回调接口)
+     */
+    private static final String get_insurance_policy = getReceiverServerHost() + "/send_insurance_policy";
+
+    /**
+     * 回写配送信息(回调接口)
+     */
+    private static final String get_express_info = getReceiverServerHost() + "/send__express_info";
+
     public static String getServerHost() {
         return SERVER_HOST;
+    }
+
+    public static String getReceiverServerHost() {
+        return RECEIVER_SERVER_HOST;
     }
 
 }

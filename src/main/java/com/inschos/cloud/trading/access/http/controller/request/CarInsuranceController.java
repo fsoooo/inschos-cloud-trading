@@ -169,4 +169,28 @@ public class CarInsuranceController {
         return carInsuranceAction.resolveDrivingLicense(actionBean);
     }
 
+    // 回调接口
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/send_apply_underwriting_result")
+    @ResponseBody
+    public String sendApplyUnderwritingResult(ActionBean actionBean) {
+        return carInsuranceAction.sendApplyUnderwritingResult(actionBean);
+    }
+
+    // 回调接口
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/send_insurance_policy")
+    @ResponseBody
+    public String sendInsurancePolicy(ActionBean actionBean) {
+        return carInsuranceAction.sendInsurancePolicy(actionBean);
+    }
+
+    // 回调接口
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/send__express_info")
+    @ResponseBody
+    public String sendExpressInfo(ActionBean actionBean) {
+        return carInsuranceAction.sendExpressInfo(actionBean);
+    }
+
 }

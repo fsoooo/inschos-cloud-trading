@@ -189,7 +189,7 @@ public class BaseAction {
         return page;
     }
 
-    protected PageBean setPageBean(long lastId, String page_size, int total, int listSize) {
+    protected PageBean setPageBean(long lastId, String page_size, long total, int listSize) {
         PageBean pageBean = new PageBean();
         pageBean.lastId = String.valueOf(lastId);
         pageBean.pageSize = StringKit.isInteger(page_size) ? page_size : "20";
@@ -199,10 +199,10 @@ public class BaseAction {
         return pageBean;
     }
 
-    protected PageBean setPageBean(String page_num, String page_size, int total, int listSize) {
+    protected PageBean setPageBean(String page_num, String page_size, long total, int listSize) {
         PageBean pageBean = new PageBean();
 
-        int pageTotal = 0;
+        long pageTotal = 0;
 
         if (StringKit.isInteger(page_size)) {
             int pageSize = Integer.valueOf(page_size);

@@ -13,7 +13,7 @@ public interface InsuranceParticipantMapper {
 
     int addInsuranceParticipant (InsuranceParticipantModel insuranceParticipantModel);
 
-    List<InsuranceParticipantModel> findInsuranceParticipantByPrivateCode(String privateCode);
+    List<InsuranceParticipantModel> findInsuranceParticipantByWarrantyCode(String warrantyCode);
 
     List<InsuranceParticipantModel> findInsuranceParticipantInsuredByPrivateCode(String privateCode);
 

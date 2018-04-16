@@ -1,6 +1,8 @@
 package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
+import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 
 /**
  * 创建日期：2018/3/23 on 11:52
@@ -8,10 +10,6 @@ import com.inschos.cloud.trading.assist.kit.CardCodeKit;
  * 作者：zhangyunhe
  */
 public class InsuranceParticipantModel {
-
-    public final static int TYPE_POLICYHOLDER = 1;
-    public final static int TYPE_INSURED = 2;
-    public final static int TYPE_BENEFICIARY = 3;
 
     /**
      * 主键
@@ -46,7 +44,7 @@ public class InsuranceParticipantModel {
     /**
      * 证件类型（1为身份证，2为护照，3为军官证）
      */
-    public int card_type;
+    public String card_type;
 
     /**
      * 证件号
@@ -133,46 +131,117 @@ public class InsuranceParticipantModel {
      */
     public String updated_at;
 
+    public InsuranceParticipantModel() {
 
-    public boolean setCardType(int cardType) {
-        if (cardType != CardCodeKit.CARD_TYPE_ID_CARD && cardType != CardCodeKit.CARD_TYPE_PASSPORT && cardType != CardCodeKit.CARD_TYPE_MILITARY_CERTIFICATE) {
-            return false;
-        }
-
-        this.card_type = cardType;
-
-        return true;
     }
 
-    public String getCardTypeText(int cardType) {
-        String cardTypeText = null;
-        switch (cardType) {
-            case CardCodeKit.CARD_TYPE_ID_CARD:
-                cardTypeText = "身份证";
+    /**
+     * 该构造只限车险使用
+     *
+     * @param warrantyUuid 内部保单标识
+     * @param type         人员类型
+     * @param relationName 默认为"1"
+     * @param time         时间戳
+     * @param startTime    开始时间
+     * @param endTime      结束时间
+     * @param personInfo   人员信息
+     */
+    public InsuranceParticipantModel(String warrantyUuid, String type, String relationName, String time, String startTime, String endTime, ExtendCarInsurancePolicy.InsuranceParticipant personInfo) {
+        this.warranty_uuid = warrantyUuid;
+        this.type = type;
+        this.relation_name = relationName;
+        switch (type) {
+            case TYPE_POLICYHOLDER:
+                this.name = personInfo.insuredName;
+                this.card_type = personInfo.insuredIdType;
+                this.card_code = personInfo.insuredID;
+                this.phone = personInfo.insuredMobile;
+                this.birthday = personInfo.insuredBirthday;
+                this.sex = personInfo.insuredSex;
+                this.age = personInfo.getAge(personInfo.insuredBirthday);
                 break;
-            case CardCodeKit.CARD_TYPE_PASSPORT:
-                cardTypeText = "护照";
-                break;
-            case CardCodeKit.CARD_TYPE_MILITARY_CERTIFICATE:
-                cardTypeText = "军官证";
+            case TYPE_INSURED:
+                this.name = personInfo.applicantName;
+                this.card_type = personInfo.applicantIdType;
+                this.card_code = personInfo.applicantID;
+                this.phone = personInfo.applicantMobile;
+                this.birthday = personInfo.applicantBirthday;
+                this.sex = personInfo.applicantSex;
+                this.age = personInfo.getAge(personInfo.applicantBirthday);
                 break;
         }
-        return cardTypeText;
+        this.start_time = startTime;
+        this.end_time = endTime;
+        this.created_at = time;
+        this.updated_at = time;
     }
 
-    // 先设置证件类型
+    // 先设置证件类型（验证证件号码的有效性）
     public boolean setCardCode(String cardCode) {
-        if (card_type == 0) {
+        if (!StringKit.isInteger(cardCode)) {
             return false;
         }
 
-        if (!CardCodeKit.isLegal(card_type, cardCode)) {
+        if (!CardCodeKit.isLegal(Integer.valueOf(card_type), cardCode)) {
             return false;
         }
 
         this.card_code = cardCode;
 
         return true;
+    }
+
+    public String cardTypeText(String cardType) {
+        return CardCodeKit.getCardTypeText(cardType);
+    }
+
+    // 投保人
+    public final static String TYPE_POLICYHOLDER = "1";
+    // 被保人
+    public final static String TYPE_INSURED = "2";
+    // 受益人
+    public final static String TYPE_BENEFICIARY = "3";
+
+    public String typeText(String type) {
+        String str = "";
+        if (type == null) {
+            return str;
+        }
+        // 人员类型: 1-投保人 2-被保人 3-受益人
+        switch (type) {
+            case TYPE_POLICYHOLDER:
+                str = "投保人";
+                break;
+            case TYPE_INSURED:
+                str = "被保人";
+                break;
+            case TYPE_BENEFICIARY:
+                str = "受益人";
+                break;
+        }
+        return str;
+    }
+
+    // 男
+    public final static String SEX_MAN = "1";
+    // 女
+    public final static String SEX_WOMAN = "2";
+
+    public String sexText(String sex) {
+        String str = "";
+        if (sex == null) {
+            return str;
+        }
+        // 性别: 1-男 2-女
+        switch (sex) {
+            case SEX_MAN:
+                str = "男";
+                break;
+            case SEX_WOMAN:
+                str = "女";
+                break;
+        }
+        return str;
     }
 
 }

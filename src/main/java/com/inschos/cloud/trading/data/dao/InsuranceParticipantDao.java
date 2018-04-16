@@ -22,8 +22,8 @@ public class InsuranceParticipantDao extends BaseDao {
         return insuranceParticipantMapper.addInsuranceParticipant(insuranceParticipantModel);
     }
 
-    public List<InsuranceParticipantModel> findInsuranceParticipantByPrivateCode(String privateCode) {
-        return insuranceParticipantMapper.findInsuranceParticipantByPrivateCode(privateCode);
+    public List<InsuranceParticipantModel> findInsuranceParticipantByWarrantyCode(String warrantyCode) {
+        return insuranceParticipantMapper.findInsuranceParticipantByWarrantyCode(warrantyCode);
     }
 
     public List<InsuranceParticipantModel> findInsuranceParticipantInsuredByPrivateCode(String privateCode) {

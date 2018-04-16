@@ -5,11 +5,11 @@ package com.inschos.cloud.trading.access.rpc.bean;
  */
 public class AccountBean {
 
-    /** 所属账号uuid*/
-    public String accountUuid;
+    /** 所属业管uuid*/
+    public String managerUuid;
 
     /** 登录账号uuid*/
-    public String loginUuid;
+    public String accountUuid;
 
     /** 1：个人账号，2：客户企业账号，3：业管账号，4：代理人*/
     public int userType;

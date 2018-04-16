@@ -1,5 +1,9 @@
 package com.inschos.cloud.trading.assist.kit;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * 创建日期：2018/3/22 on 15:00
  * 描述：
@@ -20,7 +24,7 @@ public class CardCodeKit {
             return false;
         }
 
-        if (cardType == CARD_TYPE_ID_CARD ) {
+        if (cardType == CARD_TYPE_ID_CARD) {
             if (cardCode.length() != 18) {
                 return false;
             }
@@ -35,7 +39,7 @@ public class CardCodeKit {
                 } else if (i == 17 && (c >= '0' && c <= '9') || c == 'x' || c == 'X') {
                     long l = result % 11;
                     String s = String.valueOf(c);
-                    flag =  s.equalsIgnoreCase(base[(int) l]);
+                    flag = s.equalsIgnoreCase(base[(int) l]);
                 } else {
                     flag = false;
                     break;
@@ -52,6 +56,47 @@ public class CardCodeKit {
             return false;
         }
 
+    }
+
+    public static Date getBirthDayByCode(int cardType, String cardCode) {
+        Date date = null;
+        if (isLegal(cardType, cardCode)) {
+            if (cardType == CARD_TYPE_ID_CARD) {
+                String substring = cardCode.substring(6, 14);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                try {
+                    date = sdf.parse(substring);
+                } catch (ParseException e) {
+                    date = null;
+                }
+            }
+        }
+        return date;
+    }
+    public static String getCardTypeText(String cardType) {
+        String str = "";
+        if (!StringKit.isInteger(cardType)) {
+            return str;
+        }
+        int type = Integer.valueOf(cardType);
+        return getCardTypeText(type);
+    }
+
+
+    public static String getCardTypeText(int cardType) {
+        String cardTypeText = null;
+        switch (cardType) {
+            case CardCodeKit.CARD_TYPE_ID_CARD:
+                cardTypeText = "身份证";
+                break;
+            case CardCodeKit.CARD_TYPE_PASSPORT:
+                cardTypeText = "护照";
+                break;
+            case CardCodeKit.CARD_TYPE_MILITARY_CERTIFICATE:
+                cardTypeText = "军官证";
+                break;
+        }
+        return cardTypeText;
     }
 
 }

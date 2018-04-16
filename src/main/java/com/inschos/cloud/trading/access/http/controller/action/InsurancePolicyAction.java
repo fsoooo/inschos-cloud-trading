@@ -1,9 +1,22 @@
 package com.inschos.cloud.trading.access.http.controller.action;
 
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
-import com.inschos.cloud.trading.data.dao.*;
+import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
+import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
+import com.inschos.cloud.trading.annotation.CheckParamsKit;
+import com.inschos.cloud.trading.assist.kit.JsonKit;
+import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.data.dao.CarInfoDao;
+import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
+import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
+import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.cloud.trading.model.InsuranceParticipantModel;
+import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 创建日期：2018/3/22 on 11:06
@@ -17,21 +30,107 @@ public class InsurancePolicyAction extends BaseAction {
     private InsurancePolicyDao insurancePolicyDao;
 
     @Autowired
+    private CarInfoDao carInfoDao;
+
+    @Autowired
     private InsuranceParticipantDao insuranceParticipantDao;
 
-    @Autowired
-    private InsurancePreservationDao insurancePreservationDao;
 
-    @Autowired
-    private BrokerageCommissionDao brokerageCommissionDao;
+    public String getInsurancePolicyListForOnlineStore(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyListForOnlineStoreRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListForOnlineStoreRequest.class);
+        InsurancePolicy.GetInsurancePolicyListForOnlineStoreResponse response = new InsurancePolicy.GetInsurancePolicyListForOnlineStoreResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        String str;
+
+        if (!StringKit.isEmpty(request.searchKey) || !StringKit.isEmpty(request.warrantyStatus)) {
+            InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+
+            insurancePolicyModel.account_uuid = actionBean.accountUuid;
+            insurancePolicyModel.warranty_status = StringKit.isEmpty(request.warrantyStatus) ? "0" : request.warrantyStatus;
+            insurancePolicyModel.search = request.searchKey;
+            insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+
+            long total = insurancePolicyDao.findInsurancePolicyCountByWarrantyStatus(insurancePolicyModel);
+
+            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusOrSearch(insurancePolicyModel);
+            response.data = new ArrayList<>();
+
+            if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
+                for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
+                    response.data.add(new InsurancePolicy.GetInsurancePolicy(policyListByWarrantyStatusOrSearch));
+                }
+            }
+
+            response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.size());
+
+            str = json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "searchKey与warrantyStatus至少存在一个", response);
+        }
+
+        return str;
+    }
 
 
-    public String getInsurancePolicyList(ActionBean actionBean) {
+    public String getInsurancePolicyDetailForOnlineStore(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestRequest.class);
+        InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse response = new InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
 
 
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
 
+        InsurancePolicyModel insurancePolicyDetailByWarrantyCode = insurancePolicyDao.findInsurancePolicyDetailByWarrantyCode(request.warrantyUuid);
+        List<InsuranceParticipantModel> insuranceParticipantByWarrantyCode = insuranceParticipantDao.findInsuranceParticipantByWarrantyCode(request.warrantyUuid);
 
-        return "";
+        response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode);
+        response.data.insuredList = new ArrayList<>();
+        response.data.beneficiaryList = new ArrayList<>();
+
+        if (insuranceParticipantByWarrantyCode != null && !insuranceParticipantByWarrantyCode.isEmpty()) {
+            for (InsuranceParticipantModel insuranceParticipantModel : insuranceParticipantByWarrantyCode) {
+                InsurancePolicy.InsurancePolicyParticipantInfo insurancePolicyParticipantInfo = new InsurancePolicy.InsurancePolicyParticipantInfo(insuranceParticipantModel);
+                if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_POLICYHOLDER)) {
+                    response.data.policyHolder = insurancePolicyParticipantInfo;
+                } else if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_INSURED)) {
+                    response.data.insuredList.add(insurancePolicyParticipantInfo);
+                } else if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_BENEFICIARY)) {
+                    response.data.beneficiaryList.add(insurancePolicyParticipantInfo);
+                }
+            }
+        }
+
+        String str;
+        if (insurancePolicyDetailByWarrantyCode != null) {
+            if (StringKit.equals(insurancePolicyDetailByWarrantyCode.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
+                // 车险
+                CarInfoModel oneByWarrantyCode = carInfoDao.findOneByWarrantyUuid(request.warrantyUuid);
+                response.data.carInfo = new InsurancePolicy.CarInfo(oneByWarrantyCode);
+                str = json(BaseResponse.CODE_SUCCESS, "获取保单详情成功", response);
+            } else {
+                // 其他险
+                str = json(BaseResponse.CODE_SUCCESS, "获取保单详情成功", response);
+            }
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "数据不存在", response);
+        }
+
+        return str;
     }
 //    public String insure(InsurancePolicy.InsurancePolicyInsureForPersonRequest insurancePolicyInsureForPersonRequest) {
 //
