@@ -11,7 +11,7 @@ public class UpdateInsurancePolicyStatusAndWarrantyCodeForCarInsurance {
     public String thpBizID;
     public String pay_status;
     public String pay_time;
-    public String premium;
+    public String payMoney;
     public String warranty_status;
     public String biProposalNo;
     public String ciProposalNo;

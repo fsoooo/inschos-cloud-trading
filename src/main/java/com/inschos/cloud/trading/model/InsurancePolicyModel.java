@@ -25,19 +25,24 @@ public class InsurancePolicyModel {
     public String pro_policy_no;
 
     /**
+     * 业管uuid
+     */
+    public String manager_uuid;
+
+    /**
      * 保单号
      */
     public String warranty_code;
 
     /**
-     * 归属业管uuid
-     */
-    public String manager_uuid;
-
-    /**
-     * 账号uuid
+     * 归属账号uuid
      */
     public String account_uuid;
+
+    /**
+     * 买家uuid
+     */
+    public String buyer_auuid;
 
     /**
      * 代理人ID为null则为用户自主购买
@@ -95,6 +100,11 @@ public class InsurancePolicyModel {
     public String pay_way;
 
     /**
+     * 付款金额
+     */
+    public String pay_money;
+
+    /**
      * 分期方式
      */
     public String by_stages_way;
@@ -135,6 +145,11 @@ public class InsurancePolicyModel {
     public String warranty_status;
 
     /**
+     * 积分
+     */
+    public String integral;
+
+    /**
      * 快递单号
      */
     public String express_no;
@@ -143,6 +158,26 @@ public class InsurancePolicyModel {
      * 快递公司名称
      */
     public String express_company_name;
+
+    /**
+     * 邮寄详细地址
+     */
+    public String express_address;
+
+    /**
+     * 邮寄省级代码
+     */
+    public String express_province_code;
+
+    /**
+     * 邮寄市级代码
+     */
+    public String express_city_code;
+
+    /**
+     * 邮寄地区代码
+     */
+    public String express_county_code;
 
     /**
      * 快递方式，0-自取，1-快递
@@ -163,6 +198,7 @@ public class InsurancePolicyModel {
      * 删除标识 0删除 1可用
      */
     public String state;
+
 
     public String search;
 

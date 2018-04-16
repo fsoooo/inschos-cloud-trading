@@ -768,7 +768,7 @@ public class InsurancePolicy {
 //        public String updatedTime;
 //
 //        // '保单价格'
-//        public String premium;
+//        public String payMoney;
 //
 //        // '购买份数'
 //        public String count;

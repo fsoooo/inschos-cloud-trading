@@ -27,6 +27,8 @@ public interface InsurancePolicyMapper {
 
     InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(String warrantyUuid);
 
+    String findInsurancePolicyPremiumByWarrantyUuid(String warrantyUuid);
+
     // NOTENABLED: 2018/4/12
     List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);
 

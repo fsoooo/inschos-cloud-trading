@@ -3,16 +3,16 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper">
 
     <sql id="Base_Column_List">
-        `id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`express_no`,`express_company_name`,`delivery_type`,`created_at`,`updated_at`,`state`
+        `id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`pay_money`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`,`state`
     </sql>
 
     <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert into cust_warranty
-        (`id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`account_uuid`,`manager_uuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`express_no`,`express_company_name`,`delivery_type`,`created_at`,`updated_at`,`state`)
+        (`id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`pay_money`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`,`state`)
         values
-        (#{id},#{warranty_uuid},#{pro_policy_no},#{warranty_code},#{account_uuid},#{manager_uuid},#{agent_auuid},#{ditch_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{ins_company_id},#{count},#{pay_time},#{pay_way},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{check_status},#{pay_status},#{warranty_status},#{express_no},#{express_company_name},#{delivery_type},#{created_at},#{updated_at},#{state})
+        (#{id},#{warranty_uuid},#{pro_policy_no},#{warranty_code},#{manager_uuid},#{account_uuid},#{agent_auuid},#{ditch_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{ins_company_id},#{count},#{pay_time},#{pay_way},#{pay_money},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{check_status},#{pay_status},#{warranty_status},#{integral},#{express_no},#{express_company_name},#{express_address},#{express_province_code},#{express_city_code},#{express_county_code},#{delivery_type},#{created_at},#{updated_at},#{state})
     </insert>
 
     <update id="updateInsurancePolicyProPolicyNoByWarrantyUuid"
@@ -39,7 +39,7 @@
     <update id="updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         update cust_warranty set
-        `express_no`=#{express_no},`express_company_name`=#{express_company_name},`delivery_type`=#{delivery_type},`updated_at`=#{updated_at}
+        `express_no`=#{express_no},`express_company_name`=#{express_company_name},`express_address`=#{express_address},`express_province_code`=#{express_province_code},`express_city_code`=#{express_city_code},`express_county_code`=#{express_county_code},`delivery_type`=#{delivery_type},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
@@ -62,6 +62,15 @@
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
         <include refid="Base_Column_List"/>
+        from cust_warranty
+        WHERE warranty_uuid=#{_parameter} AND state=1
+    </select>
+
+    <select id="findInsurancePolicyPremiumByWarrantyUuid"
+            parameterType="String"
+            resultType="String">
+        select
+        `premium`
         from cust_warranty
         WHERE warranty_uuid=#{_parameter} AND state=1
     </select>

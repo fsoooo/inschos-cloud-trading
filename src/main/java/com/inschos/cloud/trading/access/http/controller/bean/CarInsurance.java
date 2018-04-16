@@ -271,6 +271,7 @@ public class CarInsurance {
         public ExtendCarInsurancePolicy.InsuranceParticipant personInfo;
         @CheckParams
         public List<InsuranceInfo> coverageList;
+
     }
 
     public static class GetPremiumCalibrateResponse extends BaseResponse {
@@ -332,6 +333,7 @@ public class CarInsurance {
         public String bjCodeFlag;
 
         public List<ExtendCarInsurancePolicy.InsurancePolicyInfo> coverageList;
+        public List<ExtendCarInsurancePolicy.SpAgreement> spAgreements;
 
         public boolean isNeedVerificationCode() {
             return StringKit.equals("1", bjCodeFlag);
