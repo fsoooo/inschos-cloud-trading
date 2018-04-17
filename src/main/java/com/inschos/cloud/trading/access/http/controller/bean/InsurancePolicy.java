@@ -78,6 +78,9 @@ public class InsurancePolicy {
         //结束时间（显示用）
         public String endTimeText;
 
+        //保障区间
+        public String term;
+
         //保险公司ID
         public String insCompanyId;
 
@@ -151,6 +154,9 @@ public class InsurancePolicy {
         //更新时间（显示用）
         public String updatedAtText;
 
+        // 被保险人
+        public String insuredText;
+
         public GetInsurancePolicy() {
 
         }
@@ -160,6 +166,7 @@ public class InsurancePolicy {
                 return;
             }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy.MM.dd");
             this.id = model.id;
             this.warrantyUuid = model.warranty_uuid;
             this.proPolicyNo = model.pro_policy_no;
@@ -177,13 +184,18 @@ public class InsurancePolicy {
                 this.premiumText = "¥" + model.premium;
             }
             this.startTime = model.start_time;
+            String start = "";
             if (StringKit.isInteger(model.start_time)) {
                 this.startTimeText = sdf.format(new Date(Long.valueOf(model.start_time)));
+                start = sdf2.format(new Date(Long.valueOf(model.start_time)));
             }
             this.endTime = model.end_time;
+            String end = "";
             if (StringKit.isInteger(model.end_time)) {
                 this.endTimeText = sdf.format(new Date(Long.valueOf(model.end_time)));
+                end = sdf2.format(new Date(Long.valueOf(model.end_time)));
             }
+            this.term = start + "-" + end;
             this.insCompanyId = model.ins_company_id;
             this.count = model.count;
             this.payTime = model.pay_time;
@@ -584,14 +596,55 @@ public class InsurancePolicy {
         }
     }
 
-    public static class GetInsurancePolicyDetailForOtherInsuranceRequest extends BaseRequest {
+    public static class GetInsurancePolicyStatusListRequest extends BaseRequest {
 
     }
 
-    public static class GetInsurancePolicyDetailForOtherInsuranceResponse extends BaseResponse {
-
+    public static class GetInsurancePolicyStatusListResponse extends BaseResponse {
+        public List<GetInsurancePolicyStatus> data;
     }
 
+    public static class GetInsurancePolicyStatus {
+        public String status;
+        public String statusText;
+    }
+
+    public static class GetInsurancePolicyListForManagerSystemRequest extends BaseRequest {
+        // 保单状态
+        public String warrantyStatus;
+        // 搜索关键字
+        public String searchKey;
+        // 起保开始时间
+        public String startTime;
+        // 起保结束时间
+        public String endTime;
+        // 保单来源
+        public String warrantyFrom;
+        // 保单渠道
+        public String ditchId;
+        // 保单类型
+        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        public String warrantyType;
+    }
+
+    public static class GetInsurancePolicyListForManagerSystemResponse extends BaseResponse {
+        public List<GetInsurancePolicyForManagerSystem> data;
+    }
+
+    public static class GetInsurancePolicyForManagerSystem extends GetInsurancePolicy {
+        public InsurancePolicyParticipantInfo contacts;
+        public String policyHolderName;
+        public String frameNo;
+        public String carCode;
+
+        public GetInsurancePolicyForManagerSystem() {
+
+        }
+
+        public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model) {
+            super(model);
+        }
+    }
 
 //    // 获取保单详情
 //    public static class InsurancePolicyDetailRequest extends BaseRequest {

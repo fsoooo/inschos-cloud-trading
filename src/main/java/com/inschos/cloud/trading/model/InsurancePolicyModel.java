@@ -2,6 +2,8 @@ package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.StringKit;
 
+import java.util.LinkedHashMap;
+
 /**
  * 创建日期：2018/3/22 on 16:43
  * 描述：
@@ -312,6 +314,20 @@ public class InsurancePolicyModel {
 
         this.warranty_status = warrantyStatus;
         return true;
+    }
+
+    public static LinkedHashMap<String, String> getWarrantyStatusMap() {
+        InsurancePolicyModel model = new InsurancePolicyModel();
+        LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put(POLICY_STATUS_PENDING, model.warrantyStatusText(POLICY_STATUS_PENDING));
+        linkedHashMap.put(POLICY_STATUS_PAYING, model.warrantyStatusText(POLICY_STATUS_PAYING));
+        linkedHashMap.put(POLICY_STATUS_WAITING, model.warrantyStatusText(POLICY_STATUS_WAITING));
+        linkedHashMap.put(POLICY_STATUS_EFFECTIVE, model.warrantyStatusText(POLICY_STATUS_EFFECTIVE));
+        linkedHashMap.put(POLICY_STATUS_CONTINUE, model.warrantyStatusText(POLICY_STATUS_CONTINUE));
+        linkedHashMap.put(POLICY_STATUS_INVALID, model.warrantyStatusText(POLICY_STATUS_INVALID));
+        linkedHashMap.put(POLICY_STATUS_SURRENDER, model.warrantyStatusText(POLICY_STATUS_SURRENDER));
+        linkedHashMap.put(POLICY_STATUS_EXPIRED, model.warrantyStatusText(POLICY_STATUS_EXPIRED));
+        return linkedHashMap;
     }
 
     // 个人保单

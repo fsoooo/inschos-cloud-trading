@@ -39,4 +39,10 @@
         from cust_warranty_car where thp_biz_id=#{_parameter}
     </select>
 
+    <select id="findCarInfoCarCodeAndFrameNoByWarrantyUuid" parameterType="String" resultType="com.inschos.cloud.trading.model.CarInfoModel">
+        select
+        `car_code`,`frame_no`
+        from cust_warranty_car where warranty_uuid=#{_parameter}
+    </select>
+
 </mapper>

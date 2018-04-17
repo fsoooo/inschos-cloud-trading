@@ -248,7 +248,6 @@ public class CarInsurance {
 
         @CheckParams
         public String signToken;
-        @CheckParams
         public String thpBizID;
         @CheckParams
         public String cityCode;
@@ -330,6 +329,7 @@ public class CarInsurance {
         public String verificationCode;
         // 必传
         public String bjCodeFlag;
+        public String integral;
 
         public List<ExtendCarInsurancePolicy.InsurancePolicyInfo> coverageList;
         public List<ExtendCarInsurancePolicy.SpAgreement> spAgreements;

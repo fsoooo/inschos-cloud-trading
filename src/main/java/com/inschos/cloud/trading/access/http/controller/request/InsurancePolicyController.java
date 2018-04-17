@@ -22,6 +22,14 @@ public class InsurancePolicyController {
     private InsurancePolicyAction insurancePolicyAction;
 
     @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_insurance_policy_status_list")
+    @ResponseBody
+    public String getInsurancePolicyStatusList(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyStatusList(actionBean);
+    }
+
+
+    @GetActionBeanAnnotation
     @RequestMapping("car_insurance/get_insurance_policy_list_for_online_store")
     @ResponseBody
     public String getInsurancePolicyListForOnlineStore(ActionBean actionBean) {
