@@ -15,7 +15,7 @@ public class AccountBean {
     public int userType;
 
     /** 用户ID*/
-    public String userId;
+    public long userId;
 
     /** 用户名*/
     public String username;
