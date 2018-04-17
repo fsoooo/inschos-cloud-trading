@@ -7,7 +7,8 @@ package com.inschos.cloud.trading.access.rpc.bean;
  */
 public class InsuranceConciseInfo {
 
-    public String insuranceProductName;
-    public String insuranceCompanyName;
+    public String id;
+    public String ins_name;
+    public String company_name;
 
 }
