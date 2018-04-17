@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.assist.kit.TimeKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 
 /**
@@ -122,14 +123,21 @@ public class InsuranceParticipantModel {
     public String end_time;
 
     /**
-     * 创建时间
+     * 记录开始时间
      */
-    public String created_at;
+    public String record_start_time;
 
     /**
-     * 修改时间
+     * 记录结束时间
      */
-    public String updated_at;
+    public String record_end_time;
+
+    /**
+     * 查询用当前时间
+     */
+    public String current_time = String.valueOf(System.currentTimeMillis());
+
+    public String max_time = String.valueOf(TimeKit.MAX_MILLIS);
 
     public InsuranceParticipantModel() {
 
@@ -172,8 +180,8 @@ public class InsuranceParticipantModel {
         }
         this.start_time = startTime;
         this.end_time = endTime;
-        this.created_at = time;
-        this.updated_at = time;
+        this.record_start_time = time;
+        this.record_end_time = String.valueOf(TimeKit.MAX_MILLIS);
     }
 
     // 先设置证件类型（验证证件号码的有效性）

@@ -49,12 +49,12 @@ public class InsurancePolicyModel {
     /**
      * 代理人ID为null则为用户自主购买
      */
-    public String agent_auuid;
+    public String agent_id;
 
     /**
      * 渠道ID为0则为用户自主购买
      */
-    public String ditch_id;
+    public String channel_id;
 
     /**
      * 计划书ID为0则为用户自主购买
@@ -316,20 +316,6 @@ public class InsurancePolicyModel {
         return true;
     }
 
-    public static LinkedHashMap<String, String> getWarrantyStatusMap() {
-        InsurancePolicyModel model = new InsurancePolicyModel();
-        LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put(POLICY_STATUS_PENDING, model.warrantyStatusText(POLICY_STATUS_PENDING));
-        linkedHashMap.put(POLICY_STATUS_PAYING, model.warrantyStatusText(POLICY_STATUS_PAYING));
-        linkedHashMap.put(POLICY_STATUS_WAITING, model.warrantyStatusText(POLICY_STATUS_WAITING));
-        linkedHashMap.put(POLICY_STATUS_EFFECTIVE, model.warrantyStatusText(POLICY_STATUS_EFFECTIVE));
-        linkedHashMap.put(POLICY_STATUS_CONTINUE, model.warrantyStatusText(POLICY_STATUS_CONTINUE));
-        linkedHashMap.put(POLICY_STATUS_INVALID, model.warrantyStatusText(POLICY_STATUS_INVALID));
-        linkedHashMap.put(POLICY_STATUS_SURRENDER, model.warrantyStatusText(POLICY_STATUS_SURRENDER));
-        linkedHashMap.put(POLICY_STATUS_EXPIRED, model.warrantyStatusText(POLICY_STATUS_EXPIRED));
-        return linkedHashMap;
-    }
-
     // 个人保单
     public static final String POLICY_TYPE_PERSON = "1";
     // 团险保单
@@ -409,6 +395,16 @@ public class InsurancePolicyModel {
         return str;
     }
 
+    public static LinkedHashMap<String, String> getWarrantyFromMap() {
+        InsurancePolicyModel model = new InsurancePolicyModel();
+        LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put(SOURCE_SELF, model.warrantyStatusText(SOURCE_SELF));
+        linkedHashMap.put(SOURCE_ONLINE, model.warrantyStatusText(SOURCE_ONLINE));
+        linkedHashMap.put(SOURCE_OFFLINE, model.warrantyStatusText(SOURCE_OFFLINE));
+        linkedHashMap.put(SOURCE_COPY, model.warrantyStatusText(SOURCE_COPY));
+        return linkedHashMap;
+    }
+
     public String checkStatusText(String checkStatus) {
         String str = "";
         if (checkStatus == null) {
@@ -484,6 +480,20 @@ public class InsurancePolicyModel {
                 break;
         }
         return str;
+    }
+
+    public static LinkedHashMap<String, String> getWarrantyStatusMap() {
+        InsurancePolicyModel model = new InsurancePolicyModel();
+        LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put(POLICY_STATUS_PENDING, model.warrantyStatusText(POLICY_STATUS_PENDING));
+        linkedHashMap.put(POLICY_STATUS_PAYING, model.warrantyStatusText(POLICY_STATUS_PAYING));
+        linkedHashMap.put(POLICY_STATUS_WAITING, model.warrantyStatusText(POLICY_STATUS_WAITING));
+        linkedHashMap.put(POLICY_STATUS_EFFECTIVE, model.warrantyStatusText(POLICY_STATUS_EFFECTIVE));
+        linkedHashMap.put(POLICY_STATUS_CONTINUE, model.warrantyStatusText(POLICY_STATUS_CONTINUE));
+        linkedHashMap.put(POLICY_STATUS_INVALID, model.warrantyStatusText(POLICY_STATUS_INVALID));
+        linkedHashMap.put(POLICY_STATUS_SURRENDER, model.warrantyStatusText(POLICY_STATUS_SURRENDER));
+        linkedHashMap.put(POLICY_STATUS_EXPIRED, model.warrantyStatusText(POLICY_STATUS_EXPIRED));
+        return linkedHashMap;
     }
 
     public static final String DELIVERY_TYPE_SELF = "0";

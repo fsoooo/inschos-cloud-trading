@@ -3,16 +3,16 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper">
 
     <sql id="Base_Column_List">
-        `id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`pay_money`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`,`state`
+        `id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`pay_money`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`,`state`
     </sql>
 
     <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert into cust_warranty
-        (`id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`pay_money`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`,`state`)
+        (`id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`pay_money`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`,`state`)
         values
-        (#{id},#{warranty_uuid},#{pro_policy_no},#{warranty_code},#{manager_uuid},#{account_uuid},#{agent_auuid},#{ditch_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{ins_company_id},#{count},#{pay_time},#{pay_way},#{pay_money},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{check_status},#{pay_status},#{warranty_status},#{integral},#{express_no},#{express_company_name},#{express_address},#{express_province_code},#{express_city_code},#{express_county_code},#{delivery_type},#{created_at},#{updated_at},#{state})
+        (#{id},#{warranty_uuid},#{pro_policy_no},#{warranty_code},#{manager_uuid},#{account_uuid},#{agent_id},#{channel_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{ins_company_id},#{count},#{pay_time},#{pay_way},#{pay_money},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{check_status},#{pay_status},#{warranty_status},#{integral},#{express_no},#{express_company_name},#{express_address},#{express_province_code},#{express_city_code},#{express_county_code},#{delivery_type},#{created_at},#{updated_at},#{state})
     </insert>
 
     <update id="updateInsurancePolicyProPolicyNoByWarrantyUuid"
@@ -132,7 +132,7 @@
                         and `warranty_status`=#{warranty_status}
                     </if>
                     <if test="ditch_id!=-1">
-                        and `ditch_id`=#{ditch_id}
+                        and `channel_id`=#{channel_id}
                     </if>
                     <if test="warranty_from!=0">
                         and `warranty_from`=#{warranty_from}
@@ -161,7 +161,7 @@
                 and `warranty_status`=#{warranty_status}
             </if>
             <if test="ditch_id!=-1">
-                and `ditch_id`=#{ditch_id}
+                and `channel_id`=#{channel_id}
             </if>
             <if test="warranty_from!=0">
                 and `warranty_from`=#{warranty_from}

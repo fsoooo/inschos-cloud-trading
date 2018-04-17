@@ -50,10 +50,10 @@ public class InsurancePolicy {
         public String buyerAuuid;
 
         //代理人ID为null则为用户自主购买
-        public String agentAuuid;
+        public String agentId;
 
         //渠道ID为0则为用户自主购买
-        public String ditchId;
+        public String channelId;
 
         //计划书ID为0则为用户自主购买
         public String planId;
@@ -161,6 +161,10 @@ public class InsurancePolicy {
         // 被保险人
         public String insuredText;
 
+        public String insuranceProductName;
+
+        public String insuranceCompanyName;
+
         public GetInsurancePolicy() {
 
         }
@@ -177,8 +181,8 @@ public class InsurancePolicy {
             this.warrantyCode = model.warranty_code;
             this.accountUuid = model.manager_uuid;
             this.buyerAuuid = model.account_uuid;
-            this.agentAuuid = model.agent_auuid;
-            this.ditchId = model.ditch_id;
+            this.agentId = model.agent_id;
+            this.channelId = model.channel_id;
             this.planId = model.plan_id;
             this.productId = model.product_id;
             this.premium = model.premium;
@@ -552,11 +556,6 @@ public class InsurancePolicy {
         public String endTime;
         public String endTimeText;
 
-        //修改时间
-        public String updatedAt;
-        public String updatedAtText;
-
-
         public InsurancePolicyParticipantInfo() {
 
         }
@@ -598,10 +597,6 @@ public class InsurancePolicy {
             if (StringKit.isInteger(model.end_time)) {
                 this.endTimeText = sdf.format(new Date(Long.valueOf(model.end_time)));
             }
-            this.updatedAt = model.updated_at;
-            if (StringKit.isInteger(model.updated_at)) {
-                this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
-            }
         }
     }
 
@@ -613,9 +608,17 @@ public class InsurancePolicy {
         public List<GetInsurancePolicyStatus> data;
     }
 
+    public static class GetInsurancePolicySourceListRequest extends BaseRequest {
+
+    }
+
+    public static class GetInsurancePolicySourceListResponse extends BaseResponse {
+        public List<GetInsurancePolicyStatus> data;
+    }
+
     public static class GetInsurancePolicyStatus {
-        public String status;
-        public String statusText;
+        public String value;
+        public String valueText;
     }
 
     public static class GetInsurancePolicyListForManagerSystemRequest extends BaseRequest {
@@ -630,7 +633,7 @@ public class InsurancePolicy {
         // 保单来源
         public String warrantyFrom;
         // 保单渠道
-        public String ditchId;
+        public String channelId;
         // 保单类型
         @CheckParams(stringType = CheckParams.StringType.NUMBER)
         public String warrantyType;
@@ -641,8 +644,10 @@ public class InsurancePolicy {
     }
 
     public static class GetInsurancePolicyForManagerSystem extends GetInsurancePolicy {
-        public InsurancePolicyParticipantInfo contacts;
+        public String contactsName;
+        public String contactsMobile;
         public String policyHolderName;
+        public String policyHolderMobile;
         public String frameNo;
         public String carCode;
 

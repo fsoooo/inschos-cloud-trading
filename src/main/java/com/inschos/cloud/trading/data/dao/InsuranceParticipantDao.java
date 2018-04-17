@@ -30,8 +30,8 @@ public class InsuranceParticipantDao extends BaseDao {
         return insuranceParticipantMapper.findInsuranceParticipantInsuredNameByWarrantyUuid(warrantyUuid);
     }
 
-    public InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameByWarrantyUuid(String warrantyUuid){
-        return insuranceParticipantMapper.findInsuranceParticipantPolicyHolderNameByWarrantyUuid(warrantyUuid);
+    public InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(String warrantyUuid){
+        return insuranceParticipantMapper.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(warrantyUuid);
     }
 
     public List<InsuranceParticipantModel> findInsuranceParticipantInsuredByWarrantyUuid(String warrantyUuid) {

@@ -19,6 +19,6 @@ public interface InsuranceParticipantMapper {
 
     List<InsuranceParticipantModel> findInsuranceParticipantInsuredByWarrantyUuid(String warrantyUuid);
 
-    InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameByWarrantyUuid(String warrantyUuid);
+    InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(String warrantyUuid);
 
 }

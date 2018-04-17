@@ -3,44 +3,44 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.InsuranceParticipantMapper">
 
     <sql id="Base_Column_List">
-        `id`,`warranty_uuid`,`type`,`relation_name`,`out_order_no`,`name`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`age`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`,`created_at`,`updated_at`
+        `id`,`warranty_uuid`,`type`,`relation_name`,`out_order_no`,`name`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`age`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`,`record_start_time`,`record_end_time`
     </sql>
 
     <insert id="addInsuranceParticipant" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert into cust_warranty_person
-        (`id`,`warranty_uuid`,`type`,`relation_name`,`out_order_no`,`name`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`age`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`,`created_at`,`updated_at`)
+        (`id`,`warranty_uuid`,`type`,`relation_name`,`out_order_no`,`name`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`age`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`,`record_start_time`,`record_end_time`)
         values
-        (#{id},#{warranty_uuid},#{type},#{relation_name},#{out_order_no},#{name},#{card_type},#{card_code},#{phone},#{occupation},#{birthday},#{sex},#{age},#{email},#{nationality},#{annual_income},#{height},#{weight},#{area},#{address},#{start_time},#{end_time},#{created_at},#{updated_at})
+        (#{id},#{warranty_uuid},#{type},#{relation_name},#{out_order_no},#{name},#{card_type},#{card_code},#{phone},#{occupation},#{birthday},#{sex},#{age},#{email},#{nationality},#{annual_income},#{height},#{weight},#{area},#{address},#{start_time},#{end_time},#{record_start_time},#{record_end_time})
     </insert>
 
     <select id="findInsuranceParticipantByWarrantyUuid" parameterType="String"
             resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty_person where warranty_uuid=#{_parameter}
+        from cust_warranty_person where warranty_uuid=#{_parameter} AND `record_end_time`=#{max_time}
     </select>
 
     <select id="findInsuranceParticipantInsuredNameByWarrantyUuid" parameterType="String"
             resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         `name`
-        from cust_warranty_person where warranty_uuid=#{_parameter} AND `type`=2
+        from cust_warranty_person where warranty_uuid=#{_parameter} AND `type`=2 AND `record_end_time`=#{max_time}
     </select>
 
     <select id="findInsuranceParticipantInsuredByWarrantyUuid" parameterType="String"
             resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty_person where warranty_uuid=#{_parameter} AND `type`=2
+        from cust_warranty_person where warranty_uuid=#{_parameter} AND `type`=2 AND `record_end_time`=#{max_time}
     </select>
 
-    <select id="findInsuranceParticipantPolicyHolderNameByWarrantyUuid" parameterType="String"
+    <select id="findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid" parameterType="String"
             resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         `name`
-        from cust_warranty_person where warranty_uuid=#{_parameter} AND `type`=1
+        from cust_warranty_person where warranty_uuid=#{_parameter} AND `type`=1 AND `record_end_time`=#{max_time}
     </select>
 
 </mapper>

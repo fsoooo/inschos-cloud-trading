@@ -10,5 +10,8 @@ import java.util.List;
  * 作者：zhangyunhe
  */
 public interface InsuranceService {
-    List<InsuranceConciseInfo> insList(String token);
+
+    List<InsuranceConciseInfo> insList();
+
+    InsuranceConciseInfo insList(String product_id);
 }
