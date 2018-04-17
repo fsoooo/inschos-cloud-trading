@@ -319,6 +319,11 @@ public class CarInfoModel {
         });
     }
 
+    public List<ExtendCarInsurancePolicy.SpAgreement> parseSpAgreement (String spAgreement) {
+        return JsonKit.json2Bean(spAgreement, new TypeReference<List<ExtendCarInsurancePolicy.SpAgreement>>() {
+        });
+    }
+
     public static final String COVERAGE_CODE_A = "A";
     public static final String COVERAGE_CODE_B = "B";
     public static final String COVERAGE_CODE_G1 = "G1";

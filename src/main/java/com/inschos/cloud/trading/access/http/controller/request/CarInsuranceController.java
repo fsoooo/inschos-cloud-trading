@@ -170,7 +170,7 @@ public class CarInsuranceController {
     }
 
     // 回调接口
-    @GetActionBeanAnnotation
+    @GetActionBeanAnnotation(isCheckAccess = false)
     @RequestMapping("car_insurance/send_apply_underwriting_result")
     @ResponseBody
     public String sendApplyUnderwritingResult(ActionBean actionBean) {
@@ -178,7 +178,7 @@ public class CarInsuranceController {
     }
 
     // 回调接口
-    @GetActionBeanAnnotation
+    @GetActionBeanAnnotation(isCheckAccess = false)
     @RequestMapping("car_insurance/send_insurance_policy")
     @ResponseBody
     public String sendInsurancePolicy(ActionBean actionBean) {
@@ -186,7 +186,7 @@ public class CarInsuranceController {
     }
 
     // 回调接口
-    @GetActionBeanAnnotation
+    @GetActionBeanAnnotation(isCheckAccess = false)
     @RequestMapping("car_insurance/send__express_info")
     @ResponseBody
     public String sendExpressInfo(ActionBean actionBean) {

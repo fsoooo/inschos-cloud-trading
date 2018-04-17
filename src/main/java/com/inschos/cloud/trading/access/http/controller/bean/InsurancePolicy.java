@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 import com.inschos.cloud.trading.model.CarInfoModel;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
@@ -138,6 +139,9 @@ public class InsurancePolicy {
         //保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保（显示用）
         public String warrantyStatusText;
 
+        // 积分
+        public String integral;
+
         // 快递单号
         public String expressNo;
 
@@ -215,6 +219,7 @@ public class InsurancePolicy {
             this.checkStatus = model.checkStatusText(checkStatus);
             this.payStatus = model.pay_status;
             this.payStatusText = model.payStatusText(payStatus);
+            this.integral = model.integral;
             this.warrantyStatus = model.warranty_status;
             this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
             this.expressNo = model.express_no;
@@ -376,6 +381,10 @@ public class InsurancePolicy {
         // public String coverageList;
         public List<CarInsurance.InsuranceInfo> coverageList;
 
+        // 特约信息
+        // public String spAgreement;
+        public List<ExtendCarInsurancePolicy.SpAgreement> spAgreement;
+
         //结束时间
         public String updatedAt;
         public String updatedAtText;
@@ -463,7 +472,7 @@ public class InsurancePolicy {
                     }
                 }
             }
-
+            this.spAgreement = model.parseSpAgreement(model.sp_agreement);
             this.updatedAt = model.updated_at;
             if (StringKit.isInteger(model.updated_at)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
@@ -644,6 +653,15 @@ public class InsurancePolicy {
         public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model) {
             super(model);
         }
+    }
+
+    public static class GetInsurancePolicyDetailForManagerSystemRequest extends BaseRequest {
+        @CheckParams
+        public String warrantyUuid;
+    }
+
+    public static class GetInsurancePolicyDetailForManagerSystemResponse extends GetInsurancePolicyDetailForOnlineStoreRequestResponse {
+
     }
 
 //    // 获取保单详情
