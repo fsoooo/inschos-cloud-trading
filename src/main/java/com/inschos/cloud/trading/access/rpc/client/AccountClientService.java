@@ -37,5 +37,16 @@ public class AccountClientService extends BaseClientService implements AccountSe
         }
     }
 
+    public AccountBean findByUuid(String uuid){
+        try {
+            AccountService service = getAccountRemoteService();
+            return service!=null?service.findByUuid(uuid):null;
+
+        }catch (Exception e){
+            L.log.error("remote fail {}",e.getMessage(),e);
+            return null;
+        }
+    }
+
 
 }
