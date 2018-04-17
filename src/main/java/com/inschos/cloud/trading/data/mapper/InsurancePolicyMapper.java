@@ -19,7 +19,7 @@ public interface InsurancePolicyMapper {
 
     int updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(InsurancePolicyModel insurancePolicyModel);
 
-    int updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid (InsurancePolicyModel insurancePolicyModel);
+    int updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid(InsurancePolicyModel insurancePolicyModel);
 
     List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearch(InsurancePolicyModel insurancePolicyModel);
 
@@ -28,6 +28,8 @@ public interface InsurancePolicyMapper {
     InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(String warrantyUuid);
 
     String findInsurancePolicyPremiumByWarrantyUuid(String warrantyUuid);
+
+    List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrDitchId(InsurancePolicyModel insurancePolicyModel);
 
     // NOTENABLED: 2018/4/12
     List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);

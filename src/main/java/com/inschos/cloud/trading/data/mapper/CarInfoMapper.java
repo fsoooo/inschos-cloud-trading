@@ -15,6 +15,8 @@ public interface CarInfoMapper {
 
     CarInfoModel findOneByWarrantyUuid(String warrantyUuid);
 
+    CarInfoModel findCarInfoCarCodeAndFrameNoByWarrantyUuid(String warrantyUuid);
+
     List<CarInfoModel> findByBizId(String bizId);
 
     List<CarInfoModel> findWarrantyUuidByBizId(String bizId);

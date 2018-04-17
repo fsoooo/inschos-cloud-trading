@@ -3,7 +3,6 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
-import com.inschos.cloud.trading.access.rpc.service.PhpTestClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -1181,6 +1180,7 @@ public class CarInsuranceAction extends BaseAction {
             ciProposal.pay_status = payState;
             ciProposal.warranty_status = warrantyStatus;
             ciProposal.by_stages_way = "趸缴";
+            ciProposal.integral = "0";
             ciProposal.state = "1";
             ciProposal.created_at = time;
             ciProposal.updated_at = time;
@@ -1192,6 +1192,7 @@ public class CarInsuranceAction extends BaseAction {
             ciProposal.product_id = "0";
             ciProposal.ins_company_id = "0";
             ciProposal.is_settlement = "0";
+
 
             insurancePolicyAndParticipantForCarInsurance.ciProposal = ciProposal;
 
@@ -1223,6 +1224,7 @@ public class CarInsuranceAction extends BaseAction {
             biProposal.pay_status = payState;
             biProposal.warranty_status = warrantyStatus;
             biProposal.by_stages_way = "趸缴";
+            biProposal.integral = request.applyUnderwriting.integral;
             biProposal.state = "1";
             biProposal.created_at = time;
             biProposal.updated_at = time;
@@ -1359,6 +1361,7 @@ public class CarInsuranceAction extends BaseAction {
                     request.applyUnderwriting.biBeginDateValue = insurancePolicyPremiumDetail.biBeginDateValue;
                     request.applyUnderwriting.coverageList = insurancePolicyPremiumDetail.coverageList;
                     request.applyUnderwriting.spAgreements = insurancePolicyPremiumDetail.spAgreement;
+                    request.applyUnderwriting.integral = insurancePolicyPremiumDetail.integral;
                     flag = true;
                     break;
                 }
@@ -2305,10 +2308,4 @@ public class CarInsuranceAction extends BaseAction {
         return str;
     }
 
-    @Autowired
-    private PhpTestClient phpTestClient;
-
-    public String rpc(ActionBean actionBean) {
-        return "javaTest action id:" + phpTestClient.getPhpTest().toString();
-    }
 }
