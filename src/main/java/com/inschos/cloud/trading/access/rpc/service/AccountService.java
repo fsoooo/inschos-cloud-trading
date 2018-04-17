@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.service;
 
+
 import com.inschos.cloud.trading.access.rpc.bean.AccountBean;
 
 /**
@@ -7,5 +8,7 @@ import com.inschos.cloud.trading.access.rpc.bean.AccountBean;
  */
 public interface AccountService {
 
-    public AccountBean getAccount(String token);
+    AccountBean getAccount(String token);
+
+    AccountBean findByUuid(String uuid);
 }
