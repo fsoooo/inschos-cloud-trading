@@ -248,7 +248,6 @@ public class CarInsurance {
 
         @CheckParams
         public String signToken;
-        @CheckParams
         public String thpBizID;
         @CheckParams
         public String cityCode;
