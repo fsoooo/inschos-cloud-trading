@@ -949,12 +949,12 @@ public class CarInsuranceAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, s, response);
         }
 
-        if (!isTrans) {
-            // 新车备案要用到的-来历凭证编号
-            if (StringKit.isEmpty(request.carInfo.sourceCertificateNo)) {
-                return json(BaseResponse.CODE_FAILURE, "缺少来历凭证编号", response);
-            }
-        }
+//        if (notLicenseNo) {
+//            // 新车备案要用到的-来历凭证编号
+//            if (StringKit.isEmpty(request.carInfo.sourceCertificateNo)) {
+//                return json(BaseResponse.CODE_FAILURE, "缺少来历凭证编号", response);
+//            }
+//        }
 
         getPremiumCalibrateRequest.carInfo = request.carInfo;
 
