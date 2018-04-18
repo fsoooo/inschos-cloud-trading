@@ -331,9 +331,8 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(insurancePolicyModel);
     }
 
-    // NOTENABLED: 2018/4/14
-    public InsurancePolicyModel findInsurancePolicyDetailByWarrantyCode(String warrantyCode) {
-        return insurancePolicyMapper.findInsurancePolicyDetailByWarrantyUuid(warrantyCode);
+    public InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(String warrantyUuid) {
+        return insurancePolicyMapper.findInsurancePolicyDetailByWarrantyUuid(warrantyUuid);
     }
 
     // NOTENABLED: 2018/4/14
