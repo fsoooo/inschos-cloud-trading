@@ -112,7 +112,7 @@
         </where>
     </select>
 
-    <select id="findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrDitchId"
+    <select id="findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
@@ -131,7 +131,7 @@
                     <if test="warranty_status!=0">
                         and `warranty_status`=#{warranty_status}
                     </if>
-                    <if test="ditch_id!=-1">
+                    <if test="channel_id!=-1">
                         and `channel_id`=#{channel_id}
                     </if>
                     <if test="warranty_from!=0">
@@ -160,7 +160,7 @@
             <if test="warranty_status!=0">
                 and `warranty_status`=#{warranty_status}
             </if>
-            <if test="ditch_id!=-1">
+            <if test="channel_id!=-1">
                 and `channel_id`=#{channel_id}
             </if>
             <if test="warranty_from!=0">

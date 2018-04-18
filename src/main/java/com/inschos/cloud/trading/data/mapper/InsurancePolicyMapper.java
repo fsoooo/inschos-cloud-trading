@@ -29,7 +29,7 @@ public interface InsurancePolicyMapper {
 
     String findInsurancePolicyPremiumByWarrantyUuid(String warrantyUuid);
 
-    List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrDitchId(InsurancePolicyModel insurancePolicyModel);
+    List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(InsurancePolicyModel insurancePolicyModel);
 
     // NOTENABLED: 2018/4/12
     List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);

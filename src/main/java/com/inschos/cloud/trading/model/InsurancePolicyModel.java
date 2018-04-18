@@ -398,10 +398,10 @@ public class InsurancePolicyModel {
     public static LinkedHashMap<String, String> getWarrantyFromMap() {
         InsurancePolicyModel model = new InsurancePolicyModel();
         LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put(SOURCE_SELF, model.warrantyStatusText(SOURCE_SELF));
-        linkedHashMap.put(SOURCE_ONLINE, model.warrantyStatusText(SOURCE_ONLINE));
-        linkedHashMap.put(SOURCE_OFFLINE, model.warrantyStatusText(SOURCE_OFFLINE));
-        linkedHashMap.put(SOURCE_COPY, model.warrantyStatusText(SOURCE_COPY));
+        linkedHashMap.put(SOURCE_SELF, model.warrantyFromText(SOURCE_SELF));
+        linkedHashMap.put(SOURCE_ONLINE, model.warrantyFromText(SOURCE_ONLINE));
+        linkedHashMap.put(SOURCE_OFFLINE, model.warrantyFromText(SOURCE_OFFLINE));
+        linkedHashMap.put(SOURCE_COPY, model.warrantyFromText(SOURCE_COPY));
         return linkedHashMap;
     }
 
