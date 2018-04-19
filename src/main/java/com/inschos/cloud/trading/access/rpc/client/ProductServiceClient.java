@@ -14,25 +14,17 @@ import java.util.List;
  * 作者：zhangyunhe
  */
 @Component
-public class ProductServiceClient extends BaseClientService {
+public class ProductServiceClient extends BaseServiceClient<ProductService> {
 
     @Value("${rpc.remote.product.host}")
     private String host;
 
     private final String uri = "/rpc/account";
 
-    private ProductService productService;
-
-    private ProductService getProductService() {
-        if (productService == null) {
-            productService = getService(host + uri, ProductService.class);
-        }
-        return productService;
-    }
 
     public List<ProductInfo> insList() {
         try {
-            ProductService service = getProductService();
+            ProductService service = getService(host + uri);
             return service != null ? service.product_list() : null;
 
         } catch (Exception e) {
@@ -43,8 +35,8 @@ public class ProductServiceClient extends BaseClientService {
 
     public ProductInfo insList(String product_id) {
         try {
-            ProductService service = getProductService();
-            return service != null ? service.product_list(product_id) : null;
+            ProductService service = getService(host + uri);
+            return service != null ? service.product_byId(product_id) : null;
 
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);

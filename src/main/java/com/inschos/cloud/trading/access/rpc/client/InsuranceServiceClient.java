@@ -14,7 +14,7 @@ import java.util.List;
  * 作者：zhangyunhe
  */
 @Component
-public class InsuranceServiceClient extends BaseClientService {
+public class InsuranceServiceClient extends BaseServiceClient<InsuranceService> {
 
     @Value("${rpc.remote.product.host}")
     private String host;
@@ -23,17 +23,12 @@ public class InsuranceServiceClient extends BaseClientService {
 
     private InsuranceService insuranceService;
 
-    private InsuranceService getInsuranceService() {
-        if (insuranceService == null) {
-            insuranceService = getService(host + uri, InsuranceService.class);
-        }
-        return insuranceService;
-    }
+
 
     public List<InsuranceConciseInfo> insList() {
         try {
-            InsuranceService service = getInsuranceService();
-            return service != null ? service.insList() : null;
+            InsuranceService service = getService(host + uri);
+            return service != null ? service.ins_list() : null;
 
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);
@@ -43,8 +38,8 @@ public class InsuranceServiceClient extends BaseClientService {
 
     public InsuranceConciseInfo insList(String product_id) {
         try {
-            InsuranceService service = getInsuranceService();
-            return service != null ? service.insList(product_id) : null;
+            InsuranceService service = getService(host + uri);
+            return service != null ? service.ins_list(product_id) : null;
 
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);
