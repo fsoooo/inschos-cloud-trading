@@ -3,7 +3,7 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
-import com.inschos.cloud.trading.access.rpc.client.AccountClientService;
+import com.inschos.cloud.trading.access.rpc.client.AccountClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -43,7 +43,7 @@ public class InsurancePolicyAction extends BaseAction {
     private CustWarrantyCostDao custWarrantyCostDao;
 
     @Autowired
-    private AccountClientService accountClientService;
+    private AccountClient accountClient;
 
     public String getInsurancePolicyStatusList(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyStatusListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatusListRequest.class);

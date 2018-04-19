@@ -5,7 +5,7 @@ import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseRequest;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.rpc.bean.AccountBean;
-import com.inschos.cloud.trading.access.rpc.client.AccountClientService;
+import com.inschos.cloud.trading.access.rpc.client.AccountClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.annotation.GetActionBeanAnnotation;
 import com.inschos.cloud.trading.assist.kit.ConstantKit;
@@ -31,7 +31,7 @@ import java.util.List;
 public class HttpAopDefine {
 
     @Autowired
-    private AccountClientService accountClientService;
+    private AccountClient accountClient;
 
     @Around("@annotation(com.inschos.cloud.trading.annotation.GetActionBeanAnnotation)")
     public Object checkAuth(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -59,7 +59,7 @@ public class HttpAopDefine {
 
             ActionBean bean = new ActionBean();
 
-            AccountBean accountBean = accountClientService.getAccount(accessToken);
+            AccountBean accountBean = accountClient.getAccount(accessToken);
 
             if (!isAccess(joinPoint, bean,accountBean)) {
                 response.code = BaseResponse.CODE_ACCESS_FAILURE;
