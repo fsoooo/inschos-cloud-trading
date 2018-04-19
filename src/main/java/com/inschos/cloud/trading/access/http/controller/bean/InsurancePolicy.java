@@ -669,6 +669,29 @@ public class InsurancePolicy {
 
     }
 
+    public static class GetInsurancePolicyStatisticForManagerSystemRequest extends BaseRequest {
+        // 搜索关键字
+        public String searchKey;
+        // 起保开始时间
+        public String startTime;
+        // 起保结束时间
+        public String endTime;
+        // 保单渠道
+        public String channelId;
+    }
+
+    public static class GetInsurancePolicyStatisticForManagerSystemResponse extends BaseResponse {
+        public InsurancePolicyStatistic data;
+    }
+
+    public static class InsurancePolicyStatistic {
+        public String dayAmount;
+        public String monthAmount;
+        public String totalAmount;
+        public List<GetInsurancePolicy> list;
+    }
+
+
 //    // 获取保单详情
 //    public static class InsurancePolicyDetailRequest extends BaseRequest {
 //        public String privateCode;

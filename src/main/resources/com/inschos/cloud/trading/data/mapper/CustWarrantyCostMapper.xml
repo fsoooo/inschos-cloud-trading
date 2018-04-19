@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper">
+
+    <sql id="Base_Column_List">
+        `id`,`warranty_uuid`,`pay_time`,`premium`,`actual_pay_time`,`pay_way`,`pay_money`,`pay_status`,`created_at`,`updated_at`
+    </sql>
+
+    <insert id="addCustWarrantyCost" parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into cust_warranty_cost
+        (`id`,`warranty_uuid`,`pay_time`,`premium`,`actual_pay_time`,`pay_way`,`pay_money`,`pay_status`,`created_at`,`updated_at`)
+        values
+        (#{id},#{warranty_uuid},#{pay_time},#{premium},#{actual_pay_time},#{pay_way},#{pay_money},#{pay_status},#{created_at},#{updated_at})
+    </insert>
+
+    <select id="findCustWarrantyCostByWarrantyUuid" parameterType="com.inschos.cloud.trading.model.CarInfoModel" resultType="com.inschos.cloud.trading.model.CarInfoModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty_cost where warranty_uuid=#{warranty_uuid}
+    </select>
+
+</mapper>

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface InsuranceService {
 
-    List<InsuranceConciseInfo> insList();
+    List<InsuranceConciseInfo> ins_list();
 
-    InsuranceConciseInfo insList(String product_id);
+    InsuranceConciseInfo ins_list(String product_id);
 }

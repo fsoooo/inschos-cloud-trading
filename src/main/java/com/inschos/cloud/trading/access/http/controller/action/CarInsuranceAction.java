@@ -10,10 +10,7 @@ import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.extend.car.*;
-import com.inschos.cloud.trading.model.CarInfoModel;
-import com.inschos.cloud.trading.model.CarRecordModel;
-import com.inschos.cloud.trading.model.InsuranceParticipantModel;
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.model.*;
 import com.inschos.cloud.trading.model.fordao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -1110,29 +1107,27 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             String applyState;
-            String payState;
-            String warrantyStatus;
+            String payState = "";
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
                 response.data.bjCodeFlag = request.applyUnderwriting.bjCodeFlag;
                 applyState = getApplyUnderwritingState(response.data.synchFlag);
-                payState = InsurancePolicyModel.PAY_STATUS_PROCESSING_1;
+
+                if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_SUCCESS)) {
+                    payState = CustWarrantyCostModel.PAY_STATUS_WAIT;
+                } else if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_PROCESSING)) {
+                    payState = CustWarrantyCostModel.APPLY_UNDERWRITING_PROCESSING;
+                }
+
             } else {
                 // 核保失败
-                applyState = InsurancePolicyModel.APPLY_UNDERWRITING_FAILURE;
-                payState = InsurancePolicyModel.PAY_STATUS_FAILURE;
+                payState = CustWarrantyCostModel.APPLY_UNDERWRITING_FAILURE;
                 if (response.data == null) {
                     response.data = new ExtendCarInsurancePolicy.ApplyUnderwriting();
                 }
             }
 
-            if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_PROCESSING_1)) {
-                warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
-            } else if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_SUCCESS)) {
-                warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PAYING;
-            } else {
-                warrantyStatus = InsurancePolicyModel.POLICY_STATUS_INVALID;
-            }
+            String warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
 
             InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance = new InsurancePolicyAndParticipantForCarInsurance();
             String time = String.valueOf(System.currentTimeMillis());
@@ -1155,8 +1150,7 @@ public class CarInsuranceAction extends BaseAction {
             // FORCEPREMIUM 强险
             InsurancePolicyModel ciProposal = new InsurancePolicyModel();
             ciProposal.warranty_uuid = getThpBizID();
-            ciProposal.pro_policy_no = result.data.ciProposalNo;
-            ciProposal.premium = request.applyUnderwriting.ciInsuredPremium;
+            ciProposal.pre_policy_no = result.data.ciProposalNo;
             ciProposal.start_time = request.applyUnderwriting.ciBeginDateValue;
 
             String ciEndDateValue = nextYearMillisecond(request.applyUnderwriting.ciBeginDateValue);
@@ -1176,8 +1170,6 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             ciProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
-            ciProposal.check_status = applyState;
-            ciProposal.pay_status = payState;
             ciProposal.warranty_status = warrantyStatus;
             ciProposal.by_stages_way = "趸缴";
             ciProposal.integral = "0";
@@ -1199,8 +1191,7 @@ public class CarInsuranceAction extends BaseAction {
             // 商业险
             InsurancePolicyModel biProposal = new InsurancePolicyModel();
             biProposal.warranty_uuid = getThpBizID();
-            biProposal.pro_policy_no = result.data.biProposalNo;
-            biProposal.premium = request.applyUnderwriting.biInsuredPremium;
+            biProposal.pre_policy_no = result.data.biProposalNo;
             biProposal.start_time = request.applyUnderwriting.biBeginDateValue;
 
             String biEndDateValue = nextYearMillisecond(request.applyUnderwriting.biBeginDateValue);
@@ -1220,8 +1211,6 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             biProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
-            biProposal.check_status = applyState;
-            biProposal.pay_status = payState;
             biProposal.warranty_status = warrantyStatus;
             biProposal.by_stages_way = "趸缴";
             biProposal.integral = request.applyUnderwriting.integral;
@@ -1239,6 +1228,27 @@ public class CarInsuranceAction extends BaseAction {
 
 
             insurancePolicyAndParticipantForCarInsurance.biProposal = biProposal;
+
+            // 存支付信息
+            CustWarrantyCostModel ciCustWarrantyCostModel = new CustWarrantyCostModel();
+            ciCustWarrantyCostModel.warranty_uuid = ciProposal.warranty_uuid;
+            ciCustWarrantyCostModel.pay_time = ciProposal.start_time;
+            ciCustWarrantyCostModel.premium = request.applyUnderwriting.ciInsuredPremium;
+            ciCustWarrantyCostModel.pay_status = payState;
+            ciCustWarrantyCostModel.created_at = time;
+            ciCustWarrantyCostModel.updated_at = time;
+
+            insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyCostModel = ciCustWarrantyCostModel;
+
+            CustWarrantyCostModel biCustWarrantyCostModel = new CustWarrantyCostModel();
+            biCustWarrantyCostModel.warranty_uuid = biProposal.warranty_uuid;
+            biCustWarrantyCostModel.pay_time = biProposal.start_time;
+            biCustWarrantyCostModel.premium = request.applyUnderwriting.biInsuredPremium;
+            biCustWarrantyCostModel.pay_status = payState;
+            biCustWarrantyCostModel.created_at = time;
+            biCustWarrantyCostModel.updated_at = time;
+
+            insurancePolicyAndParticipantForCarInsurance.biCustWarrantyCostModel = biCustWarrantyCostModel;
 
             // 存保单车辆信息
             insurancePolicyAndParticipantForCarInsurance.biCarInfoModel = new CarInfoModel(biProposal.warranty_uuid,
@@ -2285,7 +2295,7 @@ public class CarInsuranceAction extends BaseAction {
             if (synchFlag == 0) {
                 applyState = InsurancePolicyModel.APPLY_UNDERWRITING_SUCCESS;
             } else if (synchFlag == 1) {
-                applyState = InsurancePolicyModel.APPLY_UNDERWRITING_PROCESSING_1;
+                applyState = InsurancePolicyModel.APPLY_UNDERWRITING_PROCESSING;
             } else {
                 applyState = "synchFlag = " + synchFlag;
             }

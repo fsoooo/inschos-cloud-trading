@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.model.fordao;
 
 import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 
@@ -19,12 +20,7 @@ public class InsurancePolicyAndParticipantForCarInsurance {
     public InsuranceParticipantModel biPolicyholder;
     public CarInfoModel ciCarInfoModel;
     public CarInfoModel biCarInfoModel;
-
-    public boolean isEnable() {
-        return ciProposal != null && biProposal != null &&
-                ciInsured != null && biInsured != null &&
-                ciPolicyholder != null && biPolicyholder != null &&
-                ciCarInfoModel != null && biCarInfoModel != null;
-    }
+    public CustWarrantyCostModel ciCustWarrantyCostModel;
+    public CustWarrantyCostModel biCustWarrantyCostModel;
 
 }
