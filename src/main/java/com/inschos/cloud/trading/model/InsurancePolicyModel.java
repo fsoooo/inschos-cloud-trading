@@ -189,8 +189,8 @@ public class InsurancePolicyModel {
     public static final String POLICY_STATUS_CONTINUE = "4";
     // 已过保
     public static final String POLICY_STATUS_EXPIRED = "5";
-    // 已退保
-    public static final String POLICY_STATUS_SURRENDER = "6";
+    // 已失效
+    public static final String POLICY_STATUS_INVALID = "6";
 
     public boolean setWarrantyStatus(String warrantyStatus) {
         if (!StringKit.isInteger(warrantyStatus) || Integer.valueOf(warrantyStatus) > 6 || Integer.valueOf(warrantyStatus) < 1) {
@@ -272,7 +272,7 @@ public class InsurancePolicyModel {
         if (warrantyStatus == null) {
             return str;
         }
-        // 1-投保中，2-待生效，3-保障中，4-可续保，5-已过保，6-已退保
+        // 1-投保中，2-待生效，3-保障中，4-可续保，5-已过保，6-已失效
         switch (warrantyStatus) {
             case POLICY_STATUS_PENDING:
                 str = "投保中";
@@ -289,8 +289,8 @@ public class InsurancePolicyModel {
             case POLICY_STATUS_EXPIRED:
                 str = "已过保";
                 break;
-            case POLICY_STATUS_SURRENDER:
-                str = "已退保";
+            case POLICY_STATUS_INVALID:
+                str = "已失效";
                 break;
         }
         return str;
@@ -303,8 +303,8 @@ public class InsurancePolicyModel {
         linkedHashMap.put(POLICY_STATUS_WAITING, model.warrantyStatusText(POLICY_STATUS_WAITING));
         linkedHashMap.put(POLICY_STATUS_EFFECTIVE, model.warrantyStatusText(POLICY_STATUS_EFFECTIVE));
         linkedHashMap.put(POLICY_STATUS_CONTINUE, model.warrantyStatusText(POLICY_STATUS_CONTINUE));
-        linkedHashMap.put(POLICY_STATUS_SURRENDER, model.warrantyStatusText(POLICY_STATUS_SURRENDER));
         linkedHashMap.put(POLICY_STATUS_EXPIRED, model.warrantyStatusText(POLICY_STATUS_EXPIRED));
+        linkedHashMap.put(POLICY_STATUS_INVALID, model.warrantyStatusText(POLICY_STATUS_INVALID));
         return linkedHashMap;
     }
 

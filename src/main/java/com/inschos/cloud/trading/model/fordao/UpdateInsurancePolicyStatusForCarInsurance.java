@@ -9,7 +9,6 @@ public class UpdateInsurancePolicyStatusForCarInsurance {
 
     public String bizId;
     public String thpBizID;
-    public String check_status;
     public String pay_status;
     public String warranty_status;
     public String biProposalNo;

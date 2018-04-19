@@ -30,7 +30,7 @@ public class ProductServiceClient extends BaseClientService {
         return productService;
     }
 
-    public List<ProductInfo> insList() {
+    public List<ProductInfo> product_list() {
         try {
             ProductService service = getProductService();
             return service != null ? service.product_list() : null;
@@ -41,10 +41,10 @@ public class ProductServiceClient extends BaseClientService {
         }
     }
 
-    public ProductInfo insList(String product_id) {
+    public ProductInfo product_byId(String product_id) {
         try {
             ProductService service = getProductService();
-            return service != null ? service.product_list(product_id) : null;
+            return service != null ? service.product_byId(product_id) : null;
 
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);

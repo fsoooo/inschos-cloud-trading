@@ -18,8 +18,8 @@ public class CustWarrantyCostDao extends BaseDao {
     @Autowired
     private CustWarrantyCostMapper custWarrantyCostMapper;
 
-    public List<CustWarrantyCostModel> findCustWarrantyCostByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.findCustWarrantyCostByWarrantyUuid(custWarrantyCostModel);
+    public List<CustWarrantyCostModel> findCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.findCustWarrantyCost(custWarrantyCostModel);
     }
 
     public int addCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel) {

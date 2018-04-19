@@ -7,6 +7,8 @@ import com.inschos.cloud.trading.model.CarInfoModel;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -67,6 +69,12 @@ public class InsurancePolicy {
         //保单价格（显示用）
         public String premiumText;
 
+        //实际支付金额
+        public String payMoney;
+
+        //实际支付金额（显示用）
+        public String payMoneyText;
+
         //起保时间
         public String startTime;
 
@@ -87,18 +95,6 @@ public class InsurancePolicy {
 
         //购买份数
         public String count;
-
-        //支付时间
-        public String payTime;
-
-        //支付时间（显示用）
-        public String payTimeText;
-
-        //支付方式 1 银联 2 支付宝 3 微信 4现金
-        public String payWay;
-
-        //支付方式 1 银联 2 支付宝 3 微信 4现金（显示用）
-        public String payWayText;
 
         //分期方式
         public String byStagesWay;
@@ -121,20 +117,9 @@ public class InsurancePolicy {
         //保单类型1表示个人保单，2表示团险保单，3表示车险保单
         public String type;
 
-        //核保状态（01核保中 2核保失败，3核保成功
-        public String checkStatus;
-
-        //核保状态（01核保中 2核保失败，3核保成功（显示用）
-        public String checkStatusText;
-
-        //支付状态 0，1支付中2支付失败3支付成功，
-        public String payStatus;
-
-        //支付状态 0，1支付中2支付失败3支付成功，（显示用）
-        public String payStatusText;
-
         //保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保
         public String warrantyStatus;
+        public String payStatus;
 
         //保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保（显示用）
         public String warrantyStatusText;
@@ -169,7 +154,7 @@ public class InsurancePolicy {
 
         }
 
-        public GetInsurancePolicy(InsurancePolicyModel model) {
+        public GetInsurancePolicy(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
             if (model == null) {
                 return;
             }
@@ -177,7 +162,7 @@ public class InsurancePolicy {
             SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy.MM.dd");
             this.id = model.id;
             this.warrantyUuid = model.warranty_uuid;
-            this.proPolicyNo = model.pro_policy_no;
+            this.proPolicyNo = model.pre_policy_no;
             this.warrantyCode = model.warranty_code;
             this.accountUuid = model.manager_uuid;
             this.buyerAuuid = model.account_uuid;
@@ -185,12 +170,11 @@ public class InsurancePolicy {
             this.channelId = model.channel_id;
             this.planId = model.plan_id;
             this.productId = model.product_id;
-            this.premium = model.premium;
-            if (StringKit.isEmpty(model.premium)) {
-                this.premiumText = "¥0.00";
-            } else {
-                this.premiumText = "¥" + model.premium;
-            }
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+            this.premium = decimalFormat.format(premium.doubleValue());
+            this.premiumText = "¥" + this.premium;
+            this.payMoney = decimalFormat.format(pay_money.doubleValue());
+            this.payMoneyText = "¥" + this.payMoney;
             this.startTime = model.start_time;
             String start = "";
             if (StringKit.isInteger(model.start_time)) {
@@ -206,12 +190,6 @@ public class InsurancePolicy {
             this.term = start + "-" + end;
             this.insCompanyId = model.ins_company_id;
             this.count = model.count;
-            this.payTime = model.pay_time;
-            if (StringKit.isInteger(model.pay_time)) {
-                this.payTimeText = sdf.format(new Date(Long.valueOf(model.pay_time)));
-            }
-            this.payWay = model.pay_way;
-            this.payWayText = model.payWayText(payWay);
             this.byStagesWay = model.by_stages_way;
             this.isSettlement = model.is_settlement;
             this.isSettlementText = model.isSettlementText(isSettlement);
@@ -219,13 +197,14 @@ public class InsurancePolicy {
             this.warrantyFrom = model.warranty_from;
             this.warrantyFromText = model.warrantyFromText(warrantyFrom);
             this.type = model.type;
-            this.checkStatus = model.check_status;
-            this.checkStatus = model.checkStatusText(checkStatus);
-            this.payStatus = model.pay_status;
-            this.payStatusText = model.payStatusText(payStatus);
             this.integral = model.integral;
             this.warrantyStatus = model.warranty_status;
-            this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
+            this.payStatus = warrantyStatusForPay;
+            if (StringKit.equals(this.warrantyStatus, InsurancePolicyModel.POLICY_STATUS_PENDING)) {
+                this.warrantyStatusText = warrantyStatusForPayText;
+            } else {
+                this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
+            }
             this.expressNo = model.express_no;
             this.expressCompanyName = model.express_company_name;
             this.deliveryType = model.delivery_type;
@@ -262,8 +241,8 @@ public class InsurancePolicy {
             super();
         }
 
-        public GetInsurancePolicyDetail(InsurancePolicyModel model) {
-            super(model);
+        public GetInsurancePolicyDetail(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+            super(model, premium, pay_money, warrantyStatusForPay, warrantyStatusForPayText);
         }
     }
 
@@ -655,8 +634,8 @@ public class InsurancePolicy {
 
         }
 
-        public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model) {
-            super(model);
+        public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+            super(model, premium, pay_money, warrantyStatusForPay, warrantyStatusForPayText);
         }
     }
 

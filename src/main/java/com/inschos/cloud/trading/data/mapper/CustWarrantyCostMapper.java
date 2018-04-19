@@ -11,8 +11,12 @@ import java.util.List;
  */
 public interface CustWarrantyCostMapper {
 
-    List<CustWarrantyCostModel> findCustWarrantyCostByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel);
+    List<CustWarrantyCostModel> findCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel);
 
     int addCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel);
+
+    int updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel);
+
+    int updateCustWarrantyCostPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel);
 
 }

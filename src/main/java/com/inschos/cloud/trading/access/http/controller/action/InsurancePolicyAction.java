@@ -4,23 +4,23 @@ import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.access.rpc.client.AccountClientService;
-import com.inschos.cloud.trading.access.rpc.client.InsuranceServiceClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.dao.CarInfoDao;
+import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
 import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.*;
 
 /**
  * 创建日期：2018/3/22 on 11:06
@@ -40,10 +40,10 @@ public class InsurancePolicyAction extends BaseAction {
     private InsuranceParticipantDao insuranceParticipantDao;
 
     @Autowired
-    private AccountClientService accountClientService;
+    private CustWarrantyCostDao custWarrantyCostDao;
 
     @Autowired
-    private InsuranceServiceClient insuranceServiceClient;
+    private AccountClientService accountClientService;
 
     public String getInsurancePolicyStatusList(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyStatusListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatusListRequest.class);
@@ -151,14 +151,50 @@ public class InsurancePolicyAction extends BaseAction {
 //                    map.put(conciseInfo.id, conciseInfo);
 //                }
 
+                CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+                long time = System.currentTimeMillis();
                 for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
-                    InsurancePolicy.GetInsurancePolicy insurancePolicy = new InsurancePolicy.GetInsurancePolicy(policyListByWarrantyStatusOrSearch);
+
+                    custWarrantyCostModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
+
+                    List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
+
+                    BigDecimal premium = new BigDecimal("0.00");
+                    BigDecimal payMoney = new BigDecimal("0.00");
+
+                    boolean isFindLast = false;
+                    int size1 = custWarrantyCostByWarrantyUuid.size();
+                    String warrantyStatusForPay = "";
+                    String warrantyStatusForPayText = "";
+
+                    for (int i = size1 - 1; i > -1; i--) {
+                        CustWarrantyCostModel custWarrantyCostModel1 = custWarrantyCostByWarrantyUuid.get(i);
+                        if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
+                            premium = premium.add(new BigDecimal(custWarrantyCostModel1.premium));
+                        }
+
+                        if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
+                            payMoney = payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
+                        }
+
+                        if (!isFindLast) {
+                            isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
+                        }
+
+                        if (isFindLast) {
+                            warrantyStatusForPay = custWarrantyCostModel1.pay_status;
+                            warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
+                        }
+                    }
+
+                    InsurancePolicy.GetInsurancePolicy insurancePolicy = new InsurancePolicy.GetInsurancePolicy(policyListByWarrantyStatusOrSearch, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
 
 //                    InsuranceConciseInfo product = map.get(insurancePolicy.productId);
 //                    if (product != null) {
 //                        insurancePolicy.insuranceProductName = product.ins_name;
 //                        insurancePolicy.insuranceCompanyName = product.company_name;
 //                    }
+
                     insurancePolicy.insuranceProductName = "产品名";
                     insurancePolicy.insuranceCompanyName = "保险公司名";
 
@@ -280,7 +316,43 @@ public class InsurancePolicyAction extends BaseAction {
         response.data = new ArrayList<>();
 
         for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
-            InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch);
+
+            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+            long time = System.currentTimeMillis();
+            custWarrantyCostModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
+
+            List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
+
+            BigDecimal premium = new BigDecimal("0.00");
+            BigDecimal payMoney = new BigDecimal("0.00");
+
+            boolean isFindLast = false;
+            int size1 = custWarrantyCostByWarrantyUuid.size();
+            String warrantyStatusForPay = "";
+            String warrantyStatusForPayText = "";
+
+            for (int i = size1 - 1; i > -1; i--) {
+                CustWarrantyCostModel custWarrantyCostModel1 = custWarrantyCostByWarrantyUuid.get(i);
+                if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
+                    premium = premium.add(new BigDecimal(custWarrantyCostModel1.premium));
+                }
+
+                if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
+                    payMoney = payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
+                }
+
+                if (!isFindLast) {
+                    isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
+                }
+
+                if (isFindLast) {
+                    warrantyStatusForPay = custWarrantyCostModel1.pay_status;
+                    warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
+                }
+            }
+
+            InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
+
             if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
                 InsuranceParticipantModel insuranceParticipantPolicyHolderNameByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
                 if (insuranceParticipantPolicyHolderNameByWarrantyUuid != null) {
@@ -327,7 +399,41 @@ public class InsurancePolicyAction extends BaseAction {
         InsurancePolicyModel insurancePolicyDetailByWarrantyCode = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(warrantyUuid);
         List<InsuranceParticipantModel> insuranceParticipantByWarrantyCode = insuranceParticipantDao.findInsuranceParticipantByWarrantyUuid(warrantyUuid);
 
-        response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode);
+        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+        long time = System.currentTimeMillis();
+        custWarrantyCostModel.warranty_uuid = insurancePolicyDetailByWarrantyCode.warranty_uuid;
+
+        List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
+
+        BigDecimal premium = new BigDecimal("0.00");
+        BigDecimal payMoney = new BigDecimal("0.00");
+
+        boolean isFindLast = false;
+        int size1 = custWarrantyCostByWarrantyUuid.size();
+        String warrantyStatusForPay = "";
+        String warrantyStatusForPayText = "";
+
+        for (int i = size1 - 1; i > -1; i--) {
+            CustWarrantyCostModel custWarrantyCostModel1 = custWarrantyCostByWarrantyUuid.get(i);
+            if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
+                premium = premium.add(new BigDecimal(custWarrantyCostModel1.premium));
+            }
+
+            if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
+                payMoney = payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
+            }
+
+            if (!isFindLast) {
+                isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
+            }
+
+            if (isFindLast) {
+                warrantyStatusForPay = custWarrantyCostModel1.pay_status;
+                warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
+            }
+        }
+
+        response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
         response.data.insuredList = new ArrayList<>();
         response.data.beneficiaryList = new ArrayList<>();
 
@@ -374,136 +480,139 @@ public class InsurancePolicyAction extends BaseAction {
         InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest.class);
         InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse();
 
-//        if (request == null) {
-//            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
-//        }
-//
-//        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
-//        if (entries != null) {
-//            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
-//        }
-//
-//        if (StringKit.isEmpty(request.lastId)) {
-//            request.lastId = "0";
-//        }
-//
-//        if (StringKit.isEmpty(request.pageNum)) {
-//            request.pageNum = "1";
-//        }
-//
-//        if (StringKit.isEmpty(request.pageSize)) {
-//            request.pageSize = "10";
-//        }
-//
-//        response.data = new InsurancePolicy.InsurancePolicyStatistic();
-//
-//        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
-//
-//        insurancePolicyModel.search = request.searchKey;
-//
-//        if (StringKit.isEmpty(request.startTime)) {
-//            insurancePolicyModel.start_time = "0";
-//        } else {
-//            insurancePolicyModel.start_time = request.startTime;
-//        }
-//
-//        if (StringKit.isEmpty(request.endTime)) {
-//            insurancePolicyModel.end_time = "0";
-//        } else {
-//            insurancePolicyModel.end_time = request.endTime;
-//        }
-//
-//        if (StringKit.isEmpty(request.channelId)) {
-//            insurancePolicyModel.channel_id = "-1";
-//        } else {
-//            insurancePolicyModel.channel_id = request.channelId;
-//        }
-//
-//        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
-//
-//        insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
-//
-//        List<InsurancePolicyModel> insurancePolicyListBySearchOrTimeOrChannelId = insurancePolicyDao.findInsurancePolicyListBySearchOrTimeOrChannelId(insurancePolicyModel);
-//        long total = insurancePolicyDao.findInsurancePolicyListBySearchOrTimeOrChannelIdCount(insurancePolicyModel);
-//
-//        Calendar instance = Calendar.getInstance();
-//
-//        int year = instance.get(Calendar.YEAR);
-//        int month = instance.get(Calendar.MONTH);
-//        int day = instance.get(Calendar.DAY_OF_MONTH);
-//
-//
-//        InsurancePolicyModel insurancePolicyModel1 = new InsurancePolicyModel();
-//        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
-//
-//        instance.set(year, month, day, 0, 0, 0);
-//        insurancePolicyModel1.start_time = String.valueOf(instance.getTimeInMillis());
-//
-//        int actualMaximum = instance.getActualMaximum(Calendar.DAY_OF_MONTH);
-//        if (day < actualMaximum) {
-//            instance.set(year, month, day + 1, 0, 0, 0);
-//        } else {
-//            if (month + 1 < 12) {
-//                instance.set(year, month + 1, 1, 0, 0, 0);
-//            } else {
-//                instance.set(year + 1, 0, 1, 0, 0, 0);
-//            }
-//        }
-//        insurancePolicyModel1.end_time = String.valueOf(instance.getTimeInMillis());
-//
-//        // 当前的所有付款的
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        if (StringKit.isEmpty(request.lastId)) {
+            request.lastId = "0";
+        }
+
+        if (StringKit.isEmpty(request.pageNum)) {
+            request.pageNum = "1";
+        }
+
+        if (StringKit.isEmpty(request.pageSize)) {
+            request.pageSize = "10";
+        }
+
+        response.data = new InsurancePolicy.InsurancePolicyStatistic();
+
+        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+
+        insurancePolicyModel.search = request.searchKey;
+
+        if (StringKit.isEmpty(request.startTime)) {
+            insurancePolicyModel.start_time = "0";
+        } else {
+            insurancePolicyModel.start_time = request.startTime;
+        }
+
+        if (StringKit.isEmpty(request.endTime)) {
+            insurancePolicyModel.end_time = "0";
+        } else {
+            insurancePolicyModel.end_time = request.endTime;
+        }
+
+        if (StringKit.isEmpty(request.channelId)) {
+            insurancePolicyModel.channel_id = "-1";
+        } else {
+            insurancePolicyModel.channel_id = request.channelId;
+        }
+
+        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+
+        insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+
+        List<InsurancePolicyModel> insurancePolicyListBySearchOrTimeOrChannelId = insurancePolicyDao.findInsurancePolicyListBySearchOrTimeOrChannelId(insurancePolicyModel);
+        long total = insurancePolicyDao.findInsurancePolicyListBySearchOrTimeOrChannelIdCount(insurancePolicyModel);
+
+        Calendar instance = Calendar.getInstance();
+
+        int year = instance.get(Calendar.YEAR);
+        int month = instance.get(Calendar.MONTH);
+        int day = instance.get(Calendar.DAY_OF_MONTH);
+
+
+        InsurancePolicyModel insurancePolicyModel1 = new InsurancePolicyModel();
+        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+
+        instance.set(year, month, day, 0, 0, 0);
+        insurancePolicyModel1.start_time = String.valueOf(instance.getTimeInMillis());
+
+        int actualMaximum = instance.getActualMaximum(Calendar.DAY_OF_MONTH);
+        if (day < actualMaximum) {
+            instance.set(year, month, day + 1, 0, 0, 0);
+        } else {
+            if (month + 1 < 12) {
+                instance.set(year, month + 1, 1, 0, 0, 0);
+            } else {
+                instance.set(year + 1, 0, 1, 0, 0, 0);
+            }
+        }
+        insurancePolicyModel1.end_time = String.valueOf(instance.getTimeInMillis());
+
+        // 当前的所有付款的
 //        Double dayAmount = insurancePolicyDao.findInsurancePolicyPayMoneyCountBySearchOrTimeOrChannelIdForManagerSystem(insurancePolicyModel1);
-//
-//        if (dayAmount == null) {
-//            dayAmount = 0.00;
-//        }
-//
-//        instance.set(year, month, 1, 0, 0, 0);
-//        insurancePolicyModel1.start_time = String.valueOf(instance.getTimeInMillis());
-//
-//        if (month + 1 < 12) {
-//            instance.set(year, month + 1, 1, 0, 0, 0);
-//        } else {
-//            instance.set(year + 1, 0, 1, 0, 0, 0);
-//        }
-//
-//        insurancePolicyModel1.end_time = String.valueOf(instance.getTimeInMillis());
-//
-//        // 当月的所有付款的
+        Double dayAmount = null;
+
+        if (dayAmount == null) {
+            dayAmount = 0.00;
+        }
+
+        instance.set(year, month, 1, 0, 0, 0);
+        insurancePolicyModel1.start_time = String.valueOf(instance.getTimeInMillis());
+
+        if (month + 1 < 12) {
+            instance.set(year, month + 1, 1, 0, 0, 0);
+        } else {
+            instance.set(year + 1, 0, 1, 0, 0, 0);
+        }
+
+        insurancePolicyModel1.end_time = String.valueOf(instance.getTimeInMillis());
+
+        // 当月的所有付款的
 //        Double monthAmount = insurancePolicyDao.findInsurancePolicyPayMoneyCountBySearchOrTimeOrChannelIdForManagerSystem(insurancePolicyModel1);
-//
-//        if (monthAmount == null) {
-//            monthAmount = 0.00;
-//        }
-//
-//        insurancePolicyModel1.start_time = "0";
-//        insurancePolicyModel1.end_time = "0";
-//
+        Double monthAmount = null;
+
+        if (monthAmount == null) {
+            monthAmount = 0.00;
+        }
+
+        insurancePolicyModel1.start_time = "0";
+        insurancePolicyModel1.end_time = "0";
+
 //        Double totalAmount = insurancePolicyDao.findInsurancePolicyPayMoneyCountBySearchOrTimeOrChannelIdForManagerSystem(insurancePolicyModel1);
-//
-//        if (totalAmount == null) {
-//            totalAmount = 0.00;
-//        }
-//
-//        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-//
-//        response.data.dayAmount = "本日保费\n" + decimalFormat.format(dayAmount);
-//        response.data.monthAmount = "本月保费\n" + decimalFormat.format(monthAmount);
-//        response.data.totalAmount = "累计保费\n" + decimalFormat.format(totalAmount);
-//        response.data.list = new ArrayList<>();
-//
+        Double totalAmount = null;
+
+        if (totalAmount == null) {
+            totalAmount = 0.00;
+        }
+
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+        response.data.dayAmount = "本日保费\n" + decimalFormat.format(dayAmount);
+        response.data.monthAmount = "本月保费\n" + decimalFormat.format(monthAmount);
+        response.data.totalAmount = "累计保费\n" + decimalFormat.format(totalAmount);
+        response.data.list = new ArrayList<>();
+
 //        if (insurancePolicyListBySearchOrTimeOrChannelId != null && !insurancePolicyListBySearchOrTimeOrChannelId.isEmpty()) {
 //            for (InsurancePolicyModel model : insurancePolicyListBySearchOrTimeOrChannelId) {
 //                response.data.list.add(new InsurancePolicy.GetInsurancePolicy(model));
 //            }
 //        }
-//
-//        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.list.size());
+
+        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.list.size());
 
         return json(BaseResponse.CODE_SUCCESS, "获取保单统计成功", response);
     }
 
-    public String getInsurancePolicyBrokerageStatisticForManagerSystem (ActionBean actionBean) {
+    public String getInsurancePolicyBrokerageStatisticForManagerSystem(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest.class);
         InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse();
 

@@ -54,13 +54,10 @@ public class CustWarrantyCostModel {
 
     }
 
-    // 核保成功
-    public static final String APPLY_UNDERWRITING_SUCCESS = "0";
     // 核保中
     public static final String APPLY_UNDERWRITING_PROCESSING = "1";
     // 核保失败
     public static final String APPLY_UNDERWRITING_FAILURE = "2";
-
     // 待支付
     public static final String PAY_STATUS_WAIT = "3";
     // 支付中

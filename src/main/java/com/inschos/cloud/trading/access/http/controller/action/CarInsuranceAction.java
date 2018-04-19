@@ -1422,7 +1422,6 @@ public class CarInsuranceAction extends BaseAction {
         getPayLinkRequest.bizID = request.bizID;
 
         // TODO: 2018/4/10 需要去数据库动态判断一下，是否需要先校验验证码
-
         ExtendCarInsurancePolicy.GetPayLinkResponse result = new CarInsuranceHttpRequest<>(get_pay_link, getPayLinkRequest, ExtendCarInsurancePolicy.GetPayLinkResponse.class).post();
 
         if (result == null) {
@@ -1435,6 +1434,21 @@ public class CarInsuranceAction extends BaseAction {
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
+                if (response.data == null || StringKit.isEmpty(response.data.payLink)) {
+                    UpdateInsurancePolicyStatusAndWarrantyCodeForCarInsurance updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance = new UpdateInsurancePolicyStatusAndWarrantyCodeForCarInsurance();
+                    updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.bizId = request.bizID;
+                    updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status = CustWarrantyCostModel.PAY_STATUS_CANCEL;
+                    updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.payMoney = "0.00";
+                    updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = "";
+                    updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = "";
+                    updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.actual_pay_time = String.valueOf(System.currentTimeMillis());
+                    updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_INVALID;
+                    int update = insurancePolicyDao.updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance);
+
+                    if (update <= 0) {
+                        return json(BaseResponse.CODE_FAILURE, "获取支付链接失败", response);
+                    }
+                }
                 str = json(BaseResponse.CODE_SUCCESS, "获取支付链接成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
@@ -1481,22 +1495,26 @@ public class CarInsuranceAction extends BaseAction {
         // 验签
         String str;
         if (result.verify) {
-            String applyState = "";
+            String warrantyStatus = "";
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
-                applyState = getApplyUnderwritingState(response.data.synchFlag);
+                String applyState = getApplyUnderwritingState(response.data.synchFlag);
+                if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_SUCCESS)) {
+                    warrantyStatus = CustWarrantyCostModel.PAY_STATUS_WAIT;
+                } else if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_PROCESSING)) {
+                    warrantyStatus = CustWarrantyCostModel.APPLY_UNDERWRITING_PROCESSING;
+                }
             } else {
-                applyState = "1";
+                warrantyStatus = InsurancePolicyModel.POLICY_STATUS_INVALID;
                 response.data = new ExtendCarInsurancePolicy.PhoneCode();
             }
 
-            int update = 1;
             UpdateInsurancePolicyProPolicyNoForCarInsurance insurance = new UpdateInsurancePolicyProPolicyNoForCarInsurance();
             insurance.bizId = request.bizID;
             insurance.biProposalNo = result.data.biProposalNo;
             insurance.ciProposalNo = result.data.ciProposalNo;
-            insurance.check_status = applyState;
-            update = insurancePolicyDao.updateInsurancePolicyProPolicyNoForCarInsurance(insurance);
+            insurance.warrantyStatus = warrantyStatus;
+            int update = insurancePolicyDao.updateInsurancePolicyProPolicyNoForCarInsurance(insurance);
 
             if (update > 0) {
                 str = json(BaseResponse.CODE_SUCCESS, "验证成功", response);
@@ -1692,23 +1710,37 @@ public class CarInsuranceAction extends BaseAction {
             return s;
         }
 
-        assert request != null;
+        if (request == null) {
+            response.msg = "未返回bizID或thpBizID";
+            response.state = String.valueOf(CarInsuranceResponse.RESULT_FAIL);
+            response.msgCode = "error_4";
+            return JsonKit.bean2Json(response);
+        }
+
         String applyState = StringKit.equals(request.state, "1") ? InsurancePolicyModel.APPLY_UNDERWRITING_SUCCESS : InsurancePolicyModel.APPLY_UNDERWRITING_FAILURE;
 
         UpdateInsurancePolicyStatusForCarInsurance insurance = new UpdateInsurancePolicyStatusForCarInsurance();
 
-        insurance.check_status = applyState;
-        if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_FAILURE)) {
-            insurance.pay_status = InsurancePolicyModel.PAY_STATUS_FAILURE;
-            insurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_INVALID;
-        } else {
-            insurance.pay_status = InsurancePolicyModel.PAY_STATUS_PROCESSING_1;
-            insurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_PAYING;
+        String payState = "";
+        String warrantyStatus = "";
+        if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_SUCCESS)) {
+            payState = CustWarrantyCostModel.PAY_STATUS_WAIT;
+            warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
+        } else if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_PROCESSING)) {
+            payState = CustWarrantyCostModel.PAY_STATUS_WAIT;
+            warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
+        } else if (StringKit.equals(applyState, InsurancePolicyModel.APPLY_UNDERWRITING_FAILURE)) {
+            payState = CustWarrantyCostModel.PAY_STATUS_CANCEL;
+            warrantyStatus = InsurancePolicyModel.POLICY_STATUS_INVALID;
         }
+
+        insurance.pay_status = payState;
+        insurance.warranty_status = warrantyStatus;
         insurance.biProposalNo = request.data.biProposalNo;
         insurance.ciProposalNo = request.data.ciProposalNo;
         insurance.bizId = request.data.bizID;
         insurance.thpBizID = request.data.thpBizID;
+
         if (!StringKit.isEmpty(request.data.bizID) || !StringKit.isEmpty(request.data.thpBizID)) {
             int update = 1;
             update = insurancePolicyDao.updateInsurancePolicyStatusForCarInsurance(insurance);
@@ -1738,26 +1770,25 @@ public class CarInsuranceAction extends BaseAction {
             return s;
         }
 
-        assert request != null;
         if (!StringKit.isEmpty(request.data.bizID) || !StringKit.isEmpty(request.data.thpBizID)) {
             UpdateInsurancePolicyStatusAndWarrantyCodeForCarInsurance updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance = new UpdateInsurancePolicyStatusAndWarrantyCodeForCarInsurance();
             updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.bizId = request.data.bizID;
             updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.thpBizID = request.data.thpBizID;
 
             if (StringKit.equals(request.data.payState, "0")) {
-                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status = InsurancePolicyModel.PAY_STATUS_FAILURE;
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status = CustWarrantyCostModel.PAY_STATUS_CANCEL;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.payMoney = "0.00";
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = "";
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = "";
-                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_time = String.valueOf(System.currentTimeMillis());
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.actual_pay_time = String.valueOf(System.currentTimeMillis());
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_INVALID;
             } else {
-                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status = InsurancePolicyModel.PAY_STATUS_SUCCESS;
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status = CustWarrantyCostModel.PAY_STATUS_SUCCESS;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.payMoney = request.data.payMoney;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = request.data.ciPolicyNo;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = request.data.biPolicyNo;
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_time = parseMillisecondByShowDate(sdf, request.data.payTime);
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.actual_pay_time = parseMillisecondByShowDate(sdf, request.data.payTime);
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_WAITING;
             }
 
@@ -1790,7 +1821,6 @@ public class CarInsuranceAction extends BaseAction {
             return s;
         }
 
-        assert request != null;
         UpdateInsurancePolicyExpressInfoForCarInsurance updateInsurancePolicyExpressInfoForCarInsurance = new UpdateInsurancePolicyExpressInfoForCarInsurance();
 
         updateInsurancePolicyExpressInfoForCarInsurance.bizId = request.data.bizID;
@@ -1805,9 +1835,7 @@ public class CarInsuranceAction extends BaseAction {
 
         int update = insurancePolicyDao.updateInsurancePolicyExpressInfoForCarInsurance(updateInsurancePolicyExpressInfoForCarInsurance);
 
-        dealCallBackParamsIllegal(update, response);
-
-        return JsonKit.bean2Json(response);
+        return JsonKit.bean2Json(dealCallBackParamsIllegal(update, response));
     }
 
     // ========================================================== 其他方法 ===========================================================

@@ -6,6 +6,7 @@ import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.InsuranceParticipantMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
 import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.fordao.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,7 +146,7 @@ public class InsurancePolicyDao extends BaseDao {
                 } else if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_COMMERCIAL)) {
                     insurancePolicyModel.pre_policy_no = updateInsurancePolicyProPolicyNoForCarInsurance.biProposalNo;
                 }
-                insurancePolicyModel.check_status = updateInsurancePolicyProPolicyNoForCarInsurance.check_status;
+                insurancePolicyModel.warranty_status = updateInsurancePolicyProPolicyNoForCarInsurance.warrantyStatus;
                 insurancePolicyModel.updated_at = time;
                 update = updateInsurancePolicyProPolicyNoByWarrantyId(insurancePolicyModel);
 
@@ -194,19 +195,31 @@ public class InsurancePolicyDao extends BaseDao {
         String time = String.valueOf(System.currentTimeMillis());
         for (CarInfoModel carInfoModel : carInfoModels) {
             InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+
+            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+
+            custWarrantyCostModel.warranty_uuid = carInfoModel.warranty_uuid;
+
             insurancePolicyModel.warranty_uuid = carInfoModel.warranty_uuid;
             if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_STRONG)) {
                 insurancePolicyModel.pre_policy_no = updateInsurancePolicyStatusForCarInsurance.ciProposalNo;
             } else if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_COMMERCIAL)) {
                 insurancePolicyModel.pre_policy_no = updateInsurancePolicyStatusForCarInsurance.biProposalNo;
             }
-            insurancePolicyModel.check_status = updateInsurancePolicyStatusForCarInsurance.check_status;
-            insurancePolicyModel.pay_status = updateInsurancePolicyStatusForCarInsurance.pay_status;
+            custWarrantyCostModel.pay_status = updateInsurancePolicyStatusForCarInsurance.pay_status;
             insurancePolicyModel.warranty_status = updateInsurancePolicyStatusForCarInsurance.warranty_status;
 
             insurancePolicyModel.updated_at = time;
+            custWarrantyCostModel.updated_at = time;
 
             update = updateInsurancePolicyStatusForCarInsuranceWarrantyUuid(insurancePolicyModel);
+
+            if (update <= 0) {
+                rollBack();
+                break;
+            }
+
+            update = custWarrantyCostMapper.updateCustWarrantyCostPayStatusForCarInsuranceByWarrantyUuid(custWarrantyCostModel);
 
             if (update <= 0) {
                 rollBack();
@@ -241,19 +254,33 @@ public class InsurancePolicyDao extends BaseDao {
 
         BigDecimal ciPremium = new BigDecimal("0.00");
         if (!StringKit.isEmpty(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo) && !StringKit.isEmpty(ciUuid)) {
-            ciPremium = getBigDecimal(insurancePolicyMapper.findInsurancePolicyPremiumByWarrantyUuid(ciUuid));
+            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+            custWarrantyCostModel.warranty_uuid = ciUuid;
+            List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostMapper.findCustWarrantyCost(custWarrantyCostModel);
+            if (custWarrantyCostByWarrantyUuid != null && !custWarrantyCostByWarrantyUuid.isEmpty()) {
+                for (CustWarrantyCostModel warrantyCostModel : custWarrantyCostByWarrantyUuid) {
+                    ciPremium = ciPremium.add(new BigDecimal(warrantyCostModel.premium));
+                }
+            }
         }
 
         BigDecimal biPremium = new BigDecimal("0.00");
         if (!StringKit.isEmpty(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo) && !StringKit.isEmpty(biUuid)) {
-            biPremium = getBigDecimal(insurancePolicyMapper.findInsurancePolicyPremiumByWarrantyUuid(biUuid));
+            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+            custWarrantyCostModel.warranty_uuid = biUuid;
+            List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostMapper.findCustWarrantyCost(custWarrantyCostModel);
+            if (custWarrantyCostByWarrantyUuid != null && !custWarrantyCostByWarrantyUuid.isEmpty()) {
+                for (CustWarrantyCostModel warrantyCostModel : custWarrantyCostByWarrantyUuid) {
+                    ciPremium = ciPremium.add(new BigDecimal(warrantyCostModel.premium));
+                }
+            }
         }
 
         BigDecimal ciMoney = new BigDecimal("0.00");
         BigDecimal biMoney = new BigDecimal("0.00");
         BigDecimal total = new BigDecimal(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.payMoney);
 
-        if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium != null && biPremium.compareTo(BigDecimal.ZERO) != 0) {
+        if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
             BigDecimal add1 = ciPremium.add(biPremium);
             if (add1.compareTo(total) == 0) {
                 ciMoney = ciPremium;
@@ -264,9 +291,9 @@ public class InsurancePolicyDao extends BaseDao {
                 ciMoney = total.divide(add, BigDecimal.ROUND_HALF_UP);
                 biMoney = total.subtract(ciMoney);
             }
-        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) == 0 && biPremium != null && biPremium.compareTo(BigDecimal.ZERO) != 0) {
+        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) == 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
             biMoney = total;
-        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium != null && biPremium.compareTo(BigDecimal.ZERO) == 0) {
+        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) == 0) {
             ciMoney = total;
         } else {
             // 理论上不可能
@@ -276,21 +303,35 @@ public class InsurancePolicyDao extends BaseDao {
         String time = String.valueOf(System.currentTimeMillis());
         for (CarInfoModel carInfoModel : carInfoModels) {
             InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+
+            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+
             insurancePolicyModel.warranty_uuid = carInfoModel.warranty_uuid;
-            insurancePolicyModel.pay_time = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_time;
+
+            custWarrantyCostModel.warranty_uuid = carInfoModel.warranty_uuid;
+            custWarrantyCostModel.actual_pay_time = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.actual_pay_time;
+
             if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_STRONG)) {
                 insurancePolicyModel.warranty_code = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo;
-                insurancePolicyModel.pay_money = ciMoney.toString();
+                custWarrantyCostModel.pay_money = ciMoney.toString();
             } else if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_COMMERCIAL)) {
                 insurancePolicyModel.warranty_code = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo;
-                insurancePolicyModel.pay_money = biMoney.toString();
+                custWarrantyCostModel.pay_money = biMoney.toString();
             }
-            insurancePolicyModel.pay_status = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status;
+            custWarrantyCostModel.pay_status = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.pay_status;
             insurancePolicyModel.warranty_status = updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status;
 
             insurancePolicyModel.updated_at = time;
+            custWarrantyCostModel.updated_at = time;
 
             update = updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(insurancePolicyModel);
+
+            if (update <= 0) {
+                rollBack();
+                break;
+            }
+
+            update = updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid(custWarrantyCostModel);
 
             if (update <= 0) {
                 rollBack();
@@ -311,6 +352,10 @@ public class InsurancePolicyDao extends BaseDao {
 
     public int updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(insurancePolicyModel);
+    }
+
+    public int updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid(custWarrantyCostModel);
     }
 
     public int updateInsurancePolicyExpressInfoForCarInsurance(UpdateInsurancePolicyExpressInfoForCarInsurance updateInsurancePolicyExpressInfoForCarInsurance) {
