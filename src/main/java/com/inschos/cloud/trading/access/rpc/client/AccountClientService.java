@@ -10,25 +10,17 @@ import org.springframework.stereotype.Component;
  * Created by IceAnt on 2018/3/20.
  */
 @Component
-public class AccountClientService extends BaseClientService implements AccountService {
+public class AccountClientService extends BaseServiceClient<AccountService> implements AccountService {
 
     @Value("${rpc.remote.account.host}")
     private String host;
     
     private final String uri = "/rpc/account";
 
-    private AccountService accountRemoteService;
-
-    private AccountService getAccountRemoteService() {
-        if(accountRemoteService ==null){
-            accountRemoteService = getService(host + uri,AccountService.class);
-        }
-        return accountRemoteService;
-    }
 
     public AccountBean getAccount(String token){
         try {
-            AccountService service = getAccountRemoteService();
+            AccountService service = getService(host+uri);
             return service!=null?service.getAccount(token):null;
 
         }catch (Exception e){
@@ -39,7 +31,7 @@ public class AccountClientService extends BaseClientService implements AccountSe
 
     public AccountBean findByUuid(String uuid){
         try {
-            AccountService service = getAccountRemoteService();
+            AccountService service = getService(host+uri);
             return service!=null?service.findByUuid(uuid):null;
 
         }catch (Exception e){
