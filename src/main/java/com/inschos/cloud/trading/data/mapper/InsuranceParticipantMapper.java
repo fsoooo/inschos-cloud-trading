@@ -13,12 +13,12 @@ public interface InsuranceParticipantMapper {
 
     int addInsuranceParticipant (InsuranceParticipantModel insuranceParticipantModel);
 
-    List<InsuranceParticipantModel> findInsuranceParticipantByWarrantyUuid(String warrantyUuid);
+    List<InsuranceParticipantModel> findInsuranceParticipantByWarrantyUuid(InsuranceParticipantModel insuranceParticipantModel);
 
-    List<InsuranceParticipantModel> findInsuranceParticipantInsuredNameByWarrantyUuid(String warrantyUuid);
+    List<InsuranceParticipantModel> findInsuranceParticipantInsuredNameByWarrantyUuid(InsuranceParticipantModel insuranceParticipantModel);
 
-    List<InsuranceParticipantModel> findInsuranceParticipantInsuredByWarrantyUuid(String warrantyUuid);
+    List<InsuranceParticipantModel> findInsuranceParticipantInsuredByWarrantyUuid(InsuranceParticipantModel insuranceParticipantModel);
 
-    InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameByWarrantyUuid(String warrantyUuid);
+    InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(InsuranceParticipantModel insuranceParticipantModel);
 
 }

@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.data.dao;
 
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.CarInfoMapper;
+import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.InsuranceParticipantMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
 import com.inschos.cloud.trading.model.CarInfoModel;
@@ -29,6 +30,9 @@ public class InsurancePolicyDao extends BaseDao {
 
     @Autowired
     public CarInfoMapper carInfoMapper;
+
+    @Autowired
+    public CustWarrantyCostMapper custWarrantyCostMapper;
 
     public int addInsurancePolicyAndParticipantForCarInsurance(InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance) {
         if (insurancePolicyAndParticipantForCarInsurance != null) {
@@ -102,6 +106,24 @@ public class InsurancePolicyDao extends BaseDao {
 
             if (add <= 0) {
                 rollBack();
+                return add;
+            }
+
+            if (insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyCostModel != null) {
+                add = custWarrantyCostMapper.addCustWarrantyCost(insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyCostModel);
+            }
+
+            if (add <= 0) {
+                rollBack();
+                return add;
+            }
+
+            if (insurancePolicyAndParticipantForCarInsurance.biCustWarrantyCostModel != null) {
+                add = custWarrantyCostMapper.addCustWarrantyCost(insurancePolicyAndParticipantForCarInsurance.biCustWarrantyCostModel);
+            }
+
+            if (add <= 0) {
+                rollBack();
             }
 
             return add;
@@ -119,9 +141,9 @@ public class InsurancePolicyDao extends BaseDao {
                 InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
                 insurancePolicyModel.warranty_uuid = carInfoModel.warranty_uuid;
                 if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_STRONG)) {
-                    insurancePolicyModel.pro_policy_no = updateInsurancePolicyProPolicyNoForCarInsurance.ciProposalNo;
+                    insurancePolicyModel.pre_policy_no = updateInsurancePolicyProPolicyNoForCarInsurance.ciProposalNo;
                 } else if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_COMMERCIAL)) {
-                    insurancePolicyModel.pro_policy_no = updateInsurancePolicyProPolicyNoForCarInsurance.biProposalNo;
+                    insurancePolicyModel.pre_policy_no = updateInsurancePolicyProPolicyNoForCarInsurance.biProposalNo;
                 }
                 insurancePolicyModel.check_status = updateInsurancePolicyProPolicyNoForCarInsurance.check_status;
                 insurancePolicyModel.updated_at = time;
@@ -174,9 +196,9 @@ public class InsurancePolicyDao extends BaseDao {
             InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
             insurancePolicyModel.warranty_uuid = carInfoModel.warranty_uuid;
             if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_STRONG)) {
-                insurancePolicyModel.pro_policy_no = updateInsurancePolicyStatusForCarInsurance.ciProposalNo;
+                insurancePolicyModel.pre_policy_no = updateInsurancePolicyStatusForCarInsurance.ciProposalNo;
             } else if (StringKit.equals(carInfoModel.insurance_type, CarInfoModel.INSURANCE_TYPE_COMMERCIAL)) {
-                insurancePolicyModel.pro_policy_no = updateInsurancePolicyStatusForCarInsurance.biProposalNo;
+                insurancePolicyModel.pre_policy_no = updateInsurancePolicyStatusForCarInsurance.biProposalNo;
             }
             insurancePolicyModel.check_status = updateInsurancePolicyStatusForCarInsurance.check_status;
             insurancePolicyModel.pay_status = updateInsurancePolicyStatusForCarInsurance.pay_status;
@@ -327,13 +349,24 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid(insurancePolicyModel);
     }
 
-    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrDitchId(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrDitchId(insurancePolicyModel);
+    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(insurancePolicyModel);
     }
 
-    // NOTENABLED: 2018/4/14
-    public InsurancePolicyModel findInsurancePolicyDetailByWarrantyCode(String warrantyCode) {
-        return insurancePolicyMapper.findInsurancePolicyDetailByWarrantyUuid(warrantyCode);
+    public long findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(insurancePolicyModel);
+    }
+
+    public InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(String warrantyUuid) {
+        return insurancePolicyMapper.findInsurancePolicyDetailByWarrantyUuid(warrantyUuid);
+    }
+
+    public List<InsurancePolicyModel> findInsurancePolicyListBySearchOrTimeOrChannelId(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListBySearchOrTimeOrChannelId(insurancePolicyModel);
+    }
+
+    public long findInsurancePolicyListBySearchOrTimeOrChannelIdCount(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListBySearchOrTimeOrChannelIdCount(insurancePolicyModel);
     }
 
     // NOTENABLED: 2018/4/14

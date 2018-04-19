@@ -3,16 +3,16 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper">
 
     <sql id="Base_Column_List">
-        `id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`pay_money`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`,`state`
+        `id`,`warranty_uuid`,`pre_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`start_time`,`end_time`,`ins_company_id`,`count`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`,`state`
     </sql>
 
     <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert into cust_warranty
-        (`id`,`warranty_uuid`,`pro_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_auuid`,`ditch_id`,`plan_id`,`product_id`,`premium`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_time`,`pay_way`,`pay_money`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`check_status`,`pay_status`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`,`state`)
+        (`id`,`warranty_uuid`,`pre_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`start_time`,`end_time`,`ins_company_id`,`count`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`,`state`)
         values
-        (#{id},#{warranty_uuid},#{pro_policy_no},#{warranty_code},#{manager_uuid},#{account_uuid},#{agent_auuid},#{ditch_id},#{plan_id},#{product_id},#{premium},#{start_time},#{end_time},#{ins_company_id},#{count},#{pay_time},#{pay_way},#{pay_money},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{check_status},#{pay_status},#{warranty_status},#{integral},#{express_no},#{express_company_name},#{express_address},#{express_province_code},#{express_city_code},#{express_county_code},#{delivery_type},#{created_at},#{updated_at},#{state})
+        (#{id},#{warranty_uuid},#{pre_policy_no},#{warranty_code},#{manager_uuid},#{account_uuid},#{agent_id},#{channel_id},#{plan_id},#{product_id},#{start_time},#{end_time},#{ins_company_id},#{count},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{warranty_status},#{integral},#{express_no},#{express_company_name},#{express_address},#{express_province_code},#{express_city_code},#{express_county_code},#{delivery_type},#{created_at},#{updated_at},#{state})
     </insert>
 
     <update id="updateInsurancePolicyProPolicyNoByWarrantyUuid"
@@ -25,14 +25,14 @@
     <update id="updateInsurancePolicyStatusForCarInsuranceWarrantyUuid"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         update cust_warranty set
-        `pro_policy_no`=#{pro_policy_no},`check_status`=#{check_status},`pay_status`=#{pay_status},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
+        `pro_policy_no`=#{pro_policy_no},`check_status`=#{check_status},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
     <update id="updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         update cust_warranty set
-        `warranty_code`=#{warranty_code},`pay_status`=#{pay_status},`pay_time`=#{pay_time},`pay_money`=#{pay_money},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
+        `warranty_code`=#{warranty_code},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
@@ -62,15 +62,6 @@
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty
-        WHERE warranty_uuid=#{_parameter} AND state=1
-    </select>
-
-    <select id="findInsurancePolicyPremiumByWarrantyUuid"
-            parameterType="String"
-            resultType="String">
-        select
-        `premium`
         from cust_warranty
         WHERE warranty_uuid=#{_parameter} AND state=1
     </select>
@@ -112,7 +103,7 @@
         </where>
     </select>
 
-    <select id="findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrDitchId"
+    <select id="findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
@@ -131,8 +122,8 @@
                     <if test="warranty_status!=0">
                         and `warranty_status`=#{warranty_status}
                     </if>
-                    <if test="ditch_id!=-1">
-                        and `ditch_id`=#{ditch_id}
+                    <if test="channel_id!=-1">
+                        and `channel_id`=#{channel_id}
                     </if>
                     <if test="warranty_from!=0">
                         and `warranty_from`=#{warranty_from}
@@ -160,8 +151,8 @@
             <if test="warranty_status!=0">
                 and `warranty_status`=#{warranty_status}
             </if>
-            <if test="ditch_id!=-1">
-                and `ditch_id`=#{ditch_id}
+            <if test="channel_id!=-1">
+                and `channel_id`=#{channel_id}
             </if>
             <if test="warranty_from!=0">
                 and `warranty_from`=#{warranty_from}
@@ -179,12 +170,76 @@
         </where>
     </select>
 
-
-    <select id="findInsurancePolicyDetailByPrivateCode" parameterType="String"
+    <select id="findInsurancePolicyListBySearchOrTimeOrChannelId"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty where warranty_uuid=#{_parameter} AND state = 1
+        from cust_warranty
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    id&gt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    id&gt;=(select id from cust_warranty where manager_uuid=#{manager_uuid} AND state=1
+                    <if test="search!=null and search!=''">
+                        and `warranty_code` like concat("%",#{search},"%")
+                    </if>
+                    <if test="channel_id!=-1">
+                        and `channel_id`=#{channel_id}
+                    </if>
+                    <if test="start_time!=0">
+                        and `start_time`&gt;=#{start_time}
+                    </if>
+                    <if test="end_time!=0">
+                        and `start_time`$lt;#{end_time}
+                    </if>
+                    limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            and manager_uuid=#{manager_uuid} AND state = 1
+            <if test="search!=null and search!=''">
+                and `warranty_code` like concat("%",#{search},"%")
+            </if>
+            <if test="channel_id!=-1">
+                and `channel_id`=#{channel_id}
+            </if>
+            <if test="start_time!=0">
+                and `start_time`&gt;=#{start_time}
+            </if>
+            <if test="end_time!=0">
+                and `start_time`$lt;#{end_time}
+            </if>
+            limit #{page.offset}
+        </where>
+    </select>
+
+    <select id="findInsurancePolicyListBySearchOrTimeOrChannelIdCount"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="long">
+        select
+        count(id)
+        from cust_warranty
+        <where>
+            manager_uuid=#{manager_uuid} AND state = 1
+            <if test="search!=null and search!=''">
+                and `warranty_code` like concat("%",#{search},"%")
+            </if>
+            <if test="channel_id!=-1">
+                and `channel_id`=#{channel_id}
+            </if>
+            <if test="start_time!=0">
+                and `start_time`&gt;=#{start_time}
+            </if>
+            <if test="end_time!=0">
+                and `start_time`$lt;#{end_time}
+            </if>
+        </where>
     </select>
 
     <select id="findInsurancePolicyPrivateCodeByUnionOrderCode" parameterType="String"

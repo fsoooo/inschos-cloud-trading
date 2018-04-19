@@ -3,6 +3,8 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
+import com.inschos.cloud.trading.access.rpc.client.AccountClientService;
+import com.inschos.cloud.trading.access.rpc.client.InsuranceServiceClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -37,6 +39,12 @@ public class InsurancePolicyAction extends BaseAction {
     @Autowired
     private InsuranceParticipantDao insuranceParticipantDao;
 
+    @Autowired
+    private AccountClientService accountClientService;
+
+    @Autowired
+    private InsuranceServiceClient insuranceServiceClient;
+
     public String getInsurancePolicyStatusList(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyStatusListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatusListRequest.class);
         InsurancePolicy.GetInsurancePolicyStatusListResponse response = new InsurancePolicy.GetInsurancePolicyStatusListResponse();
@@ -56,12 +64,39 @@ public class InsurancePolicyAction extends BaseAction {
 
         for (String string : strings) {
             InsurancePolicy.GetInsurancePolicyStatus getInsurancePolicyStatus = new InsurancePolicy.GetInsurancePolicyStatus();
-            getInsurancePolicyStatus.status = string;
-            getInsurancePolicyStatus.statusText = warrantyStatusMap.get(string);
+            getInsurancePolicyStatus.value = string;
+            getInsurancePolicyStatus.valueText = warrantyStatusMap.get(string);
             response.data.add(getInsurancePolicyStatus);
         }
 
         return json(BaseResponse.CODE_SUCCESS, "获取保单状态分类成功", response);
+    }
+
+    public String getInsurancePolicySourceList(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicySourceListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicySourceListRequest.class);
+        InsurancePolicy.GetInsurancePolicySourceListResponse response = new InsurancePolicy.GetInsurancePolicySourceListResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        response.data = new ArrayList<>();
+        LinkedHashMap<String, String> warrantyStatusMap = InsurancePolicyModel.getWarrantyFromMap();
+        Set<String> strings = warrantyStatusMap.keySet();
+
+        for (String string : strings) {
+            InsurancePolicy.GetInsurancePolicyStatus getInsurancePolicyStatus = new InsurancePolicy.GetInsurancePolicyStatus();
+            getInsurancePolicyStatus.value = string;
+            getInsurancePolicyStatus.valueText = warrantyStatusMap.get(string);
+            response.data.add(getInsurancePolicyStatus);
+        }
+
+        return json(BaseResponse.CODE_SUCCESS, "获取保单来源分类成功", response);
     }
 
 
@@ -76,6 +111,18 @@ public class InsurancePolicyAction extends BaseAction {
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        if (StringKit.isEmpty(request.lastId)) {
+            request.lastId = "0";
+        }
+
+        if (StringKit.isEmpty(request.pageNum)) {
+            request.pageNum = "1";
+        }
+
+        if (StringKit.isEmpty(request.pageSize)) {
+            request.pageSize = "10";
         }
 
         String str;
@@ -94,8 +141,27 @@ public class InsurancePolicyAction extends BaseAction {
             response.data = new ArrayList<>();
 
             if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
+
+                // TODO: 2018/4/17 真实的，目前不能用
+                // List<InsuranceConciseInfo> insuranceConciseInfo = insuranceServiceClient.insList();
+
+//                HashMap<String, InsuranceConciseInfo> map = new HashMap<>();
+//
+//                for (InsuranceConciseInfo conciseInfo : insuranceConciseInfo) {
+//                    map.put(conciseInfo.id, conciseInfo);
+//                }
+
                 for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
                     InsurancePolicy.GetInsurancePolicy insurancePolicy = new InsurancePolicy.GetInsurancePolicy(policyListByWarrantyStatusOrSearch);
+
+//                    InsuranceConciseInfo product = map.get(insurancePolicy.productId);
+//                    if (product != null) {
+//                        insurancePolicy.insuranceProductName = product.ins_name;
+//                        insurancePolicy.insuranceCompanyName = product.company_name;
+//                    }
+                    insurancePolicy.insuranceProductName = "产品名";
+                    insurancePolicy.insuranceCompanyName = "保险公司名";
+
                     List<InsuranceParticipantModel> insuranceParticipantInsuredByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantInsuredNameByWarrantyUuid(insurancePolicy.warrantyUuid);
 
                     if (insuranceParticipantInsuredByWarrantyUuid.isEmpty()) {
@@ -184,27 +250,43 @@ public class InsurancePolicyAction extends BaseAction {
             insurancePolicyModel.warranty_from = request.warrantyFrom;
         }
 
-        if (StringKit.isEmpty(request.ditchId)) {
-            insurancePolicyModel.ditch_id = "-1";
+        if (StringKit.isEmpty(request.channelId)) {
+            insurancePolicyModel.channel_id = "-1";
         } else {
-            insurancePolicyModel.ditch_id = request.ditchId;
+            insurancePolicyModel.channel_id = request.channelId;
         }
 
-        insurancePolicyModel.manager_uuid = "2";
+        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+
+        if (StringKit.isEmpty(request.lastId)) {
+            request.lastId = "0";
+        }
+
+        if (StringKit.isEmpty(request.pageNum)) {
+            request.pageNum = "1";
+        }
+
+        if (StringKit.isEmpty(request.pageSize)) {
+            request.pageSize = "10";
+        }
+
+
+//        AccountBean agentBean = accountClientService.findByUuid(insurancePolicyModel.agent_auuid);
+//        agentBean.userId
 
         insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
-        List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrDitchId(insurancePolicyModel);
+        List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(insurancePolicyModel);
         response.data = new ArrayList<>();
 
         for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
             InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch);
             if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
-                InsuranceParticipantModel insuranceParticipantPolicyHolderNameByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
+                InsuranceParticipantModel insuranceParticipantPolicyHolderNameByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
                 if (insuranceParticipantPolicyHolderNameByWarrantyUuid != null) {
                     getInsurancePolicyForManagerSystem.policyHolderName = insuranceParticipantPolicyHolderNameByWarrantyUuid.name;
+                    getInsurancePolicyForManagerSystem.policyHolderMobile = insuranceParticipantPolicyHolderNameByWarrantyUuid.phone;
                 }
-
                 CarInfoModel carInfoCarCodeAndFrameNoByWarrantyUuid = carInfoDao.findCarInfoCarCodeAndFrameNoByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
                 if (carInfoCarCodeAndFrameNoByWarrantyUuid != null) {
                     getInsurancePolicyForManagerSystem.frameNo = carInfoCarCodeAndFrameNoByWarrantyUuid.frame_no;
@@ -217,6 +299,10 @@ public class InsurancePolicyAction extends BaseAction {
             }
             response.data.add(getInsurancePolicyForManagerSystem);
         }
+
+        long total = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(insurancePolicyModel);
+
+        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.size());
 
         return json(BaseResponse.CODE_SUCCESS, "获取保单详情成功", response);
     }
@@ -238,14 +324,22 @@ public class InsurancePolicyAction extends BaseAction {
     }
 
     public String getInsurancePolicyDetail(String warrantyUuid, InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse response) {
-        InsurancePolicyModel insurancePolicyDetailByWarrantyCode = insurancePolicyDao.findInsurancePolicyDetailByWarrantyCode(warrantyUuid);
+        InsurancePolicyModel insurancePolicyDetailByWarrantyCode = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(warrantyUuid);
         List<InsuranceParticipantModel> insuranceParticipantByWarrantyCode = insuranceParticipantDao.findInsuranceParticipantByWarrantyUuid(warrantyUuid);
 
         response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode);
         response.data.insuredList = new ArrayList<>();
         response.data.beneficiaryList = new ArrayList<>();
 
+        // TODO: 2018/4/17 真实的，目前不能用
+        // InsuranceConciseInfo insuranceConciseInfo = insuranceServiceClient.insList(insurancePolicyDetailByWarrantyCode.product_id);
+
         if (insuranceParticipantByWarrantyCode != null && !insuranceParticipantByWarrantyCode.isEmpty()) {
+//            response.data.insuranceProductName = insuranceConciseInfo.ins_name;
+//            response.data.insuranceCompanyName = insuranceConciseInfo.company_name;
+            response.data.insuranceProductName = "产品名";
+            response.data.insuranceCompanyName = "保险公司名";
+
             for (InsuranceParticipantModel insuranceParticipantModel : insuranceParticipantByWarrantyCode) {
                 InsurancePolicy.InsurancePolicyParticipantInfo insurancePolicyParticipantInfo = new InsurancePolicy.InsurancePolicyParticipantInfo(insuranceParticipantModel);
                 if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_POLICYHOLDER)) {
@@ -274,6 +368,272 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         return str;
+    }
+
+    public String getInsurancePolicyPayMoneyStatisticForManagerSystem(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest.class);
+        InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse();
+
+//        if (request == null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+//        }
+//
+//        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+//        if (entries != null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+//        }
+//
+//        if (StringKit.isEmpty(request.lastId)) {
+//            request.lastId = "0";
+//        }
+//
+//        if (StringKit.isEmpty(request.pageNum)) {
+//            request.pageNum = "1";
+//        }
+//
+//        if (StringKit.isEmpty(request.pageSize)) {
+//            request.pageSize = "10";
+//        }
+//
+//        response.data = new InsurancePolicy.InsurancePolicyStatistic();
+//
+//        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+//
+//        insurancePolicyModel.search = request.searchKey;
+//
+//        if (StringKit.isEmpty(request.startTime)) {
+//            insurancePolicyModel.start_time = "0";
+//        } else {
+//            insurancePolicyModel.start_time = request.startTime;
+//        }
+//
+//        if (StringKit.isEmpty(request.endTime)) {
+//            insurancePolicyModel.end_time = "0";
+//        } else {
+//            insurancePolicyModel.end_time = request.endTime;
+//        }
+//
+//        if (StringKit.isEmpty(request.channelId)) {
+//            insurancePolicyModel.channel_id = "-1";
+//        } else {
+//            insurancePolicyModel.channel_id = request.channelId;
+//        }
+//
+//        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+//
+//        insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+//
+//        List<InsurancePolicyModel> insurancePolicyListBySearchOrTimeOrChannelId = insurancePolicyDao.findInsurancePolicyListBySearchOrTimeOrChannelId(insurancePolicyModel);
+//        long total = insurancePolicyDao.findInsurancePolicyListBySearchOrTimeOrChannelIdCount(insurancePolicyModel);
+//
+//        Calendar instance = Calendar.getInstance();
+//
+//        int year = instance.get(Calendar.YEAR);
+//        int month = instance.get(Calendar.MONTH);
+//        int day = instance.get(Calendar.DAY_OF_MONTH);
+//
+//
+//        InsurancePolicyModel insurancePolicyModel1 = new InsurancePolicyModel();
+//        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+//
+//        instance.set(year, month, day, 0, 0, 0);
+//        insurancePolicyModel1.start_time = String.valueOf(instance.getTimeInMillis());
+//
+//        int actualMaximum = instance.getActualMaximum(Calendar.DAY_OF_MONTH);
+//        if (day < actualMaximum) {
+//            instance.set(year, month, day + 1, 0, 0, 0);
+//        } else {
+//            if (month + 1 < 12) {
+//                instance.set(year, month + 1, 1, 0, 0, 0);
+//            } else {
+//                instance.set(year + 1, 0, 1, 0, 0, 0);
+//            }
+//        }
+//        insurancePolicyModel1.end_time = String.valueOf(instance.getTimeInMillis());
+//
+//        // 当前的所有付款的
+//        Double dayAmount = insurancePolicyDao.findInsurancePolicyPayMoneyCountBySearchOrTimeOrChannelIdForManagerSystem(insurancePolicyModel1);
+//
+//        if (dayAmount == null) {
+//            dayAmount = 0.00;
+//        }
+//
+//        instance.set(year, month, 1, 0, 0, 0);
+//        insurancePolicyModel1.start_time = String.valueOf(instance.getTimeInMillis());
+//
+//        if (month + 1 < 12) {
+//            instance.set(year, month + 1, 1, 0, 0, 0);
+//        } else {
+//            instance.set(year + 1, 0, 1, 0, 0, 0);
+//        }
+//
+//        insurancePolicyModel1.end_time = String.valueOf(instance.getTimeInMillis());
+//
+//        // 当月的所有付款的
+//        Double monthAmount = insurancePolicyDao.findInsurancePolicyPayMoneyCountBySearchOrTimeOrChannelIdForManagerSystem(insurancePolicyModel1);
+//
+//        if (monthAmount == null) {
+//            monthAmount = 0.00;
+//        }
+//
+//        insurancePolicyModel1.start_time = "0";
+//        insurancePolicyModel1.end_time = "0";
+//
+//        Double totalAmount = insurancePolicyDao.findInsurancePolicyPayMoneyCountBySearchOrTimeOrChannelIdForManagerSystem(insurancePolicyModel1);
+//
+//        if (totalAmount == null) {
+//            totalAmount = 0.00;
+//        }
+//
+//        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+//
+//        response.data.dayAmount = "本日保费\n" + decimalFormat.format(dayAmount);
+//        response.data.monthAmount = "本月保费\n" + decimalFormat.format(monthAmount);
+//        response.data.totalAmount = "累计保费\n" + decimalFormat.format(totalAmount);
+//        response.data.list = new ArrayList<>();
+//
+//        if (insurancePolicyListBySearchOrTimeOrChannelId != null && !insurancePolicyListBySearchOrTimeOrChannelId.isEmpty()) {
+//            for (InsurancePolicyModel model : insurancePolicyListBySearchOrTimeOrChannelId) {
+//                response.data.list.add(new InsurancePolicy.GetInsurancePolicy(model));
+//            }
+//        }
+//
+//        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.list.size());
+
+        return json(BaseResponse.CODE_SUCCESS, "获取保单统计成功", response);
+    }
+
+    public String getInsurancePolicyBrokerageStatisticForManagerSystem (ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest.class);
+        InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse();
+
+//        if (request == null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+//        }
+//
+//        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+//        if (entries != null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+//        }
+//
+//        if (StringKit.isEmpty(request.lastId)) {
+//            request.lastId = "0";
+//        }
+//
+//        if (StringKit.isEmpty(request.pageNum)) {
+//            request.pageNum = "1";
+//        }
+//
+//        if (StringKit.isEmpty(request.pageSize)) {
+//            request.pageSize = "10";
+//        }
+//
+//        response.data = new InsurancePolicy.InsurancePolicyStatistic();
+//
+//        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+//
+//        insurancePolicyModel.search = request.searchKey;
+//
+//        if (StringKit.isEmpty(request.startTime)) {
+//            insurancePolicyModel.start_time = "0";
+//        } else {
+//            insurancePolicyModel.start_time = request.startTime;
+//        }
+//
+//        if (StringKit.isEmpty(request.endTime)) {
+//            insurancePolicyModel.end_time = "0";
+//        } else {
+//            insurancePolicyModel.end_time = request.endTime;
+//        }
+//
+//        if (StringKit.isEmpty(request.channelId)) {
+//            insurancePolicyModel.channel_id = "-1";
+//        } else {
+//            insurancePolicyModel.channel_id = request.channelId;
+//        }
+//
+//        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+//
+//        insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+//
+//        List<InsurancePolicyModel> insurancePolicyListBySearchOrTimeOrChannelId = insurancePolicyDao.findInsurancePolicyListBySearchOrTimeOrChannelId(insurancePolicyModel);
+//        long total = insurancePolicyDao.findInsurancePolicyListBySearchOrTimeOrChannelIdCount(insurancePolicyModel);
+//
+//        Calendar instance = Calendar.getInstance();
+//
+//        int year = instance.get(Calendar.YEAR);
+//        int month = instance.get(Calendar.MONTH);
+//        int day = instance.get(Calendar.DAY_OF_MONTH);
+//
+//
+//        InsurancePolicyModel insurancePolicyModel1 = new InsurancePolicyModel();
+//        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+//
+//        instance.set(year, month, day, 0, 0, 0);
+//        insurancePolicyModel1.start_time = String.valueOf(instance.getTimeInMillis());
+//
+//        int actualMaximum = instance.getActualMaximum(Calendar.DAY_OF_MONTH);
+//        if (day < actualMaximum) {
+//            instance.set(year, month, day + 1, 0, 0, 0);
+//        } else {
+//            if (month + 1 < 12) {
+//                instance.set(year, month + 1, 1, 0, 0, 0);
+//            } else {
+//                instance.set(year + 1, 0, 1, 0, 0, 0);
+//            }
+//        }
+//        insurancePolicyModel1.end_time = String.valueOf(instance.getTimeInMillis());
+//
+//        // 当前的所有付款的
+//        Double dayAmount = insurancePolicyDao.(insurancePolicyModel1);
+//
+//        if (dayAmount == null) {
+//            dayAmount = 0.00;
+//        }
+//
+//        instance.set(year, month, 1, 0, 0, 0);
+//        insurancePolicyModel1.start_time = String.valueOf(instance.getTimeInMillis());
+//
+//        if (month + 1 < 12) {
+//            instance.set(year, month + 1, 1, 0, 0, 0);
+//        } else {
+//            instance.set(year + 1, 0, 1, 0, 0, 0);
+//        }
+//
+//        insurancePolicyModel1.end_time = String.valueOf(instance.getTimeInMillis());
+//
+//        // 当月的所有付款的
+//        Double monthAmount = insurancePolicyDao.(insurancePolicyModel1);
+//
+//        if (monthAmount == null) {
+//            monthAmount = 0.00;
+//        }
+//
+//        insurancePolicyModel1.start_time = "0";
+//        insurancePolicyModel1.end_time = "0";
+//
+//        Double totalAmount = insurancePolicyDao.(insurancePolicyModel1);
+//
+//        if (totalAmount == null) {
+//            totalAmount = 0.00;
+//        }
+//
+//        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+//
+//        response.data.dayAmount = "本日保费\n" + decimalFormat.format(dayAmount);
+//        response.data.monthAmount = "本月保费\n" + decimalFormat.format(monthAmount);
+//        response.data.totalAmount = "累计保费\n" + decimalFormat.format(totalAmount);
+//        response.data.list = new ArrayList<>();
+//
+//        if (insurancePolicyListBySearchOrTimeOrChannelId != null && !insurancePolicyListBySearchOrTimeOrChannelId.isEmpty()) {
+//            for (InsurancePolicyModel model : insurancePolicyListBySearchOrTimeOrChannelId) {
+//                response.data.list.add(new InsurancePolicy.GetInsurancePolicy(model));
+//            }
+//        }
+//
+//        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.list.size());
+
+        return json(BaseResponse.CODE_SUCCESS, "获取佣金统计成功", response);
     }
 
 
@@ -483,7 +843,7 @@ public class InsurancePolicyAction extends BaseAction {
 //
 //        InsuranceClaimsModel insuranceClaimsModel = new InsuranceClaimsModel();
 //        insuranceClaimsModel.user_id = insuranceClaimsListByUserIdRequest.userId;
-//        insuranceClaimsModel.status = insuranceClaimsListByUserIdRequest.status;
+//        insuranceClaimsModel.status = insuranceClaimsListByUserIdRequest.value;
 //        insuranceClaimsModel.search = insuranceClaimsListByUserIdRequest.searchKey;
 //
 //
@@ -746,7 +1106,7 @@ public class InsurancePolicyAction extends BaseAction {
 ////
 ////        InsuranceClaimsModel insuranceClaimsModel = new InsuranceClaimsModel();
 ////        insuranceClaimsModel.user_id = insuranceClaimsListByUserIdRequest.userId;
-////        insuranceClaimsModel.status = insuranceClaimsListByUserIdRequest.status;
+////        insuranceClaimsModel.status = insuranceClaimsListByUserIdRequest.value;
 ////        insuranceClaimsModel.search = insuranceClaimsListByUserIdRequest.searchKey;
 ////
 ////
@@ -862,6 +1222,5 @@ public class InsurancePolicyAction extends BaseAction {
 //    private void getInsurancePolicy() {
 //
 //    }
-
 
 }

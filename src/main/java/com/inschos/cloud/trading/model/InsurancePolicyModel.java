@@ -15,214 +15,137 @@ public class InsurancePolicyModel {
      * 主键
      */
     public String id;
-
     /**
      * 内部保单唯一标识
      */
     public String warranty_uuid;
-
     /**
      * 投保单号
      */
-    public String pro_policy_no;
-
-    /**
-     * 业管uuid
-     */
-    public String manager_uuid;
-
+    public String pre_policy_no;
     /**
      * 保单号
      */
     public String warranty_code;
-
     /**
      * 归属账号uuid
      */
-    public String account_uuid;
-
+    public String manager_uuid;
     /**
      * 买家uuid
      */
-    public String buyer_auuid;
-
+    public String account_uuid;
     /**
      * 代理人ID为null则为用户自主购买
      */
-    public String agent_auuid;
-
+    public String agent_id;
     /**
      * 渠道ID为0则为用户自主购买
      */
-    public String ditch_id;
-
+    public String channel_id;
     /**
      * 计划书ID为0则为用户自主购买
      */
     public String plan_id;
-
     /**
      * 产品ID
      */
     public String product_id;
-
-    /**
-     * 保单价格
-     */
-    public String premium;
-
     /**
      * 起保时间
      */
     public String start_time;
-
     /**
      * 结束时间
      */
     public String end_time;
-
     /**
      * 保险公司ID
      */
     public String ins_company_id;
-
     /**
      * 购买份数
      */
     public String count;
-
-    /**
-     * 支付时间
-     */
-    public String pay_time;
-
-    /**
-     * 支付方式 1 银联 2 支付宝 3 微信 4现金
-     */
-    public String pay_way;
-
-    /**
-     * 付款金额
-     */
-    public String pay_money;
-
     /**
      * 分期方式
      */
     public String by_stages_way;
-
     /**
      * 佣金 0表示未结算，1表示已结算
      */
     public String is_settlement;
-
     /**
      * 电子保单下载地址
      */
     public String warranty_url;
-
     /**
      * 保单来源 1 自购 2线上成交 3线下成交 4导入
      */
     public String warranty_from;
-
     /**
      * 保单类型1表示个人保单，2表示团险保单，3表示车险保单
      */
     public String type;
-
     /**
-     * 核保状态（01核保中 2核保失败，3核保成功
-     */
-    public String check_status;
-
-    /**
-     * 支付状态 0，1支付中2支付失败3支付成功，
-     */
-    public String pay_status;
-
-    /**
-     * 保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保
+     * 保单状态 1投保中 2待生效 3保障中 4可续保 5已过保，6已退保
      */
     public String warranty_status;
-
     /**
      * 积分
      */
     public String integral;
-
     /**
      * 快递单号
      */
     public String express_no;
-
     /**
      * 快递公司名称
      */
     public String express_company_name;
-
     /**
      * 邮寄详细地址
      */
     public String express_address;
-
     /**
      * 邮寄省级代码
      */
     public String express_province_code;
-
     /**
      * 邮寄市级代码
      */
     public String express_city_code;
-
     /**
      * 邮寄地区代码
      */
     public String express_county_code;
-
     /**
      * 快递方式，0-自取，1-快递
      */
     public String delivery_type;
-
     /**
      * 创建时间
      */
     public String created_at;
-
     /**
      * 结束时间
      */
     public String updated_at;
-
     /**
      * 删除标识 0删除 1可用
      */
     public String state;
 
-
     public String search;
 
     public Page page;
 
-    // 银联
-    public static final String PAY_WAY_CHINA_UNION = "1";
-    // 支付宝
-    public static final String PAY_WAY_ALI = "2";
-    // 微信
-    public static final String PAY_WAY_WE_CHAT = "3";
-    // 现金
-    public static final String PAY_WAY_CASH = "4";
-
-    public boolean setPayWay(String payWay) {
-        if (!StringKit.isInteger(payWay) || Integer.valueOf(payWay) > 4 || Integer.valueOf(payWay) < 1) {
-            return false;
-        }
-
-        this.pay_way = payWay;
-        return true;
-    }
+    // 核保成功
+    public static final String APPLY_UNDERWRITING_SUCCESS = "0";
+    // 核保中
+    public static final String APPLY_UNDERWRITING_PROCESSING = "1";
+    // 核保失败
+    public static final String APPLY_UNDERWRITING_FAILURE = "2";
 
     // 未结算
     public static final String COMMISSION_UNSETTLE = "0";
@@ -256,78 +179,26 @@ public class InsurancePolicyModel {
         return true;
     }
 
-    // 核保中
-    public static final String APPLY_UNDERWRITING_PROCESSING_0 = "0";
-    public static final String APPLY_UNDERWRITING_PROCESSING_1 = "1";
-    // 核保失败
-    public static final String APPLY_UNDERWRITING_FAILURE = "2";
-    // 核保成功
-    public static final String APPLY_UNDERWRITING_SUCCESS = "3";
-
-    public boolean setCheckStatus(String checkStatus) {
-        if (!StringKit.isInteger(checkStatus) || Integer.valueOf(checkStatus) > 3 || Integer.valueOf(checkStatus) < 0) {
-            return false;
-        }
-
-        this.check_status = checkStatus;
-        return true;
-    }
-
-    // 支付中
-    public static final String PAY_STATUS_PROCESSING_0 = "0";
-    public static final String PAY_STATUS_PROCESSING_1 = "1";
-    // 支付失败
-    public static final String PAY_STATUS_FAILURE = "2";
-    // 支付成功
-    public static final String PAY_STATUS_SUCCESS = "3";
-
-    public boolean setPayStatus(String payStatus) {
-        if (!StringKit.isInteger(payStatus) || Integer.valueOf(payStatus) > 3 || Integer.valueOf(payStatus) < 0) {
-            return false;
-        }
-
-        this.pay_status = payStatus;
-        return true;
-    }
-
-    // 待处理
+    // 投保中
     public static final String POLICY_STATUS_PENDING = "1";
-    // 待支付
-    public static final String POLICY_STATUS_PAYING = "2";
     // 待生效
-    public static final String POLICY_STATUS_WAITING = "3";
+    public static final String POLICY_STATUS_WAITING = "2";
     // 保障中
-    public static final String POLICY_STATUS_EFFECTIVE = "4";
+    public static final String POLICY_STATUS_EFFECTIVE = "3";
     // 可续保
-    public static final String POLICY_STATUS_CONTINUE = "5";
-    // 已失效
-    public static final String POLICY_STATUS_INVALID = "6";
-    // 已退保
-    public static final String POLICY_STATUS_SURRENDER = "7";
+    public static final String POLICY_STATUS_CONTINUE = "4";
     // 已过保
-    public static final String POLICY_STATUS_EXPIRED = "8";
+    public static final String POLICY_STATUS_EXPIRED = "5";
+    // 已退保
+    public static final String POLICY_STATUS_SURRENDER = "6";
 
     public boolean setWarrantyStatus(String warrantyStatus) {
-        if (!StringKit.isInteger(warrantyStatus) || Integer.valueOf(warrantyStatus) > 8 || Integer.valueOf(warrantyStatus) < 1) {
+        if (!StringKit.isInteger(warrantyStatus) || Integer.valueOf(warrantyStatus) > 6 || Integer.valueOf(warrantyStatus) < 1) {
             return false;
         }
 
         this.warranty_status = warrantyStatus;
         return true;
-    }
-
-    public static LinkedHashMap<String, String> getWarrantyStatusMap() {
-        InsurancePolicyModel model = new InsurancePolicyModel();
-        LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put(POLICY_STATUS_PENDING, model.warrantyStatusText(POLICY_STATUS_PENDING));
-        linkedHashMap.put(POLICY_STATUS_PAYING, model.warrantyStatusText(POLICY_STATUS_PAYING));
-        linkedHashMap.put(POLICY_STATUS_WAITING, model.warrantyStatusText(POLICY_STATUS_WAITING));
-        linkedHashMap.put(POLICY_STATUS_EFFECTIVE, model.warrantyStatusText(POLICY_STATUS_EFFECTIVE));
-        linkedHashMap.put(POLICY_STATUS_CONTINUE, model.warrantyStatusText(POLICY_STATUS_CONTINUE));
-        linkedHashMap.put(POLICY_STATUS_INVALID, model.warrantyStatusText(POLICY_STATUS_INVALID));
-        linkedHashMap.put(POLICY_STATUS_SURRENDER, model.warrantyStatusText(POLICY_STATUS_SURRENDER));
-        linkedHashMap.put(POLICY_STATUS_EXPIRED, model.warrantyStatusText(POLICY_STATUS_EXPIRED));
-        return linkedHashMap;
     }
 
     // 个人保单
@@ -344,29 +215,6 @@ public class InsurancePolicyModel {
 
         this.type = type;
         return true;
-    }
-
-    public String payWayText(String payWay) {
-        String str = "";
-        if (payWay == null) {
-            return str;
-        }
-        // 1 银联 2 支付宝 3 微信 4 现金
-        switch (payWay) {
-            case PAY_WAY_CHINA_UNION:
-                str = "银联";
-                break;
-            case PAY_WAY_ALI:
-                str = "支付宝";
-                break;
-            case PAY_WAY_WE_CHAT:
-                str = "微信";
-                break;
-            case PAY_WAY_CASH:
-                str = "现金";
-                break;
-        }
-        return str;
     }
 
     public String isSettlementText(String isSettlement) {
@@ -409,46 +257,14 @@ public class InsurancePolicyModel {
         return str;
     }
 
-    public String checkStatusText(String checkStatus) {
-        String str = "";
-        if (checkStatus == null) {
-            return str;
-        }
-        // 核保状态 01-核保中 2-核保失败，3-核保成功
-        switch (checkStatus) {
-            case APPLY_UNDERWRITING_PROCESSING_0:
-            case APPLY_UNDERWRITING_PROCESSING_1:
-                str = "核保中";
-                break;
-            case APPLY_UNDERWRITING_FAILURE:
-                str = "核保失败";
-                break;
-            case APPLY_UNDERWRITING_SUCCESS:
-                str = "核保成功";
-                break;
-        }
-        return str;
-    }
-
-    public String payStatusText(String payStatus) {
-        String str = "";
-        if (payStatus == null) {
-            return str;
-        }
-        // 支付状态 0，1-支付中 2-支付失败 3-支付成功
-        switch (payStatus) {
-            case PAY_STATUS_PROCESSING_0:
-            case PAY_STATUS_PROCESSING_1:
-                str = "支付中";
-                break;
-            case PAY_STATUS_FAILURE:
-                str = "支付失败";
-                break;
-            case PAY_STATUS_SUCCESS:
-                str = "支付成功";
-                break;
-        }
-        return str;
+    public static LinkedHashMap<String, String> getWarrantyFromMap() {
+        InsurancePolicyModel model = new InsurancePolicyModel();
+        LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put(SOURCE_SELF, model.warrantyFromText(SOURCE_SELF));
+        linkedHashMap.put(SOURCE_ONLINE, model.warrantyFromText(SOURCE_ONLINE));
+        linkedHashMap.put(SOURCE_OFFLINE, model.warrantyFromText(SOURCE_OFFLINE));
+        linkedHashMap.put(SOURCE_COPY, model.warrantyFromText(SOURCE_COPY));
+        return linkedHashMap;
     }
 
     public String warrantyStatusText(String warrantyStatus) {
@@ -456,13 +272,10 @@ public class InsurancePolicyModel {
         if (warrantyStatus == null) {
             return str;
         }
-        // 1-待处理 2-待支付 3-待生效 4-保障中 5-可续保 6-已失效 7-已退保 8-已过保
+        // 1-投保中，2-待生效，3-保障中，4-可续保，5-已过保，6-已退保
         switch (warrantyStatus) {
             case POLICY_STATUS_PENDING:
-                str = "待处理";
-                break;
-            case POLICY_STATUS_PAYING:
-                str = "待支付";
+                str = "投保中";
                 break;
             case POLICY_STATUS_WAITING:
                 str = "待生效";
@@ -473,17 +286,26 @@ public class InsurancePolicyModel {
             case POLICY_STATUS_CONTINUE:
                 str = "可续保";
                 break;
-            case POLICY_STATUS_INVALID:
-                str = "已失效";
+            case POLICY_STATUS_EXPIRED:
+                str = "已过保";
                 break;
             case POLICY_STATUS_SURRENDER:
                 str = "已退保";
                 break;
-            case POLICY_STATUS_EXPIRED:
-                str = "已过保";
-                break;
         }
         return str;
+    }
+
+    public static LinkedHashMap<String, String> getWarrantyStatusMap() {
+        InsurancePolicyModel model = new InsurancePolicyModel();
+        LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put(POLICY_STATUS_PENDING, model.warrantyStatusText(POLICY_STATUS_PENDING));
+        linkedHashMap.put(POLICY_STATUS_WAITING, model.warrantyStatusText(POLICY_STATUS_WAITING));
+        linkedHashMap.put(POLICY_STATUS_EFFECTIVE, model.warrantyStatusText(POLICY_STATUS_EFFECTIVE));
+        linkedHashMap.put(POLICY_STATUS_CONTINUE, model.warrantyStatusText(POLICY_STATUS_CONTINUE));
+        linkedHashMap.put(POLICY_STATUS_SURRENDER, model.warrantyStatusText(POLICY_STATUS_SURRENDER));
+        linkedHashMap.put(POLICY_STATUS_EXPIRED, model.warrantyStatusText(POLICY_STATUS_EXPIRED));
+        return linkedHashMap;
     }
 
     public static final String DELIVERY_TYPE_SELF = "0";

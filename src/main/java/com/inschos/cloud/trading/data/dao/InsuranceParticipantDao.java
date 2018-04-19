@@ -23,19 +23,27 @@ public class InsuranceParticipantDao extends BaseDao {
     }
 
     public List<InsuranceParticipantModel> findInsuranceParticipantByWarrantyUuid(String warrantyUuid) {
-        return insuranceParticipantMapper.findInsuranceParticipantByWarrantyUuid(warrantyUuid);
+        InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
+        insuranceParticipantModel.warranty_uuid = warrantyUuid;
+        return insuranceParticipantMapper.findInsuranceParticipantByWarrantyUuid(insuranceParticipantModel);
     }
 
     public List<InsuranceParticipantModel> findInsuranceParticipantInsuredNameByWarrantyUuid(String warrantyUuid) {
-        return insuranceParticipantMapper.findInsuranceParticipantInsuredNameByWarrantyUuid(warrantyUuid);
+        InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
+        insuranceParticipantModel.warranty_uuid = warrantyUuid;
+        return insuranceParticipantMapper.findInsuranceParticipantInsuredNameByWarrantyUuid(insuranceParticipantModel);
     }
 
-    public InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameByWarrantyUuid(String warrantyUuid){
-        return insuranceParticipantMapper.findInsuranceParticipantPolicyHolderNameByWarrantyUuid(warrantyUuid);
+    public InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(String warrantyUuid){
+        InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
+        insuranceParticipantModel.warranty_uuid = warrantyUuid;
+        return insuranceParticipantMapper.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(insuranceParticipantModel);
     }
 
     public List<InsuranceParticipantModel> findInsuranceParticipantInsuredByWarrantyUuid(String warrantyUuid) {
-        return insuranceParticipantMapper.findInsuranceParticipantInsuredByWarrantyUuid(warrantyUuid);
+        InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
+        insuranceParticipantModel.warranty_uuid = warrantyUuid;
+        return insuranceParticipantMapper.findInsuranceParticipantInsuredByWarrantyUuid(insuranceParticipantModel);
     }
 
 }
