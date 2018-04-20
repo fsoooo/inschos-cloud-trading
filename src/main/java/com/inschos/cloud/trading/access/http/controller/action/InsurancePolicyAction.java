@@ -585,7 +585,8 @@ public class InsurancePolicyAction extends BaseAction {
         insurancePolicyModel1.end_time = String.valueOf(instance.getTimeInMillis());
 
         // 当前的所有付款的
-        Double dayAmount = insurancePolicyDao.findInsurancePolicyWarrantyUuidBySearchOrTimeOrChannelIdForManagerSystem(insurancePolicyModel1);
+//        Double dayAmount = insurancePolicyDao.findInsurancePolicyWarrantyUuidBySearchOrTimeOrChannelIdForManagerSystem(insurancePolicyModel1);
+        Double dayAmount = null;
 
         if (dayAmount == null) {
             dayAmount = 0.00;
