@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.access.rpc.service.provider;
 
 import com.inschos.cloud.trading.access.rpc.bean.GetPremiumByChannelIdForManagerSystem;
 import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
+import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.cloud.trading.data.dao.CustWarrantyBrokerageDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.model.CustWarrantyBrokerageModel;
@@ -29,18 +30,21 @@ public class BrokerageServiceImpl implements BrokerageService {
 
     @Override
     public String getBrokerageByChannelIdForManagerSystem(GetPremiumByChannelIdForManagerSystem bean) {
-        List<InsurancePolicyModel> effectiveInsurancePolicyListByChannelId = insurancePolicyDao.findEffectiveInsurancePolicyListByChannelId(bean.channelId);
         BigDecimal bigDecimal = new BigDecimal("0.00");
-        if (effectiveInsurancePolicyListByChannelId != null && !effectiveInsurancePolicyListByChannelId.isEmpty()) {
-            CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
-            for (InsurancePolicyModel insurancePolicyModel : effectiveInsurancePolicyListByChannelId) {
-                custWarrantyBrokerageModel.warranty_uuid = insurancePolicyModel.warranty_uuid;
-                Double aDouble = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotal(custWarrantyBrokerageModel);
-                if (aDouble != null) {
-                    bigDecimal = bigDecimal.add(new BigDecimal(aDouble));
+        if (bean != null) {
+            List<InsurancePolicyModel> effectiveInsurancePolicyListByChannelId = insurancePolicyDao.findEffectiveInsurancePolicyListByChannelId(bean.channelId);
+            if (effectiveInsurancePolicyListByChannelId != null && !effectiveInsurancePolicyListByChannelId.isEmpty()) {
+                CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
+                for (InsurancePolicyModel insurancePolicyModel : effectiveInsurancePolicyListByChannelId) {
+                    custWarrantyBrokerageModel.warranty_uuid = insurancePolicyModel.warranty_uuid;
+                    Double aDouble = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotal(custWarrantyBrokerageModel);
+                    if (aDouble != null) {
+                        bigDecimal = bigDecimal.add(new BigDecimal(aDouble));
+                    }
                 }
             }
         }
+        L.log.debug("================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================" + bigDecimal.doubleValue() + "");
         return String.valueOf(bigDecimal.doubleValue());
     }
 }

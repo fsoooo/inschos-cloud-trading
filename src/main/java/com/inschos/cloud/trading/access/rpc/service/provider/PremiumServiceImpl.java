@@ -29,15 +29,17 @@ public class PremiumServiceImpl implements PremiumService {
 
     @Override
     public String getPremiumByChannelIdForManagerSystem(GetPremiumByChannelIdForManagerSystem bean) {
-        List<InsurancePolicyModel> effectiveInsurancePolicyListByChannelId = insurancePolicyDao.findEffectiveInsurancePolicyListByChannelId(bean.channelId);
         BigDecimal bigDecimal = new BigDecimal("0.00");
-        if (effectiveInsurancePolicyListByChannelId != null && !effectiveInsurancePolicyListByChannelId.isEmpty()) {
-            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-            for (InsurancePolicyModel insurancePolicyModel : effectiveInsurancePolicyListByChannelId) {
-                custWarrantyCostModel.warranty_uuid = insurancePolicyModel.warranty_uuid;
-                Double aDouble = custWarrantyCostDao.findCustWarrantyCostTotal(custWarrantyCostModel);
-                if (aDouble != null) {
-                    bigDecimal = bigDecimal.add(new BigDecimal(aDouble));
+        if (bean != null) {
+            List<InsurancePolicyModel> effectiveInsurancePolicyListByChannelId = insurancePolicyDao.findEffectiveInsurancePolicyListByChannelId(bean.channelId);
+            if (effectiveInsurancePolicyListByChannelId != null && !effectiveInsurancePolicyListByChannelId.isEmpty()) {
+                CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+                for (InsurancePolicyModel insurancePolicyModel : effectiveInsurancePolicyListByChannelId) {
+                    custWarrantyCostModel.warranty_uuid = insurancePolicyModel.warranty_uuid;
+                    Double aDouble = custWarrantyCostDao.findCustWarrantyCostTotal(custWarrantyCostModel);
+                    if (aDouble != null) {
+                        bigDecimal = bigDecimal.add(new BigDecimal(aDouble));
+                    }
                 }
             }
         }
