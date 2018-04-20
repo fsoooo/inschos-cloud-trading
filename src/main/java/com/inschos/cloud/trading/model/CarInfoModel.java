@@ -198,6 +198,11 @@ public class CarInfoModel {
     public String sp_agreement;
 
     /**
+     * 车险验证码标识
+     */
+    public String bj_code_flag;
+
+    /**
      * 创建时间
      */
     public String created_at;
@@ -211,7 +216,7 @@ public class CarInfoModel {
 
     }
 
-    public CarInfoModel(String warrantyUuid, String bizId, String thpBizId, String insuranceType, String time, String coverageList, String spAgreement, ExtendCarInsurancePolicy.CarInfoDetail carInfoDetail, ExtendCarInsurancePolicy.InsuranceParticipant participant) {
+    public CarInfoModel(String warrantyUuid, String bizId, String thpBizId, String insuranceType, String time, String coverageList, String spAgreement,String bjCodeFlag, ExtendCarInsurancePolicy.CarInfoDetail carInfoDetail, ExtendCarInsurancePolicy.InsuranceParticipant participant) {
         this.warranty_uuid = warrantyUuid;
         this.biz_id = bizId;
         this.thp_biz_id = thpBizId;
@@ -256,6 +261,7 @@ public class CarInfoModel {
         this.standard_name = carInfoDetail.standardName;
         this.coverage_list = coverageList;
         this.sp_agreement = spAgreement;
+        this.bj_code_flag = bjCodeFlag;
         this.created_at = time;
         this.updated_at = time;
     }

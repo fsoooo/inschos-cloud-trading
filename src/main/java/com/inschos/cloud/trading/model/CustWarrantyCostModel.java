@@ -55,20 +55,20 @@ public class CustWarrantyCostModel {
     }
 
     // 核保中
-    public static final String APPLY_UNDERWRITING_PROCESSING = "1";
+    public static final String APPLY_UNDERWRITING_PROCESSING = "201";
     // 核保失败
-    public static final String APPLY_UNDERWRITING_FAILURE = "2";
+    public static final String APPLY_UNDERWRITING_FAILURE = "202";
     // 待支付
-    public static final String PAY_STATUS_WAIT = "3";
+    public static final String PAY_STATUS_WAIT = "203";
     // 支付中
-    public static final String PAY_STATUS_PROCESSING = "4";
+    public static final String PAY_STATUS_PROCESSING = "204";
     // 支付取消
-    public static final String PAY_STATUS_CANCEL = "5";
+    public static final String PAY_STATUS_CANCEL = "205";
     // 支付成功
-    public static final String PAY_STATUS_SUCCESS = "6";
+    public static final String PAY_STATUS_SUCCESS = "206";
 
     public boolean setPayStatus(String payStatus) {
-        if (!StringKit.isInteger(payStatus) || Integer.valueOf(payStatus) > 6 || Integer.valueOf(payStatus) < 1) {
+        if (!StringKit.isInteger(payStatus) || Integer.valueOf(payStatus) > 206 || Integer.valueOf(payStatus) < 201) {
             return false;
         }
 

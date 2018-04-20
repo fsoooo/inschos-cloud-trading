@@ -1257,6 +1257,7 @@ public class CarInsuranceAction extends BaseAction {
                     CarInfoModel.INSURANCE_TYPE_COMMERCIAL,
                     time, JsonKit.bean2Json(request.applyUnderwriting.coverageList),
                     JsonKit.bean2Json(request.applyUnderwriting.spAgreements),
+                    response.data.bjCodeFlag,
                     request.premiumCalibrate.carInfo,
                     request.premiumCalibrate.personInfo);
 
@@ -1266,6 +1267,7 @@ public class CarInsuranceAction extends BaseAction {
                     CarInfoModel.INSURANCE_TYPE_STRONG,
                     time, JsonKit.bean2Json(request.applyUnderwriting.coverageList),
                     JsonKit.bean2Json(request.applyUnderwriting.spAgreements),
+                    response.data.bjCodeFlag,
                     request.premiumCalibrate.carInfo,
                     request.premiumCalibrate.personInfo);
 

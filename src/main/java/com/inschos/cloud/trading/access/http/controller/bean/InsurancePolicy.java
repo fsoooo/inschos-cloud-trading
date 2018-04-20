@@ -40,7 +40,7 @@ public class InsurancePolicy {
         public String warrantyUuid;
 
         //投保单号
-        public String proPolicyNo;
+        public String prePolicyNo;
 
         //保单号
         public String warrantyCode;
@@ -150,6 +150,11 @@ public class InsurancePolicy {
 
         public String insuranceCompanyName;
 
+        // 车险用验证码（仅车险存在）
+        public String bjCodeFlag;
+        // 车险流水号
+        public String bizId;
+
         public GetInsurancePolicy() {
 
         }
@@ -162,7 +167,7 @@ public class InsurancePolicy {
             SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy.MM.dd");
             this.id = model.id;
             this.warrantyUuid = model.warranty_uuid;
-            this.proPolicyNo = model.pre_policy_no;
+            this.prePolicyNo = model.pre_policy_no;
             this.warrantyCode = model.warranty_code;
             this.accountUuid = model.manager_uuid;
             this.buyerAuuid = model.account_uuid;
@@ -368,6 +373,9 @@ public class InsurancePolicy {
         // public String spAgreement;
         public List<ExtendCarInsurancePolicy.SpAgreement> spAgreement;
 
+        // 车险验证码标识
+        public String bjCodeFlag;
+
         //结束时间
         public String updatedAt;
         public String updatedAtText;
@@ -456,6 +464,7 @@ public class InsurancePolicy {
                 }
             }
             this.spAgreement = model.parseSpAgreement(model.sp_agreement);
+            this.bjCodeFlag = model.bj_code_flag;
             this.updatedAt = model.updated_at;
             if (StringKit.isInteger(model.updated_at)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));

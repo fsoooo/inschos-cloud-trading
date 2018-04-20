@@ -22,4 +22,8 @@ public interface CarInfoMapper {
     List<CarInfoModel> findWarrantyUuidByBizId(String bizId);
 
     List<CarInfoModel> findWarrantyUuidByThpBizID(String thpBizID);
+
+    CarInfoModel findBjCodeFlagAndBizIdByWarrantyUuid(String warrantyUuid);
+
+    int updateBjCodeFlagByWarrantyUuid(CarInfoModel carInfoModel);
 }
