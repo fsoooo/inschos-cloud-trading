@@ -1,12 +1,12 @@
 package com.inschos.cloud.trading.access.rpc.service.provider;
 
-import com.inschos.cloud.trading.access.rpc.bean.GetPremiumByChannelIdForManagerSystem;
+import com.inschos.cloud.trading.access.rpc.bean.BrokerageBean;
+import com.inschos.cloud.trading.access.rpc.bean.PremiumBean;
 import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
 import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.cloud.trading.data.dao.CustWarrantyBrokerageDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.model.CustWarrantyBrokerageModel;
-import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class BrokerageServiceImpl implements BrokerageService {
     private CustWarrantyBrokerageDao custWarrantyBrokerageDao;
 
     @Override
-    public String getBrokerageByChannelIdForManagerSystem(GetPremiumByChannelIdForManagerSystem bean) {
+    public String getBrokerageByChannelIdForManagerSystem(BrokerageBean bean) {
         BigDecimal bigDecimal = new BigDecimal("0.00");
         if (bean != null) {
             List<InsurancePolicyModel> effectiveInsurancePolicyListByChannelId = insurancePolicyDao.findEffectiveInsurancePolicyListByChannelId(bean.channelId);

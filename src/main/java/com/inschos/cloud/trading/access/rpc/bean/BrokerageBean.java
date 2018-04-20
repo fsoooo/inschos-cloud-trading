@@ -5,7 +5,7 @@ package com.inschos.cloud.trading.access.rpc.bean;
  * 描述：
  * 作者：zhangyunhe
  */
-public class GetPremiumByChannelIdForManagerSystem {
+public class BrokerageBean {
 
     public String channelId;
     public String startTime;

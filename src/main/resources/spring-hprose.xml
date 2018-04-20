@@ -16,7 +16,7 @@
         <property name="mappings">
             <props>
                 <!-- route bean -->
-                <prop key="/rpc/trade/get_brokerage_by_channel_id_for_manager_system">brokerageService</prop>
+                <prop key="/rpc/brokerage">brokerageService</prop>
             </props>
         </property>
     </bean>
@@ -25,7 +25,7 @@
         <property name="mappings">
             <props>
                 <!-- route bean -->
-                <prop key="/rpc/trade/get_premium_by_channel_id_for_manager_system">premiumService</prop>
+                <prop key="/rpc/premium">premiumService</prop>
             </props>
         </property>
     </bean>

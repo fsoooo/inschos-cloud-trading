@@ -1,6 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.service.provider;
 
-import com.inschos.cloud.trading.access.rpc.bean.GetPremiumByChannelIdForManagerSystem;
+import com.inschos.cloud.trading.access.rpc.bean.PremiumBean;
 import com.inschos.cloud.trading.access.rpc.service.PremiumService;
 import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
@@ -28,7 +28,7 @@ public class PremiumServiceImpl implements PremiumService {
     private CustWarrantyCostDao custWarrantyCostDao;
 
     @Override
-    public String getPremiumByChannelIdForManagerSystem(GetPremiumByChannelIdForManagerSystem bean) {
+    public String getPremiumByChannelIdForManagerSystem(PremiumBean bean) {
         BigDecimal bigDecimal = new BigDecimal("0.00");
         if (bean != null) {
             List<InsurancePolicyModel> effectiveInsurancePolicyListByChannelId = insurancePolicyDao.findEffectiveInsurancePolicyListByChannelId(bean.channelId);
@@ -43,7 +43,7 @@ public class PremiumServiceImpl implements PremiumService {
                 }
             }
         }
-        L.log.debug("================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================" + bigDecimal.doubleValue() + "");
+        L.log.debug("================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================" + bigDecimal.doubleValue() + "======" + bean);
         return String.valueOf(bigDecimal.doubleValue());
     }
 }
