@@ -22,6 +22,10 @@ public class CustWarrantyCostDao extends BaseDao {
         return custWarrantyCostMapper.findCustWarrantyCost(custWarrantyCostModel);
     }
 
+    public Double findCustWarrantyCostTotal (CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCostModel);
+    }
+
     public int addCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.addCustWarrantyCost(custWarrantyCostModel);
     }

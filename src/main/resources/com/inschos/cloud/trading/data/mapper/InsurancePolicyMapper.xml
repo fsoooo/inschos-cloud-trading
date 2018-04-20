@@ -242,6 +242,14 @@
         </where>
     </select>
 
+    <select id="findEffectiveInsurancePolicyListByChannelId"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty WHERE `channel_id`=#{channel_id} AND `warranty_status`!= 1 AND `warranty_status`!= 6 AND state = 1
+    </select>
+
     <select id="findInsurancePolicyPrivateCodeByUnionOrderCode" parameterType="String"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select

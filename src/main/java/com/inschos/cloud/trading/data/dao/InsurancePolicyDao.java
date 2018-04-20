@@ -419,6 +419,10 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findInsurancePolicyListBySearchOrTimeOrChannelIdCount(insurancePolicyModel);
     }
 
+    public List<InsurancePolicyModel> findEffectiveInsurancePolicyListByChannelId(String channelId) {
+        return insurancePolicyMapper.findEffectiveInsurancePolicyListByChannelId(channelId);
+    }
+
     // NOTENABLED: 2018/4/14
     public int updateInsurancePolicyUnionOrderCode(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.updateInsurancePolicyUnionOrderCode(insurancePolicyModel);
