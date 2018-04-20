@@ -1,4 +1,4 @@
-package com.inschos.cloud.trading.access.rpc.hprose;
+package com.inschos.cloud.trading.access.rpc.remoting.hprose;
 
 import hprose.common.FilterHandler;
 import hprose.common.HproseFilter;
