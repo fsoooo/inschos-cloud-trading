@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.service;
 
+import com.inschos.cloud.trading.access.rpc.bean.GetPremiumByChannelIdForManagerSystem;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,5 +10,5 @@ import org.springframework.stereotype.Service;
  */
 public interface BrokerageService {
 
-    String getBrokerageByChannelIdForManagerSystem(String channelId);
+    String getBrokerageByChannelIdForManagerSystem(GetPremiumByChannelIdForManagerSystem bean);
 }

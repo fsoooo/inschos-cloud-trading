@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.service.provider;
 
+import com.inschos.cloud.trading.access.rpc.bean.GetPremiumByChannelIdForManagerSystem;
 import com.inschos.cloud.trading.access.rpc.service.PremiumService;
 import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
@@ -26,8 +27,8 @@ public class PremiumServiceImpl implements PremiumService {
     private CustWarrantyCostDao custWarrantyCostDao;
 
     @Override
-    public String getPremiumByChannelIdForManagerSystem(String channelId) {
-        List<InsurancePolicyModel> effectiveInsurancePolicyListByChannelId = insurancePolicyDao.findEffectiveInsurancePolicyListByChannelId(channelId);
+    public String getPremiumByChannelIdForManagerSystem(GetPremiumByChannelIdForManagerSystem bean) {
+        List<InsurancePolicyModel> effectiveInsurancePolicyListByChannelId = insurancePolicyDao.findEffectiveInsurancePolicyListByChannelId(bean.channelId);
         BigDecimal bigDecimal = new BigDecimal("0.00");
         if (effectiveInsurancePolicyListByChannelId != null && !effectiveInsurancePolicyListByChannelId.isEmpty()) {
             CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
