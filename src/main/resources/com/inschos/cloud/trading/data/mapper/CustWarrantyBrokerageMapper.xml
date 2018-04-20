@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.CustWarrantyBrokerageMapper">
+
+    <sql id="Base_Column_List">
+        `id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`data_id`,`money`,`rate`,`type`,`created_at`,`updated_at`
+    </sql>
+
+    <insert id="addBrokerageCommission" parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into cust_warranty_brokerage
+        (`id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`data_id`,`money`,`rate`,`type`,`created_at`,`updated_at`)
+        values
+        (#{id},#{warranty_uuid},#{manager_uuid},#{cost_id},#{data_id},#{money},#{rate},#{type},#{created_at},#{updated_at})
+    </insert>
+
+    <select id="findCustWarrantyBrokerageTotal"
+            resultType="Double"
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
+        select cust_warranty_cost
+        SUM(`money`)
+        where `warranty_uuid`=#{warranty_uuid}
+    </select>
+
+</mapper>
