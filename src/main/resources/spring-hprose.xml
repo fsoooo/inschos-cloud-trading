@@ -16,7 +16,7 @@
         <property name="mappings">
             <props>
                 <!-- route bean -->
-                <prop key="/rpc/trade">brokerageService</prop>
+                <prop key="/rpc/trade/get_brokerage_by_channel_id_for_manager_system">brokerageService</prop>
             </props>
         </property>
     </bean>
@@ -25,22 +25,12 @@
         <property name="mappings">
             <props>
                 <!-- route bean -->
-                <prop key="/rpc/trade">premiumService</prop>
+                <prop key="/rpc/trade/get_premium_by_channel_id_for_manager_system">premiumService</prop>
             </props>
         </property>
     </bean>
 
     <!--bean -->
-    <bean name="brokerageService"
-          class="com.inschos.cloud.trading.access.rpc.remoting.hprose.HproseHttpServiceExporter">
-
-        <!-- 实现-->
-        <property name="service" ref="brokerageServiceImpl"/>
-        <!-- 接口-->
-        <property name="serviceInterface"
-                  value="com.inschos.cloud.trading.access.rpc.service.BrokerageService"/>
-    </bean>
-
     <bean name="premiumService"
           class="com.inschos.cloud.trading.access.rpc.remoting.hprose.HproseHttpServiceExporter">
 
@@ -49,6 +39,16 @@
         <!-- 接口-->
         <property name="serviceInterface"
                   value="com.inschos.cloud.trading.access.rpc.service.PremiumService"/>
+    </bean>
+
+    <bean name="brokerageService"
+          class="com.inschos.cloud.trading.access.rpc.remoting.hprose.HproseHttpServiceExporter">
+
+        <!-- 实现-->
+        <property name="service" ref="brokerageServiceImpl"/>
+        <!-- 接口-->
+        <property name="serviceInterface"
+                  value="com.inschos.cloud.trading.access.rpc.service.BrokerageService"/>
     </bean>
 
 </beans>
