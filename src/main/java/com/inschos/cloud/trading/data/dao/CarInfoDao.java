@@ -37,4 +37,9 @@ public class CarInfoDao {
     public List<CarInfoModel> findWarrantyUuidByThpBizID(String thpBizID) {
         return carInfoMapper.findWarrantyUuidByThpBizID(thpBizID);
     }
+
+    public String findBjCodeFlagByWarrantyUuid(String warrantyUuid) {
+        return carInfoMapper.findBjCodeFlagByWarrantyUuid(warrantyUuid);
+    }
+
 }

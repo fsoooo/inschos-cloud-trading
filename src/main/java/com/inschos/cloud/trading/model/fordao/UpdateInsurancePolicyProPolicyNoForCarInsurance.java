@@ -11,5 +11,6 @@ public class UpdateInsurancePolicyProPolicyNoForCarInsurance {
     public String warrantyStatus;
     public String biProposalNo;
     public String ciProposalNo;
+    public String bjCodeFlag;
 
 }

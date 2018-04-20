@@ -150,6 +150,9 @@ public class InsurancePolicy {
 
         public String insuranceCompanyName;
 
+        // 车险用验证码（仅车险存在）
+        public String bjCodeFlag;
+
         public GetInsurancePolicy() {
 
         }
@@ -368,6 +371,9 @@ public class InsurancePolicy {
         // public String spAgreement;
         public List<ExtendCarInsurancePolicy.SpAgreement> spAgreement;
 
+        // 车险验证码标识
+        public String bjCodeFlag;
+
         //结束时间
         public String updatedAt;
         public String updatedAtText;
@@ -456,6 +462,7 @@ public class InsurancePolicy {
                 }
             }
             this.spAgreement = model.parseSpAgreement(model.sp_agreement);
+            this.bjCodeFlag = model.bj_code_flag;
             this.updatedAt = model.updated_at;
             if (StringKit.isInteger(model.updated_at)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));

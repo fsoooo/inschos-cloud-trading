@@ -18,14 +18,14 @@
     <update id="updateInsurancePolicyProPolicyNoByWarrantyUuid"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         update cust_warranty set
-        `pro_policy_no`=#{pro_policy_no},`updated_at`=#{updated_at}
+        `pre_policy_no`=#{pre_policy_no},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
     <update id="updateInsurancePolicyStatusForCarInsuranceWarrantyUuid"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         update cust_warranty set
-        `pro_policy_no`=#{pro_policy_no},`check_status`=#{check_status},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
+        `pre_policy_no`=#{pre_policy_no},`check_status`=#{check_status},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
@@ -82,8 +82,8 @@
                     <if test="search!=null and search!=''">
                         and `warranty_code` like concat("%",#{search},"%")
                     </if>
-                    <if test="warranty_status!=0">
-                        and `warranty_status`=#{warranty_status}
+                    <if test="status_string!=null and status_string!=''">
+                        and `warranty_status` in (${status_string})
                     </if>
                     limit #{page.start},1
                     )
@@ -96,8 +96,8 @@
             <if test="search!=null and search!=''">
                 and `warranty_code` like concat("%",#{search},"%")
             </if>
-            <if test="warranty_status!=0">
-                and `warranty_status`=#{warranty_status}
+            <if test="status_string!=null and status_string!=''">
+                and `warranty_status` in (${status_string})
             </if>
             limit #{page.offset}
         </where>

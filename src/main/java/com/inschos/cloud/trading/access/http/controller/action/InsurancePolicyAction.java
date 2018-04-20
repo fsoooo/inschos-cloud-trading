@@ -131,9 +131,16 @@ public class InsurancePolicyAction extends BaseAction {
             InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
 
             insurancePolicyModel.account_uuid = actionBean.accountUuid;
-            insurancePolicyModel.warranty_status = StringKit.isEmpty(request.warrantyStatus) ? "0" : request.warrantyStatus;
             insurancePolicyModel.search = request.searchKey;
             insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+
+            // 将前台的状态转成我们需要的状态
+            if (StringKit.isEmpty(request.warrantyStatus)) {
+                insurancePolicyModel.status_string = "";
+            } else {
+
+            }
+            insurancePolicyModel.warranty_status = StringKit.isEmpty(request.warrantyStatus) ? "0" : request.warrantyStatus;
 
             long total = insurancePolicyDao.findInsurancePolicyCountByWarrantyStatus(insurancePolicyModel);
 
@@ -188,6 +195,10 @@ public class InsurancePolicyAction extends BaseAction {
                     }
 
                     InsurancePolicy.GetInsurancePolicy insurancePolicy = new InsurancePolicy.GetInsurancePolicy(policyListByWarrantyStatusOrSearch, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
+
+                    if (StringKit.equals(insurancePolicy.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
+                        insurancePolicy.bjCodeFlag = carInfoDao.findBjCodeFlagByWarrantyUuid(insurancePolicy.warrantyUuid);
+                    }
 
 //                    InsuranceConciseInfo product = map.get(insurancePolicy.productId);
 //                    if (product != null) {

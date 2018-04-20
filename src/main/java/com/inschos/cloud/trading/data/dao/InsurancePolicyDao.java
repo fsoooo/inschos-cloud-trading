@@ -148,7 +148,17 @@ public class InsurancePolicyDao extends BaseDao {
                 }
                 insurancePolicyModel.warranty_status = updateInsurancePolicyProPolicyNoForCarInsurance.warrantyStatus;
                 insurancePolicyModel.updated_at = time;
-                update = updateInsurancePolicyProPolicyNoByWarrantyId(insurancePolicyModel);
+                update = insurancePolicyMapper.updateInsurancePolicyProPolicyNoByWarrantyUuid(insurancePolicyModel);
+
+                if (update <= 0) {
+                    rollBack();
+                    break;
+                }
+
+                carInfoModel.bj_code_flag = updateInsurancePolicyProPolicyNoForCarInsurance.bjCodeFlag;
+                carInfoModel.updated_at = String.valueOf(System.currentTimeMillis());
+
+                update = carInfoMapper.updateBjCodeFlagByWarrantyUuid(carInfoModel);
 
                 if (update <= 0) {
                     rollBack();
@@ -169,11 +179,6 @@ public class InsurancePolicyDao extends BaseDao {
 
     public long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyCountByWarrantyStatus(insurancePolicyModel);
-    }
-
-
-    public int updateInsurancePolicyProPolicyNoByWarrantyId(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.updateInsurancePolicyProPolicyNoByWarrantyUuid(insurancePolicyModel);
     }
 
     public List<CarInfoModel> getCarInfoList(String bizId, String thpBizID) {
@@ -271,7 +276,7 @@ public class InsurancePolicyDao extends BaseDao {
             List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostMapper.findCustWarrantyCost(custWarrantyCostModel);
             if (custWarrantyCostByWarrantyUuid != null && !custWarrantyCostByWarrantyUuid.isEmpty()) {
                 for (CustWarrantyCostModel warrantyCostModel : custWarrantyCostByWarrantyUuid) {
-                    ciPremium = ciPremium.add(new BigDecimal(warrantyCostModel.premium));
+                    biPremium = biPremium.add(new BigDecimal(warrantyCostModel.premium));
                 }
             }
         }

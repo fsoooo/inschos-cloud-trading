@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.model;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 创建日期：2018/3/22 on 16:43
@@ -139,6 +140,8 @@ public class InsurancePolicyModel {
     public String search;
 
     public Page page;
+
+    public String status_string;
 
     // 核保成功
     public static final String APPLY_UNDERWRITING_SUCCESS = "0";
