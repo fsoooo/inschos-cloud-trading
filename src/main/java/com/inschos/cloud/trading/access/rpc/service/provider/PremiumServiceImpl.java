@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -44,6 +45,7 @@ public class PremiumServiceImpl implements PremiumService {
             }
         }
         L.log.debug("================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================" + bigDecimal.doubleValue() + "======" + bean);
-        return String.valueOf(bigDecimal.doubleValue());
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        return String.valueOf(decimalFormat.format(bigDecimal.doubleValue()));
     }
 }

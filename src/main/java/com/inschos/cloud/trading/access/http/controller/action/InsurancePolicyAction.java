@@ -516,18 +516,6 @@ public class InsurancePolicyAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        if (StringKit.isEmpty(request.lastId)) {
-            request.lastId = "0";
-        }
-
-        if (StringKit.isEmpty(request.pageNum)) {
-            request.pageNum = "1";
-        }
-
-        if (StringKit.isEmpty(request.pageSize)) {
-            request.pageSize = "10";
-        }
-
         response.data = new InsurancePolicy.InsurancePolicyStatistic();
 
         InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
@@ -554,17 +542,11 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyModel.manager_uuid = actionBean.managerUuid;
 
-        insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
-
-        List<InsurancePolicyModel> insurancePolicyListBySearchOrTimeOrChannelId = insurancePolicyDao.findInsurancePolicyListBySearchOrTimeOrChannelId(insurancePolicyModel);
-        long total = insurancePolicyDao.findInsurancePolicyListBySearchOrTimeOrChannelIdCount(insurancePolicyModel);
-
         Calendar instance = Calendar.getInstance();
 
         int year = instance.get(Calendar.YEAR);
         int month = instance.get(Calendar.MONTH);
         int day = instance.get(Calendar.DAY_OF_MONTH);
-
 
         InsurancePolicyModel insurancePolicyModel1 = new InsurancePolicyModel();
         insurancePolicyModel.manager_uuid = actionBean.managerUuid;
@@ -633,8 +615,6 @@ public class InsurancePolicyAction extends BaseAction {
 //                response.data.list.add(new InsurancePolicy.GetInsurancePolicy(model));
 //            }
 //        }
-
-        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.list.size());
 
         return json(BaseResponse.CODE_SUCCESS, "获取保单统计成功", response);
     }
