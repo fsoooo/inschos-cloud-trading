@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.access.rpc.service.provider;
 
 import com.inschos.cloud.trading.access.rpc.bean.GetPremiumByChannelIdForManagerSystem;
 import com.inschos.cloud.trading.access.rpc.service.PremiumService;
+import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
@@ -40,6 +41,7 @@ public class PremiumServiceImpl implements PremiumService {
                 }
             }
         }
+        L.log.debug("================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================" + bigDecimal.doubleValue() + "");
         return String.valueOf(bigDecimal.doubleValue());
     }
 }
