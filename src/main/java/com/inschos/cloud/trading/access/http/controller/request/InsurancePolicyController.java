@@ -64,10 +64,10 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_pay_money_statistic_for_manager_system")
+    @RequestMapping("car_insurance/get_insurance_policy_premium_statistic_for_manager_system")
     @ResponseBody
-    public String getInsurancePolicyPayMoneyStatisticForManagerSystem(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyPayMoneyStatisticForManagerSystem(actionBean);
+    public String getInsurancePolicyPremiumStatisticForManagerSystem(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyPremiumStatisticForManagerSystem(actionBean);
     }
 
     @GetActionBeanAnnotation

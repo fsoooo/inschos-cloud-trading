@@ -37,6 +37,8 @@ public interface InsurancePolicyMapper {
 
     List<InsurancePolicyModel> findEffectiveInsurancePolicyListByChannelId(String channelId);
 
+    List<InsurancePolicyModel> findEffectiveInsurancePolicyWarrantyUuidBySearchOrTimeOrChannelIdForManagerSystem(InsurancePolicyModel insurancePolicyModel);
+
     // NOTENABLED: 2018/4/12
     List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);
 

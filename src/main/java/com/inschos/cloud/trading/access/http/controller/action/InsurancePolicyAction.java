@@ -503,7 +503,7 @@ public class InsurancePolicyAction extends BaseAction {
         return str;
     }
 
-    public String getInsurancePolicyPayMoneyStatisticForManagerSystem(ActionBean actionBean) {
+    public String getInsurancePolicyPremiumStatisticForManagerSystem(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest.class);
         InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse();
 
@@ -585,8 +585,7 @@ public class InsurancePolicyAction extends BaseAction {
         insurancePolicyModel1.end_time = String.valueOf(instance.getTimeInMillis());
 
         // 当前的所有付款的
-//        Double dayAmount = insurancePolicyDao.findInsurancePolicyPayMoneyCountBySearchOrTimeOrChannelIdForManagerSystem(insurancePolicyModel1);
-        Double dayAmount = null;
+        Double dayAmount = insurancePolicyDao.findInsurancePolicyWarrantyUuidBySearchOrTimeOrChannelIdForManagerSystem(insurancePolicyModel1);
 
         if (dayAmount == null) {
             dayAmount = 0.00;
