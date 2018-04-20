@@ -1,6 +1,6 @@
 package com.inschos.cloud.trading.access.http.controller.request;
 
-import com.inschos.cloud.trading.access.rpc.client.AccountClientService;
+import com.inschos.cloud.trading.access.rpc.client.AccountClient;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.L;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +18,13 @@ import javax.servlet.http.HttpServletRequest;
 public class TestController {
 
     @Autowired
-    private AccountClientService accountClientService;
+    private AccountClient accountClient;
 
     @RequestMapping("/token")
     @ResponseBody
     public String token(HttpServletRequest request){
         String token = request.getParameter("token");
         L.log.debug("token is {}",token);
-        return JsonKit.bean2Json(accountClientService.getAccount(token));
+        return JsonKit.bean2Json(accountClient.getAccount(token));
     }
 }

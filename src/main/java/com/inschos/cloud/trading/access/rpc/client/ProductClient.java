@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.access.rpc.client;
 import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
 import com.inschos.cloud.trading.access.rpc.service.ProductService;
 import com.inschos.cloud.trading.assist.kit.L;
+import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * 作者：zhangyunhe
  */
 @Component
-public class ProductServiceClient extends BaseServiceClient<ProductService> {
+public class ProductClient {
 
     @Value("${rpc.remote.product.host}")
     private String host;
@@ -22,9 +23,13 @@ public class ProductServiceClient extends BaseServiceClient<ProductService> {
     private final String uri = "/rpc/account";
 
 
+    private ProductService getService(){
+        return new HproseHttpClient(host + uri).useService(ProductService.class);
+    }
+
     public List<ProductInfo> product_list() {
         try {
-            ProductService service = getService(host + uri);
+            ProductService service = getService();
             return service != null ? service.product_list() : null;
 
         } catch (Exception e) {
@@ -35,7 +40,7 @@ public class ProductServiceClient extends BaseServiceClient<ProductService> {
 
     public ProductInfo product_byId(String product_id) {
         try {
-            ProductService service = getService(host + uri);
+            ProductService service = getService();
             return service != null ? service.product_byId(product_id) : null;
 
         } catch (Exception e) {
