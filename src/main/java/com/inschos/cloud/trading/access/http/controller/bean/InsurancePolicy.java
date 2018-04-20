@@ -40,7 +40,7 @@ public class InsurancePolicy {
         public String warrantyUuid;
 
         //投保单号
-        public String proPolicyNo;
+        public String prePolicyNo;
 
         //保单号
         public String warrantyCode;
@@ -152,6 +152,8 @@ public class InsurancePolicy {
 
         // 车险用验证码（仅车险存在）
         public String bjCodeFlag;
+        // 车险流水号
+        public String bizId;
 
         public GetInsurancePolicy() {
 
@@ -165,7 +167,7 @@ public class InsurancePolicy {
             SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy.MM.dd");
             this.id = model.id;
             this.warrantyUuid = model.warranty_uuid;
-            this.proPolicyNo = model.pre_policy_no;
+            this.prePolicyNo = model.pre_policy_no;
             this.warrantyCode = model.warranty_code;
             this.accountUuid = model.manager_uuid;
             this.buyerAuuid = model.account_uuid;

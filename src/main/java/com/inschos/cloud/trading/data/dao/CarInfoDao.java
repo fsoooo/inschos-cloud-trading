@@ -38,8 +38,8 @@ public class CarInfoDao {
         return carInfoMapper.findWarrantyUuidByThpBizID(thpBizID);
     }
 
-    public String findBjCodeFlagByWarrantyUuid(String warrantyUuid) {
-        return carInfoMapper.findBjCodeFlagByWarrantyUuid(warrantyUuid);
+    public CarInfoModel findBjCodeFlagAndBizIdByWarrantyUuid(String warrantyUuid) {
+        return carInfoMapper.findBjCodeFlagAndBizIdByWarrantyUuid(warrantyUuid);
     }
 
 }

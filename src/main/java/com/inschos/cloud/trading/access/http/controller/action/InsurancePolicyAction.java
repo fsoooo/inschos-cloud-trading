@@ -138,9 +138,22 @@ public class InsurancePolicyAction extends BaseAction {
             if (StringKit.isEmpty(request.warrantyStatus)) {
                 insurancePolicyModel.status_string = "";
             } else {
-
+                // 1-待支付 2-待生效 3-保障中 4-已失效
+                switch (request.warrantyStatus) {
+                    case "1":
+                        insurancePolicyModel.warranty_status = CustWarrantyCostModel.APPLY_UNDERWRITING_PROCESSING + "," + CustWarrantyCostModel.PAY_STATUS_WAIT + "," + CustWarrantyCostModel.PAY_STATUS_PROCESSING;
+                        break;
+                    case "2":
+                        insurancePolicyModel.warranty_status = InsurancePolicyModel.POLICY_STATUS_WAITING;
+                        break;
+                    case "3":
+                        insurancePolicyModel.warranty_status = InsurancePolicyModel.POLICY_STATUS_EFFECTIVE;
+                        break;
+                    case "4":
+                        insurancePolicyModel.warranty_status = InsurancePolicyModel.POLICY_STATUS_INVALID + "," + InsurancePolicyModel.POLICY_STATUS_EXPIRED;
+                        break;
+                }
             }
-            insurancePolicyModel.warranty_status = StringKit.isEmpty(request.warrantyStatus) ? "0" : request.warrantyStatus;
 
             long total = insurancePolicyDao.findInsurancePolicyCountByWarrantyStatus(insurancePolicyModel);
 
@@ -188,7 +201,7 @@ public class InsurancePolicyAction extends BaseAction {
                             isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
                         }
 
-                        if (isFindLast) {
+                        if (isFindLast || i == 0) {
                             warrantyStatusForPay = custWarrantyCostModel1.pay_status;
                             warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
                         }
@@ -197,7 +210,9 @@ public class InsurancePolicyAction extends BaseAction {
                     InsurancePolicy.GetInsurancePolicy insurancePolicy = new InsurancePolicy.GetInsurancePolicy(policyListByWarrantyStatusOrSearch, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
 
                     if (StringKit.equals(insurancePolicy.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
-                        insurancePolicy.bjCodeFlag = carInfoDao.findBjCodeFlagByWarrantyUuid(insurancePolicy.warrantyUuid);
+                        CarInfoModel bjCodeFlagAndBizIdByWarrantyUuid = carInfoDao.findBjCodeFlagAndBizIdByWarrantyUuid(insurancePolicy.warrantyUuid);
+                        insurancePolicy.bjCodeFlag = bjCodeFlagAndBizIdByWarrantyUuid.bj_code_flag;
+                        insurancePolicy.bizId = bjCodeFlagAndBizIdByWarrantyUuid.biz_id;
                     }
 
 //                    InsuranceConciseInfo product = map.get(insurancePolicy.productId);
@@ -356,7 +371,7 @@ public class InsurancePolicyAction extends BaseAction {
                     isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
                 }
 
-                if (isFindLast) {
+                if (isFindLast || i == 0) {
                     warrantyStatusForPay = custWarrantyCostModel1.pay_status;
                     warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
                 }
@@ -408,73 +423,74 @@ public class InsurancePolicyAction extends BaseAction {
 
     public String getInsurancePolicyDetail(String warrantyUuid, InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse response) {
         InsurancePolicyModel insurancePolicyDetailByWarrantyCode = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(warrantyUuid);
-        List<InsuranceParticipantModel> insuranceParticipantByWarrantyCode = insuranceParticipantDao.findInsuranceParticipantByWarrantyUuid(warrantyUuid);
-
-        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-        long time = System.currentTimeMillis();
-        custWarrantyCostModel.warranty_uuid = insurancePolicyDetailByWarrantyCode.warranty_uuid;
-
-        List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
-
-        BigDecimal premium = new BigDecimal("0.00");
-        BigDecimal payMoney = new BigDecimal("0.00");
-
-        boolean isFindLast = false;
-        int size1 = custWarrantyCostByWarrantyUuid.size();
-        String warrantyStatusForPay = "";
-        String warrantyStatusForPayText = "";
-
-        for (int i = size1 - 1; i > -1; i--) {
-            CustWarrantyCostModel custWarrantyCostModel1 = custWarrantyCostByWarrantyUuid.get(i);
-            if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
-                premium = premium.add(new BigDecimal(custWarrantyCostModel1.premium));
-            }
-
-            if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
-                payMoney = payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
-            }
-
-            if (!isFindLast) {
-                isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
-            }
-
-            if (isFindLast) {
-                warrantyStatusForPay = custWarrantyCostModel1.pay_status;
-                warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
-            }
-        }
-
-        response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
-        response.data.insuredList = new ArrayList<>();
-        response.data.beneficiaryList = new ArrayList<>();
-
-        // TODO: 2018/4/17 真实的，目前不能用
-        // InsuranceConciseInfo insuranceConciseInfo = insuranceServiceClient.insList(insurancePolicyDetailByWarrantyCode.product_id);
-
-        if (insuranceParticipantByWarrantyCode != null && !insuranceParticipantByWarrantyCode.isEmpty()) {
-//            response.data.insuranceProductName = insuranceConciseInfo.ins_name;
-//            response.data.insuranceCompanyName = insuranceConciseInfo.company_name;
-            response.data.insuranceProductName = "产品名";
-            response.data.insuranceCompanyName = "保险公司名";
-
-            for (InsuranceParticipantModel insuranceParticipantModel : insuranceParticipantByWarrantyCode) {
-                InsurancePolicy.InsurancePolicyParticipantInfo insurancePolicyParticipantInfo = new InsurancePolicy.InsurancePolicyParticipantInfo(insuranceParticipantModel);
-                if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_POLICYHOLDER)) {
-                    response.data.policyHolder = insurancePolicyParticipantInfo;
-                } else if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_INSURED)) {
-                    response.data.insuredList.add(insurancePolicyParticipantInfo);
-                } else if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_BENEFICIARY)) {
-                    response.data.beneficiaryList.add(insurancePolicyParticipantInfo);
-                }
-            }
-        }
-
         String str;
         if (insurancePolicyDetailByWarrantyCode != null) {
+            List<InsuranceParticipantModel> insuranceParticipantByWarrantyCode = insuranceParticipantDao.findInsuranceParticipantByWarrantyUuid(warrantyUuid);
+
+            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+            long time = System.currentTimeMillis();
+            custWarrantyCostModel.warranty_uuid = insurancePolicyDetailByWarrantyCode.warranty_uuid;
+
+            List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
+
+            BigDecimal premium = new BigDecimal("0.00");
+            BigDecimal payMoney = new BigDecimal("0.00");
+
+            boolean isFindLast = false;
+            int size1 = custWarrantyCostByWarrantyUuid.size();
+            String warrantyStatusForPay = "";
+            String warrantyStatusForPayText = "";
+
+            for (int i = size1 - 1; i > -1; i--) {
+                CustWarrantyCostModel custWarrantyCostModel1 = custWarrantyCostByWarrantyUuid.get(i);
+                if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
+                    premium = premium.add(new BigDecimal(custWarrantyCostModel1.premium));
+                }
+
+                if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
+                    payMoney = payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
+                }
+
+                if (!isFindLast) {
+                    isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
+                }
+
+                if (isFindLast || i == 0) {
+                    warrantyStatusForPay = custWarrantyCostModel1.pay_status;
+                    warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
+                }
+            }
+
+            response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
+            response.data.insuredList = new ArrayList<>();
+            response.data.beneficiaryList = new ArrayList<>();
+
+            // TODO: 2018/4/17 真实的，目前不能用
+            // InsuranceConciseInfo insuranceConciseInfo = insuranceServiceClient.insList(insurancePolicyDetailByWarrantyCode.product_id);
+
+            if (insuranceParticipantByWarrantyCode != null && !insuranceParticipantByWarrantyCode.isEmpty()) {
+//            response.data.insuranceProductName = insuranceConciseInfo.ins_name;
+//            response.data.insuranceCompanyName = insuranceConciseInfo.company_name;
+                response.data.insuranceProductName = "产品名";
+                response.data.insuranceCompanyName = "保险公司名";
+
+                for (InsuranceParticipantModel insuranceParticipantModel : insuranceParticipantByWarrantyCode) {
+                    InsurancePolicy.InsurancePolicyParticipantInfo insurancePolicyParticipantInfo = new InsurancePolicy.InsurancePolicyParticipantInfo(insuranceParticipantModel);
+                    if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_POLICYHOLDER)) {
+                        response.data.policyHolder = insurancePolicyParticipantInfo;
+                    } else if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_INSURED)) {
+                        response.data.insuredList.add(insurancePolicyParticipantInfo);
+                    } else if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_BENEFICIARY)) {
+                        response.data.beneficiaryList.add(insurancePolicyParticipantInfo);
+                    }
+                }
+            }
+
             if (StringKit.equals(insurancePolicyDetailByWarrantyCode.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
                 // 车险
                 CarInfoModel oneByWarrantyCode = carInfoDao.findOneByWarrantyUuid(warrantyUuid);
                 response.data.carInfo = new InsurancePolicy.CarInfo(oneByWarrantyCode);
+                response.data.bizId = oneByWarrantyCode.biz_id;
                 str = json(BaseResponse.CODE_SUCCESS, "获取保单详情成功", response);
             } else {
                 // 其他险

@@ -45,9 +45,9 @@
         from cust_warranty_car where warranty_uuid=#{_parameter}
     </select>
 
-    <select id="findBjCodeFlagByWarrantyUuid" parameterType="String" resultType="String">
+    <select id="findBjCodeFlagAndBizIdByWarrantyUuid" parameterType="String" resultType="com.inschos.cloud.trading.model.CarInfoModel">
         select
-        `bj_code_flag`
+        `bj_code_flag`,`biz_id`
         from cust_warranty_car where warranty_uuid=#{_parameter}
     </select>
 
