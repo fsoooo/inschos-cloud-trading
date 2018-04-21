@@ -131,11 +131,11 @@
                     <if test="type!=0">
                         and `type`=#{type}
                     </if>
-                    <if test="start_time!=0">
+                    <if test="start_time!=null and start_time!='' start_time!=0">
                         and `start_time`&gt;=#{start_time}
                     </if>
-                    <if test="end_time!=0">
-                        and `start_time`$lt;#{end_time}
+                    <if test="end_time!=null and end_time!='' and end_time!=0">
+                        and `start_time`lt;#{end_time}
                     </if>
                     limit #{page.start},1
                     )
@@ -160,11 +160,11 @@
             <if test="type!=0">
                 and `type`=#{type}
             </if>
-            <if test="start_time!=0">
+            <if test="start_time!=null and start_time!='' start_time!=0">
                 and `start_time`&gt;=#{start_time}
             </if>
-            <if test="end_time!=0">
-                and `start_time`$lt;#{end_time}
+            <if test="end_time!=null and end_time!='' and end_time!=0">
+                and `start_time`lt;#{end_time}
             </if>
             limit #{page.offset}
         </where>
@@ -189,11 +189,11 @@
                     <if test="channel_id!=-1">
                         and `channel_id`=#{channel_id}
                     </if>
-                    <if test="start_time!=0">
+                    <if test="start_time!=null and start_time!='' start_time!=0">
                         and `start_time`&gt;=#{start_time}
                     </if>
-                    <if test="end_time!=0">
-                        and `start_time`$lt;#{end_time}
+                    <if test="end_time!=null and end_time!='' and end_time!=0">
+                        and `start_time`lt;#{end_time}
                     </if>
                     limit #{page.start},1
                     )
@@ -209,11 +209,11 @@
             <if test="channel_id!=-1">
                 and `channel_id`=#{channel_id}
             </if>
-            <if test="start_time!=0">
+            <if test="start_time!=null and start_time!='' start_time!=0">
                 and `start_time`&gt;=#{start_time}
             </if>
-            <if test="end_time!=0">
-                and `start_time`$lt;#{end_time}
+            <if test="end_time!=null and end_time!='' and end_time!=0">
+                and `start_time`lt;#{end_time}
             </if>
             limit #{page.offset}
         </where>
@@ -233,11 +233,11 @@
             <if test="channel_id!=-1">
                 and `channel_id`=#{channel_id}
             </if>
-            <if test="start_time!=0">
+            <if test="start_time!=null and start_time!='' start_time!=0">
                 and `start_time`&gt;=#{start_time}
             </if>
-            <if test="end_time!=0">
-                and `start_time`$lt;#{end_time}
+            <if test="end_time!=null and end_time!='' and end_time!=0">
+                and `start_time`lt;#{end_time}
             </if>
         </where>
     </select>
@@ -264,11 +264,11 @@
                 </when>
                 <when test="page.start>0">
                     id&gt;=(select id from cust_warranty where manager_uuid=#{manager_uuid} AND state=1
-                    <if test="start_time!=0">
+                    <if test="start_time!=null and start_time!='' start_time!=0">
                         and `start_time`&gt;=#{start_time}
                     </if>
-                    <if test="end_time!=0">
-                        and `start_time`$lt;#{end_time}
+                    <if test="end_time!=null and end_time!='' and end_time!=0">
+                        and `start_time`lt;#{end_time}
                     </if>
                     limit #{page.start},1
                     )
@@ -278,11 +278,11 @@
                 </otherwise>
             </choose>
             `channel_id`=#{channel_id} AND `warranty_status`!= 1 AND `warranty_status`!= 6 AND state = 1
-            <if test="start_time!=0">
+            <if test="start_time!=null and start_time!='' and start_time!=0">
                 and `start_time`&gt;=#{start_time}
             </if>
-            <if test="end_time!=0">
-                and `start_time`$lt;#{end_time}
+            <if test="end_time!=null and end_time!='' and end_time!=0">
+                and `start_time`lt;#{end_time}
             </if>
             limit #{page.offset}
         </where>
@@ -295,11 +295,11 @@
         COUNT(id)
         from cust_warranty
         WHERE `channel_id`=#{channel_id} AND `warranty_status`!= 1 AND `warranty_status`!= 6 AND state = 1
-        <if test="start_time!=0">
+        <if test="start_time!=null and start_time!='' and start_time!=0">
             and `start_time`&gt;=#{start_time}
         </if>
-        <if test="end_time!=0">
-            and `start_time`$lt;#{end_time}
+        <if test="end_time!=null and end_time!='' and end_time!=0">
+            and `start_time`lt;#{end_time}
         </if>
     </select>
 

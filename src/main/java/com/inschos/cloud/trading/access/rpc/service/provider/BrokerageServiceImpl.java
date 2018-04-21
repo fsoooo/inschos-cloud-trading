@@ -32,7 +32,11 @@ public class BrokerageServiceImpl implements BrokerageService {
         String result = "0.00";
         if (bean != null) {
             InsurancePolicyModel insurance = new InsurancePolicyModel();
-            insurance.channel_id = bean.channelId;
+            if (bean.channelId != null) {
+                insurance.channel_id = bean.channelId;
+            } else {
+                insurance.channel_id = "-1";
+            }
             insurance.start_time = bean.startTime;
             insurance.end_time = bean.endTime;
 
