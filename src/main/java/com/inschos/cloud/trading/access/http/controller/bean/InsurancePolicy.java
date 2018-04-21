@@ -658,8 +658,6 @@ public class InsurancePolicy {
     }
 
     public static class GetInsurancePolicyStatisticForManagerSystemRequest extends BaseRequest {
-        // 搜索关键字
-        public String searchKey;
         // 起保开始时间
         public String startTime;
         // 起保结束时间
@@ -676,7 +674,6 @@ public class InsurancePolicy {
         public String dayAmount;
         public String monthAmount;
         public String totalAmount;
-        public List<GetInsurancePolicy> list;
     }
 
 
