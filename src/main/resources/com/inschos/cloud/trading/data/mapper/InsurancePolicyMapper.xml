@@ -288,6 +288,21 @@
         </where>
     </select>
 
+    <select id="findEffectiveInsurancePolicyCountByChannelIdAndTime"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        COUNT(id)
+        from cust_warranty
+        WHERE `channel_id`=#{channel_id} AND `warranty_status`!= 1 AND `warranty_status`!= 6 AND state = 1
+        <if test="start_time!=0">
+            and `start_time`&gt;=#{start_time}
+        </if>
+        <if test="end_time!=0">
+            and `start_time`$lt;#{end_time}
+        </if>
+    </select>
+
     <select id="findInsurancePolicyPrivateCodeByUnionOrderCode" parameterType="String"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select

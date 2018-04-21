@@ -39,6 +39,8 @@ public interface InsurancePolicyMapper {
 
     List<InsurancePolicyModel> findEffectiveInsurancePolicyByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel);
 
+    long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel);
+
     // NOTENABLED: 2018/4/12
     List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);
 

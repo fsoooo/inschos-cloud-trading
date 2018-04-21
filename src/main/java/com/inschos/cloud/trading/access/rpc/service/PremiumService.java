@@ -10,4 +10,6 @@ import com.inschos.cloud.trading.access.rpc.bean.PremiumBean;
 public interface PremiumService {
 
     String getPremiumByChannelIdForManagerSystem(PremiumBean bean);
+
+    String getPremiumCountByChannelIdForManagerSystem(PremiumBean bean);
 }
