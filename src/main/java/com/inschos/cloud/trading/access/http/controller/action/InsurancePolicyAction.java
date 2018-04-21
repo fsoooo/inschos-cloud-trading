@@ -666,6 +666,7 @@ public class InsurancePolicyAction extends BaseAction {
         instance.set(Calendar.YEAR, year);
         instance.set(Calendar.MONTH, month);
         instance.set(Calendar.DAY_OF_MONTH, 1);
+
         if (month + 1 < 12) {
             //noinspection MagicConstant
             instance.set(year, month + 1, 1, 0, 0, 0);

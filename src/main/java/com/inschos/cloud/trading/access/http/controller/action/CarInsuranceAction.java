@@ -3,6 +3,8 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
+import com.inschos.cloud.trading.access.rpc.bean.MyBean;
+import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -2346,6 +2348,55 @@ public class CarInsuranceAction extends BaseAction {
             str = str.replaceAll("city", "children");
         }
         return str;
+    }
+
+    @Autowired
+    private ProductClient productClient;
+
+    public String setData(ActionBean actionBean) {
+        CarInsurance.GetProvinceCodeRequest request1 = new CarInsurance.GetProvinceCodeRequest();
+
+        request1.type = "0";
+
+        actionBean.body = JsonKit.bean2Json(request1);
+
+        String provinceCode = getProvinceCode(actionBean);
+
+        ExtendCarInsurancePolicy.GetProvinceCodeResponse codeResponse = JsonKit.json2Bean(provinceCode, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class);
+
+        LinkedHashMap<String, MyBean> map = new LinkedHashMap<>();
+
+        if (codeResponse != null && codeResponse.data != null && !codeResponse.data.isEmpty()) {
+            for (ExtendCarInsurancePolicy.ProvinceCodeDetail datum : codeResponse.data) {
+                CarInsurance.GetInsuranceCompanyRequest request = new CarInsurance.GetInsuranceCompanyRequest();
+
+                request.provinceCode = datum.provinceCode;
+                actionBean.body = JsonKit.bean2Json(request);
+
+                String insuranceByArea = getInsuranceByArea(actionBean);
+                ExtendCarInsurancePolicy.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse.class);
+
+                if (getInsuranceCompanyResponse != null && getInsuranceCompanyResponse.data != null && !getInsuranceCompanyResponse.data.isEmpty()) {
+
+                    for (ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany : getInsuranceCompanyResponse.data) {
+                        map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode + "_CAR", insuranceCompany.insurerName));
+                    }
+                }
+            }
+        }
+
+        Set<String> strings = map.keySet();
+        List<MyBean> myBeans = new ArrayList<>();
+
+        for (String string : strings) {
+            myBeans.add(map.get(string));
+        }
+
+        if (!myBeans.isEmpty()) {
+             productClient.addCompany(myBeans);
+        }
+
+        return "";
     }
 
 }
