@@ -66,6 +66,13 @@ public class InsurancePolicyAction extends BaseAction {
             response.data.add(getInsurancePolicyStatus);
         }
 
+        InsurancePolicyModel insurance = new InsurancePolicyModel();
+        insurance.channel_id = "1";
+        insurance.start_time = "10";
+        insurance.end_time = "20";
+
+        long effectiveInsurancePolicyCountByChannelIdAndTime = insurancePolicyDao.findEffectiveInsurancePolicyCountByChannelIdAndTime(insurance);
+
         return json(BaseResponse.CODE_SUCCESS, "获取保单状态分类成功", response);
     }
 
