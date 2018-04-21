@@ -290,7 +290,7 @@
 
     <select id="findEffectiveInsurancePolicyCountByChannelIdAndTime"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            resultType="long">
         select
         COUNT(id)
         from cust_warranty
