@@ -274,10 +274,10 @@
                     )
                 </when>
                 <otherwise>
-                    1=1
+                     1=1
                 </otherwise>
             </choose>
-            `channel_id`=#{channel_id} AND `warranty_status`!= 1 AND `warranty_status`!= 6 AND state = 1
+            and `channel_id`=#{channel_id} AND `warranty_status`!= 1 AND `warranty_status`!= 6 AND state = 1
             <if test="start_time!=null and start_time!='' and start_time!=0">
                 and `start_time`&gt;=#{start_time}
             </if>
