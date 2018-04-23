@@ -7,6 +7,7 @@ import com.inschos.cloud.trading.access.rpc.bean.MyBean;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
+import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
@@ -111,13 +112,11 @@ public class CarInsuranceAction extends BaseAction {
                             str = dealFieldName(request.type, str);
                         }
 
-                        // TODO: 2018/4/3  记得给自己的系统存数据
                     } else {
                         str = json(BaseResponse.CODE_FAILURE, "获取省级列表失败", response);
                     }
                 } else {
                     str = json(BaseResponse.CODE_SUCCESS, "获取省级列表成功", response);
-                    // TODO: 2018/4/3  记得给自己的系统存数据
                 }
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
@@ -168,7 +167,6 @@ public class CarInsuranceAction extends BaseAction {
                 response.data.city = result.data;
                 str = json(BaseResponse.CODE_SUCCESS, "获取市级列表成功", response);
                 str = dealFieldName(request.type, str);
-                // TODO: 2018/4/3  记得给自己的系统存数据
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
             }
@@ -521,7 +519,12 @@ public class CarInsuranceAction extends BaseAction {
 
                 // TODO: 2018/4/8 验证这个保险公司的车险产品是否上架，可售
             } else {
-                str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
+                if (StringKit.equals(CarInsuranceResponse.ERROR_SI100100000063, result.msgCode)) {
+                    response.data = new ArrayList<>();
+                    str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
+                } else {
+                    str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
+                }
             }
         } else {
             str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
@@ -2386,14 +2389,18 @@ public class CarInsuranceAction extends BaseAction {
         }
 
         Set<String> strings = map.keySet();
-        List<MyBean> myBeans = new ArrayList<>();
+        ArrayList<MyBean> myBeans = new ArrayList<>();
 
         for (String string : strings) {
             myBeans.add(map.get(string));
         }
 
+        L.log.debug(JsonKit.bean2Json(myBeans));
+
         if (!myBeans.isEmpty()) {
-             productClient.addCompany(myBeans);
+//            MyBean[] array = new MyBean[myBeans.size()];
+//            MyBean[] myBeans1 = myBeans.toArray(array);
+            productClient.addCompany(myBeans);
         }
 
         return "";

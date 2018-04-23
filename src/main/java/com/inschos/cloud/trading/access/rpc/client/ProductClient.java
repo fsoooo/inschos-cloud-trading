@@ -62,4 +62,15 @@ public class ProductClient {
         }
     }
 
+//    public String addCompany(MyBean[] list) {
+//        try {
+//            ProductService service = getService();
+//            return service != null ? service.addCompany(list) : null;
+//
+//        } catch (Exception e) {
+//            L.log.error("remote fail {}", e.getMessage(), e);
+//            return null;
+//        }
+//    }
+
 }

@@ -18,4 +18,6 @@ public interface ProductService {
 
     String addCompany(List<MyBean> list);
 
+//    String addCompany(MyBean[] list);
+
 }

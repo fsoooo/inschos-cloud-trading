@@ -15,4 +15,11 @@ public class MyBean {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return "MyBean{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
