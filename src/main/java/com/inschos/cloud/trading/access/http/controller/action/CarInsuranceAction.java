@@ -4,15 +4,14 @@ import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
 import com.inschos.cloud.trading.access.rpc.bean.MyBean;
+import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.L;
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
+import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.extend.car.*;
+import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
 import com.inschos.cloud.trading.model.fordao.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -518,6 +517,11 @@ public class CarInsuranceAction extends BaseAction {
                 str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
 
                 // TODO: 2018/4/8 验证这个保险公司的车险产品是否上架，可售
+
+                List<ProductInfo> productInfos = productClient.listProduct();
+
+                System.currentTimeMillis();
+
             } else {
                 if (StringKit.equals(CarInsuranceResponse.ERROR_SI100100000063, result.msgCode)) {
                     response.data = new ArrayList<>();
@@ -1605,7 +1609,6 @@ public class CarInsuranceAction extends BaseAction {
 
         ExtendCarInsurancePolicy.ResolveIdentityCardRequest resolveIdentityCardRequest = new ExtendCarInsurancePolicy.ResolveIdentityCardRequest();
 
-
         if (!StringKit.isEmpty(request.frontCardUrl) || !StringKit.isEmpty(request.frontCardBase64)) {
             resolveIdentityCardRequest.frontCardUrl = request.frontCardUrl;
             resolveIdentityCardRequest.frontCardBase64 = request.frontCardBase64;
@@ -1631,7 +1634,21 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
-                // TODO: 2018/4/3 记得存咱们的服务器
+                if (!StringKit.isEmpty(request.frontCardBase64)  && result.data != null) {
+                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
+                    request1.base64 = request.frontCardBase64;
+                    request1.fileKey = MD5Kit.MD5Digest(result.data.cardNo + result.data.name + "1");
+                    request1.fileName = MD5Kit.MD5Digest(result.data.cardNo + "1");
+                    FileUpload.getInstance().uploadByBase64(request1);
+                }
+
+                if (!StringKit.isEmpty(request.backCardBase64) && result.data != null) {
+                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
+                    request1.base64 = request.backCardBase64;
+                    request1.fileKey = MD5Kit.MD5Digest(result.data.cardNo + result.data.name + "2");
+                    request1.fileName = MD5Kit.MD5Digest(result.data.cardNo + "2");
+                    FileUpload.getInstance().uploadByBase64(request1);
+                }
                 str = json(BaseResponse.CODE_SUCCESS, "身份证信息获取成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
@@ -1690,7 +1707,21 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
-                // TODO: 2018/4/3 记得存咱们的服务器
+                if (!StringKit.isEmpty(request.imgJustBase64)  && result.data != null) {
+                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
+                    request1.base64 = request.imgJustBase64;
+                    request1.fileKey = MD5Kit.MD5Digest(result.data.engineNo + result.data.frameNo + result.data.fileNumber + "1");
+                    request1.fileName = result.data.fileNumber + "1";
+                    FileUpload.getInstance().uploadByBase64(request1);
+                }
+
+                if (!StringKit.isEmpty(request.imgBackBase64) && result.data != null) {
+                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
+                    request1.base64 = request.imgBackBase64;
+                    request1.fileKey = MD5Kit.MD5Digest(result.data.engineNo + result.data.frameNo + result.data.fileNumber + "2");
+                    request1.fileName = result.data.fileNumber + "2";
+                    FileUpload.getInstance().uploadByBase64(request1);
+                }
                 str = json(BaseResponse.CODE_SUCCESS, "行驶证信息获取成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface ProductService {
 
-    List<ProductInfo> product_list();
+    List<ProductInfo> listProduct();
 
     ProductInfo product_byId(String id);
 

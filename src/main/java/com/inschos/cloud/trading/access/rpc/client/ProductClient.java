@@ -29,10 +29,10 @@ public class ProductClient {
         return new HproseHttpClient(host + uri).useService(ProductService.class);
     }
 
-    public List<ProductInfo> product_list() {
+    public List<ProductInfo> listProduct() {
         try {
             ProductService service = getService();
-            return service != null ? service.product_list() : null;
+            return service != null ? service.listProduct() : null;
 
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);
