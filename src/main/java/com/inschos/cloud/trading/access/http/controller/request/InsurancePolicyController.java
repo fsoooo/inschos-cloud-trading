@@ -76,4 +76,5 @@ public class InsurancePolicyController {
     public String getInsurancePolicyBrokerageStatisticForManagerSystem(ActionBean actionBean) {
         return insurancePolicyAction.getInsurancePolicyBrokerageStatisticForManagerSystem(actionBean);
     }
+
 }

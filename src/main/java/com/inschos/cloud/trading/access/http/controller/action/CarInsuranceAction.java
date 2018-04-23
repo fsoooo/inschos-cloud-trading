@@ -3,13 +3,15 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
+import com.inschos.cloud.trading.access.rpc.bean.MyBean;
+import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
+import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
+import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.extend.car.*;
+import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
 import com.inschos.cloud.trading.model.fordao.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,13 +111,11 @@ public class CarInsuranceAction extends BaseAction {
                             str = dealFieldName(request.type, str);
                         }
 
-                        // TODO: 2018/4/3  记得给自己的系统存数据
                     } else {
                         str = json(BaseResponse.CODE_FAILURE, "获取省级列表失败", response);
                     }
                 } else {
                     str = json(BaseResponse.CODE_SUCCESS, "获取省级列表成功", response);
-                    // TODO: 2018/4/3  记得给自己的系统存数据
                 }
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
@@ -166,7 +166,6 @@ public class CarInsuranceAction extends BaseAction {
                 response.data.city = result.data;
                 str = json(BaseResponse.CODE_SUCCESS, "获取市级列表成功", response);
                 str = dealFieldName(request.type, str);
-                // TODO: 2018/4/3  记得给自己的系统存数据
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
             }
@@ -518,8 +517,18 @@ public class CarInsuranceAction extends BaseAction {
                 str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
 
                 // TODO: 2018/4/8 验证这个保险公司的车险产品是否上架，可售
+
+                List<ProductInfo> productInfos = productClient.listProduct();
+
+                System.currentTimeMillis();
+
             } else {
-                str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
+                if (StringKit.equals(CarInsuranceResponse.ERROR_SI100100000063, result.msgCode)) {
+                    response.data = new ArrayList<>();
+                    str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
+                } else {
+                    str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
+                }
             }
         } else {
             str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
@@ -915,16 +924,17 @@ public class CarInsuranceAction extends BaseAction {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+        long current = System.currentTimeMillis();
         Long biBeginDate = formatterDate(request.biBeginDateValue);
-        if (biBeginDate == null) {
-            return json(BaseResponse.CODE_FAILURE, "商业险起保日期错误", response);
+        if (biBeginDate == null || current >= biBeginDate) {
+            return json(BaseResponse.CODE_FAILURE, "商业险起保日期错误或时间早于" + sdf.format(new Date(current + 24 * 60 * 60 * 1000)), response);
         }
 
         getPremiumCalibrateRequest.biBeginDate = sdf.format(new Date(biBeginDate));
 
         Long ciBeginDate = formatterDate(request.ciBeginDateValue);
-        if (ciBeginDate == null) {
-            return json(BaseResponse.CODE_FAILURE, "强险起保日期错误", response);
+        if (ciBeginDate == null || current >= biBeginDate) {
+            return json(BaseResponse.CODE_FAILURE, "强险起保日期错误或时间早于" + sdf.format(new Date(current + 24 * 60 * 60 * 1000)), response);
         }
 
         getPremiumCalibrateRequest.ciBeginDate = sdf.format(new Date(ciBeginDate));
@@ -1599,7 +1609,6 @@ public class CarInsuranceAction extends BaseAction {
 
         ExtendCarInsurancePolicy.ResolveIdentityCardRequest resolveIdentityCardRequest = new ExtendCarInsurancePolicy.ResolveIdentityCardRequest();
 
-
         if (!StringKit.isEmpty(request.frontCardUrl) || !StringKit.isEmpty(request.frontCardBase64)) {
             resolveIdentityCardRequest.frontCardUrl = request.frontCardUrl;
             resolveIdentityCardRequest.frontCardBase64 = request.frontCardBase64;
@@ -1625,7 +1634,21 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
-                // TODO: 2018/4/3 记得存咱们的服务器
+                if (!StringKit.isEmpty(request.frontCardBase64)  && result.data != null) {
+                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
+                    request1.base64 = request.frontCardBase64;
+                    request1.fileKey = MD5Kit.MD5Digest(result.data.cardNo + result.data.name + "1");
+                    request1.fileName = MD5Kit.MD5Digest(result.data.cardNo + "1");
+                    FileUpload.getInstance().uploadByBase64(request1);
+                }
+
+                if (!StringKit.isEmpty(request.backCardBase64) && result.data != null) {
+                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
+                    request1.base64 = request.backCardBase64;
+                    request1.fileKey = MD5Kit.MD5Digest(result.data.cardNo + result.data.name + "2");
+                    request1.fileName = MD5Kit.MD5Digest(result.data.cardNo + "2");
+                    FileUpload.getInstance().uploadByBase64(request1);
+                }
                 str = json(BaseResponse.CODE_SUCCESS, "身份证信息获取成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
@@ -1684,7 +1707,21 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
-                // TODO: 2018/4/3 记得存咱们的服务器
+                if (!StringKit.isEmpty(request.imgJustBase64)  && result.data != null) {
+                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
+                    request1.base64 = request.imgJustBase64;
+                    request1.fileKey = MD5Kit.MD5Digest(result.data.engineNo + result.data.frameNo + result.data.fileNumber + "1");
+                    request1.fileName = result.data.fileNumber + "1";
+                    FileUpload.getInstance().uploadByBase64(request1);
+                }
+
+                if (!StringKit.isEmpty(request.imgBackBase64) && result.data != null) {
+                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
+                    request1.base64 = request.imgBackBase64;
+                    request1.fileKey = MD5Kit.MD5Digest(result.data.engineNo + result.data.frameNo + result.data.fileNumber + "2");
+                    request1.fileName = result.data.fileNumber + "2";
+                    FileUpload.getInstance().uploadByBase64(request1);
+                }
                 str = json(BaseResponse.CODE_SUCCESS, "行驶证信息获取成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
@@ -2346,6 +2383,59 @@ public class CarInsuranceAction extends BaseAction {
             str = str.replaceAll("city", "children");
         }
         return str;
+    }
+
+    @Autowired
+    private ProductClient productClient;
+
+    public String setData(ActionBean actionBean) {
+        CarInsurance.GetProvinceCodeRequest request1 = new CarInsurance.GetProvinceCodeRequest();
+
+        request1.type = "0";
+
+        actionBean.body = JsonKit.bean2Json(request1);
+
+        String provinceCode = getProvinceCode(actionBean);
+
+        ExtendCarInsurancePolicy.GetProvinceCodeResponse codeResponse = JsonKit.json2Bean(provinceCode, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class);
+
+        LinkedHashMap<String, MyBean> map = new LinkedHashMap<>();
+
+        if (codeResponse != null && codeResponse.data != null && !codeResponse.data.isEmpty()) {
+            for (ExtendCarInsurancePolicy.ProvinceCodeDetail datum : codeResponse.data) {
+                CarInsurance.GetInsuranceCompanyRequest request = new CarInsurance.GetInsuranceCompanyRequest();
+
+                request.provinceCode = datum.provinceCode;
+                actionBean.body = JsonKit.bean2Json(request);
+
+                String insuranceByArea = getInsuranceByArea(actionBean);
+                ExtendCarInsurancePolicy.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse.class);
+
+                if (getInsuranceCompanyResponse != null && getInsuranceCompanyResponse.data != null && !getInsuranceCompanyResponse.data.isEmpty()) {
+
+                    for (ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany : getInsuranceCompanyResponse.data) {
+                        map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode + "_CAR", insuranceCompany.insurerName));
+                    }
+                }
+            }
+        }
+
+        Set<String> strings = map.keySet();
+        ArrayList<MyBean> myBeans = new ArrayList<>();
+
+        for (String string : strings) {
+            myBeans.add(map.get(string));
+        }
+
+        L.log.debug(JsonKit.bean2Json(myBeans));
+
+        if (!myBeans.isEmpty()) {
+//            MyBean[] array = new MyBean[myBeans.size()];
+//            MyBean[] myBeans1 = myBeans.toArray(array);
+            productClient.addCompany(myBeans);
+        }
+
+        return "";
     }
 
 }

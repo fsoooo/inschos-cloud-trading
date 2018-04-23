@@ -9,7 +9,7 @@
     <insert id="addInsuranceParticipant" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
             useGeneratedKeys="true"
             keyProperty="id">
-        insert into cust_warranty_person
+        insert ignore into cust_warranty_person
         (`id`,`warranty_uuid`,`type`,`relation_name`,`out_order_no`,`name`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`age`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`,`record_start_time`,`record_end_time`)
         values
         (#{id},#{warranty_uuid},#{type},#{relation_name},#{out_order_no},#{name},#{card_type},#{card_code},#{phone},#{occupation},#{birthday},#{sex},#{age},#{email},#{nationality},#{annual_income},#{height},#{weight},#{area},#{address},#{start_time},#{end_time},#{record_start_time},#{record_end_time})

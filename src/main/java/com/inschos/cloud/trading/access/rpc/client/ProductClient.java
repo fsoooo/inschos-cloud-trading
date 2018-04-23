@@ -1,10 +1,12 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
+import com.inschos.cloud.trading.access.rpc.bean.MyBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
 import com.inschos.cloud.trading.access.rpc.service.ProductService;
 import com.inschos.cloud.trading.assist.kit.L;
 import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,17 +22,17 @@ public class ProductClient {
     @Value("${rpc.remote.product.host}")
     private String host;
 
-    private final String uri = "/rpc/account";
+    private final String uri = "/rpc/product";
 
 
     private ProductService getService(){
         return new HproseHttpClient(host + uri).useService(ProductService.class);
     }
 
-    public List<ProductInfo> product_list() {
+    public List<ProductInfo> listProduct() {
         try {
             ProductService service = getService();
-            return service != null ? service.product_list() : null;
+            return service != null ? service.listProduct() : null;
 
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);
@@ -48,5 +50,27 @@ public class ProductClient {
             return null;
         }
     }
+
+    public String addCompany(List<MyBean> list) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.addCompany(list) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+//    public String addCompany(MyBean[] list) {
+//        try {
+//            ProductService service = getService();
+//            return service != null ? service.addCompany(list) : null;
+//
+//        } catch (Exception e) {
+//            L.log.error("remote fail {}", e.getMessage(), e);
+//            return null;
+//        }
+//    }
 
 }

@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.service;
 
+import com.inschos.cloud.trading.access.rpc.bean.MyBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
 
 import java.util.List;
@@ -11,8 +12,12 @@ import java.util.List;
  */
 public interface ProductService {
 
-    List<ProductInfo> product_list();
+    List<ProductInfo> listProduct();
 
     ProductInfo product_byId(String id);
+
+    String addCompany(List<MyBean> list);
+
+//    String addCompany(MyBean[] list);
 
 }
