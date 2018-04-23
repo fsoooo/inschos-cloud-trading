@@ -920,16 +920,17 @@ public class CarInsuranceAction extends BaseAction {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+        long current = System.currentTimeMillis();
         Long biBeginDate = formatterDate(request.biBeginDateValue);
-        if (biBeginDate == null) {
-            return json(BaseResponse.CODE_FAILURE, "商业险起保日期错误", response);
+        if (biBeginDate == null || current >= biBeginDate) {
+            return json(BaseResponse.CODE_FAILURE, "商业险起保日期错误或时间早于" + sdf.format(new Date(current + 24 * 60 * 60 * 1000)), response);
         }
 
         getPremiumCalibrateRequest.biBeginDate = sdf.format(new Date(biBeginDate));
 
         Long ciBeginDate = formatterDate(request.ciBeginDateValue);
-        if (ciBeginDate == null) {
-            return json(BaseResponse.CODE_FAILURE, "强险起保日期错误", response);
+        if (ciBeginDate == null || current >= biBeginDate) {
+            return json(BaseResponse.CODE_FAILURE, "强险起保日期错误或时间早于" + sdf.format(new Date(current + 24 * 60 * 60 * 1000)), response);
         }
 
         getPremiumCalibrateRequest.ciBeginDate = sdf.format(new Date(ciBeginDate));
