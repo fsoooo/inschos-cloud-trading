@@ -61,7 +61,7 @@ public class HproseHttpServiceExporter extends RemoteExporter implements Initial
 		p3p = value;
 	}
 
-	public void setDebugEnabled(boolean value) {
+	public void setDebug(boolean value) {
 		debug = value;
 	}
 
