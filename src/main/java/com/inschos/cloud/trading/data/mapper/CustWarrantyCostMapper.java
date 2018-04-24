@@ -13,12 +13,12 @@ public interface CustWarrantyCostMapper {
 
     List<CustWarrantyCostModel> findCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel);
 
-    Double findCustWarrantyCostTotal(CustWarrantyCostModel custWarrantyCostModel);
-
     int addCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel);
 
     int updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel);
 
     int updateCustWarrantyCostPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel);
+
+    Double findCustWarrantyCostTotal(CustWarrantyCostModel custWarrantyCostModel);
 
 }

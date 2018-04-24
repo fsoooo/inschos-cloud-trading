@@ -57,5 +57,9 @@ public class CustWarrantyBrokerageModel {
      */
     public String updated_at;
 
+    public String channel_id;
+    public String start_time;
+    public String end_time;
+
 
 }

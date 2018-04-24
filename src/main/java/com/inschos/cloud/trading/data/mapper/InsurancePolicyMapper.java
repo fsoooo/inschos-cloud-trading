@@ -42,4 +42,6 @@ public interface InsurancePolicyMapper {
     long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel);
 
     long findInsurancePolicyListCountTimeOrAccountId(InsurancePolicyModel insurancePolicyModel);
+
+    Double getTotalPremiumByAccountUuidAndTime(InsurancePolicyModel insurancePolicyModel);
 }

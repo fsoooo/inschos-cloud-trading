@@ -149,7 +149,6 @@ public class CarInsurance {
     }
 
     public static class InsuranceInfo extends ExtendCarInsurancePolicy.InsurancePolicyInfo {
-        @CheckParams
         public String hasExcessOption;
         @CheckParams
         public String isExcessOption;

@@ -66,13 +66,6 @@ public class InsurancePolicyAction extends BaseAction {
             response.data.add(getInsurancePolicyStatus);
         }
 
-        InsurancePolicyModel insurance = new InsurancePolicyModel();
-        insurance.channel_id = "1";
-        insurance.start_time = "10";
-        insurance.end_time = "20";
-
-        long effectiveInsurancePolicyCountByChannelIdAndTime = insurancePolicyDao.findEffectiveInsurancePolicyCountByChannelIdAndTime(insurance);
-
         return json(BaseResponse.CODE_SUCCESS, "获取保单状态分类成功", response);
     }
 
@@ -522,7 +515,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         response.data = new InsurancePolicy.InsurancePolicyStatistic();
 
-        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
 
         Calendar instance = Calendar.getInstance();
 
@@ -530,30 +523,30 @@ public class InsurancePolicyAction extends BaseAction {
         int month = instance.get(Calendar.MONTH);
         int day = instance.get(Calendar.DAY_OF_MONTH);
 
-        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+        custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
 
         //noinspection MagicConstant
         instance.set(year, month, day, 0, 0, 0);
-        insurancePolicyModel.start_time = String.valueOf(instance.getTimeInMillis());
+        custWarrantyCostModel.start_time = String.valueOf(instance.getTimeInMillis());
 
-        insurancePolicyModel.end_time = String.valueOf(getDayEndTime(year, day, month));
+        custWarrantyCostModel.end_time = String.valueOf(getDayEndTime(year, day, month));
 
         // 当天的所有付款的
-        String dayAmount = custWarrantyCostDao.getTotalPremium(insurancePolicyModel);
+        String dayAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCostModel);
 
         //noinspection MagicConstant
         instance.set(year, month, 1, 0, 0, 0);
-        insurancePolicyModel.start_time = String.valueOf(instance.getTimeInMillis());
+        custWarrantyCostModel.start_time = String.valueOf(instance.getTimeInMillis());
 
-        insurancePolicyModel.end_time = String.valueOf(getMonthEndTime(year, month));
+        custWarrantyCostModel.end_time = String.valueOf(getMonthEndTime(year, month));
 
         // 当月的所有付款的
-        String monthAmount = custWarrantyCostDao.getTotalPremium(insurancePolicyModel);
+        String monthAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCostModel);
 
-        insurancePolicyModel.start_time = "0";
-        insurancePolicyModel.end_time = "0";
+        custWarrantyCostModel.start_time = "0";
+        custWarrantyCostModel.end_time = "0";
 
-        String totalAmount = custWarrantyCostDao.getTotalPremium(insurancePolicyModel);
+        String totalAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCostModel);
 
         response.data.dayAmount = "本日保费\n" + dayAmount;
         response.data.monthAmount = "本月保费\n" + monthAmount;
@@ -577,27 +570,27 @@ public class InsurancePolicyAction extends BaseAction {
 
         response.data = new InsurancePolicy.InsurancePolicyStatistic();
 
-        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
 
         if (StringKit.isEmpty(request.startTime)) {
-            insurancePolicyModel.start_time = "0";
+            custWarrantyBrokerageModel.start_time = "0";
         } else {
-            insurancePolicyModel.start_time = request.startTime;
+            custWarrantyBrokerageModel.start_time = request.startTime;
         }
 
         if (StringKit.isEmpty(request.endTime)) {
-            insurancePolicyModel.end_time = "0";
+            custWarrantyBrokerageModel.end_time = "0";
         } else {
-            insurancePolicyModel.end_time = request.endTime;
+            custWarrantyBrokerageModel.end_time = request.endTime;
         }
 
         if (StringKit.isEmpty(request.channelId)) {
-            insurancePolicyModel.channel_id = "-1";
+            custWarrantyBrokerageModel.channel_id = "-1";
         } else {
-            insurancePolicyModel.channel_id = request.channelId;
+            custWarrantyBrokerageModel.channel_id = request.channelId;
         }
 
-        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+        custWarrantyBrokerageModel.manager_uuid = actionBean.managerUuid;
 
         Calendar instance = Calendar.getInstance();
 
@@ -606,7 +599,7 @@ public class InsurancePolicyAction extends BaseAction {
         int day = instance.get(Calendar.DAY_OF_MONTH);
 
         InsurancePolicyModel insurancePolicyModel1 = new InsurancePolicyModel();
-        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+        custWarrantyBrokerageModel.manager_uuid = actionBean.managerUuid;
 
         //noinspection MagicConstant
         instance.set(year, month, day, 0, 0, 0);
@@ -614,7 +607,7 @@ public class InsurancePolicyAction extends BaseAction {
         insurancePolicyModel1.end_time = String.valueOf(getDayEndTime(year, month, day));
 
         // 当天的所有付款的
-        String dayAmount = custWarrantyBrokerageDao.getTotalBrokerage(insurancePolicyModel1);
+        String dayAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerageModel);
 
         //noinspection MagicConstant
         instance.set(year, month, 1, 0, 0, 0);
@@ -622,12 +615,12 @@ public class InsurancePolicyAction extends BaseAction {
         insurancePolicyModel1.end_time = String.valueOf(getMonthEndTime(year, month));
 
         // 当月的所有付款的
-        String monthAmount = custWarrantyBrokerageDao.getTotalBrokerage(insurancePolicyModel1);
+        String monthAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerageModel);
 
         insurancePolicyModel1.start_time = "0";
         insurancePolicyModel1.end_time = "0";
 
-        String totalAmount = custWarrantyBrokerageDao.getTotalBrokerage(insurancePolicyModel1);
+        String totalAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerageModel);
 
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 

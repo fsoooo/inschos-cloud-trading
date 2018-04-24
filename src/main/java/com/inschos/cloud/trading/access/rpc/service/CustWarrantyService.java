@@ -1,6 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.service;
 
-import com.inschos.cloud.trading.access.rpc.bean.CustWarrantyPolicyholderCountBean;
+import com.inschos.cloud.trading.access.rpc.bean.AccountUuidBean;
 
 /**
  * 创建日期：2018/4/24 on 15:30
@@ -9,6 +9,6 @@ import com.inschos.cloud.trading.access.rpc.bean.CustWarrantyPolicyholderCountBe
  */
 public interface CustWarrantyService {
 
-    String getPolicyholderCountByTimeOrAccountId(CustWarrantyPolicyholderCountBean custWarrantyPolicyholderCountBean);
+    String getPolicyholderCountByTimeOrAccountId(AccountUuidBean custWarrantyPolicyholderCountBean);
 
 }

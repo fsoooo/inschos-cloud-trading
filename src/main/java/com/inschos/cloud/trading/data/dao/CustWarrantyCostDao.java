@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.data.dao;
 
+import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
@@ -30,48 +31,51 @@ public class CustWarrantyCostDao extends BaseDao {
         return custWarrantyCostMapper.findCustWarrantyCost(custWarrantyCostModel);
     }
 
-    public Double findCustWarrantyCostTotal (CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCostModel);
-    }
-
     public int addCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.addCustWarrantyCost(custWarrantyCostModel);
     }
 
-    /**
-     * 获取指定内容的有效订单，并返回总保费
-     *
-     * @param insurance
-     */
-    public String getTotalPremium(InsurancePolicyModel insurance) {
-        final int pageSize = 100;
-        insurance.page = new Page();
-        insurance.page.lastId = 0;
-        insurance.page.offset = pageSize;
-
+    public String findCustWarrantyCostTotalByAccountUuid(CustWarrantyCostModel custWarrantyCostModel) {
         BigDecimal amount = new BigDecimal("0.00");
-        boolean hasNextPage;
-        do {
-            List<InsurancePolicyModel> effectiveInsurancePolicyListByChannelId = insurancePolicyMapper.findEffectiveInsurancePolicyByChannelIdAndTime(insurance);
-            if (effectiveInsurancePolicyListByChannelId != null && !effectiveInsurancePolicyListByChannelId.isEmpty()) {
-                CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-                for (InsurancePolicyModel model : effectiveInsurancePolicyListByChannelId) {
-                    custWarrantyCostModel.warranty_uuid = model.warranty_uuid;
-                    Double daoCustWarrantyCostTotal = findCustWarrantyCostTotal(custWarrantyCostModel);
-                    if (daoCustWarrantyCostTotal != null) {
-                        amount = amount.add(new BigDecimal(daoCustWarrantyCostTotal));
-                    }
-                }
+
+        if (custWarrantyCostModel != null && !StringKit.isEmpty(custWarrantyCostModel.account_uuid)) {
+            Double custWarrantyCostTotalByAccountUuidOrChannelId = custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCostModel);
+
+            if (custWarrantyCostTotalByAccountUuidOrChannelId != null) {
+                amount = new BigDecimal(custWarrantyCostTotalByAccountUuidOrChannelId);
             }
 
-            hasNextPage = effectiveInsurancePolicyListByChannelId != null && effectiveInsurancePolicyListByChannelId.size() >= pageSize;
+        }
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        return decimalFormat.format(amount.doubleValue());
+    }
 
-            if (hasNextPage) {
-                insurance.page.lastId = Long.valueOf(effectiveInsurancePolicyListByChannelId.get(effectiveInsurancePolicyListByChannelId.size() - 1).id);
+    public String findCustWarrantyCostTotalByChannelId(CustWarrantyCostModel custWarrantyCostModel) {
+        BigDecimal amount = new BigDecimal("0.00");
+
+        if (custWarrantyCostModel != null && !StringKit.isEmpty(custWarrantyCostModel.channel_id)) {
+            Double custWarrantyCostTotalByAccountUuidOrChannelId = custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCostModel);
+
+            if (custWarrantyCostTotalByAccountUuidOrChannelId != null) {
+                amount = new BigDecimal(custWarrantyCostTotalByAccountUuidOrChannelId);
             }
 
-        } while (hasNextPage);
+        }
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        return decimalFormat.format(amount.doubleValue());
+    }
 
+    public String findCustWarrantyCostTotalByManagerUuid(CustWarrantyCostModel custWarrantyCostModel) {
+        BigDecimal amount = new BigDecimal("0.00");
+
+        if (custWarrantyCostModel != null && !StringKit.isEmpty(custWarrantyCostModel.manager_uuid)) {
+            Double custWarrantyCostTotalByAccountUuidOrChannelId = custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCostModel);
+
+            if (custWarrantyCostTotalByAccountUuidOrChannelId != null) {
+                amount = new BigDecimal(custWarrantyCostTotalByAccountUuidOrChannelId);
+            }
+
+        }
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         return decimalFormat.format(amount.doubleValue());
     }
