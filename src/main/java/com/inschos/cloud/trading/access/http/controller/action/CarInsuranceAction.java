@@ -516,11 +516,33 @@ public class CarInsuranceAction extends BaseAction {
                 response.data = result.data;
                 str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
 
-                // TODO: 2018/4/8 验证这个保险公司的车险产品是否上架，可售
-
                 List<ProductInfo> productInfos = productClient.listProduct();
 
-                System.currentTimeMillis();
+                if (productInfos != null && !productInfos.isEmpty() && response.data != null && !response.data.isEmpty()) {
+                    Map<String, ProductInfo> hashMap = new HashMap<>();
+                    for (ProductInfo productInfo : productInfos) {
+                        if (StringKit.equals(productInfo.sell_status, "1")) {
+                            hashMap.put(productInfo.code, productInfo);
+                        }
+                    }
+
+                    List<ExtendCarInsurancePolicy.InsuranceCompany> list = new ArrayList<>();
+                    for (ExtendCarInsurancePolicy.InsuranceCompany datum : response.data) {
+                        ProductInfo productInfo = hashMap.get(datum.insurerCode);
+                        if (productInfo != null) {
+                            list.add(datum);
+                        }
+                    }
+
+                    response.data.clear();
+                    response.data.addAll(list);
+
+                } else {
+                    if (response.data == null) {
+                        response.data = new ArrayList<>();
+                    }
+                    response.data.clear();
+                }
 
             } else {
                 if (StringKit.equals(CarInsuranceResponse.ERROR_SI100100000063, result.msgCode)) {
@@ -1144,6 +1166,8 @@ public class CarInsuranceAction extends BaseAction {
 
             // TODO: 2018/4/11 记得获取这几个信息
             // TODO: 2018/4/8 利用保险公司简称代码，获取产品id与保险公司id
+
+
             // 代理人ID为null则为用户自主购买
             // agent_auuid;
             // 渠道ID为0则为用户自主购买
@@ -1634,7 +1658,7 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
-                if (!StringKit.isEmpty(request.frontCardBase64)  && result.data != null) {
+                if (!StringKit.isEmpty(request.frontCardBase64) && result.data != null) {
                     FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
                     request1.base64 = request.frontCardBase64;
                     request1.fileKey = MD5Kit.MD5Digest(result.data.cardNo + result.data.name + "1");
@@ -1707,7 +1731,7 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
-                if (!StringKit.isEmpty(request.imgJustBase64)  && result.data != null) {
+                if (!StringKit.isEmpty(request.imgJustBase64) && result.data != null) {
                     FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
                     request1.base64 = request.imgJustBase64;
                     request1.fileKey = MD5Kit.MD5Digest(result.data.engineNo + result.data.frameNo + result.data.fileNumber + "1");

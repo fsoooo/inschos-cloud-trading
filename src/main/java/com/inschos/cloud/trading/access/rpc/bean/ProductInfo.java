@@ -8,11 +8,6 @@ package com.inschos.cloud.trading.access.rpc.bean;
 public class ProductInfo {
 
     /**
-     * 保险编码
-     */
-    public String insurance_code;
-
-    /**
      * 保险产品名称
      */
     public String name;
@@ -92,14 +87,10 @@ public class ProductInfo {
      * 最小起保日期
      */
     public String first_date;
-    /**
-     * 创建时间
-     */
-    public String created_at;
-    /**
-     * 修改时间
-     */
-    public String updated_at;
 
+    /**
+     * 保险公司code
+     */
+    public String code;
 
 }

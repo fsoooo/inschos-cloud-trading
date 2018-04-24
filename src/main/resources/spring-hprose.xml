@@ -23,7 +23,6 @@
         </property>
     </bean>
 
-
     <!--bean -->
     <bean name="premiumService"
           class="com.inschos.cloud.trading.access.rpc.remoting.hprose.HproseHttpServiceExporter">
@@ -38,7 +37,7 @@
 
     <bean name="brokerageService"
           class="com.inschos.cloud.trading.access.rpc.remoting.hprose.HproseHttpServiceExporter">
-        <property name="event" value="hproseHttpServiceEventExporter"/>
+        <property name="event" ref="hproseHttpServiceEventExporter"/>
         <property name="debug" value="${rpc.hprose.debug}"/>
 
         <!-- 实现-->
