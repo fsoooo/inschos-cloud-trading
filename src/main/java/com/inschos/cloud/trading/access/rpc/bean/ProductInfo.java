@@ -88,4 +88,9 @@ public class ProductInfo {
      */
     public String first_date;
 
+    /**
+     * 保险公司code
+     */
+    public String code;
+
 }

@@ -519,14 +519,24 @@ public class CarInsuranceAction extends BaseAction {
                 List<ProductInfo> productInfos = productClient.listProduct();
 
                 if (productInfos != null && !productInfos.isEmpty() && response.data != null && !response.data.isEmpty()) {
-                    Map<String, ExtendCarInsurancePolicy.InsuranceCompany> hashMap = new HashMap<>();
-                    for (ExtendCarInsurancePolicy.InsuranceCompany datum : response.data) {
-
-                    }
-
+                    Map<String, ProductInfo> hashMap = new HashMap<>();
                     for (ProductInfo productInfo : productInfos) {
-
+                        if (StringKit.equals(productInfo.sell_status, "1")) {
+                            hashMap.put(productInfo.code, productInfo);
+                        }
                     }
+
+                    List<ExtendCarInsurancePolicy.InsuranceCompany> list = new ArrayList<>();
+                    for (ExtendCarInsurancePolicy.InsuranceCompany datum : response.data) {
+                        ProductInfo productInfo = hashMap.get(datum.insurerCode);
+                        if (productInfo != null) {
+                            list.add(datum);
+                        }
+                    }
+
+                    response.data.clear();
+                    response.data.addAll(list);
+
                 } else {
                     if (response.data == null) {
                         response.data = new ArrayList<>();
