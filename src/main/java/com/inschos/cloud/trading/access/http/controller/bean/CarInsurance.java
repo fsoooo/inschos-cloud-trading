@@ -298,7 +298,6 @@ public class CarInsurance {
         public String channelCode;
         @CheckParams
         public String insurerCode;
-        @CheckParams
         public String productId;
         public String bizID;
         @CheckParams
