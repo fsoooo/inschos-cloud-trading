@@ -37,9 +37,6 @@ public class CarInsuranceAction extends BaseAction {
     private CarRecordDao carRecordDao;
 
     @Autowired
-    private CarInfoDao carInfoDao;
-
-    @Autowired
     private InsurancePolicyDao insurancePolicyDao;
 
     /**
@@ -1093,7 +1090,7 @@ public class CarInsuranceAction extends BaseAction {
      * @param actionBean 请求体
      * @return 响应json
      */
-    public String applyUnderwriting(ActionBean actionBean) {
+    private String applyUnderwriting(ActionBean actionBean) {
 //        CarInsurance.ApplyUnderwritingRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ApplyUnderwritingRequest.class);
         CarInsurance.PremiumCalibrateAndApplyUnderwritingRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.PremiumCalibrateAndApplyUnderwritingRequest.class);
         CarInsurance.ApplyUnderwritingResponse response = new CarInsurance.ApplyUnderwritingResponse();
@@ -1119,7 +1116,7 @@ public class CarInsuranceAction extends BaseAction {
 
         applyUnderwritingRequest.refereeMobile = request.applyUnderwriting.refereeMobile;
 
-        if (request.applyUnderwriting.isNeedVerificationCode()) {
+        if (!StringKit.isEmpty(request.applyUnderwriting.verificationCode)) {
             applyUnderwritingRequest.verificationCode = request.applyUnderwriting.verificationCode;
         }
 
