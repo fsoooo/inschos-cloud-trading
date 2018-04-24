@@ -5,6 +5,7 @@ import com.inschos.cloud.trading.access.http.controller.bean.PageBean;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.extend.car.CallBackCarInsuranceResponse;
 import com.inschos.cloud.trading.model.Page;
 
 import java.util.ArrayList;
@@ -26,6 +27,17 @@ public class BaseAction {
         List<CheckParamsKit.Entry<String, String>> list = new ArrayList<>();
         list.add(defaultEntry);
         response.message = list;
+
+        return JsonKit.bean2Json(response);
+    }
+
+    public String json(int code, String message, String messageCode, CallBackCarInsuranceResponse response) {
+        if (response == null) {
+            response = new CallBackCarInsuranceResponse();
+        }
+        response.state = String.valueOf(code);
+        response.msg = message;
+        response.msgCode = messageCode;
 
         return JsonKit.bean2Json(response);
     }

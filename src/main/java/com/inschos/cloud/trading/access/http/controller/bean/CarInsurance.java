@@ -406,6 +406,7 @@ public class CarInsurance {
     }
 
     public static class GetPayLinkRequest extends BaseRequest {
+        @CheckParams
         public String bizID;
     }
 

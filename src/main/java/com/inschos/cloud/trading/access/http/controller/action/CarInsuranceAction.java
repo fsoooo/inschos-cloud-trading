@@ -8,6 +8,7 @@ import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.*;
+import com.inschos.cloud.trading.data.dao.CarInfoDao;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.extend.car.*;
@@ -34,6 +35,9 @@ public class CarInsuranceAction extends BaseAction {
 
     @Autowired
     private CarRecordDao carRecordDao;
+
+    @Autowired
+    private CarInfoDao carInfoDao;
 
     @Autowired
     private InsurancePolicyDao insurancePolicyDao;
@@ -1338,7 +1342,6 @@ public class CarInsuranceAction extends BaseAction {
                         request.premiumCalibrate.personInfo);
 
 
-
                 insurancePolicyAndParticipantForCarInsurance.biPolicyholder = new InsuranceParticipantModel(
                         biProposal.warranty_uuid,
                         InsuranceParticipantModel.TYPE_POLICYHOLDER,
@@ -1461,7 +1464,6 @@ public class CarInsuranceAction extends BaseAction {
 
         getPayLinkRequest.bizID = request.bizID;
 
-        // TODO: 2018/4/10 需要去数据库动态判断一下，是否需要先校验验证码
         ExtendCarInsurancePolicy.GetPayLinkResponse result = new CarInsuranceHttpRequest<>(get_pay_link, getPayLinkRequest, ExtendCarInsurancePolicy.GetPayLinkResponse.class).post();
 
         if (result == null) {
@@ -1778,10 +1780,7 @@ public class CarInsuranceAction extends BaseAction {
         }
 
         if (request == null) {
-            response.msg = "未返回bizID或thpBizID";
-            response.state = String.valueOf(CarInsuranceResponse.RESULT_FAIL);
-            response.msgCode = "error_4";
-            return JsonKit.bean2Json(response);
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", "error_1", response);
         }
 
         String applyState = StringKit.equals(request.state, "1") ? InsurancePolicyModel.APPLY_UNDERWRITING_SUCCESS : InsurancePolicyModel.APPLY_UNDERWRITING_FAILURE;
@@ -1809,8 +1808,7 @@ public class CarInsuranceAction extends BaseAction {
         insurance.thpBizID = request.data.thpBizID;
 
         if (!StringKit.isEmpty(request.data.bizID) || !StringKit.isEmpty(request.data.thpBizID)) {
-            int update = 1;
-            update = insurancePolicyDao.updateInsurancePolicyStatusForCarInsurance(insurance);
+            int update = insurancePolicyDao.updateInsurancePolicyStatusForCarInsurance(insurance);
             dealCallBackParamsIllegal(update, response);
         } else {
             response.msg = "未返回bizID或thpBizID";
@@ -1835,6 +1833,10 @@ public class CarInsuranceAction extends BaseAction {
         String s = dealCallBackRequestError(request);
         if (!StringKit.isEmpty(s)) {
             return s;
+        }
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", "error_1", response);
         }
 
         if (!StringKit.isEmpty(request.data.bizID) || !StringKit.isEmpty(request.data.thpBizID)) {
@@ -1886,6 +1888,10 @@ public class CarInsuranceAction extends BaseAction {
         String s = dealCallBackRequestError(request);
         if (!StringKit.isEmpty(s)) {
             return s;
+        }
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", "error_1", response);
         }
 
         UpdateInsurancePolicyExpressInfoForCarInsurance updateInsurancePolicyExpressInfoForCarInsurance = new UpdateInsurancePolicyExpressInfoForCarInsurance();
