@@ -67,6 +67,7 @@ public class ExtendCarInsurancePolicy {
     public static class InsuranceCompany {
         public String insurerCode;
         public String insurerName;
+        public String productId;
     }
 
     public static class GetInsuranceInfoRequest extends CarInsuranceRequest {

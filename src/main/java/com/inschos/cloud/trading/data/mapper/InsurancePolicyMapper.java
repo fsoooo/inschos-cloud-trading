@@ -41,19 +41,5 @@ public interface InsurancePolicyMapper {
 
     long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel);
 
-    // NOTENABLED: 2018/4/12
-    List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);
-
-    // NOTENABLED: 2018/4/12
-    List<InsurancePolicyModel> findInsurancePolicyListByOtherInfo(InsurancePolicyModel insurancePolicyModel);
-
-    // NOTENABLED: 2018/4/12
-    int updateInsurancePolicyUnionOrderCode(InsurancePolicyModel insurancePolicyModel);
-
-    // NOTENABLED: 2018/4/12
-    int updateInsurancePolicyWarrantyCode(InsurancePolicyModel insurancePolicyModel);
-
-    // NOTENABLED: 2018/4/12
-    String findInsurancePolicyPrivateCodeByUnionOrderCode(String unionOrderCode);
-
+    long findInsurancePolicyListCountTimeOrAccountId(InsurancePolicyModel insurancePolicyModel);
 }

@@ -7,6 +7,8 @@ package com.inschos.cloud.trading.access.rpc.bean;
  */
 public class ProductInfo {
 
+    public String id;
+
     /**
      * 保险产品名称
      */
