@@ -285,23 +285,39 @@ public class InsurancePolicyDao extends BaseDao {
         BigDecimal biMoney = new BigDecimal("0.00");
         BigDecimal total = new BigDecimal(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.payMoney);
 
-        if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
-            BigDecimal add1 = ciPremium.add(biPremium);
-            if (add1.compareTo(total) == 0) {
-                ciMoney = ciPremium;
-                biMoney = biPremium;
-            } else {
-                BigDecimal k = biPremium.divide(ciPremium, BigDecimal.ROUND_HALF_UP);
-                BigDecimal add = k.add(new BigDecimal(1));
-                ciMoney = total.divide(add, BigDecimal.ROUND_HALF_UP);
+//        if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
+//            BigDecimal add1 = ciPremium.add(biPremium);
+//            if (add1.compareTo(total) == 0) {
+//                ciMoney = ciPremium;
+//                biMoney = biPremium;
+//            } else {
+//                BigDecimal k = biPremium.divide(ciPremium, BigDecimal.ROUND_HALF_UP);
+//                BigDecimal add = k.add(new BigDecimal(1));
+//                ciMoney = total.divide(add, BigDecimal.ROUND_HALF_UP);
+//                biMoney = total.subtract(ciMoney);
+//            }
+//        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) == 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
+//            biMoney = total;
+//        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) == 0) {
+//            ciMoney = total;
+//        } else {
+//            // 理论上不可能
+//            ciMoney = total;
+//        }
+
+        if (!StringKit.isEmpty(ciUuid) && !StringKit.isEmpty(biUuid)) {
+            if (total.compareTo(ciPremium) >= 0) {
+                ciMoney = total.subtract(ciPremium);
                 biMoney = total.subtract(ciMoney);
+            } else {
+                ciMoney = total;
             }
-        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) == 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
-            biMoney = total;
-        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) == 0) {
+        } else if (!StringKit.isEmpty(ciUuid)) {
             ciMoney = total;
+        } else if (!StringKit.isEmpty(biUuid)) {
+            biMoney = total;
         } else {
-            // 理论上不可能
+            // 保单没找到啊（理论上不可能）
             ciMoney = total;
         }
 
@@ -423,19 +439,17 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findEffectiveInsurancePolicyListByChannelId(channelId);
     }
 
-    public List<InsurancePolicyModel> findEffectiveInsurancePolicyByChannelIdAndTime (InsurancePolicyModel insurancePolicyModel) {
+    public List<InsurancePolicyModel> findEffectiveInsurancePolicyByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findEffectiveInsurancePolicyByChannelIdAndTime(insurancePolicyModel);
     }
 
-    public long findEffectiveInsurancePolicyCountByChannelIdAndTime (InsurancePolicyModel insurancePolicyModel) {
+    public long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findEffectiveInsurancePolicyCountByChannelIdAndTime(insurancePolicyModel);
     }
 
-    public long findInsurancePolicyListCountTimeOrAccountId (InsurancePolicyModel insurancePolicyModel) {
+    public long findInsurancePolicyListCountTimeOrAccountId(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListCountTimeOrAccountId(insurancePolicyModel);
     }
-
-
 
 
 }

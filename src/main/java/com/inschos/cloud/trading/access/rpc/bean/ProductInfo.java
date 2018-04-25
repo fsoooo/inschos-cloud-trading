@@ -1,5 +1,7 @@
 package com.inschos.cloud.trading.access.rpc.bean;
 
+import java.util.Objects;
+
 /**
  * 创建日期：2018/4/19 on 14:47
  * 描述：
@@ -95,4 +97,18 @@ public class ProductInfo {
      */
     public String code;
 
+    public String manager_uuid;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductInfo that = (ProductInfo) o;
+        return Objects.equals(code, that.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 }

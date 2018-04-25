@@ -517,11 +517,13 @@ public class CarInsuranceAction extends BaseAction {
                 response.data = result.data;
                 str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
 
+                // TODO: 2018/4/25 先获取manager_uuid
                 List<ProductInfo> productInfos = productClient.listProduct();
 
                 if (productInfos != null && !productInfos.isEmpty() && response.data != null && !response.data.isEmpty()) {
+                    Set<ProductInfo> hashSet = new HashSet<>(productInfos);
                     Map<String, ProductInfo> hashMap = new HashMap<>();
-                    for (ProductInfo productInfo : productInfos) {
+                    for (ProductInfo productInfo : hashSet) {
                         if (StringKit.equals(productInfo.sell_status, "1")) {
                             hashMap.put(productInfo.code, productInfo);
                         }
@@ -1161,6 +1163,21 @@ public class CarInsuranceAction extends BaseAction {
                 }
             }
 
+            // TODO: 2018/4/25 先获取manager_uuid
+            List<ProductInfo> productInfos = productClient.listProduct();
+            Map<String, ProductInfo> hashMap = new HashMap<>();
+
+            if (productInfos != null && !productInfos.isEmpty()) {
+                Set<ProductInfo> hashSet = new HashSet<>(productInfos);
+                for (ProductInfo productInfo : hashSet) {
+                    if (StringKit.equals(productInfo.sell_status, "1")) {
+                        hashMap.put(productInfo.code, productInfo);
+                    }
+                }
+            }
+
+            ProductInfo productInfo = hashMap.get(request.premiumCalibrate.insurerCode);
+
             String warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
 
             InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance = new InsurancePolicyAndParticipantForCarInsurance();
@@ -1169,19 +1186,12 @@ public class CarInsuranceAction extends BaseAction {
             // TODO: 2018/4/11 记得获取这几个信息
             // TODO: 2018/4/8 利用保险公司简称代码，获取产品id与保险公司id
 
-
             // 代理人ID为null则为用户自主购买
             // agent_auuid;
             // 渠道ID为0则为用户自主购买
             // ditch_id;
             // 计划书ID为0则为用户自主购买
             // plan_id;
-            // 产品ID
-            // product_id;
-            // 保险公司
-            // ins_company_id;
-            // 佣金 0表示未结算，1表示已结算
-            // is_settlement;
 
             // FORCEPREMIUM 强险
             if (!StringKit.isEmpty(result.data.ciProposalNo)) {
@@ -1196,7 +1206,7 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 ciProposal.end_time = ciEndDateValue;
-                ciProposal.manager_uuid = actionBean.managerUuid;
+                ciProposal.manager_uuid = productInfo.manager_uuid;
                 ciProposal.account_uuid = actionBean.accountUuid;
                 ciProposal.count = "1";
 
@@ -1218,9 +1228,9 @@ public class CarInsuranceAction extends BaseAction {
                 // agent_auuid;
                 // ditch_id;
                 // plan_id;
-                ciProposal.product_id = "0";
-                ciProposal.ins_company_id = "0";
-                ciProposal.is_settlement = "0";
+                ciProposal.product_id = productInfo.id;
+                ciProposal.ins_company_id = productInfo.product_company_id;
+                ciProposal.is_settlement = "1";
 
                 insurancePolicyAndParticipantForCarInsurance.ciProposal = ciProposal;
 
@@ -1279,7 +1289,7 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 biProposal.end_time = biEndDateValue;
-                biProposal.manager_uuid = actionBean.managerUuid;
+                biProposal.manager_uuid = productInfo.manager_uuid;
                 biProposal.account_uuid = actionBean.accountUuid;
                 biProposal.count = "1";
 
@@ -1301,9 +1311,9 @@ public class CarInsuranceAction extends BaseAction {
                 // agent_auuid;
                 // ditch_id;
                 // plan_id;
-                biProposal.product_id = "0";
-                biProposal.ins_company_id = "0";
-                biProposal.is_settlement = "0";
+                biProposal.product_id = productInfo.id;
+                biProposal.ins_company_id = productInfo.product_company_id;
+                biProposal.is_settlement = "1";
 
                 insurancePolicyAndParticipantForCarInsurance.biProposal = biProposal;
 
