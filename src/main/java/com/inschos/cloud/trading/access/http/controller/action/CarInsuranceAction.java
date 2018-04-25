@@ -1177,6 +1177,7 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             ProductInfo productInfo = hashMap.get(request.premiumCalibrate.insurerCode);
+            productInfo = new ProductInfo();
             productInfo.manager_uuid = "1";
             productInfo.id = "1";
             productInfo.product_company_id = "1";
