@@ -518,35 +518,35 @@ public class CarInsuranceAction extends BaseAction {
                 str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
 
                 // TODO: 2018/4/25 先获取manager_uuid
-                List<ProductInfo> productInfos = productClient.listProduct();
-
-                if (productInfos != null && !productInfos.isEmpty() && response.data != null && !response.data.isEmpty()) {
-                    Set<ProductInfo> hashSet = new HashSet<>(productInfos);
-                    Map<String, ProductInfo> hashMap = new HashMap<>();
-                    for (ProductInfo productInfo : hashSet) {
-                        if (StringKit.equals(productInfo.sell_status, "1")) {
-                            hashMap.put(productInfo.code, productInfo);
-                        }
-                    }
-
-                    List<ExtendCarInsurancePolicy.InsuranceCompany> list = new ArrayList<>();
-                    for (ExtendCarInsurancePolicy.InsuranceCompany datum : response.data) {
-                        ProductInfo productInfo = hashMap.get(datum.insurerCode);
-                        if (productInfo != null) {
-                            datum.productId = productInfo.id;
-                            list.add(datum);
-                        }
-                    }
-
-                    response.data.clear();
-                    response.data.addAll(list);
-
-                } else {
-                    if (response.data == null) {
-                        response.data = new ArrayList<>();
-                    }
-                    response.data.clear();
-                }
+//                List<ProductInfo> productInfos = productClient.listProduct();
+//
+//                if (productInfos != null && !productInfos.isEmpty() && response.data != null && !response.data.isEmpty()) {
+//                    Set<ProductInfo> hashSet = new HashSet<>(productInfos);
+//                    Map<String, ProductInfo> hashMap = new HashMap<>();
+//                    for (ProductInfo productInfo : hashSet) {
+//                        if (StringKit.equals(productInfo.sell_status, "1")) {
+//                            hashMap.put(productInfo.code, productInfo);
+//                        }
+//                    }
+//
+//                    List<ExtendCarInsurancePolicy.InsuranceCompany> list = new ArrayList<>();
+//                    for (ExtendCarInsurancePolicy.InsuranceCompany datum : response.data) {
+//                        ProductInfo productInfo = hashMap.get(datum.insurerCode);
+//                        if (productInfo != null) {
+//                            datum.productId = productInfo.id;
+//                            list.add(datum);
+//                        }
+//                    }
+//
+//                    response.data.clear();
+//                    response.data.addAll(list);
+//
+//                } else {
+//                    if (response.data == null) {
+//                        response.data = new ArrayList<>();
+//                    }
+//                    response.data.clear();
+//                }
 
             } else {
                 if (StringKit.equals(CarInsuranceResponse.ERROR_SI100100000063, result.msgCode)) {
@@ -1177,6 +1177,9 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             ProductInfo productInfo = hashMap.get(request.premiumCalibrate.insurerCode);
+            productInfo.manager_uuid = "1";
+            productInfo.id = "1";
+            productInfo.product_company_id = "1";
 
             String warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
 
