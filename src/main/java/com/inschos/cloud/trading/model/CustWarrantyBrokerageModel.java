@@ -28,24 +28,54 @@ public class CustWarrantyBrokerageModel {
     public String cost_id;
 
     /**
-     * 渠道ID|代理人ID
+     * 渠道ID
      */
-    public String data_id;
+    public String channel_id;
 
     /**
-     * 佣金
+     * 代理人ID
      */
-    public String money;
+    public String agent_id;
+
+    /**
+     * 保单佣金
+     */
+    public String warranty_money;
+
+    /**
+     * 业管佣金
+     */
+    public String manager_money;
+
+    /**
+     * 渠道佣金
+     */
+    public String channel_money;
+
+    /**
+     * 代理人佣金
+     */
+    public String agent_money;
 
     /**
      * 保单佣金比例
      */
-    public String rate;
+    public String warranty_rate;
 
     /**
-     * 1保单佣金 2天眼佣金 3业管佣金  4渠道佣金 5代理佣金
+     * 业管佣金比例
      */
-    public String type;
+    public String manager_rate;
+
+    /**
+     * 渠道佣金比例
+     */
+    public String channel_rate;
+
+    /**
+     * 代理人佣金比例
+     */
+    public String agent_rate;
 
     /**
      * 创建时间
@@ -57,7 +87,7 @@ public class CustWarrantyBrokerageModel {
      */
     public String updated_at;
 
-    public String channel_id;
+    public String account_uuid;
     public String start_time;
     public String end_time;
 

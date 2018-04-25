@@ -59,4 +59,17 @@ public class CustWarrantyBrokerageDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
+    public String findIncomeByManagerUuidAndAccountUuid(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+        BigDecimal amount = new BigDecimal("0.00");
+        if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.manager_uuid) && !StringKit.isEmpty(custWarrantyBrokerageModel.account_uuid)) {
+            Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findIncomeByManagerUuidAndAccountUuid(custWarrantyBrokerageModel);
+
+            if (custWarrantyBrokerageTotal != null) {
+                amount = new BigDecimal(custWarrantyBrokerageTotal);
+            }
+
+        }
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        return decimalFormat.format(amount.doubleValue());
+    }
 }

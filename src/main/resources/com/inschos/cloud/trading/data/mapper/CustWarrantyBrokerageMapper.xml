@@ -3,30 +3,54 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.CustWarrantyBrokerageMapper">
 
     <sql id="Base_Column_List">
-        `id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`data_id`,`money`,`rate`,`type`,`created_at`,`updated_at`
+        `id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`created_at`,`updated_at`
     </sql>
 
     <insert id="addBrokerageCommission" parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty_brokerage
-        (`id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`data_id`,`money`,`rate`,`type`,`created_at`,`updated_at`)
+        (`id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`created_at`,`updated_at`)
         values
-        (#{id},#{warranty_uuid},#{manager_uuid},#{cost_id},#{data_id},#{money},#{rate},#{type},#{created_at},#{updated_at})
+        (#{id},#{warranty_uuid},#{manager_uuid},#{cost_id},#{channel_id},#{agent_id},#{warranty_money},#{manager_money},#{channel_money},#{agent_money},#{warranty_rate},#{manager_rate},#{channel_rate},#{agent_rate},#{created_at},#{updated_at})
     </insert>
 
     <select id="findCustWarrantyBrokerageTotal"
             resultType="Double"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
         select SUM(`money`)
-        from cust_warranty_brokerage LEFT JOIN cust_warranty ON cust_warranty.warranty_uuid=cust_warranty_brokerage.warranty_uuid
+        from cust_warranty_brokerage LEFT JOIN cust_warranty ON
+        cust_warranty.warranty_uuid=cust_warranty_brokerage.warranty_uuid
         <where>
             cust_warranty.state = 1 AND cust_warranty.warranty_status != 1 AND cust_warranty.warranty_status != 6
             <if test="manager_uuid!=null and manager_uuid!=''">
                 and cust_warranty_brokerage.manager_uuid=#{manager_uuid}
             </if>
             <if test="channel_id!=null and channel_id!=''">
-                and cust_warranty.channel_id=#{channel_id}
+                and cust_warranty_brokerage.channel_id=#{channel_id}
+            </if>
+            <if test="start_time!=null and start_time!='' and start_time!=0">
+                and cust_warranty.start_time&gt;=#{start_time}
+            </if>
+            <if test="end_time!=null and end_time!='' and end_time!=0">
+                and cust_warranty.start_time&lt;#{end_time}
+            </if>
+        </where>
+    </select>
+
+    <select id="findIncomeByManagerUuidAndAccountUuid"
+            resultType="Double"
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
+        select SUM(`manager_money` - `agent_money`)
+        from cust_warranty_brokerage LEFT JOIN cust_warranty ON
+        cust_warranty.warranty_uuid=cust_warranty_brokerage.warranty_uuid
+        <where>
+            cust_warranty.state = 1 AND cust_warranty.warranty_status != 1 AND cust_warranty.warranty_status != 6
+            <if test="manager_uuid!=null and manager_uuid!=''">
+                and cust_warranty_brokerage.manager_uuid=#{manager_uuid}
+            </if>
+            <if test="account_uuid!=null and account_uuid!=''">
+                and cust_warranty.account_uuid=#{account_uuid}
             </if>
             <if test="start_time!=null and start_time!='' and start_time!=0">
                 and cust_warranty.start_time&gt;=#{start_time}

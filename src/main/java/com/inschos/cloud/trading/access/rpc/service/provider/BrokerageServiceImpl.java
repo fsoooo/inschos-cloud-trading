@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.access.rpc.service.provider;
 
 import com.inschos.cloud.trading.access.rpc.bean.ChannelIdBean;
+import com.inschos.cloud.trading.access.rpc.bean.IncomeBean;
 import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
 import com.inschos.cloud.trading.data.dao.CustWarrantyBrokerageDao;
 import com.inschos.cloud.trading.model.CustWarrantyBrokerageModel;
@@ -27,13 +28,38 @@ public class BrokerageServiceImpl implements BrokerageService {
             if (bean.channelId != null) {
                 insurance.channel_id = bean.channelId;
             } else {
-                insurance.channel_id = "-1";
+                return result;
             }
             insurance.start_time = bean.startTime;
             insurance.end_time = bean.endTime;
 
             result = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByChannelId(insurance);
         }
+        return result;
+    }
+
+    @Override
+    public String getIncomeByManagerUuidAndAccountUuidForManagerSystem(IncomeBean bean) {
+        String result = "0.00";
+        if (bean != null) {
+            CustWarrantyBrokerageModel insurance = new CustWarrantyBrokerageModel();
+            if (bean.accountUuid != null) {
+                insurance.account_uuid = bean.accountUuid;
+            } else {
+                return result;
+            }
+
+            if (bean.managerUuid != null) {
+                insurance.manager_uuid = bean.managerUuid;
+            } else {
+                return result;
+            }
+            insurance.start_time = bean.startTime;
+            insurance.end_time = bean.endTime;
+
+            result = custWarrantyBrokerageDao.findIncomeByManagerUuidAndAccountUuid(insurance);
+        }
+
         return result;
     }
 }
