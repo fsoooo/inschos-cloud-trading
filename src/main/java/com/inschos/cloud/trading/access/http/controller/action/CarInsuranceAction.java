@@ -3,9 +3,11 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
-import com.inschos.cloud.trading.access.rpc.bean.MyBean;
-import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
+import com.inschos.cloud.trading.access.rpc.bean.*;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
+import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
+import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
+import com.inschos.cloud.trading.access.rpc.service.PremiumService;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.CarInfoDao;
@@ -2433,52 +2435,82 @@ public class CarInsuranceAction extends BaseAction {
     @Autowired
     private ProductClient productClient;
 
+    @Autowired
+    private BrokerageService brokerageService;
+
+    @Autowired
+    private CustWarrantyService custWarrantyService;
+
+    @Autowired
+    private PremiumService premiumService;
+
     public String setData(ActionBean actionBean) {
-        CarInsurance.GetProvinceCodeRequest request1 = new CarInsurance.GetProvinceCodeRequest();
+//        CarInsurance.GetProvinceCodeRequest request1 = new CarInsurance.GetProvinceCodeRequest();
+//
+//        request1.type = "0";
+//
+//        actionBean.body = JsonKit.bean2Json(request1);
+//
+//        String provinceCode = getProvinceCode(actionBean);
+//
+//        ExtendCarInsurancePolicy.GetProvinceCodeResponse codeResponse = JsonKit.json2Bean(provinceCode, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class);
+//
+//        LinkedHashMap<String, MyBean> map = new LinkedHashMap<>();
+//
+//        if (codeResponse != null && codeResponse.data != null && !codeResponse.data.isEmpty()) {
+//            for (ExtendCarInsurancePolicy.ProvinceCodeDetail datum : codeResponse.data) {
+//                CarInsurance.GetInsuranceCompanyRequest request = new CarInsurance.GetInsuranceCompanyRequest();
+//
+//                request.provinceCode = datum.provinceCode;
+//                actionBean.body = JsonKit.bean2Json(request);
+//
+//                String insuranceByArea = getInsuranceByArea(actionBean);
+//                ExtendCarInsurancePolicy.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse.class);
+//
+//                if (getInsuranceCompanyResponse != null && getInsuranceCompanyResponse.data != null && !getInsuranceCompanyResponse.data.isEmpty()) {
+//
+//                    for (ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany : getInsuranceCompanyResponse.data) {
+//                        map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode + "_CAR", insuranceCompany.insurerName));
+//                    }
+//                }
+//            }
+//        }
+//
+//        Set<String> strings = map.keySet();
+//        ArrayList<MyBean> myBeans = new ArrayList<>();
+//
+//        for (String string : strings) {
+//            myBeans.add(map.get(string));
+//        }
+//
+//        L.log.debug(JsonKit.bean2Json(myBeans));
+//
+//        if (!myBeans.isEmpty()) {
+////            MyBean[] array = new MyBean[myBeans.size()];
+////            MyBean[] myBeans1 = myBeans.toArray(array);
+//            productClient.addCompany(myBeans);
+//        }
+        ChannelIdBean channelIdBean = new ChannelIdBean();
+        channelIdBean.channelId = "1";
 
-        request1.type = "0";
+        String brokerageByChannelIdForManagerSystem = brokerageService.getBrokerageByChannelIdForManagerSystem(channelIdBean);
 
-        actionBean.body = JsonKit.bean2Json(request1);
+        IncomeBean incomeBean = new IncomeBean();
+        incomeBean.managerUuid = "1";
+        incomeBean.accountUuid = "1";
 
-        String provinceCode = getProvinceCode(actionBean);
+        String incomeByManagerUuidAndAccountUuidForManagerSystem = brokerageService.getIncomeByManagerUuidAndAccountUuidForManagerSystem(incomeBean);
 
-        ExtendCarInsurancePolicy.GetProvinceCodeResponse codeResponse = JsonKit.json2Bean(provinceCode, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class);
+        AccountUuidBean accountUuid = new AccountUuidBean();
+        accountUuid.accountUuid = "1";
 
-        LinkedHashMap<String, MyBean> map = new LinkedHashMap<>();
+        String policyholderCountByTimeOrAccountId = custWarrantyService.getPolicyholderCountByTimeOrAccountId(accountUuid);
 
-        if (codeResponse != null && codeResponse.data != null && !codeResponse.data.isEmpty()) {
-            for (ExtendCarInsurancePolicy.ProvinceCodeDetail datum : codeResponse.data) {
-                CarInsurance.GetInsuranceCompanyRequest request = new CarInsurance.GetInsuranceCompanyRequest();
+        String premiumByAccountUuidForManagerSystem = premiumService.getPremiumByAccountUuidForManagerSystem(accountUuid);
 
-                request.provinceCode = datum.provinceCode;
-                actionBean.body = JsonKit.bean2Json(request);
+        String premiumByChannelIdForManagerSystem = premiumService.getPremiumByChannelIdForManagerSystem(channelIdBean);
 
-                String insuranceByArea = getInsuranceByArea(actionBean);
-                ExtendCarInsurancePolicy.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse.class);
-
-                if (getInsuranceCompanyResponse != null && getInsuranceCompanyResponse.data != null && !getInsuranceCompanyResponse.data.isEmpty()) {
-
-                    for (ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany : getInsuranceCompanyResponse.data) {
-                        map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode + "_CAR", insuranceCompany.insurerName));
-                    }
-                }
-            }
-        }
-
-        Set<String> strings = map.keySet();
-        ArrayList<MyBean> myBeans = new ArrayList<>();
-
-        for (String string : strings) {
-            myBeans.add(map.get(string));
-        }
-
-        L.log.debug(JsonKit.bean2Json(myBeans));
-
-        if (!myBeans.isEmpty()) {
-//            MyBean[] array = new MyBean[myBeans.size()];
-//            MyBean[] myBeans1 = myBeans.toArray(array);
-            productClient.addCompany(myBeans);
-        }
+        String premiumCountByChannelIdForManagerSystem = premiumService.getPremiumCountByChannelIdForManagerSystem(channelIdBean);
 
         return "";
     }
