@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PersonClient {
 
-    @Value("${rpc.remote.product.host}")
+    @Value("${rpc.remote.person.host}")
     private String host;
 
     private final String uri = "/rpc/person";

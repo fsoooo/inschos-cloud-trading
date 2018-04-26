@@ -8,6 +8,7 @@ import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
 import com.inschos.cloud.trading.model.CarInfoModel;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.model.PolicyListCountModel;
 import com.inschos.cloud.trading.model.fordao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -447,8 +448,16 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findEffectiveInsurancePolicyCountByChannelIdAndTime(insurancePolicyModel);
     }
 
-    public long findInsurancePolicyListCountTimeOrAccountId(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyListCountTimeOrAccountId(insurancePolicyModel);
+    public long findInsurancePolicyListCountByTimeAndAccountUuid(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListCount(insurancePolicyModel);
+    }
+
+    public long findInsurancePolicyListCountByTimeAndManagerUuid(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListCount(insurancePolicyModel);
+    }
+
+    public List<PolicyListCountModel> findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
     }
 
 

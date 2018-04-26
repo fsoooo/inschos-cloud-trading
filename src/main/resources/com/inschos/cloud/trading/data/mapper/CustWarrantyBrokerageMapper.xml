@@ -18,7 +18,18 @@
     <select id="findCustWarrantyBrokerageTotal"
             resultType="Double"
             parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
-        select SUM(`channel_money`)
+        select
+        <choose>
+            <when test="manager_uuid!=null and manager_uuid!=''">
+                sum(`manager_money`)
+            </when>
+            <when test="channel_id!=null and channel_id!=''">
+                sum(`channel_money`)
+            </when>
+            <otherwise>
+                sum(`warranty_money`)
+            </otherwise>
+        </choose>
         from cust_warranty_brokerage LEFT JOIN cust_warranty ON
         cust_warranty.warranty_uuid=cust_warranty_brokerage.warranty_uuid
         <where>

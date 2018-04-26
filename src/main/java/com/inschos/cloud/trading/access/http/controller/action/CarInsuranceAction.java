@@ -1190,15 +1190,7 @@ public class CarInsuranceAction extends BaseAction {
             InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance = new InsurancePolicyAndParticipantForCarInsurance();
             String time = String.valueOf(System.currentTimeMillis());
 
-            // TODO: 2018/4/11 记得获取这几个信息
-            // TODO: 2018/4/8 利用保险公司简称代码，获取产品id与保险公司id
-
-            // 代理人ID为null则为用户自主购买
-            // agent_auuid;
-            // 渠道ID为0则为用户自主购买
-            // ditch_id;
-            // 计划书ID为0则为用户自主购买
-            // plan_id;
+            AgentBean agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid(actionBean.managerUuid, actionBean.userId);
 
             // FORCEPREMIUM 强险
             if (!StringKit.isEmpty(result.data.ciProposalNo)) {
@@ -1213,11 +1205,13 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 ciProposal.end_time = ciEndDateValue;
-                ciProposal.manager_uuid = productInfo.manager_uuid;
+                ciProposal.manager_uuid = actionBean.managerUuid;
                 ciProposal.account_uuid = actionBean.accountUuid;
                 ciProposal.count = "1";
 
                 if (actionBean.userType == 4) {
+                    ciProposal.agent_id = agentInfoByPersonIdManagerUuid != null ? String.valueOf(agentInfoByPersonIdManagerUuid.id) : "";
+                    ciProposal.channel_id = agentInfoByPersonIdManagerUuid != null ? String.valueOf(agentInfoByPersonIdManagerUuid.channel_id) : "";
                     ciProposal.warranty_from = InsurancePolicyModel.SOURCE_ONLINE;
                 } else {
                     ciProposal.warranty_from = InsurancePolicyModel.SOURCE_SELF;
@@ -1231,10 +1225,7 @@ public class CarInsuranceAction extends BaseAction {
                 ciProposal.created_at = time;
                 ciProposal.updated_at = time;
 
-                // TODO: 2018/4/11 以下数据测试用
-                // agent_auuid;
-                // ditch_id;
-                // plan_id;
+                ciProposal.plan_id = "0";
                 ciProposal.product_id = productInfo.id;
                 ciProposal.ins_company_id = productInfo.product_company_id;
                 ciProposal.is_settlement = "1";
@@ -1296,11 +1287,13 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 biProposal.end_time = biEndDateValue;
-                biProposal.manager_uuid = productInfo.manager_uuid;
+                biProposal.manager_uuid = actionBean.managerUuid;
                 biProposal.account_uuid = actionBean.accountUuid;
                 biProposal.count = "1";
 
                 if (actionBean.userType == 4) {
+                    biProposal.agent_id = agentInfoByPersonIdManagerUuid != null ? String.valueOf(agentInfoByPersonIdManagerUuid.id) : "";
+                    biProposal.channel_id = agentInfoByPersonIdManagerUuid != null ? String.valueOf(agentInfoByPersonIdManagerUuid.channel_id) : "";
                     biProposal.warranty_from = InsurancePolicyModel.SOURCE_ONLINE;
                 } else {
                     biProposal.warranty_from = InsurancePolicyModel.SOURCE_SELF;
@@ -1314,10 +1307,7 @@ public class CarInsuranceAction extends BaseAction {
                 biProposal.created_at = time;
                 biProposal.updated_at = time;
 
-                // TODO: 2018/4/11 以下数据测试用
-                // agent_auuid;
-                // ditch_id;
-                // plan_id;
+                biProposal.plan_id = "0";
                 biProposal.product_id = productInfo.id;
                 biProposal.ins_company_id = productInfo.product_company_id;
                 biProposal.is_settlement = "1";
@@ -2490,8 +2480,6 @@ public class CarInsuranceAction extends BaseAction {
 //        L.log.debug(JsonKit.bean2Json(myBeans));
 //
 //        if (!myBeans.isEmpty()) {
-////            MyBean[] array = new MyBean[myBeans.size()];
-////            MyBean[] myBeans1 = myBeans.toArray(array);
 //            productClient.addCompany(myBeans);
 //        }
 //        ChannelIdBean channelIdBean = new ChannelIdBean();
@@ -2516,9 +2504,17 @@ public class CarInsuranceAction extends BaseAction {
 //
 //        String premiumCountByChannelIdForManagerSystem = premiumService.getPremiumCountByChannelIdForManagerSystem(channelIdBean);
 
-        AgentBean agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid("2", "92");
+//        AgentBean agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid("2", "92");
+//
+//        return agentInfoByPersonIdManagerUuid != null ? agentInfoByPersonIdManagerUuid.toString() : "null";
 
-        return agentInfoByPersonIdManagerUuid != null ?agentInfoByPersonIdManagerUuid.toString():"null";
+        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        insurancePolicyModel.manager_uuid = "2";
+        insurancePolicyModel.product_id_string = "0,1";
+
+        List<PolicyListCountModel> insurancePolicyListCountByTimeAndManagerUuidAndProductId = insurancePolicyDao.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
+
+        return "";
     }
 
 }

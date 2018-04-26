@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.data.mapper;
 
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.model.PolicyListCountModel;
 
 import java.util.List;
 
@@ -41,7 +42,9 @@ public interface InsurancePolicyMapper {
 
     long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel);
 
-    long findInsurancePolicyListCountTimeOrAccountId(InsurancePolicyModel insurancePolicyModel);
+    long findInsurancePolicyListCount(InsurancePolicyModel insurancePolicyModel);
+
+    List<PolicyListCountModel> findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(InsurancePolicyModel insurancePolicyModel);
 
     Double getTotalPremiumByAccountUuidAndTime(InsurancePolicyModel insurancePolicyModel);
 }

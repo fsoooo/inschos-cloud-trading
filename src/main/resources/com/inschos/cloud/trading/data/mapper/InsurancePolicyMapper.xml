@@ -306,7 +306,7 @@
                     )
                 </when>
                 <otherwise>
-                     1=1
+                    1=1
                 </otherwise>
             </choose>
             and `channel_id`=#{channel_id} AND `warranty_status`!= 1 AND `warranty_status`!= 6 AND state = 1
@@ -335,14 +335,20 @@
         </if>
     </select>
 
-    <select id="findInsurancePolicyListCountTimeOrAccountId"
+    <select id="findInsurancePolicyListCount"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             resultType="long">
         select
         count(id)
         from cust_warranty
         <where>
-            account_uuid=#{account_uuid} AND state = 1
+            state = 1
+            <if test="account_uuid!=null and account_uuid!=''">
+                and `account_uuid`=#{account_uuid}
+            </if>
+            <if test="manager_uuid!=null and manager_uuid!=''">
+                and `manager_uuid`=#{manager_uuid}
+            </if>
             <if test="start_time!=null and start_time!='' and start_time!=0">
                 and `start_time`&gt;=#{start_time}
             </if>
@@ -352,5 +358,28 @@
         </where>
     </select>
 
+    <select id="findInsurancePolicyListCountByTimeAndManagerUuidAndProductId"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="PolicyListCountModel">
+        select
+        `product_id`, count(id) product_count
+        from cust_warranty
+        <where>
+            state = 1
+            <if test="manager_uuid!=null and manager_uuid!=''">
+                and `manager_uuid`=#{manager_uuid}
+            </if>
+            <if test="start_time!=null and start_time!='' and start_time!=0">
+                and `start_time`&gt;=#{start_time}
+            </if>
+            <if test="end_time!=null and end_time!='' and end_time!=0">
+                and `start_time`&lt;#{end_time}
+            </if>
+            <if test="product_id_string!=null and product_id_string!=''">
+                and `product_id` in (${product_id_string})
+            </if>
+        </where>
+        GROUP BY `product_id`
+    </select>
 
 </mapper>
