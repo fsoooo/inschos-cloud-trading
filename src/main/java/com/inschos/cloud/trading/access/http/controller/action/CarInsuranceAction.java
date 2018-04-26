@@ -4,6 +4,7 @@ import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
 import com.inschos.cloud.trading.access.rpc.bean.*;
+import com.inschos.cloud.trading.access.rpc.client.PersonClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
@@ -2436,6 +2437,9 @@ public class CarInsuranceAction extends BaseAction {
     private ProductClient productClient;
 
     @Autowired
+    private PersonClient personClient;
+
+    @Autowired
     private BrokerageService brokerageService;
 
     @Autowired
@@ -2490,27 +2494,29 @@ public class CarInsuranceAction extends BaseAction {
 ////            MyBean[] myBeans1 = myBeans.toArray(array);
 //            productClient.addCompany(myBeans);
 //        }
-        ChannelIdBean channelIdBean = new ChannelIdBean();
-        channelIdBean.channelId = "1";
+//        ChannelIdBean channelIdBean = new ChannelIdBean();
+//        channelIdBean.channelId = "1";
+//
+//        String brokerageByChannelIdForManagerSystem = brokerageService.getBrokerageByChannelIdForManagerSystem(channelIdBean);
+//
+//        IncomeBean incomeBean = new IncomeBean();
+//        incomeBean.managerUuid = "1";
+//        incomeBean.accountUuid = "1";
+//
+//        String incomeByManagerUuidAndAccountUuidForManagerSystem = brokerageService.getIncomeByManagerUuidAndAccountUuidForManagerSystem(incomeBean);
+//
+//        AccountUuidBean accountUuid = new AccountUuidBean();
+//        accountUuid.accountUuid = "1";
+//
+//        String policyholderCountByTimeOrAccountId = custWarrantyService.getPolicyholderCountByTimeOrAccountId(accountUuid);
+//
+//        String premiumByAccountUuidForManagerSystem = premiumService.getPremiumByAccountUuidForManagerSystem(accountUuid);
+//
+//        String premiumByChannelIdForManagerSystem = premiumService.getPremiumByChannelIdForManagerSystem(channelIdBean);
+//
+//        String premiumCountByChannelIdForManagerSystem = premiumService.getPremiumCountByChannelIdForManagerSystem(channelIdBean);
 
-        String brokerageByChannelIdForManagerSystem = brokerageService.getBrokerageByChannelIdForManagerSystem(channelIdBean);
-
-        IncomeBean incomeBean = new IncomeBean();
-        incomeBean.managerUuid = "1";
-        incomeBean.accountUuid = "1";
-
-        String incomeByManagerUuidAndAccountUuidForManagerSystem = brokerageService.getIncomeByManagerUuidAndAccountUuidForManagerSystem(incomeBean);
-
-        AccountUuidBean accountUuid = new AccountUuidBean();
-        accountUuid.accountUuid = "1";
-
-        String policyholderCountByTimeOrAccountId = custWarrantyService.getPolicyholderCountByTimeOrAccountId(accountUuid);
-
-        String premiumByAccountUuidForManagerSystem = premiumService.getPremiumByAccountUuidForManagerSystem(accountUuid);
-
-        String premiumByChannelIdForManagerSystem = premiumService.getPremiumByChannelIdForManagerSystem(channelIdBean);
-
-        String premiumCountByChannelIdForManagerSystem = premiumService.getPremiumCountByChannelIdForManagerSystem(channelIdBean);
+        AgentBean agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid("2", "92");
 
         return "";
     }
