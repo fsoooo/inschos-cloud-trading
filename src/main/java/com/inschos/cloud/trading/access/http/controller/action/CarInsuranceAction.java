@@ -1057,9 +1057,21 @@ public class CarInsuranceAction extends BaseAction {
                 BigDecimal bi = new BigDecimal("0.0");
                 SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd");
                 StringBuilder stringBuilder = new StringBuilder();
+                boolean flag = false;
                 for (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail datum : result.data) {
                     datum.biBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
+                    String s1 = nextYearMillisecond(datum.biBeginDateValue);
+                    if (StringKit.isInteger(s1)) {
+                        datum.biInsuranceTermText = dateSdf.format(new Date(Long.valueOf(datum.biBeginDateValue))) + "-" + dateSdf.format(new Date(Long.valueOf(s1)));
+                    }
+
                     datum.ciBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.ciBeginDate);
+                    s1 = nextYearMillisecond(datum.ciBeginDateValue);
+                    if (StringKit.isInteger(s1)) {
+                        datum.ciInsuranceTermText = dateSdf.format(new Date(Long.valueOf(datum.ciBeginDateValue))) + "-" + dateSdf.format(new Date(Long.valueOf(s1)));
+                    }
+
+                    datum.productName = "";
 
                     for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : datum.coverageList) {
                         if (StringKit.isNumeric(insurancePolicyInfo.insuredPremium)) {
@@ -1071,6 +1083,12 @@ public class CarInsuranceAction extends BaseAction {
                         }
                     }
 
+                    if (flag) {
+                        stringBuilder.append("\n");
+                    }
+
+                    stringBuilder.append(dealInsurancePolicyInfoForShow(datum.coverageList));
+                    flag = true;
                 }
 
                 response.data.biInsuredPremium = bi.toString();
@@ -1081,11 +1099,8 @@ public class CarInsuranceAction extends BaseAction {
                 response.data.totalInsuredPremium = add.toString();
                 response.data.totalInsuredPremiumText = "¥" + add.toString();
 
-//                response.data.productName =;
                 response.data.insuredName = request.personInfo.insuredName;
-//                response.data.ciInsuranceTermText = ;
-//                response.data.biInsuranceTermText =;
-//                response.data.insuranceContent =;
+                response.data.insuranceContent = stringBuilder.toString();
 
 
                 response.data.insurancePolicyPremiumDetails = result.data;
@@ -2325,10 +2340,28 @@ public class CarInsuranceAction extends BaseAction {
         }
     }
 
-    public String deal(List<ExtendCarInsurancePolicy.InsurancePolicyInfo> list) {
+    public String dealInsurancePolicyInfoForShow(List<ExtendCarInsurancePolicy.InsurancePolicyInfo> list) {
         StringBuilder stringBuilder = new StringBuilder();
+        Map<String, ExtendCarInsurancePolicy.InsurancePolicyInfo> map = new HashMap<>();
         for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : list) {
+            if (insurancePolicyInfo.coverageCode.startsWith("M")) {
+                map.put(insurancePolicyInfo.coverageCode.substring(1, insurancePolicyInfo.coverageCode.length()), insurancePolicyInfo);
+            }
+        }
 
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo = list.get(i);
+            if (!insurancePolicyInfo.coverageCode.startsWith("M")) {
+                stringBuilder.append(insurancePolicyInfo.coverageName);
+                if (map.get(insurancePolicyInfo.coverageCode) != null) {
+                    stringBuilder.append(insurancePolicyInfo.coverageName).append("(不计免赔)");
+                }
+
+                if (i < size - 1) {
+                    stringBuilder.append("、");
+                }
+            }
         }
         return stringBuilder.toString();
     }
