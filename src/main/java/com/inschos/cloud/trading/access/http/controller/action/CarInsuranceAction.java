@@ -2518,7 +2518,7 @@ public class CarInsuranceAction extends BaseAction {
 
         AgentBean agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid("2", "92");
 
-        return "";
+        return agentInfoByPersonIdManagerUuid != null ?agentInfoByPersonIdManagerUuid.toString():"null";
     }
 
 }

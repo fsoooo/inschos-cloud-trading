@@ -49,4 +49,19 @@ public class AgentBean {
      */
     public String end_time;
 
+    @Override
+    public String toString() {
+        return "AgentBean{" +
+                "id=" + id +
+                ", manager_uuid=" + manager_uuid +
+                ", channel_id=" + channel_id +
+                ", person_id=" + person_id +
+                ", phone=" + phone +
+                ", job_num=" + job_num +
+                ", position_id=" + position_id +
+                ", note='" + note + '\'' +
+                ", start_time='" + start_time + '\'' +
+                ", end_time='" + end_time + '\'' +
+                '}';
+    }
 }
