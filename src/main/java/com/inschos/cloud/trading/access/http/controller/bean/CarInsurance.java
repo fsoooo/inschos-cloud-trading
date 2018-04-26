@@ -282,6 +282,11 @@ public class CarInsurance {
         public String ciInsuredPremiumText;
         public String biInsuredPremium;
         public String biInsuredPremiumText;
+        public String productName;
+        public String insuredName;
+        public String ciInsuranceTermText;
+        public String biInsuranceTermText;
+        public String insuranceContent;
         public List<ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail> insurancePolicyPremiumDetails;
     }
 

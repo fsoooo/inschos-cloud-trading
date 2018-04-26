@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
 import com.inschos.cloud.trading.access.rpc.bean.MyBean;
+import com.inschos.cloud.trading.access.rpc.bean.MyBean2;
 import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
 import com.inschos.cloud.trading.access.rpc.service.ProductService;
 import com.inschos.cloud.trading.assist.kit.L;
@@ -62,15 +63,26 @@ public class ProductClient {
         }
     }
 
-//    public String addCompany(MyBean[] list) {
-//        try {
-//            ProductService service = getService();
-//            return service != null ? service.addCompany(list) : null;
-//
-//        } catch (Exception e) {
-//            L.log.error("remote fail {}", e.getMessage(), e);
-//            return null;
-//        }
-//    }
+    public List<MyBean> listCompany() {
+        try {
+            ProductService service = getService();
+            return service != null ? service.listCompany() : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public String addProduct(List<MyBean2> list) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.addProduct(list) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
 
 }

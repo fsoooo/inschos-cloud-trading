@@ -14,6 +14,7 @@ import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.CarInfoDao;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
+import com.inschos.cloud.trading.data.dao.ProductDao;
 import com.inschos.cloud.trading.extend.car.*;
 import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
@@ -1055,6 +1056,7 @@ public class CarInsuranceAction extends BaseAction {
                 BigDecimal ci = new BigDecimal("0.0");
                 BigDecimal bi = new BigDecimal("0.0");
                 SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd");
+                StringBuilder stringBuilder = new StringBuilder();
                 for (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail datum : result.data) {
                     datum.biBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
                     datum.ciBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.ciBeginDate);
@@ -1068,12 +1070,23 @@ public class CarInsuranceAction extends BaseAction {
                             }
                         }
                     }
+
                 }
 
                 response.data.biInsuredPremium = bi.toString();
                 response.data.ciInsuredPremium = ci.toString();
                 response.data.ciInsuredPremiumText = "¥" + ci.toString();
                 response.data.biInsuredPremiumText = "¥" + bi.toString();
+                BigDecimal add = bi.add(ci);
+                response.data.totalInsuredPremium = add.toString();
+                response.data.totalInsuredPremiumText = "¥" + add.toString();
+
+//                response.data.productName =;
+                response.data.insuredName = request.personInfo.insuredName;
+//                response.data.ciInsuranceTermText = ;
+//                response.data.biInsuranceTermText =;
+//                response.data.insuranceContent =;
+
 
                 response.data.insurancePolicyPremiumDetails = result.data;
 
@@ -2312,6 +2325,14 @@ public class CarInsuranceAction extends BaseAction {
         }
     }
 
+    public String deal(List<ExtendCarInsurancePolicy.InsurancePolicyInfo> list) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : list) {
+
+        }
+        return stringBuilder.toString();
+    }
+
     /**
      * 格式化时间戳用
      *
@@ -2438,50 +2459,96 @@ public class CarInsuranceAction extends BaseAction {
     @Autowired
     private PremiumService premiumService;
 
+    @Autowired
+    private ProductDao productDao;
+
     public String setData(ActionBean actionBean) {
-//        CarInsurance.GetProvinceCodeRequest request1 = new CarInsurance.GetProvinceCodeRequest();
-//
-//        request1.type = "0";
-//
-//        actionBean.body = JsonKit.bean2Json(request1);
-//
-//        String provinceCode = getProvinceCode(actionBean);
-//
-//        ExtendCarInsurancePolicy.GetProvinceCodeResponse codeResponse = JsonKit.json2Bean(provinceCode, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class);
-//
-//        LinkedHashMap<String, MyBean> map = new LinkedHashMap<>();
-//
-//        if (codeResponse != null && codeResponse.data != null && !codeResponse.data.isEmpty()) {
-//            for (ExtendCarInsurancePolicy.ProvinceCodeDetail datum : codeResponse.data) {
-//                CarInsurance.GetInsuranceCompanyRequest request = new CarInsurance.GetInsuranceCompanyRequest();
-//
-//                request.provinceCode = datum.provinceCode;
-//                actionBean.body = JsonKit.bean2Json(request);
-//
-//                String insuranceByArea = getInsuranceByArea(actionBean);
-//                ExtendCarInsurancePolicy.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse.class);
-//
-//                if (getInsuranceCompanyResponse != null && getInsuranceCompanyResponse.data != null && !getInsuranceCompanyResponse.data.isEmpty()) {
-//
-//                    for (ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany : getInsuranceCompanyResponse.data) {
-//                        map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode + "_CAR", insuranceCompany.insurerName));
-//                    }
-//                }
-//            }
-//        }
-//
-//        Set<String> strings = map.keySet();
-//        ArrayList<MyBean> myBeans = new ArrayList<>();
-//
-//        for (String string : strings) {
-//            myBeans.add(map.get(string));
-//        }
-//
-//        L.log.debug(JsonKit.bean2Json(myBeans));
-//
-//        if (!myBeans.isEmpty()) {
-//            productClient.addCompany(myBeans);
-//        }
+        CarInsurance.GetProvinceCodeRequest request1 = new CarInsurance.GetProvinceCodeRequest();
+
+        request1.type = "0";
+
+        actionBean.body = JsonKit.bean2Json(request1);
+
+        String provinceCode = getProvinceCode(actionBean);
+
+        Map<String, String> nameMap = new HashMap<>();
+        nameMap.put("YGBX", "阳光财产保险股份有限公司");
+        nameMap.put("TAIC", "天安财产保险股份有限公司");
+        nameMap.put("ASTP", "安盛天平财产保险股份有限公司");
+        nameMap.put("ZHONGAN", "众安在线财产保险股份有限公司");
+        nameMap.put("LIHI", "利宝保险有限公司");
+        nameMap.put("PAIC", "中国平安财产保险股份有限公司");
+        nameMap.put("AXIC", "安心财产保险有限责任公司");
+        nameMap.put("ZFIC", "珠峰财产保险股份有限公司");
+        nameMap.put("CICP", "中华联合财产保险股份有限公司");
+        nameMap.put("CHAC", "诚泰财产保险股份有限公司");
+        nameMap.put("CCIC", "中国大地财产保险股份有限公司");
+        nameMap.put("YAIC", "永安财产保险股份有限公司");
+        nameMap.put("PICC", "中国人民财产保险股份有限公司");
+        nameMap.put("TPIC", "太平财产保险有限公司");
+        nameMap.put("ACIC", "安诚财产保险股份有限公司");
+        nameMap.put("APIC", "永诚财产保险股份有限公司");
+        nameMap.put("TSBX", "泰山财产保险股份有限公司");
+        nameMap.put("CLPC", "中国人寿财产保险股份有限公司");
+        nameMap.put("CPIC", "中国太平洋财产保险股份有限公司");
+
+        ExtendCarInsurancePolicy.GetProvinceCodeResponse codeResponse = JsonKit.json2Bean(provinceCode, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class);
+
+        LinkedHashMap<String, MyBean> map = new LinkedHashMap<>();
+        long time = System.currentTimeMillis();
+
+        if (codeResponse != null && codeResponse.data != null && !codeResponse.data.isEmpty()) {
+            for (ExtendCarInsurancePolicy.ProvinceCodeDetail datum : codeResponse.data) {
+                CarInsurance.GetInsuranceCompanyRequest request = new CarInsurance.GetInsuranceCompanyRequest();
+
+                request.provinceCode = datum.provinceCode;
+                actionBean.body = JsonKit.bean2Json(request);
+
+                String insuranceByArea = getInsuranceByArea(actionBean);
+                ExtendCarInsurancePolicy.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse.class);
+
+                if (getInsuranceCompanyResponse != null && getInsuranceCompanyResponse.data != null && !getInsuranceCompanyResponse.data.isEmpty()) {
+
+                    for (ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany : getInsuranceCompanyResponse.data) {
+                        map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode, nameMap.get(insuranceCompany.insurerCode), insuranceCompany.insurerName, time));
+                    }
+                }
+            }
+        }
+
+        Set<String> strings = map.keySet();
+        ArrayList<MyBean> myBeans = new ArrayList<>();
+
+        for (String string : strings) {
+            myBeans.add(map.get(string));
+        }
+
+        L.log.debug(JsonKit.bean2Json(myBeans));
+
+        Map<String, String> idMap = new HashMap<>();
+
+        if (!myBeans.isEmpty()) {
+            for (MyBean myBean : myBeans) {
+                long l = productDao.addCompany(myBean);
+                idMap.put(myBean.code, myBean.id);
+            }
+        }
+
+        List<MyBean2> list = new ArrayList<>();
+        for (MyBean myBean : myBeans) {
+            MyBean2 myBean2_2 = new MyBean2(myBean.display_name + "交强险", idMap.get(myBean.code), myBean.code + "_CAR_COMPULSORY", "200040001", time);
+            MyBean2 myBean2_1 = new MyBean2(myBean.display_name + "商业险", idMap.get(myBean.code), myBean.code + "_CAR_BUSINESS", "200040002", time);
+            list.add(myBean2_2);
+            list.add(myBean2_1);
+        }
+
+        if (!list.isEmpty()) {
+            for (MyBean2 myBean2 : list) {
+                productDao.addProduct(myBean2);
+            }
+        }
+
+
 //        ChannelIdBean channelIdBean = new ChannelIdBean();
 //        channelIdBean.channelId = "1";
 //
@@ -2508,11 +2575,11 @@ public class CarInsuranceAction extends BaseAction {
 //
 //        return agentInfoByPersonIdManagerUuid != null ? agentInfoByPersonIdManagerUuid.toString() : "null";
 
-        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
-        insurancePolicyModel.manager_uuid = "2";
-        insurancePolicyModel.product_id_string = "0,1";
-
-        List<PolicyListCountModel> insurancePolicyListCountByTimeAndManagerUuidAndProductId = insurancePolicyDao.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
+//        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+//        insurancePolicyModel.manager_uuid = "2";
+//        insurancePolicyModel.product_id_string = "0,1";
+//
+//        List<PolicyListCountModel> insurancePolicyListCountByTimeAndManagerUuidAndProductId = insurancePolicyDao.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
 
         return "";
     }

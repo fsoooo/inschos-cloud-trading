@@ -7,6 +7,8 @@ package com.inschos.cloud.trading.access.rpc.bean;
  */
 public class MyBean2 {
 
+    public String id;
+
     /**
      * 保险产品名称
      */
@@ -122,5 +124,29 @@ public class MyBean2 {
      */
     public String state;
 
+    public MyBean2(String name, String company_id, String type, String category_id, long time) {
+        this.name = name;
+        this.display_name = name;
+        this.product_company_id = company_id;
+        this.product_category_id = category_id;
+        this.min_math = "1";
+        this.max_math = "1";
+        this.sell_status = "1";
+        this.base_price = "0";
+        this.type = type;
+        this.pay_mode = "外链";
+        this.business_support = "线下理赔";
+        this.observation_period = "0";
+        this.period_hesitation = "0";
+        this.latest_date = "0";
+        this.first_date = "0";
+        this.created_at = String.valueOf(time);
+        this.updated_at = String.valueOf(time);
+        this.state = "1";
+        this.product_brokerage_id = "0.3";
+        this.system_commission_ratio = "0.3";
+        this.base_stages_way = "0.3";
+        this.base_ratio = "0.3";
+    }
 
 }
