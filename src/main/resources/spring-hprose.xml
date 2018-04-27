@@ -11,7 +11,7 @@
 
     <bean id="httpRequestHandlerAdapter"
           class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"/>
-    <bean id="hproseHttpServiceEventExporter" class="com.inschos.cloud.trading.access.rpc.remoting.hprose.HproseHttpServiceEventExporter"/>
+    <bean id="hproseHttpServiceEventExporter" class="com.org.springframework.remoting.hprose.HproseHttpServiceEventExporter"/>
 
     <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
@@ -25,7 +25,7 @@
 
     <!--bean -->
     <bean name="premiumService"
-          class="com.inschos.cloud.trading.access.rpc.remoting.hprose.HproseHttpServiceExporter">
+          class="com.org.springframework.remoting.hprose.HproseHttpServiceExporter">
         <property name="event" ref="hproseHttpServiceEventExporter"/>
         <property name="debug" value="${rpc.hprose.debug}"/>
         <!-- 实现-->
@@ -36,7 +36,7 @@
     </bean>
 
     <bean name="brokerageService"
-          class="com.inschos.cloud.trading.access.rpc.remoting.hprose.HproseHttpServiceExporter">
+          class="com.org.springframework.remoting.hprose.HproseHttpServiceExporter">
         <property name="event" ref="hproseHttpServiceEventExporter"/>
         <property name="debug" value="${rpc.hprose.debug}"/>
 

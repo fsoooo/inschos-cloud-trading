@@ -1,4 +1,4 @@
-package com.inschos.cloud.trading.access.rpc.remoting.hprose;
+package com.org.springframework.remoting.hprose;
 
 import hprose.client.HproseClient;
 import hprose.client.HproseHttpClient;

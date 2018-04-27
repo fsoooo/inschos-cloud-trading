@@ -1,4 +1,4 @@
-package com.inschos.cloud.trading.access.rpc.remoting.hprose;
+package com.org.springframework.remoting.hprose;
 
 import hprose.common.FilterHandler;
 import hprose.common.HproseFilter;
