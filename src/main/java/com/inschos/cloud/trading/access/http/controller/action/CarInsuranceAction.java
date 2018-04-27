@@ -2505,21 +2505,22 @@ public class CarInsuranceAction extends BaseAction {
         String provinceCode = getProvinceCode(actionBean);
 
         Map<String, String> nameMap = new HashMap<>();
-        nameMap.put("YGBX", "阳光财产保险股份有限公司");
-        nameMap.put("TAIC", "天安财产保险股份有限公司");
-        nameMap.put("ASTP", "安盛天平财产保险股份有限公司");
-        nameMap.put("ZHONGAN", "众安在线财产保险股份有限公司");
-        nameMap.put("LIHI", "利宝保险有限公司");
-        nameMap.put("PAIC", "中国平安财产保险股份有限公司");
-        nameMap.put("AXIC", "安心财产保险有限责任公司");
-        nameMap.put("ZFIC", "珠峰财产保险股份有限公司");
-        nameMap.put("CICP", "中华联合财产保险股份有限公司");
-        nameMap.put("CHAC", "诚泰财产保险股份有限公司");
-        nameMap.put("CCIC", "中国大地财产保险股份有限公司");
-        nameMap.put("YAIC", "永安财产保险股份有限公司");
-        nameMap.put("PICC", "中国人民财产保险股份有限公司");
-        nameMap.put("TPIC", "太平财产保险有限公司");
-        nameMap.put("ACIC", "安诚财产保险股份有限公司");
+//        nameMap.put("ACIC", "安诚财产保险股份有限公司");
+//        nameMap.put("ASTP", "安盛天平财产保险股份有限公司");
+//        nameMap.put("AXIC", "安心财产保险有限责任公司");
+//        nameMap.put("CCIC", "中国大地财产保险股份有限公司");
+//        nameMap.put("CHAC", "诚泰财产保险股份有限公司");
+//        nameMap.put("CICP", "中华联合财产保险股份有限公司");
+//        nameMap.put("LIHI", "利宝保险有限公司");
+//        nameMap.put("PAIC", "中国平安财产保险股份有限公司");
+//        nameMap.put("PICC", "中国人民财产保险股份有限公司");
+//        nameMap.put("TAIC", "天安财产保险股份有限公司");
+//        nameMap.put("TPIC", "太平财产保险有限公司");
+//        nameMap.put("YAIC", "永安财产保险股份有限公司");
+//        nameMap.put("YGBX", "阳光财产保险股份有限公司");
+//        nameMap.put("ZFIC", "珠峰财产保险股份有限公司");
+//        nameMap.put("ZHONGAN", "众安在线财产保险股份有限公司");
+
         nameMap.put("APIC", "永诚财产保险股份有限公司");
         nameMap.put("TSBX", "泰山财产保险股份有限公司");
         nameMap.put("CLPC", "中国人寿财产保险股份有限公司");
@@ -2543,7 +2544,10 @@ public class CarInsuranceAction extends BaseAction {
                 if (getInsuranceCompanyResponse != null && getInsuranceCompanyResponse.data != null && !getInsuranceCompanyResponse.data.isEmpty()) {
 
                     for (ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany : getInsuranceCompanyResponse.data) {
-                        map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode, nameMap.get(insuranceCompany.insurerCode), insuranceCompany.insurerName, time));
+                        String s = nameMap.get(insuranceCompany.insurerCode);
+                        if (s != null) {
+                            map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode, s, insuranceCompany.insurerName, time));
+                        }
                     }
                 }
             }

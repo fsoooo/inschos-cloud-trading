@@ -90,7 +90,7 @@ public class MyBean {
         this.name = name;
         this.display_name = display_name;
         this.category_id = "200000000";
-        this.logo = code + "_key";
+        this.logo = code + "_property_key";
         this.created_at = String.valueOf(time);
         this.updated_at = String.valueOf(time);
     }

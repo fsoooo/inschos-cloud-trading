@@ -24,7 +24,11 @@ public interface InsurancePolicyMapper {
 
     List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearch(InsurancePolicyModel insurancePolicyModel);
 
+    List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusStringOrSearch(InsurancePolicyModel insurancePolicyModel);
+
     long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountByWarrantyStatusString(InsurancePolicyModel insurancePolicyModel);
 
     InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(String warrantyUuid);
 

@@ -174,12 +174,20 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearch(insurancePolicyModel);
     }
 
+    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusStringOrSearch(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusStringOrSearch(insurancePolicyModel);
+    }
+
     public int addInsurancePolicy(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.addInsurancePolicy(insurancePolicyModel);
     }
 
     public long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyCountByWarrantyStatus(insurancePolicyModel);
+    }
+
+    public long findInsurancePolicyCountByWarrantyStatusString(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyCountByWarrantyStatusString(insurancePolicyModel);
     }
 
     public List<CarInfoModel> getCarInfoList(String bizId, String thpBizID) {

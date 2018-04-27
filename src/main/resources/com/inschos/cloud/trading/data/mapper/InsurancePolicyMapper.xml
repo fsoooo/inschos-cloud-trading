@@ -57,6 +57,20 @@
         </if>
     </select>
 
+    <select id="findInsurancePolicyCountByWarrantyStatusString"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="long">
+        select count(id)
+        from cust_warranty
+        WHERE account_uuid=#{account_uuid} AND state=1
+        <if test="search!=null and search!=''">
+            and `warranty_code` like concat("%",#{search},"%")
+        </if>
+        <if test="status_string!=null and status_string!=''">
+            and `warranty_status` in (${status_string})
+        </if>
+    </select>
+
     <select id="findInsurancePolicyDetailByWarrantyUuid"
             parameterType="String"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
@@ -67,6 +81,43 @@
     </select>
 
     <select id="findInsurancePolicyListByWarrantyStatusOrSearch"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    id&gt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    id&gt;=(select id from cust_warranty where account_uuid=#{account_uuid} AND state=1
+                    <if test="search!=null and search!=''">
+                        and `warranty_code` like concat("%",#{search},"%")
+                    </if>
+                    <if test="warranty_status!=0">
+                        and `warranty_status`=#{warranty_status}
+                    </if>
+                    limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            and account_uuid=#{account_uuid} AND state = 1
+            <if test="search!=null and search!=''">
+                and `warranty_code` like concat("%",#{search},"%")
+            </if>
+            <if test="warranty_status!=0">
+                and `warranty_status`=#{warranty_status}
+            </if>
+            limit #{page.offset}
+        </where>
+    </select>
+
+    <select id="findInsurancePolicyListByWarrantyStatusStringOrSearch"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select

@@ -138,23 +138,24 @@ public class InsurancePolicyAction extends BaseAction {
                 // 1-待支付 2-待生效 3-保障中 4-已失效
                 switch (request.warrantyStatus) {
                     case "1":
-                        insurancePolicyModel.warranty_status = CustWarrantyCostModel.APPLY_UNDERWRITING_PROCESSING + "," + CustWarrantyCostModel.PAY_STATUS_WAIT + "," + CustWarrantyCostModel.PAY_STATUS_PROCESSING;
+                        // CustWarrantyCostModel.APPLY_UNDERWRITING_PROCESSING + "," + CustWarrantyCostModel.PAY_STATUS_WAIT + "," + CustWarrantyCostModel.PAY_STATUS_PROCESSING
+                        insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_PENDING;
                         break;
                     case "2":
-                        insurancePolicyModel.warranty_status = InsurancePolicyModel.POLICY_STATUS_WAITING;
+                        insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_WAITING;
                         break;
                     case "3":
-                        insurancePolicyModel.warranty_status = InsurancePolicyModel.POLICY_STATUS_EFFECTIVE;
+                        insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_EFFECTIVE;
                         break;
                     case "4":
-                        insurancePolicyModel.warranty_status = InsurancePolicyModel.POLICY_STATUS_INVALID + "," + InsurancePolicyModel.POLICY_STATUS_EXPIRED;
+                        insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_INVALID + "," + InsurancePolicyModel.POLICY_STATUS_EXPIRED;
                         break;
                 }
             }
 
-            long total = insurancePolicyDao.findInsurancePolicyCountByWarrantyStatus(insurancePolicyModel);
+            long total = insurancePolicyDao.findInsurancePolicyCountByWarrantyStatusString(insurancePolicyModel);
 
-            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusOrSearch(insurancePolicyModel);
+            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusStringOrSearch(insurancePolicyModel);
             response.data = new ArrayList<>();
 
             if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
