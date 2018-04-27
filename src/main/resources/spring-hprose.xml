@@ -19,6 +19,7 @@
                 <!-- route bean -->
                 <prop key="/rpc/brokerage">brokerageService</prop>
                 <prop key="/rpc/premium">premiumService</prop>
+                <prop key="/rpc/cust_warranty">custWarrantyService</prop>
             </props>
         </property>
     </bean>
@@ -45,6 +46,17 @@
         <!-- 接口-->
         <property name="serviceInterface"
                   value="com.inschos.cloud.trading.access.rpc.service.BrokerageService"/>
+    </bean>
+
+    <bean name="custWarrantyService"
+          class="com.inschos.cloud.trading.access.rpc.remoting.hprose.HproseHttpServiceExporter">
+        <property name="event" ref="hproseHttpServiceEventExporter"/>
+        <property name="debug" value="${rpc.hprose.debug}"/>
+        <!-- 实现-->
+        <property name="service" ref="custWarrantyServiceImpl"/>
+        <!-- 接口-->
+        <property name="serviceInterface"
+                  value="com.inschos.cloud.trading.access.rpc.service.CustWarrantyService"/>
     </bean>
 
 </beans>

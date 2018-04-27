@@ -149,7 +149,6 @@ public class CarInsurance {
     }
 
     public static class InsuranceInfo extends ExtendCarInsurancePolicy.InsurancePolicyInfo {
-        @CheckParams
         public String hasExcessOption;
         @CheckParams
         public String isExcessOption;
@@ -283,6 +282,11 @@ public class CarInsurance {
         public String ciInsuredPremiumText;
         public String biInsuredPremium;
         public String biInsuredPremiumText;
+        public String productName;
+        public String insuredName;
+        public String ciInsuranceTermText;
+        public String biInsuranceTermText;
+        public String insuranceContent;
         public List<ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail> insurancePolicyPremiumDetails;
     }
 
@@ -299,6 +303,7 @@ public class CarInsurance {
         public String channelCode;
         @CheckParams
         public String insurerCode;
+        public String productId;
         public String bizID;
         @CheckParams
         public String addresseeName;
@@ -406,6 +411,7 @@ public class CarInsurance {
     }
 
     public static class GetPayLinkRequest extends BaseRequest {
+        @CheckParams
         public String bizID;
     }
 

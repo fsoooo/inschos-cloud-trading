@@ -67,6 +67,7 @@ public class ExtendCarInsurancePolicy {
     public static class InsuranceCompany {
         public String insurerCode;
         public String insurerName;
+        public String productId;
     }
 
     public static class GetInsuranceInfoRequest extends CarInsuranceRequest {
@@ -383,13 +384,16 @@ public class ExtendCarInsurancePolicy {
         public String msgCode;
         public String bizID;
         public String thpBizID;
+        public String productName;
         public String insurerCode;
         public String channelCode;
         public String biBeginDate;
         public String biBeginDateValue;
+        public String biInsuranceTermText;
         public String biPremium;
         public String ciBeginDate;
         public String ciBeginDateValue;
+        public String ciInsuranceTermText;
         public String ciPremium;
         public String carshipTax;
         public String integral;

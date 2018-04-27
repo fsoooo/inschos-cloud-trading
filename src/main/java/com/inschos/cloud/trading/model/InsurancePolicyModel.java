@@ -143,6 +143,8 @@ public class InsurancePolicyModel {
 
     public String status_string;
 
+    public String product_id_string;
+
     // 核保成功
     public static final String APPLY_UNDERWRITING_SUCCESS = "0";
     // 核保中

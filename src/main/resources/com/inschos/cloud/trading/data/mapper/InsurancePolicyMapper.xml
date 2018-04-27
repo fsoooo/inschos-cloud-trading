@@ -57,6 +57,20 @@
         </if>
     </select>
 
+    <select id="findInsurancePolicyCountByWarrantyStatusString"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="long">
+        select count(id)
+        from cust_warranty
+        WHERE account_uuid=#{account_uuid} AND state=1
+        <if test="search!=null and search!=''">
+            and `warranty_code` like concat("%",#{search},"%")
+        </if>
+        <if test="status_string!=null and status_string!=''">
+            and `warranty_status` in (${status_string})
+        </if>
+    </select>
+
     <select id="findInsurancePolicyDetailByWarrantyUuid"
             parameterType="String"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
@@ -67,6 +81,43 @@
     </select>
 
     <select id="findInsurancePolicyListByWarrantyStatusOrSearch"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    id&gt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    id&gt;=(select id from cust_warranty where account_uuid=#{account_uuid} AND state=1
+                    <if test="search!=null and search!=''">
+                        and `warranty_code` like concat("%",#{search},"%")
+                    </if>
+                    <if test="warranty_status!=0">
+                        and `warranty_status`=#{warranty_status}
+                    </if>
+                    limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            and account_uuid=#{account_uuid} AND state = 1
+            <if test="search!=null and search!=''">
+                and `warranty_code` like concat("%",#{search},"%")
+            </if>
+            <if test="warranty_status!=0">
+                and `warranty_status`=#{warranty_status}
+            </if>
+            limit #{page.offset}
+        </where>
+    </select>
+
+    <select id="findInsurancePolicyListByWarrantyStatusStringOrSearch"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
@@ -306,7 +357,7 @@
                     )
                 </when>
                 <otherwise>
-                     1=1
+                    1=1
                 </otherwise>
             </choose>
             and `channel_id`=#{channel_id} AND `warranty_status`!= 1 AND `warranty_status`!= 6 AND state = 1
@@ -335,58 +386,51 @@
         </if>
     </select>
 
-    <select id="findInsurancePolicyPrivateCodeByUnionOrderCode" parameterType="String"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
-        select
-        `warranty_uuid`
-        from cust_warranty where pro_policy_no=#{_parameter} AND state = 1
-    </select>
-
-    <select id="findInsurancePolicyListByUserIdAndStatus"
+    <select id="findInsurancePolicyListCount"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
-        <!--select-->
-        <!--<include refid="Base_Column_List" />-->
-        <!--from cust_warranty-->
-        <!--<where>-->
-        <!--<choose>-->
-        <!--<when test="page.lastId>0">-->
-        <!--id&gt;#{page.lastId}-->
-        <!--</when>-->
-        <!--<when test="page.start>0">-->
-        <!--id&gt;=(select id from cust_warranty where company_id=#{company_id} AND state=1-->
-        <!--<if test="search!=null and search!=''">-->
-        <!--and `name` like concat("%",#{search},"%")-->
-        <!--</if>-->
-        <!--limit #{page.start},1-->
-        <!--)-->
-        <!--</when>-->
-        <!--<otherwise>-->
-        <!--1=1-->
-        <!--</otherwise>-->
-        <!--</choose>-->
-        <!--and user_id=#{user_id} AND state = 1-->
-        <!--<if test="search!=null and search!=''">-->
-        <!--and `name` like concat("%",#{search},"%")-->
-        <!--</if>-->
-        <!--limit #{page.offset}-->
-        <!--</where>-->
-        <!---->
-        <!---->
-        <!---->
-        <!---->
-        <!--<if test="status!=0">-->
-        <!---->
-        <!--</if>-->
-    </select>
-
-
-    <select id="findInsurancePolicyListByOtherInfo" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            resultType="long">
         select
-        <include refid="Base_Column_List"/>
-        from cust_warranty where private_code=#{_parameter}
+        count(id)
+        from cust_warranty
+        <where>
+            state = 1
+            <if test="account_uuid!=null and account_uuid!=''">
+                and `account_uuid`=#{account_uuid}
+            </if>
+            <if test="manager_uuid!=null and manager_uuid!=''">
+                and `manager_uuid`=#{manager_uuid}
+            </if>
+            <if test="start_time!=null and start_time!='' and start_time!=0">
+                and `start_time`&gt;=#{start_time}
+            </if>
+            <if test="end_time!=null and end_time!='' and end_time!=0">
+                and `start_time`&lt;#{end_time}
+            </if>
+        </where>
     </select>
 
+    <select id="findInsurancePolicyListCountByTimeAndManagerUuidAndProductId"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="PolicyListCountModel">
+        select
+        `product_id`, count(id) product_count
+        from cust_warranty
+        <where>
+            state = 1
+            <if test="manager_uuid!=null and manager_uuid!=''">
+                and `manager_uuid`=#{manager_uuid}
+            </if>
+            <if test="start_time!=null and start_time!='' and start_time!=0">
+                and `start_time`&gt;=#{start_time}
+            </if>
+            <if test="end_time!=null and end_time!='' and end_time!=0">
+                and `start_time`&lt;#{end_time}
+            </if>
+            <if test="product_id_string!=null and product_id_string!=''">
+                and `product_id` in (${product_id_string})
+            </if>
+        </where>
+        GROUP BY `product_id`
+    </select>
 
 </mapper>

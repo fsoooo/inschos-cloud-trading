@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.data.mapper;
 
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.model.PolicyListCountModel;
 
 import java.util.List;
 
@@ -23,7 +24,11 @@ public interface InsurancePolicyMapper {
 
     List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearch(InsurancePolicyModel insurancePolicyModel);
 
+    List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusStringOrSearch(InsurancePolicyModel insurancePolicyModel);
+
     long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountByWarrantyStatusString(InsurancePolicyModel insurancePolicyModel);
 
     InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(String warrantyUuid);
 
@@ -41,19 +46,9 @@ public interface InsurancePolicyMapper {
 
     long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel);
 
-    // NOTENABLED: 2018/4/12
-    List<InsurancePolicyModel> findInsurancePolicyListByUserIdAndStatus(InsurancePolicyModel insurancePolicyModel);
+    long findInsurancePolicyListCount(InsurancePolicyModel insurancePolicyModel);
 
-    // NOTENABLED: 2018/4/12
-    List<InsurancePolicyModel> findInsurancePolicyListByOtherInfo(InsurancePolicyModel insurancePolicyModel);
+    List<PolicyListCountModel> findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(InsurancePolicyModel insurancePolicyModel);
 
-    // NOTENABLED: 2018/4/12
-    int updateInsurancePolicyUnionOrderCode(InsurancePolicyModel insurancePolicyModel);
-
-    // NOTENABLED: 2018/4/12
-    int updateInsurancePolicyWarrantyCode(InsurancePolicyModel insurancePolicyModel);
-
-    // NOTENABLED: 2018/4/12
-    String findInsurancePolicyPrivateCodeByUnionOrderCode(String unionOrderCode);
-
+    Double getTotalPremiumByAccountUuidAndTime(InsurancePolicyModel insurancePolicyModel);
 }

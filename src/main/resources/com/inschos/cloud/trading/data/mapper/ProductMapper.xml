@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.ProductMapper">
+
+    <sql id="Base_Column_List1">
+        `id`,`name`,`display_name`,`category_id`,`code`,`logo`,`bank_type`,`bank_num`,`email`,`url`,`phone`,`code_img`,`created_at`,`updated_at`,`state`
+    </sql>
+
+    <sql id="Base_Column_List2">
+        `id`,`name`,`display_name`,`content`,`product_company_id`,`product_category_id`,`product_brokerage_id`,`min_math`,`max_math`,`sell_status`,`base_price`,`system_commission_ratio`,`base_stages_way`,`base_ratio`,`type`,`pay_mode`,`business_support`,`observation_period`,`period_hesitation`,`latest_date`,`first_date`,`created_at`,`updated_at`,`state`
+    </sql>
+
+    <insert id="addCompany" parameterType="com.inschos.cloud.trading.access.rpc.bean.MyBean"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into product_company
+        (`id`,`name`,`display_name`,`category_id`,`code`,`logo`,`bank_type`,`bank_num`,`email`,`url`,`phone`,`code_img`,`created_at`,`updated_at`,`state`)
+        values
+        (#{id},#{name},#{display_name},#{category_id},#{code},#{logo},#{bank_type},#{bank_num},#{email},#{url},#{phone},#{code_img},#{created_at},#{updated_at},#{state})
+    </insert>
+
+    <insert id="addProduct" parameterType="com.inschos.cloud.trading.access.rpc.bean.MyBean2"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into product
+        (`id`,`name`,`display_name`,`content`,`product_company_id`,`product_category_id`,`product_brokerage_id`,`min_math`,`max_math`,`sell_status`,`base_price`,`system_commission_ratio`,`base_stages_way`,`base_ratio`,`type`,`pay_mode`,`business_support`,`observation_period`,`period_hesitation`,`latest_date`,`first_date`,`created_at`,`updated_at`,`state`)
+        values
+        (#{id},#{name},#{display_name},#{content},#{product_company_id},#{product_category_id},#{product_brokerage_id},#{min_math},#{max_math},#{sell_status},#{base_price},#{system_commission_ratio},#{base_stages_way},#{base_ratio},#{type},#{pay_mode},#{business_support},#{observation_period},#{period_hesitation},#{latest_date},#{first_date},#{created_at},#{updated_at},#{state})
+    </insert>
+
+
+</mapper>

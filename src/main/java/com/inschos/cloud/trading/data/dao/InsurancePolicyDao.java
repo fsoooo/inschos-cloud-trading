@@ -8,6 +8,7 @@ import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
 import com.inschos.cloud.trading.model.CarInfoModel;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.model.PolicyListCountModel;
 import com.inschos.cloud.trading.model.fordao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -173,12 +174,20 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearch(insurancePolicyModel);
     }
 
+    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusStringOrSearch(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusStringOrSearch(insurancePolicyModel);
+    }
+
     public int addInsurancePolicy(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.addInsurancePolicy(insurancePolicyModel);
     }
 
     public long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyCountByWarrantyStatus(insurancePolicyModel);
+    }
+
+    public long findInsurancePolicyCountByWarrantyStatusString(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyCountByWarrantyStatusString(insurancePolicyModel);
     }
 
     public List<CarInfoModel> getCarInfoList(String bizId, String thpBizID) {
@@ -285,23 +294,39 @@ public class InsurancePolicyDao extends BaseDao {
         BigDecimal biMoney = new BigDecimal("0.00");
         BigDecimal total = new BigDecimal(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.payMoney);
 
-        if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
-            BigDecimal add1 = ciPremium.add(biPremium);
-            if (add1.compareTo(total) == 0) {
-                ciMoney = ciPremium;
-                biMoney = biPremium;
-            } else {
-                BigDecimal k = biPremium.divide(ciPremium, BigDecimal.ROUND_HALF_UP);
-                BigDecimal add = k.add(new BigDecimal(1));
-                ciMoney = total.divide(add, BigDecimal.ROUND_HALF_UP);
+//        if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
+//            BigDecimal add1 = ciPremium.add(biPremium);
+//            if (add1.compareTo(total) == 0) {
+//                ciMoney = ciPremium;
+//                biMoney = biPremium;
+//            } else {
+//                BigDecimal k = biPremium.divide(ciPremium, BigDecimal.ROUND_HALF_UP);
+//                BigDecimal add = k.add(new BigDecimal(1));
+//                ciMoney = total.divide(add, BigDecimal.ROUND_HALF_UP);
+//                biMoney = total.subtract(ciMoney);
+//            }
+//        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) == 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
+//            biMoney = total;
+//        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) == 0) {
+//            ciMoney = total;
+//        } else {
+//            // 理论上不可能
+//            ciMoney = total;
+//        }
+
+        if (!StringKit.isEmpty(ciUuid) && !StringKit.isEmpty(biUuid)) {
+            if (total.compareTo(ciPremium) >= 0) {
+                ciMoney = total.subtract(ciPremium);
                 biMoney = total.subtract(ciMoney);
+            } else {
+                ciMoney = total;
             }
-        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) == 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
-            biMoney = total;
-        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) == 0) {
+        } else if (!StringKit.isEmpty(ciUuid)) {
             ciMoney = total;
+        } else if (!StringKit.isEmpty(biUuid)) {
+            biMoney = total;
         } else {
-            // 理论上不可能
+            // 保单没找到啊（理论上不可能）
             ciMoney = total;
         }
 
@@ -423,27 +448,24 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findEffectiveInsurancePolicyListByChannelId(channelId);
     }
 
-    public List<InsurancePolicyModel> findEffectiveInsurancePolicyByChannelIdAndTime (InsurancePolicyModel insurancePolicyModel) {
+    public List<InsurancePolicyModel> findEffectiveInsurancePolicyByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findEffectiveInsurancePolicyByChannelIdAndTime(insurancePolicyModel);
     }
 
-    public long findEffectiveInsurancePolicyCountByChannelIdAndTime (InsurancePolicyModel insurancePolicyModel) {
+    public long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findEffectiveInsurancePolicyCountByChannelIdAndTime(insurancePolicyModel);
     }
 
-    // NOTENABLED: 2018/4/14
-    public int updateInsurancePolicyUnionOrderCode(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.updateInsurancePolicyUnionOrderCode(insurancePolicyModel);
+    public long findInsurancePolicyListCountByTimeAndAccountUuid(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListCount(insurancePolicyModel);
     }
 
-    // NOTENABLED: 2018/4/14
-    public int updateInsurancePolicyWarrantyCode(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.updateInsurancePolicyWarrantyCode(insurancePolicyModel);
+    public long findInsurancePolicyListCountByTimeAndManagerUuid(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListCount(insurancePolicyModel);
     }
 
-    // NOTENABLED: 2018/4/14
-    public String findInsurancePolicyPrivateCodeByUnionOrderCode(String unionOrderCode) {
-        return insurancePolicyMapper.findInsurancePolicyPrivateCodeByUnionOrderCode(unionOrderCode);
+    public List<PolicyListCountModel> findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
     }
 
 }

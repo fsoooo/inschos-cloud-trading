@@ -1,13 +1,14 @@
 package com.inschos.cloud.trading.access.rpc.bean;
 
 /**
- * 创建日期：2018/4/20 on 17:23
+ * 创建日期：2018/4/25 on 14:38
  * 描述：
  * 作者：zhangyunhe
  */
-public class PremiumBean {
+public class IncomeBean {
 
-    public String channelId;
+    public String accountUuid;
+    public String managerUuid;
     public String startTime;
     public String endTime;
 

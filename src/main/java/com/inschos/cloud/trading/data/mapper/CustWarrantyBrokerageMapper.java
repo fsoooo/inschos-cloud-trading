@@ -13,4 +13,6 @@ public interface CustWarrantyBrokerageMapper {
 
     Double findCustWarrantyBrokerageTotal (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
 
+    Double findIncomeByManagerUuidAndAccountUuid (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
+
 }
