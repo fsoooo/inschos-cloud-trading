@@ -2605,196 +2605,196 @@ public class CarInsuranceAction extends BaseAction {
         return str;
     }
 
-    @Autowired
-    private ProductClient productClient;
-
-    @Autowired
-    private PersonClient personClient;
-
-    @Autowired
-    private BrokerageService brokerageService;
-
-    @Autowired
-    private CustWarrantyService custWarrantyService;
-
-    @Autowired
-    private PremiumService premiumService;
-
-    @Autowired
-    private ProductDao productDao;
-
-    public String setData(ActionBean actionBean) {
-        CarInsurance.GetProvinceCodeRequest request1 = new CarInsurance.GetProvinceCodeRequest();
-
-        request1.type = "0";
-
-        actionBean.body = JsonKit.bean2Json(request1);
-
-        String provinceCode = getProvinceCode(actionBean);
-
-        Map<String, String> nameMap = new HashMap<>();
-//        nameMap.put("ACIC", "安诚财产保险股份有限公司");
-//        nameMap.put("ASTP", "安盛天平财产保险股份有限公司");
-//        nameMap.put("AXIC", "安心财产保险有限责任公司");
-//        nameMap.put("CCIC", "中国大地财产保险股份有限公司");
-//        nameMap.put("CHAC", "诚泰财产保险股份有限公司");
-//        nameMap.put("CICP", "中华联合财产保险股份有限公司");
-//        nameMap.put("LIHI", "利宝保险有限公司");
-//        nameMap.put("PAIC", "中国平安财产保险股份有限公司");
-//        nameMap.put("PICC", "中国人民财产保险股份有限公司");
-//        nameMap.put("TAIC", "天安财产保险股份有限公司");
-//        nameMap.put("TPIC", "太平财产保险有限公司");
-//        nameMap.put("YAIC", "永安财产保险股份有限公司");
-//        nameMap.put("YGBX", "阳光财产保险股份有限公司");
-//        nameMap.put("ZFIC", "珠峰财产保险股份有限公司");
-//        nameMap.put("ZHONGAN", "众安在线财产保险股份有限公司");
-
-//        nameMap.put("APIC", "永诚财产保险股份有限公司");
-//        nameMap.put("TSBX", "泰山财产保险股份有限公司");
-//        nameMap.put("CLPC", "中国人寿财产保险股份有限公司");
-//        nameMap.put("CPIC", "中国太平洋财产保险股份有限公司");
-
-        ExtendCarInsurancePolicy.GetProvinceCodeResponse codeResponse = JsonKit.json2Bean(provinceCode, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class);
-
-        LinkedHashMap<String, MyBean> map = new LinkedHashMap<>();
-        long time = System.currentTimeMillis();
-
-        if (codeResponse != null && codeResponse.data != null && !codeResponse.data.isEmpty()) {
-            for (ExtendCarInsurancePolicy.ProvinceCodeDetail datum : codeResponse.data) {
-                CarInsurance.GetInsuranceCompanyRequest request = new CarInsurance.GetInsuranceCompanyRequest();
-
-                request.provinceCode = datum.provinceCode;
-                actionBean.body = JsonKit.bean2Json(request);
-
-                String insuranceByArea = getInsuranceByArea(actionBean);
-                ExtendCarInsurancePolicy.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse.class);
-
-                if (getInsuranceCompanyResponse != null && getInsuranceCompanyResponse.data != null && !getInsuranceCompanyResponse.data.isEmpty()) {
-
-                    for (ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany : getInsuranceCompanyResponse.data) {
-                        String s = nameMap.get(insuranceCompany.insurerCode);
-                        if (s != null) {
-                            map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode, s, insuranceCompany.insurerName, time));
-                        }
-                    }
-                }
-            }
-        }
-
-        Set<String> strings = map.keySet();
-        ArrayList<MyBean> myBeans = new ArrayList<>();
-
-        for (String string : strings) {
-            myBeans.add(map.get(string));
-        }
-
-        L.log.debug(JsonKit.bean2Json(myBeans));
-
-        Map<String, String> idMap = new HashMap<>();
-
-        if (!myBeans.isEmpty()) {
-            for (MyBean myBean : myBeans) {
-                long l = productDao.addCompany(myBean);
-                idMap.put(myBean.code, myBean.id);
-            }
-        }
-
-        List<MyBean2> list = new ArrayList<>();
-        for (MyBean myBean : myBeans) {
-            MyBean2 myBean2_2 = new MyBean2(myBean.display_name + "交强险", idMap.get(myBean.code), myBean.code + "_CAR_COMPULSORY", "200040001", time);
-            MyBean2 myBean2_1 = new MyBean2(myBean.display_name + "商业险", idMap.get(myBean.code), myBean.code + "_CAR_BUSINESS", "200040002", time);
-            list.add(myBean2_2);
-            list.add(myBean2_1);
-        }
-
-        if (!list.isEmpty()) {
-            for (MyBean2 myBean2 : list) {
-                productDao.addProduct(myBean2);
-            }
-        }
-
-
-//        ChannelIdBean channelIdBean = new ChannelIdBean();
-//        channelIdBean.channelId = "1";
+//    @Autowired
+//    private ProductClient productClient;
 //
-//        String brokerageByChannelIdForManagerSystem = brokerageService.getBrokerageByChannelIdForManagerSystem(channelIdBean);
+//    @Autowired
+//    private PersonClient personClient;
 //
-//        IncomeBean incomeBean = new IncomeBean();
-//        incomeBean.managerUuid = "1";
-//        incomeBean.accountUuid = "1";
+//    @Autowired
+//    private BrokerageService brokerageService;
 //
-//        String incomeByManagerUuidAndAccountUuidForManagerSystem = brokerageService.getIncomeByManagerUuidAndAccountUuidForManagerSystem(incomeBean);
+//    @Autowired
+//    private CustWarrantyService custWarrantyService;
 //
-//        AccountUuidBean accountUuid = new AccountUuidBean();
-//        accountUuid.accountUuid = "1";
+//    @Autowired
+//    private PremiumService premiumService;
 //
-//        String policyholderCountByTimeOrAccountId = custWarrantyService.getPolicyholderCountByTimeOrAccountId(accountUuid);
+//    @Autowired
+//    private ProductDao productDao;
 //
-//        String premiumByAccountUuidForManagerSystem = premiumService.getPremiumByAccountUuidForManagerSystem(accountUuid);
+//    public String setData(ActionBean actionBean) {
+//        CarInsurance.GetProvinceCodeRequest request1 = new CarInsurance.GetProvinceCodeRequest();
 //
-//        String premiumByChannelIdForManagerSystem = premiumService.getPremiumByChannelIdForManagerSystem(channelIdBean);
+//        request1.type = "0";
 //
-//        String premiumCountByChannelIdForManagerSystem = premiumService.getPremiumCountByChannelIdForManagerSystem(channelIdBean);
-
-//        AgentBean agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid("2", "92");
+//        actionBean.body = JsonKit.bean2Json(request1);
 //
-//        return agentInfoByPersonIdManagerUuid != null ? agentInfoByPersonIdManagerUuid.toString() : "null";
-
-//        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
-//        insurancePolicyModel.manager_uuid = "2";
-//        insurancePolicyModel.product_id_string = "0,1";
+//        String provinceCode = getProvinceCode(actionBean);
 //
-//        List<PolicyListCountModel> insurancePolicyListCountByTimeAndManagerUuidAndProductId = insurancePolicyDao.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
-
-//        Map<String, String> typeMap = new HashMap<>();
+//        Map<String, String> nameMap = new HashMap<>();
+////        nameMap.put("ACIC", "安诚财产保险股份有限公司");
+////        nameMap.put("ASTP", "安盛天平财产保险股份有限公司");
+////        nameMap.put("AXIC", "安心财产保险有限责任公司");
+////        nameMap.put("CCIC", "中国大地财产保险股份有限公司");
+////        nameMap.put("CHAC", "诚泰财产保险股份有限公司");
+////        nameMap.put("CICP", "中华联合财产保险股份有限公司");
+////        nameMap.put("LIHI", "利宝保险有限公司");
+////        nameMap.put("PAIC", "中国平安财产保险股份有限公司");
+////        nameMap.put("PICC", "中国人民财产保险股份有限公司");
+////        nameMap.put("TAIC", "天安财产保险股份有限公司");
+////        nameMap.put("TPIC", "太平财产保险有限公司");
+////        nameMap.put("YAIC", "永安财产保险股份有限公司");
+////        nameMap.put("YGBX", "阳光财产保险股份有限公司");
+////        nameMap.put("ZFIC", "珠峰财产保险股份有限公司");
+////        nameMap.put("ZHONGAN", "众安在线财产保险股份有限公司");
 //
-//        养老险 000100010000
-//        人寿险 000100020000
-//        健康险 000100030000
-//        意外险 000100040000
-//        重疾险 000100050000
-//        其他 000199990000
-//        财产损失险 000200010000
-//        责任保险 000200020000
-//        信用保证险 000200030000
-//        车险 000200040000
-//        农险 000200050000
-//        其他 000200060000
-//        生存保险 000100020001
-//        死亡保险 000100020002
-//        两全保险 000100020003
-//        医疗保险 000100030001
-//        失能收入保险 000100030002
-//        护理保险 000100030003
-//        个人意外险 000100040001
-//        团体意外险 000100040002
-//        企财险 000200010001
-//        家财险 000200010002
-//        运输工具险 000200010003
-//        工程险 000200010004
-//        特殊风险 000200010005
-//        指数险 000200010006
-//        公众责任险 000200020001
-//        第三者责任险 000200020002
-//        产品责任险 000200020003
-//        雇主责任险 000200020004
-//        职业责任险 000200020005
-//        物流责任险 000200020006
-//        出口信用险 000200030001
-//        投资保险 000200030002
-//        雇员忠诚保证险 000200030003
-//        履约保证险 000200030004
-//        交强险 000200040001
-//        商业险 000200040002
-//        typeMap.put("", "");
-
-        MyBean3 root1 = new MyBean3("人身保险", "0", "1", "100000000");
-        productDao.addCategory(root1);
-        MyBean3 root2 = new MyBean3("财产保险", "0", "1", "200000000");
-        productDao.addCategory(root2);
-
-
-        return "";
-    }
+////        nameMap.put("APIC", "永诚财产保险股份有限公司");
+////        nameMap.put("TSBX", "泰山财产保险股份有限公司");
+////        nameMap.put("CLPC", "中国人寿财产保险股份有限公司");
+////        nameMap.put("CPIC", "中国太平洋财产保险股份有限公司");
+//
+//        ExtendCarInsurancePolicy.GetProvinceCodeResponse codeResponse = JsonKit.json2Bean(provinceCode, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class);
+//
+//        LinkedHashMap<String, MyBean> map = new LinkedHashMap<>();
+//        long time = System.currentTimeMillis();
+//
+//        if (codeResponse != null && codeResponse.data != null && !codeResponse.data.isEmpty()) {
+//            for (ExtendCarInsurancePolicy.ProvinceCodeDetail datum : codeResponse.data) {
+//                CarInsurance.GetInsuranceCompanyRequest request = new CarInsurance.GetInsuranceCompanyRequest();
+//
+//                request.provinceCode = datum.provinceCode;
+//                actionBean.body = JsonKit.bean2Json(request);
+//
+//                String insuranceByArea = getInsuranceByArea(actionBean);
+//                ExtendCarInsurancePolicy.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse.class);
+//
+//                if (getInsuranceCompanyResponse != null && getInsuranceCompanyResponse.data != null && !getInsuranceCompanyResponse.data.isEmpty()) {
+//
+//                    for (ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany : getInsuranceCompanyResponse.data) {
+//                        String s = nameMap.get(insuranceCompany.insurerCode);
+//                        if (s != null) {
+//                            map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode, s, insuranceCompany.insurerName, time));
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        Set<String> strings = map.keySet();
+//        ArrayList<MyBean> myBeans = new ArrayList<>();
+//
+//        for (String string : strings) {
+//            myBeans.add(map.get(string));
+//        }
+//
+//        L.log.debug(JsonKit.bean2Json(myBeans));
+//
+//        Map<String, String> idMap = new HashMap<>();
+//
+//        if (!myBeans.isEmpty()) {
+//            for (MyBean myBean : myBeans) {
+//                long l = productDao.addCompany(myBean);
+//                idMap.put(myBean.code, myBean.id);
+//            }
+//        }
+//
+//        List<MyBean2> list = new ArrayList<>();
+//        for (MyBean myBean : myBeans) {
+//            MyBean2 myBean2_2 = new MyBean2(myBean.display_name + "交强险", idMap.get(myBean.code), myBean.code + "_CAR_COMPULSORY", "200040001", time);
+//            MyBean2 myBean2_1 = new MyBean2(myBean.display_name + "商业险", idMap.get(myBean.code), myBean.code + "_CAR_BUSINESS", "200040002", time);
+//            list.add(myBean2_2);
+//            list.add(myBean2_1);
+//        }
+//
+//        if (!list.isEmpty()) {
+//            for (MyBean2 myBean2 : list) {
+//                productDao.addProduct(myBean2);
+//            }
+//        }
+//
+//
+////        ChannelIdBean channelIdBean = new ChannelIdBean();
+////        channelIdBean.channelId = "1";
+////
+////        String brokerageByChannelIdForManagerSystem = brokerageService.getBrokerageByChannelIdForManagerSystem(channelIdBean);
+////
+////        IncomeBean incomeBean = new IncomeBean();
+////        incomeBean.managerUuid = "1";
+////        incomeBean.accountUuid = "1";
+////
+////        String incomeByManagerUuidAndAccountUuidForManagerSystem = brokerageService.getIncomeByManagerUuidAndAccountUuidForManagerSystem(incomeBean);
+////
+////        AccountUuidBean accountUuid = new AccountUuidBean();
+////        accountUuid.accountUuid = "1";
+////
+////        String policyholderCountByTimeOrAccountId = custWarrantyService.getPolicyholderCountByTimeOrAccountId(accountUuid);
+////
+////        String premiumByAccountUuidForManagerSystem = premiumService.getPremiumByAccountUuidForManagerSystem(accountUuid);
+////
+////        String premiumByChannelIdForManagerSystem = premiumService.getPremiumByChannelIdForManagerSystem(channelIdBean);
+////
+////        String premiumCountByChannelIdForManagerSystem = premiumService.getPremiumCountByChannelIdForManagerSystem(channelIdBean);
+//
+////        AgentBean agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid("2", "92");
+////
+////        return agentInfoByPersonIdManagerUuid != null ? agentInfoByPersonIdManagerUuid.toString() : "null";
+//
+////        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+////        insurancePolicyModel.manager_uuid = "2";
+////        insurancePolicyModel.product_id_string = "0,1";
+////
+////        List<PolicyListCountModel> insurancePolicyListCountByTimeAndManagerUuidAndProductId = insurancePolicyDao.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
+//
+////        Map<String, String> typeMap = new HashMap<>();
+////
+////        养老险 000100010000
+////        人寿险 000100020000
+////        健康险 000100030000
+////        意外险 000100040000
+////        重疾险 000100050000
+////        其他 000199990000
+////        财产损失险 000200010000
+////        责任保险 000200020000
+////        信用保证险 000200030000
+////        车险 000200040000
+////        农险 000200050000
+////        其他 000200060000
+////        生存保险 000100020001
+////        死亡保险 000100020002
+////        两全保险 000100020003
+////        医疗保险 000100030001
+////        失能收入保险 000100030002
+////        护理保险 000100030003
+////        个人意外险 000100040001
+////        团体意外险 000100040002
+////        企财险 000200010001
+////        家财险 000200010002
+////        运输工具险 000200010003
+////        工程险 000200010004
+////        特殊风险 000200010005
+////        指数险 000200010006
+////        公众责任险 000200020001
+////        第三者责任险 000200020002
+////        产品责任险 000200020003
+////        雇主责任险 000200020004
+////        职业责任险 000200020005
+////        物流责任险 000200020006
+////        出口信用险 000200030001
+////        投资保险 000200030002
+////        雇员忠诚保证险 000200030003
+////        履约保证险 000200030004
+////        交强险 000200040001
+////        商业险 000200040002
+////        typeMap.put("", "");
+//
+//        MyBean3 root1 = new MyBean3("人身保险", "0", "1", "100000000");
+//        productDao.addCategory(root1);
+//        MyBean3 root2 = new MyBean3("财产保险", "0", "1", "200000000");
+//        productDao.addCategory(root2);
+//
+//
+//        return "";
+//    }
 
 }
