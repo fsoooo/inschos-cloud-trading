@@ -2605,11 +2605,11 @@ public class CarInsuranceAction extends BaseAction {
         return str;
     }
 
-//    @Autowired
-//    private ProductClient productClient;
-//
-//    @Autowired
-//    private PersonClient personClient;
+    @Autowired
+    private ProductClient productClient;
+
+    @Autowired
+    private PersonClient personClient;
 //
 //    @Autowired
 //    private BrokerageService brokerageService;
