@@ -11,7 +11,6 @@ import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
 import com.inschos.cloud.trading.access.rpc.service.PremiumService;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.*;
-import com.inschos.cloud.trading.data.dao.CarInfoDao;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.data.dao.ProductDao;
@@ -867,6 +866,22 @@ public class CarInsuranceAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, checkCoverageListResult.message, response);
         }
 
+//        if (checkCoverageListResult.coverageList.isEmpty()) {
+//            response.data = new CarInsurance.GetPremiumDetail();
+//            response.data.insurancePolicies = new ArrayList<>();
+//
+//            response.data.totalInsuredPremium = "0.00";
+//            response.data.totalInsuredPremiumText = "¥0.00";
+//
+//            CarInsurance.InsurancePolicy insurancePolicy = new CarInsurance.InsurancePolicy();
+//            insurancePolicy.totalPremium = "0.00";
+//            insurancePolicy.totalPremiumText = "¥0.00";
+//
+//            response.data.insurancePolicies.add(insurancePolicy);
+//
+//            return json(BaseResponse.CODE_SUCCESS, "获取参考报价成功", response);
+//        }
+
         getPremiumRequest.coverageList = checkCoverageListResult.coverageList;
 
         ExtendCarInsurancePolicy.GetPremiumResponse result = new CarInsuranceHttpRequest<>(get_premium, getPremiumRequest, ExtendCarInsurancePolicy.GetPremiumResponse.class).post();
@@ -881,7 +896,7 @@ public class CarInsuranceAction extends BaseAction {
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = new CarInsurance.GetPremiumDetail();
-                response.data.insurancePolicies = result.data;
+                response.data.insurancePolicies = new ArrayList<>();
 
                 BigDecimal total = new BigDecimal("0.0");
                 for (ExtendCarInsurancePolicy.InsurancePolicy datum : result.data) {
@@ -903,6 +918,14 @@ public class CarInsuranceAction extends BaseAction {
                     datum.totalPremium = add.toString();
                     datum.totalPremiumText = "¥" + datum.totalPremium;
                     total = total.add(add);
+
+                    CarInsurance.InsurancePolicy insurancePolicy = new CarInsurance.InsurancePolicy(datum);
+
+                    insurancePolicy.coverageList = dealInsurancePolicyInfoForShowList(datum.coverageList);
+                    boolean b = checkCommitEqualsUltimate(checkCoverageListResult.coverageList, datum.coverageList);
+                    insurancePolicy.isChanged = b ? "0" : "1";
+
+                    response.data.insurancePolicies.add(insurancePolicy);
                 }
 
                 response.data.totalInsuredPremium = total.toString();
@@ -1016,7 +1039,7 @@ public class CarInsuranceAction extends BaseAction {
         }
 
         if (!request.personInfo.isEnable()) {
-            return json(BaseResponse.CODE_FAILURE, "缺少人员信息", response);
+            return json(BaseResponse.CODE_FAILURE, "缺少人员信息或身份证号码不合法", response);
         }
 
         getPremiumCalibrateRequest.personInfo = request.personInfo;
@@ -1058,6 +1081,7 @@ public class CarInsuranceAction extends BaseAction {
                 SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd");
                 StringBuilder stringBuilder = new StringBuilder();
                 boolean flag = false;
+                response.data.insurancePolicyPremiumDetails = new ArrayList<>();
                 for (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail datum : result.data) {
                     datum.biBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
                     String s1 = nextYearMillisecond(datum.biBeginDateValue);
@@ -1087,8 +1111,15 @@ public class CarInsuranceAction extends BaseAction {
                         stringBuilder.append("\n");
                     }
 
-                    stringBuilder.append(dealInsurancePolicyInfoForShow(datum.coverageList));
+                    stringBuilder.append(dealInsurancePolicyInfoForShowString(datum.coverageList));
                     flag = true;
+
+                    CarInsurance.InsurancePolicyPremiumDetail insurancePolicyPremiumDetail = new CarInsurance.InsurancePolicyPremiumDetail(datum);
+
+                    insurancePolicyPremiumDetail.coverageList = dealInsurancePolicyInfoForShowList(datum.coverageList);
+                    boolean b = checkCommitEqualsUltimate(checkCoverageListResult.coverageList, datum.coverageList);
+                    insurancePolicyPremiumDetail.isChanged = b ? "0" : "1";
+                    response.data.insurancePolicyPremiumDetails.add(insurancePolicyPremiumDetail);
                 }
 
                 response.data.biInsuredPremium = bi.toString();
@@ -1101,9 +1132,6 @@ public class CarInsuranceAction extends BaseAction {
 
                 response.data.insuredName = request.personInfo.insuredName;
                 response.data.insuranceContent = stringBuilder.toString();
-
-
-                response.data.insurancePolicyPremiumDetails = result.data;
 
                 str = json(BaseResponse.CODE_SUCCESS, "获取报价成功", response);
             } else {
@@ -1437,7 +1465,7 @@ public class CarInsuranceAction extends BaseAction {
             request.applyUnderwriting.biInsuredPremium = getPremiumCalibrateResponse.data.biInsuredPremium;
             // request.applyUnderwriting.bjCodeFlag = getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails.get(0).;
             boolean flag = false;
-            for (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail insurancePolicyPremiumDetail : getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails) {
+            for (CarInsurance.InsurancePolicyPremiumDetail insurancePolicyPremiumDetail : getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails) {
                 if (StringKit.equals(insurancePolicyPremiumDetail.insurerCode, request.applyUnderwriting.insurerCode)) {
                     request.applyUnderwriting.bizID = insurancePolicyPremiumDetail.bizID;
                     request.applyUnderwriting.bjCodeFlag = insurancePolicyPremiumDetail.bjCodeFlag;
@@ -2117,6 +2145,7 @@ public class CarInsuranceAction extends BaseAction {
         return list;
     }
 
+
     /**
      * 处理响应码，如果返回null，则正常处理，如果返回非null，就需要返回以String为message的response
      *
@@ -2340,7 +2369,13 @@ public class CarInsuranceAction extends BaseAction {
         }
     }
 
-    public String dealInsurancePolicyInfoForShow(List<ExtendCarInsurancePolicy.InsurancePolicyInfo> list) {
+    /**
+     * 将投保的实际险别列表变成字符串显示文案
+     *
+     * @param list 投保的实际险别
+     * @return 文案
+     */
+    public String dealInsurancePolicyInfoForShowString(List<ExtendCarInsurancePolicy.InsurancePolicyInfo> list) {
         StringBuilder stringBuilder = new StringBuilder();
         Map<String, ExtendCarInsurancePolicy.InsurancePolicyInfo> map = new HashMap<>();
         for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : list) {
@@ -2364,6 +2399,99 @@ public class CarInsuranceAction extends BaseAction {
             }
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * 将投保的实际险别列表变成显示用险别列表
+     *
+     * @param list 投保的实际险别列表
+     * @return 显示用险别列表
+     */
+    public List<CarInsurance.InsuranceInfo> dealInsurancePolicyInfoForShowList(List<ExtendCarInsurancePolicy.InsurancePolicyInfo> list) {
+        Map<String, ExtendCarInsurancePolicy.InsurancePolicyInfo> map = new HashMap<>();
+        for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : list) {
+            if (insurancePolicyInfo.coverageCode.startsWith("M")) {
+                map.put(insurancePolicyInfo.coverageCode.substring(1, insurancePolicyInfo.coverageCode.length()), insurancePolicyInfo);
+            }
+        }
+
+        List<CarInsurance.InsuranceInfo> result = new ArrayList<>();
+        for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : list) {
+            CarInsurance.InsuranceInfo insuranceInfo = new CarInsurance.InsuranceInfo();
+
+            insuranceInfo.coverageCode = insurancePolicyInfo.coverageCode;
+            insuranceInfo.coverageName = insurancePolicyInfo.coverageName;
+            insuranceInfo.insuredAmount = insurancePolicyInfo.insuredAmount;
+            insuranceInfo.insuredPremium = insurancePolicyInfo.insuredPremium;
+
+            if (!insurancePolicyInfo.coverageCode.startsWith("M")) {
+                insuranceInfo.isExcessOption = map.get(insurancePolicyInfo.coverageCode) != null ? "1" : "0";
+
+                if (StringKit.equals(insuranceInfo.coverageCode, "F")) {
+                    insuranceInfo.flag = insurancePolicyInfo.flag;
+                }
+
+                if (StringKit.equals(insuranceInfo.coverageCode, "Z2") && !StringKit.isEmpty(insurancePolicyInfo.flag)) {
+
+                    String[] split = insurancePolicyInfo.flag.split(",");
+
+                    if (split.length == 2) {
+                        insuranceInfo.day = split[0];
+                        insuranceInfo.amount = split[1];
+                    }
+                }
+            }
+
+            result.add(insuranceInfo);
+        }
+        return result;
+    }
+
+    /**
+     * 检查提交的投保险别列表是否与实际的投保险别列表一致
+     *
+     * @param commit   提交的投保险别列表
+     * @param ultimate 实际的投保险别列表
+     * @return 是否一致
+     */
+    public boolean checkCommitEqualsUltimate(List<ExtendCarInsurancePolicy.InsuranceInfoDetail> commit, List<ExtendCarInsurancePolicy.InsurancePolicyInfo> ultimate) {
+
+        if (commit == null && ultimate == null) {
+            return true;
+        }
+
+        if (commit != null && ultimate != null && commit.size() != ultimate.size()) {
+            return false;
+        }
+
+        if (commit == null || ultimate == null) {
+            return false;
+        }
+
+        Map<String, ExtendCarInsurancePolicy.InsuranceInfoDetail> map = new HashMap<>();
+
+        for (ExtendCarInsurancePolicy.InsuranceInfoDetail insuranceInfoDetail : commit) {
+            map.put(insuranceInfoDetail.coverageCode, insuranceInfoDetail);
+        }
+
+        for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : ultimate) {
+            ExtendCarInsurancePolicy.InsuranceInfoDetail insuranceInfoDetail = map.get(insurancePolicyInfo.coverageCode);
+
+            if (insuranceInfoDetail == null) {
+                return false;
+            }
+
+            if (!StringKit.equals(insurancePolicyInfo.insuredAmount, insuranceInfoDetail.insuredAmount)) {
+                return false;
+            }
+
+            if (!StringKit.equals(insurancePolicyInfo.flag, insuranceInfoDetail.flag)) {
+                return false;
+            }
+
+        }
+
+        return true;
     }
 
     /**
@@ -2521,10 +2649,10 @@ public class CarInsuranceAction extends BaseAction {
 //        nameMap.put("ZFIC", "珠峰财产保险股份有限公司");
 //        nameMap.put("ZHONGAN", "众安在线财产保险股份有限公司");
 
-        nameMap.put("APIC", "永诚财产保险股份有限公司");
-        nameMap.put("TSBX", "泰山财产保险股份有限公司");
-        nameMap.put("CLPC", "中国人寿财产保险股份有限公司");
-        nameMap.put("CPIC", "中国太平洋财产保险股份有限公司");
+//        nameMap.put("APIC", "永诚财产保险股份有限公司");
+//        nameMap.put("TSBX", "泰山财产保险股份有限公司");
+//        nameMap.put("CLPC", "中国人寿财产保险股份有限公司");
+//        nameMap.put("CPIC", "中国太平洋财产保险股份有限公司");
 
         ExtendCarInsurancePolicy.GetProvinceCodeResponse codeResponse = JsonKit.json2Bean(provinceCode, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class);
 
@@ -2617,6 +2745,54 @@ public class CarInsuranceAction extends BaseAction {
 //        insurancePolicyModel.product_id_string = "0,1";
 //
 //        List<PolicyListCountModel> insurancePolicyListCountByTimeAndManagerUuidAndProductId = insurancePolicyDao.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
+
+//        Map<String, String> typeMap = new HashMap<>();
+//
+//        养老险 000100010000
+//        人寿险 000100020000
+//        健康险 000100030000
+//        意外险 000100040000
+//        重疾险 000100050000
+//        其他 000199990000
+//        财产损失险 000200010000
+//        责任保险 000200020000
+//        信用保证险 000200030000
+//        车险 000200040000
+//        农险 000200050000
+//        其他 000200060000
+//        生存保险 000100020001
+//        死亡保险 000100020002
+//        两全保险 000100020003
+//        医疗保险 000100030001
+//        失能收入保险 000100030002
+//        护理保险 000100030003
+//        个人意外险 000100040001
+//        团体意外险 000100040002
+//        企财险 000200010001
+//        家财险 000200010002
+//        运输工具险 000200010003
+//        工程险 000200010004
+//        特殊风险 000200010005
+//        指数险 000200010006
+//        公众责任险 000200020001
+//        第三者责任险 000200020002
+//        产品责任险 000200020003
+//        雇主责任险 000200020004
+//        职业责任险 000200020005
+//        物流责任险 000200020006
+//        出口信用险 000200030001
+//        投资保险 000200030002
+//        雇员忠诚保证险 000200030003
+//        履约保证险 000200030004
+//        交强险 000200040001
+//        商业险 000200040002
+//        typeMap.put("", "");
+
+        MyBean3 root1 = new MyBean3("人身保险", "0", "1", "100000000");
+        productDao.addCategory(root1);
+        MyBean3 root2 = new MyBean3("财产保险", "0", "1", "200000000");
+        productDao.addCategory(root2);
+
 
         return "";
     }

@@ -456,7 +456,8 @@ public class InsurancePolicy {
             if (list != null && !list.isEmpty()) {
                 for (CarInsurance.InsuranceInfo o : list) {
                     if (model.insuranceType(insuranceType, o.coverageCode)) {
-                        if (StringKit.equals(o.hasExcessOption, "1") && StringKit.equals(o.isExcessOption, "1")) {
+                        // StringKit.equals(o.hasExcessOption, "1") &&
+                        if (StringKit.equals(o.isExcessOption, "1")) {
                             o.coverageName = String.format("%s（不计免赔）", o.coverageName);
                         }
                         this.coverageList.add(o);
