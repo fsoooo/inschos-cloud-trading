@@ -7,8 +7,8 @@ package com.inschos.cloud.trading.extend.car;
  */
 public class CarInsuranceCommon {
 
-//    private static final String SERVER_HOST = "http://apiplus.ztwltech.com/v2.0";
-    private static final String SERVER_HOST = "http://api-mock.ztwltech.com/apply-mock/v2.0";
+    private static final String SERVER_HOST = "http://apiplus.ztwltech.com/v2.0";
+//    private static final String SERVER_HOST = "http://api-mock.ztwltech.com/apply-mock/v2.0";
     private static final String RECEIVER_SERVER_HOST = "http://http://59.110.136.249:9200/trading/trade/";
 
     /**

@@ -155,7 +155,7 @@ public class CarInsuranceController {
         return carInsuranceAction.getPremiumCalibrateAndApplyUnderwriting(actionBean);
     }
 
-    @GetActionBeanAnnotation
+    @GetActionBeanAnnotation(isCheckAccess = false)
     @RequestMapping("car_insurance/resolve_identity_card")
     @ResponseBody
     public String resolveIdentityCard(ActionBean actionBean) {
