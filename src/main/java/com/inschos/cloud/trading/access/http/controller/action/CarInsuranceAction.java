@@ -3,17 +3,17 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
-import com.inschos.cloud.trading.access.rpc.bean.*;
+import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
+import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
 import com.inschos.cloud.trading.access.rpc.client.PersonClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
-import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
-import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
-import com.inschos.cloud.trading.access.rpc.service.PremiumService;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.*;
+import com.inschos.cloud.trading.assist.kit.JsonKit;
+import com.inschos.cloud.trading.assist.kit.MD5Kit;
+import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
-import com.inschos.cloud.trading.data.dao.ProductDao;
 import com.inschos.cloud.trading.extend.car.*;
 import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
@@ -1694,7 +1694,6 @@ public class CarInsuranceAction extends BaseAction {
         CarInsurance.ResolveIdentityCardRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.ResolveIdentityCardRequest.class);
 //        CarInsurance.ResolveIdentityCardRequest request = new CarInsurance.ResolveIdentityCardRequest();
         CarInsurance.ResolveIdentityCardResponse response = new CarInsurance.ResolveIdentityCardResponse();
-
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
