@@ -1,6 +1,8 @@
 package com.inschos.cloud.trading.data.mapper;
 
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
+import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.model.PolicyListCountModel;
 
 import java.util.List;
 
@@ -20,5 +22,9 @@ public interface CustWarrantyCostMapper {
     int updateCustWarrantyCostPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel);
 
     Double findCustWarrantyCostTotal(CustWarrantyCostModel custWarrantyCostModel);
+
+    List<InsurancePolicyModel> findInsurancePolicyListForInsuring(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountForInsuring(InsurancePolicyModel insurancePolicyModel);
 
 }

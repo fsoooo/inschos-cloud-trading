@@ -132,30 +132,36 @@ public class InsurancePolicyAction extends BaseAction {
             insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
             // 将前台的状态转成我们需要的状态
+            long total = 0;
+            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = new ArrayList<>();
             if (StringKit.isEmpty(request.warrantyStatus)) {
                 insurancePolicyModel.status_string = "";
             } else {
                 // 1-待支付 2-待生效 3-保障中 4-已失效
                 switch (request.warrantyStatus) {
                     case "1":
-                        // CustWarrantyCostModel.APPLY_UNDERWRITING_PROCESSING + "," + CustWarrantyCostModel.PAY_STATUS_WAIT + "," + CustWarrantyCostModel.PAY_STATUS_PROCESSING
                         insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_PENDING;
+                        total = insurancePolicyDao.findInsurancePolicyCountForInsuring(insurancePolicyModel);
+                        insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListForInsuring(insurancePolicyModel);
                         break;
                     case "2":
                         insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_WAITING;
+                        total = insurancePolicyDao.findInsurancePolicyCountByWarrantyStatusString(insurancePolicyModel);
+                        insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusStringOrSearch(insurancePolicyModel);
                         break;
                     case "3":
                         insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_EFFECTIVE;
+                        total = insurancePolicyDao.findInsurancePolicyCountByWarrantyStatusString(insurancePolicyModel);
+                        insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusStringOrSearch(insurancePolicyModel);
                         break;
                     case "4":
                         insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_INVALID + "," + InsurancePolicyModel.POLICY_STATUS_EXPIRED;
+                        total = insurancePolicyDao.findInsurancePolicyCountByWarrantyStatusString(insurancePolicyModel);
+                        insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusStringOrSearch(insurancePolicyModel);
                         break;
                 }
             }
 
-            long total = insurancePolicyDao.findInsurancePolicyCountByWarrantyStatusString(insurancePolicyModel);
-
-            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusStringOrSearch(insurancePolicyModel);
             response.data = new ArrayList<>();
 
             if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
