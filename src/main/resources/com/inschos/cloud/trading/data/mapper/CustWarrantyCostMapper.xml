@@ -3,16 +3,16 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper">
 
     <sql id="Base_Column_List">
-        `id`,`warranty_uuid`,`pay_time`,`premium`,`actual_pay_time`,`pay_way`,`pay_money`,`pay_status`,`created_at`,`updated_at`
+        `id`,`warranty_uuid`,`pay_time`,`phase`,`premium`,`actual_pay_time`,`pay_way`,`pay_money`,`pay_status`,`created_at`,`updated_at`
     </sql>
 
     <insert id="addCustWarrantyCost" parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty_cost
-        (`id`,`warranty_uuid`,`pay_time`,`premium`,`actual_pay_time`,`pay_way`,`pay_money`,`pay_status`,`created_at`,`updated_at`)
+        (`id`,`warranty_uuid`,`pay_time`,`phase`,`premium`,`actual_pay_time`,`pay_way`,`pay_money`,`pay_status`,`created_at`,`updated_at`)
         values
-        (#{id},#{warranty_uuid},#{pay_time},#{premium},#{actual_pay_time},#{pay_way},#{pay_money},#{pay_status},#{created_at},#{updated_at})
+        (#{id},#{warranty_uuid},#{pay_time},#{phase},#{premium},#{actual_pay_time},#{pay_way},#{pay_money},#{pay_status},#{created_at},#{updated_at})
     </insert>
 
     <select id="findCustWarrantyCost" parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
@@ -61,5 +61,44 @@
             </if>
         </where>
     </select>
+
+
+    <select id="findInsurancePolicyListByWarrantyCostStatusStringAndWarrantyStatus"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        `id`,`warranty_uuid`,`pre_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`start_time`,`end_time`,`ins_company_id`,`count`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,`created_at`,`updated_at`
+        from cust_warranty
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    id&gt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    id&gt;=(select id from cust_warranty where account_uuid=#{account_uuid} AND state=1
+                    <if test="search!=null and search!=''">
+                        and `warranty_code` like concat("%",#{search},"%")
+                    </if>
+                    <if test="status_string!=null and status_string!=''">
+                        and `warranty_status` in (${status_string})
+                    </if>
+                    limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            and account_uuid=#{account_uuid} AND state = 1
+            <if test="search!=null and search!=''">
+                and `warranty_code` like concat("%",#{search},"%")
+            </if>
+            <if test="status_string!=null and status_string!=''">
+                and `warranty_status` in (${status_string})
+            </if>
+            limit #{page.offset}
+        </where>
+    </select>
+
 
 </mapper>

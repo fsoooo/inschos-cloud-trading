@@ -1298,6 +1298,7 @@ public class CarInsuranceAction extends BaseAction {
                 CustWarrantyCostModel ciCustWarrantyCostModel = new CustWarrantyCostModel();
                 ciCustWarrantyCostModel.warranty_uuid = ciProposal.warranty_uuid;
                 ciCustWarrantyCostModel.pay_time = ciProposal.start_time;
+                ciCustWarrantyCostModel.phase = "1";
                 ciCustWarrantyCostModel.premium = request.applyUnderwriting.ciInsuredPremium;
                 ciCustWarrantyCostModel.pay_status = payState;
                 ciCustWarrantyCostModel.created_at = time;
@@ -1379,6 +1380,7 @@ public class CarInsuranceAction extends BaseAction {
                 CustWarrantyCostModel biCustWarrantyCostModel = new CustWarrantyCostModel();
                 biCustWarrantyCostModel.warranty_uuid = biProposal.warranty_uuid;
                 biCustWarrantyCostModel.pay_time = biProposal.start_time;
+                biCustWarrantyCostModel.phase = "1";
                 biCustWarrantyCostModel.premium = request.applyUnderwriting.biInsuredPremium;
                 biCustWarrantyCostModel.pay_status = payState;
                 biCustWarrantyCostModel.created_at = time;
@@ -1491,13 +1493,20 @@ public class CarInsuranceAction extends BaseAction {
                 actionBean.body = JsonKit.bean2Json(request);
                 CarInsurance.ApplyUnderwritingResponse applyUnderwritingResponse = JsonKit.json2Bean(applyUnderwriting(actionBean), CarInsurance.ApplyUnderwritingResponse.class);
 
-                if (applyUnderwritingResponse != null) {
+                if (applyUnderwritingResponse != null && applyUnderwritingResponse.code == BaseResponse.CODE_SUCCESS && applyUnderwritingResponse.data != null) {
                     response.data.applyUnderwriting = applyUnderwritingResponse.data;
+                    response.data.insurancePolicyPremiumDetails = getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails;
+                    return json(BaseResponse.CODE_SUCCESS, "申请核保成功", response);
+                } else {
+                    if (applyUnderwritingResponse == null) {
+                        return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
+                    } else {
+                        response.code = applyUnderwritingResponse.code;
+                        response.message = applyUnderwritingResponse.message;
+                        response.data.insurancePolicyPremiumDetails = getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails;
+                        return json(response);
+                    }
                 }
-
-                response.data.insurancePolicyPremiumDetails = getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails;
-
-                return json(BaseResponse.CODE_SUCCESS, "申请核保成功", response);
             } else {
                 return json(BaseResponse.CODE_FAILURE, "insurerCode参数有误", response);
             }
@@ -1748,10 +1757,10 @@ public class CarInsuranceAction extends BaseAction {
 //                }
                 str = json(BaseResponse.CODE_SUCCESS, "身份证信息获取成功", response);
             } else {
-                str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
+                str = json(BaseResponse.CODE_FAILURE, "识别图片失败(" + result.msgCode + ")", response);
             }
         } else {
-            str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
+            str = json(BaseResponse.CODE_FAILURE, "识别图片失败(" + result.msgCode + ")", response);
         }
 
         return str;
@@ -1804,27 +1813,27 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
-                if (!StringKit.isEmpty(request.imgJustBase64) && result.data != null) {
-                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
-                    request1.base64 = request.imgJustBase64;
-                    request1.fileKey = MD5Kit.MD5Digest(result.data.engineNo + result.data.frameNo + result.data.fileNumber + "1");
-                    request1.fileName = result.data.fileNumber + "1";
-                    FileUpload.getInstance().uploadByBase64(request1);
-                }
-
-                if (!StringKit.isEmpty(request.imgBackBase64) && result.data != null) {
-                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
-                    request1.base64 = request.imgBackBase64;
-                    request1.fileKey = MD5Kit.MD5Digest(result.data.engineNo + result.data.frameNo + result.data.fileNumber + "2");
-                    request1.fileName = result.data.fileNumber + "2";
-                    FileUpload.getInstance().uploadByBase64(request1);
-                }
+//                if (!StringKit.isEmpty(request.imgJustBase64) && result.data != null) {
+//                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
+//                    request1.base64 = request.imgJustBase64;
+//                    request1.fileKey = MD5Kit.MD5Digest(result.data.engineNo + result.data.frameNo + result.data.fileNumber + "1");
+//                    request1.fileName = result.data.fileNumber + "1";
+//                    FileUpload.getInstance().uploadByBase64(request1);
+//                }
+//
+//                if (!StringKit.isEmpty(request.imgBackBase64) && result.data != null) {
+//                    FileUpload.UploadByBase64Request request1 = new FileUpload.UploadByBase64Request();
+//                    request1.base64 = request.imgBackBase64;
+//                    request1.fileKey = MD5Kit.MD5Digest(result.data.engineNo + result.data.frameNo + result.data.fileNumber + "2");
+//                    request1.fileName = result.data.fileNumber + "2";
+//                    FileUpload.getInstance().uploadByBase64(request1);
+//                }
                 str = json(BaseResponse.CODE_SUCCESS, "行驶证信息获取成功", response);
             } else {
-                str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
+                str = json(BaseResponse.CODE_FAILURE, "识别图片失败(" + result.msgCode + ")", response);
             }
         } else {
-            str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
+            str = json(BaseResponse.CODE_FAILURE, "识别图片失败(" + result.msgCode + ")", response);
         }
 
         return str;

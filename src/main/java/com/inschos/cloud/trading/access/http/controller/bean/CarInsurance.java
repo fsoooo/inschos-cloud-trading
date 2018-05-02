@@ -355,6 +355,10 @@ public class CarInsurance {
         public ExtendCarInsurancePolicy.VehicleInfo vehicleInfo;
         public List<InsuranceInfo> coverageList;
 
+        public InsurancePolicyPremiumDetail () {
+
+        }
+
         public InsurancePolicyPremiumDetail (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail  insurancePolicy) {
             this.state = insurancePolicy.state;
             this.msg = insurancePolicy.msg;

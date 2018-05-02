@@ -21,6 +21,12 @@ public class CustWarrantyCostModel {
      * 应支付时间
      */
     public String pay_time;
+
+    /**
+     * 第几期
+     */
+    public String phase;
+
     /**
      * 保单价格
      */
@@ -56,7 +62,7 @@ public class CustWarrantyCostModel {
     public String start_time;
     public String end_time;
 
-    public CustWarrantyCostModel () {
+    public CustWarrantyCostModel() {
 
     }
 
