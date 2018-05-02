@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.data.dao;
 
 import com.inschos.cloud.trading.access.rpc.bean.MyBean;
 import com.inschos.cloud.trading.access.rpc.bean.MyBean2;
+import com.inschos.cloud.trading.access.rpc.bean.MyBean3;
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.data.mapper.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,10 @@ public class ProductDao extends BaseDao {
 
     public long addProduct(MyBean2 myBean) {
         return productMapper.addProduct(myBean);
+    }
+
+    public long addCategory(MyBean3 myBean) {
+        return productMapper.addCategory(myBean);
     }
 
 }

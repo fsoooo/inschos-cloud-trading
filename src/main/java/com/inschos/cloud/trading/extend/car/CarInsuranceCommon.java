@@ -94,7 +94,7 @@ public class CarInsuranceCommon {
     /**
      * 解析身份证
      */
-    public static final String resolve_identity_card = CarInsuranceCommon.getServerHost() + "/valueadd/analyzingDriving";
+    public static final String resolve_identity_card = CarInsuranceCommon.getServerHost() + "/valueadd/analyzingCardInfo";
 
     /**
      * 解析行驶本

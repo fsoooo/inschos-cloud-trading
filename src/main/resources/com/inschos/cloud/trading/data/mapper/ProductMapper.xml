@@ -10,6 +10,10 @@
         `id`,`name`,`display_name`,`content`,`product_company_id`,`product_category_id`,`product_brokerage_id`,`min_math`,`max_math`,`sell_status`,`base_price`,`system_commission_ratio`,`base_stages_way`,`base_ratio`,`type`,`pay_mode`,`business_support`,`observation_period`,`period_hesitation`,`latest_date`,`first_date`,`created_at`,`updated_at`,`state`
     </sql>
 
+    <sql id="Base_Column_List3">
+        `id`,`category_name`,`pid`,`level`,`category_type`,`created_at`,`updated_at`,`state`
+    </sql>
+
     <insert id="addCompany" parameterType="com.inschos.cloud.trading.access.rpc.bean.MyBean"
             useGeneratedKeys="true"
             keyProperty="id">
@@ -26,6 +30,15 @@
         (`id`,`name`,`display_name`,`content`,`product_company_id`,`product_category_id`,`product_brokerage_id`,`min_math`,`max_math`,`sell_status`,`base_price`,`system_commission_ratio`,`base_stages_way`,`base_ratio`,`type`,`pay_mode`,`business_support`,`observation_period`,`period_hesitation`,`latest_date`,`first_date`,`created_at`,`updated_at`,`state`)
         values
         (#{id},#{name},#{display_name},#{content},#{product_company_id},#{product_category_id},#{product_brokerage_id},#{min_math},#{max_math},#{sell_status},#{base_price},#{system_commission_ratio},#{base_stages_way},#{base_ratio},#{type},#{pay_mode},#{business_support},#{observation_period},#{period_hesitation},#{latest_date},#{first_date},#{created_at},#{updated_at},#{state})
+    </insert>
+
+    <insert id="addCategory" parameterType="com.inschos.cloud.trading.access.rpc.bean.MyBean3"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into product
+        (`id`,`category_name`,`pid`,`level`,`category_type`,`created_at`,`updated_at`,`state`)
+        values
+        (#{id},#{category_name},#{pid},#{level},#{category_type},#{created_at},#{updated_at},#{state})
     </insert>
 
 

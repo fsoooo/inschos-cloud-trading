@@ -138,7 +138,41 @@ public class CarInsurance {
     public static class GetPremiumDetail {
         public String totalInsuredPremium;
         public String totalInsuredPremiumText;
-        public List<ExtendCarInsurancePolicy.InsurancePolicy> insurancePolicies;
+        public List<InsurancePolicy> insurancePolicies;
+    }
+
+    public static class InsurancePolicy{
+        public String refId;
+        public String insurerCode;
+        public String biBeginDate;
+        public String biPremium;
+        public String integral;
+        public String ciBeginDate;
+        public String ciPremium;
+        public String carshipTax;
+        public String isChanged;
+
+        public String totalPremium;
+        public String totalPremiumText;
+
+        public List<InsuranceInfo> coverageList;
+
+        public InsurancePolicy () {
+
+        }
+
+        public InsurancePolicy (ExtendCarInsurancePolicy.InsurancePolicy insurancePolicy) {
+            this.refId = insurancePolicy.refId;
+            this.insurerCode = insurancePolicy.insurerCode;
+            this.biBeginDate = insurancePolicy.biBeginDate;
+            this.biPremium = insurancePolicy.biPremium;
+            this.integral = insurancePolicy.integral;
+            this.ciBeginDate = insurancePolicy.ciBeginDate;
+            this.ciPremium = insurancePolicy.ciPremium;
+            this.carshipTax = insurancePolicy.carshipTax;
+            this.totalPremium = insurancePolicy.totalPremium;
+            this.totalPremiumText = insurancePolicy.totalPremiumText;
+        }
     }
 
     public static class GetInsuranceInfoRequest extends BaseRequest {
@@ -287,7 +321,68 @@ public class CarInsurance {
         public String ciInsuranceTermText;
         public String biInsuranceTermText;
         public String insuranceContent;
-        public List<ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail> insurancePolicyPremiumDetails;
+        public List<InsurancePolicyPremiumDetail> insurancePolicyPremiumDetails;
+    }
+
+    public static class InsurancePolicyPremiumDetail {
+        public String state;
+        public String msg;
+        public String msgCode;
+        public String bizID;
+        public String thpBizID;
+        public String productName;
+        public String insurerCode;
+        public String channelCode;
+        public String biBeginDate;
+        public String biBeginDateValue;
+        public String biInsuranceTermText;
+        public String biPremium;
+        public String ciBeginDate;
+        public String ciBeginDateValue;
+        public String ciInsuranceTermText;
+        public String ciPremium;
+        public String carshipTax;
+        public String integral;
+        public String cIntegral;
+        public String bIntegral;
+        public String showCiCost;
+        public String showBiCost;
+        public String showSumIntegral;
+        public String bjCodeFlag;
+        public String isChanged;
+        public ExtendCarInsurancePolicy.DiscountInfo discountInfo;
+        public List<ExtendCarInsurancePolicy.SpAgreement> spAgreement;
+        public ExtendCarInsurancePolicy.VehicleInfo vehicleInfo;
+        public List<InsuranceInfo> coverageList;
+
+        public InsurancePolicyPremiumDetail (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail  insurancePolicy) {
+            this.state = insurancePolicy.state;
+            this.msg = insurancePolicy.msg;
+            this.msgCode = insurancePolicy.msgCode;
+            this.bizID = insurancePolicy.bizID;
+            this.thpBizID = insurancePolicy.thpBizID;
+            this.productName = insurancePolicy.productName;
+            this.insurerCode = insurancePolicy.insurerCode;
+            this.channelCode = insurancePolicy.channelCode;
+            this.biBeginDate = insurancePolicy.biBeginDate;
+            this.biBeginDateValue = insurancePolicy.biBeginDateValue;
+            this.biInsuranceTermText = insurancePolicy.biInsuranceTermText;
+            this.biPremium = insurancePolicy.biPremium;
+            this.ciBeginDate = insurancePolicy.ciBeginDate;
+            this.ciBeginDateValue = insurancePolicy.ciBeginDateValue;
+            this.ciInsuranceTermText = insurancePolicy.ciInsuranceTermText;
+            this.ciPremium = insurancePolicy.ciPremium;
+            this.carshipTax = insurancePolicy.carshipTax;
+            this.integral = insurancePolicy.integral;
+            this.cIntegral = insurancePolicy.cIntegral;
+            this.bIntegral = insurancePolicy.bIntegral;
+            this.showCiCost = insurancePolicy.showCiCost;
+            this.showBiCost = insurancePolicy.showBiCost;
+            this.bjCodeFlag = insurancePolicy.bjCodeFlag;
+            this.discountInfo = insurancePolicy.discountInfo;
+            this.spAgreement = insurancePolicy.spAgreement;
+            this.vehicleInfo = insurancePolicy.vehicleInfo;
+        }
     }
 
 //    public static class GetPremiumFactorRequest extends BaseRequest {
@@ -336,7 +431,7 @@ public class CarInsurance {
         public String bjCodeFlag;
         public String integral;
 
-        public List<ExtendCarInsurancePolicy.InsurancePolicyInfo> coverageList;
+        public List<InsuranceInfo> coverageList;
         public List<ExtendCarInsurancePolicy.SpAgreement> spAgreements;
 
         public boolean isNeedVerificationCode() {
@@ -407,7 +502,7 @@ public class CarInsurance {
 
     public static class PremiumCalibrateAndApplyUnderwriting {
         public ExtendCarInsurancePolicy.ApplyUnderwriting applyUnderwriting;
-        public List<ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail> insurancePolicyPremiumDetails;
+        public List<InsurancePolicyPremiumDetail> insurancePolicyPremiumDetails;
     }
 
     public static class GetPayLinkRequest extends BaseRequest {

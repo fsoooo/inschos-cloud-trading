@@ -105,7 +105,7 @@ public class CustWarrantyCostModel {
         if (payStatus == null) {
             return str;
         }
-        // 支付状态 1-核保中 2-核保失败 3-待支付 4-支付中 5-支付取消 6-支付成功
+        // 支付状态 201-核保中 202-核保失败 203-待支付 204-支付中 205-支付取消 206-支付成功
         switch (payStatus) {
             case APPLY_UNDERWRITING_PROCESSING:
                 str = "核保中";

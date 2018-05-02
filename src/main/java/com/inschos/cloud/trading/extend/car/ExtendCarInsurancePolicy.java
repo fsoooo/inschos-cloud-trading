@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.extend.car;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
+import com.inschos.cloud.trading.assist.kit.CardCodeKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 
 import java.util.Date;
@@ -374,7 +375,10 @@ public class ExtendCarInsurancePolicy {
                     !StringKit.isEmpty(this.insuredMobile) &&
                     !StringKit.isEmpty(this.applicantName) &&
                     !StringKit.isEmpty(this.applicantID) &&
-                    !StringKit.isEmpty(this.applicantMobile);
+                    !StringKit.isEmpty(this.applicantMobile) &&
+                    CardCodeKit.isLegal(insuredIdType, insuredID) &&
+                    CardCodeKit.isLegal(applicantIdType, applicantID) &&
+                    CardCodeKit.isLegal(ownerIdType, ownerID) ;
         }
     }
 

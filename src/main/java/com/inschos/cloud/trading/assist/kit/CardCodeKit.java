@@ -58,6 +58,17 @@ public class CardCodeKit {
 
     }
 
+    public static boolean isLegal(String cardType, String cardCode) {
+        if (!StringKit.isInteger(cardType)) {
+            return false;
+        }
+
+        Integer integer = Integer.valueOf(cardType);
+
+        return integer >= 1 && integer <= 3 && isLegal(integer, cardCode);
+
+    }
+
     public static Date getBirthDayByCode(int cardType, String cardCode) {
         Date date = null;
         if (isLegal(cardType, cardCode)) {
@@ -73,6 +84,7 @@ public class CardCodeKit {
         }
         return date;
     }
+
     public static String getCardTypeText(String cardType) {
         String str = "";
         if (!StringKit.isInteger(cardType)) {
