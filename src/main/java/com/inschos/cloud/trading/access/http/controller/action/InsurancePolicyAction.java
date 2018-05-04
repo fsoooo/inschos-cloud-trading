@@ -406,7 +406,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.size());
 
-        return json(BaseResponse.CODE_SUCCESS, "获取保单详情成功", response);
+        return json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
     }
 
     public String getInsurancePolicyDetailForManagerSystem(ActionBean actionBean) {
@@ -495,6 +495,7 @@ public class InsurancePolicyAction extends BaseAction {
                 CarInfoModel oneByWarrantyCode = carInfoDao.findOneByWarrantyUuid(warrantyUuid);
                 response.data.carInfo = new InsurancePolicy.CarInfo(oneByWarrantyCode);
                 response.data.bizId = oneByWarrantyCode.biz_id;
+                response.data.bjCodeFlag = oneByWarrantyCode.bj_code_flag;
                 str = json(BaseResponse.CODE_SUCCESS, "获取保单详情成功", response);
             } else {
                 // 其他险
