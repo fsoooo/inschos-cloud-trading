@@ -19,7 +19,7 @@ public class CustWarrantyClaimsDao extends BaseDao{
     @Autowired
     private CustWarrantyClaimsMapper custWarrantyClaimsMapper;
 
-    public List<CustWarrantyClaims> findInsuranceClaimsListByUserId (@NotNull CustWarrantyClaims custWarrantyClaims) {
+    public List<CustWarrantyClaims> findInsuranceClaimsListByUserId (CustWarrantyClaims custWarrantyClaims) {
         return custWarrantyClaimsMapper.findInsuranceClaimsListByUserId(custWarrantyClaims);
     }
 

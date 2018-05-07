@@ -19,12 +19,12 @@ public class InsurancePreservationDao {
     @Autowired
     public InsurancePreservationMapper insurancePreservationMapper;
 
-    public int addInsurancePreservation(@NotNull InsurancePreservationModel insurancePreservationModel) {
+    public int addInsurancePreservation(InsurancePreservationModel insurancePreservationModel) {
         return insurancePreservationMapper.addInsurancePreservation(insurancePreservationModel);
     }
 
     // 理赔记录
-    public List<InsurancePreservationModel> findInsurancePreservationListPrivateCode (@NotNull InsurancePreservationModel insurancePreservationModel) {
+    public List<InsurancePreservationModel> findInsurancePreservationListPrivateCode (InsurancePreservationModel insurancePreservationModel) {
         return insurancePreservationMapper.findInsurancePreservationListPrivateCode(insurancePreservationModel);
     }
 

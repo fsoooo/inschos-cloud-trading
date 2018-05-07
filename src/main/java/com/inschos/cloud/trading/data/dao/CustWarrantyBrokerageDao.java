@@ -28,11 +28,11 @@ public class CustWarrantyBrokerageDao {
     @Autowired
     public InsurancePolicyMapper insurancePolicyMapper;
 
-    public int addCustWarrantyBrokerage(@NotNull CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+    public int addCustWarrantyBrokerage(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
         return custWarrantyBrokerageMapper.addCustWarrantyBrokerage(custWarrantyBrokerageModel);
     }
 
-    public String findCustWarrantyBrokerageTotalByChannelId(@NotNull CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+    public String findCustWarrantyBrokerageTotalByChannelId(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
         BigDecimal amount = new BigDecimal("0.00");
         if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.channel_id)) {
             Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findCustWarrantyBrokerageTotal(custWarrantyBrokerageModel);
@@ -46,7 +46,7 @@ public class CustWarrantyBrokerageDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public String findCustWarrantyBrokerageTotalByManagerUuid(@NotNull CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+    public String findCustWarrantyBrokerageTotalByManagerUuid(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
         BigDecimal amount = new BigDecimal("0.00");
         if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.manager_uuid)) {
             Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findCustWarrantyBrokerageTotal(custWarrantyBrokerageModel);
@@ -60,7 +60,7 @@ public class CustWarrantyBrokerageDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public String findIncomeByManagerUuidAndAccountUuid(@NotNull CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+    public String findIncomeByManagerUuidAndAccountUuid(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
         BigDecimal amount = new BigDecimal("0.00");
         if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.manager_uuid) && !StringKit.isEmpty(custWarrantyBrokerageModel.account_uuid)) {
             Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findIncomeByManagerUuidAndAccountUuid(custWarrantyBrokerageModel);

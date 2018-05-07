@@ -19,27 +19,27 @@ public class CarInfoDao {
     @Autowired
     private CarInfoMapper carInfoMapper;
 
-    public int addCarInfo(@NotNull CarInfoModel carInfoModel) {
+    public int addCarInfo(CarInfoModel carInfoModel) {
         return carInfoMapper.addCarInfo(carInfoModel);
     }
 
-    public CarInfoModel findOneByWarrantyUuid(@NotNull String warrantyUuid) {
+    public CarInfoModel findOneByWarrantyUuid(String warrantyUuid) {
         return carInfoMapper.findOneByWarrantyUuid(warrantyUuid);
     }
 
-    public CarInfoModel findCarInfoCarCodeAndFrameNoByWarrantyUuid(@NotNull String warrantyUuid) {
+    public CarInfoModel findCarInfoCarCodeAndFrameNoByWarrantyUuid(String warrantyUuid) {
         return carInfoMapper.findCarInfoCarCodeAndFrameNoByWarrantyUuid(warrantyUuid);
     }
 
-    public List<CarInfoModel> findWarrantyUuidByBizId(@NotNull String bizId) {
+    public List<CarInfoModel> findWarrantyUuidByBizId(String bizId) {
         return carInfoMapper.findWarrantyUuidByBizId(bizId);
     }
 
-    public List<CarInfoModel> findWarrantyUuidByThpBizID(@NotNull String thpBizID) {
+    public List<CarInfoModel> findWarrantyUuidByThpBizID(String thpBizID) {
         return carInfoMapper.findWarrantyUuidByThpBizID(thpBizID);
     }
 
-    public CarInfoModel findBjCodeFlagAndBizIdByWarrantyUuid(@NotNull String warrantyUuid) {
+    public CarInfoModel findBjCodeFlagAndBizIdByWarrantyUuid(String warrantyUuid) {
         return carInfoMapper.findBjCodeFlagAndBizIdByWarrantyUuid(warrantyUuid);
     }
 

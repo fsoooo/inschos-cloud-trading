@@ -28,15 +28,15 @@ public class CustWarrantyCostDao extends BaseDao {
     @Autowired
     public InsurancePolicyMapper insurancePolicyMapper;
 
-    public List<CustWarrantyCostModel> findCustWarrantyCost(@NotNull CustWarrantyCostModel custWarrantyCostModel) {
+    public List<CustWarrantyCostModel> findCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.findCustWarrantyCost(custWarrantyCostModel);
     }
 
-    public int addCustWarrantyCost(@NotNull CustWarrantyCostModel custWarrantyCostModel) {
+    public int addCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.addCustWarrantyCost(custWarrantyCostModel);
     }
 
-    public String findCustWarrantyCostTotalByAccountUuid(@NotNull CustWarrantyCostModel custWarrantyCostModel) {
+    public String findCustWarrantyCostTotalByAccountUuid(CustWarrantyCostModel custWarrantyCostModel) {
         BigDecimal amount = new BigDecimal("0.00");
 
         if (custWarrantyCostModel != null && !StringKit.isEmpty(custWarrantyCostModel.account_uuid)) {
@@ -51,7 +51,7 @@ public class CustWarrantyCostDao extends BaseDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public String findCustWarrantyCostTotalByChannelId(@NotNull CustWarrantyCostModel custWarrantyCostModel) {
+    public String findCustWarrantyCostTotalByChannelId(CustWarrantyCostModel custWarrantyCostModel) {
         BigDecimal amount = new BigDecimal("0.00");
 
         if (custWarrantyCostModel != null && !StringKit.isEmpty(custWarrantyCostModel.channel_id)) {
@@ -66,7 +66,7 @@ public class CustWarrantyCostDao extends BaseDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public String findCustWarrantyCostTotalByManagerUuid(@NotNull CustWarrantyCostModel custWarrantyCostModel) {
+    public String findCustWarrantyCostTotalByManagerUuid(CustWarrantyCostModel custWarrantyCostModel) {
         BigDecimal amount = new BigDecimal("0.00");
 
         if (custWarrantyCostModel != null && !StringKit.isEmpty(custWarrantyCostModel.manager_uuid)) {

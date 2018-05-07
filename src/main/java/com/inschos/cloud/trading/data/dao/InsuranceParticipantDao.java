@@ -20,29 +20,29 @@ public class InsuranceParticipantDao extends BaseDao {
     @Autowired
     private InsuranceParticipantMapper insuranceParticipantMapper;
 
-    public int addInsuranceParticipant (@NotNull InsuranceParticipantModel insuranceParticipantModel) {
+    public int addInsuranceParticipant (InsuranceParticipantModel insuranceParticipantModel) {
         return insuranceParticipantMapper.addInsuranceParticipant(insuranceParticipantModel);
     }
 
-    public List<InsuranceParticipantModel> findInsuranceParticipantByWarrantyUuid(@NotNull String warrantyUuid) {
+    public List<InsuranceParticipantModel> findInsuranceParticipantByWarrantyUuid(String warrantyUuid) {
         InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
         insuranceParticipantModel.warranty_uuid = warrantyUuid;
         return insuranceParticipantMapper.findInsuranceParticipantByWarrantyUuid(insuranceParticipantModel);
     }
 
-    public List<InsuranceParticipantModel> findInsuranceParticipantInsuredNameByWarrantyUuid(@NotNull String warrantyUuid) {
+    public List<InsuranceParticipantModel> findInsuranceParticipantInsuredNameByWarrantyUuid(String warrantyUuid) {
         InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
         insuranceParticipantModel.warranty_uuid = warrantyUuid;
         return insuranceParticipantMapper.findInsuranceParticipantInsuredNameByWarrantyUuid(insuranceParticipantModel);
     }
 
-    public InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(@NotNull String warrantyUuid){
+    public InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(String warrantyUuid){
         InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
         insuranceParticipantModel.warranty_uuid = warrantyUuid;
         return insuranceParticipantMapper.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(insuranceParticipantModel);
     }
 
-    public List<InsuranceParticipantModel> findInsuranceParticipantInsuredByWarrantyUuid(@NotNull String warrantyUuid) {
+    public List<InsuranceParticipantModel> findInsuranceParticipantInsuredByWarrantyUuid(String warrantyUuid) {
         InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
         insuranceParticipantModel.warranty_uuid = warrantyUuid;
         return insuranceParticipantMapper.findInsuranceParticipantInsuredByWarrantyUuid(insuranceParticipantModel);

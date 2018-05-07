@@ -17,15 +17,15 @@ public class CarRecordDao extends BaseDao {
     @Autowired
     public CarRecordMapper carRecordMapper;
 
-    public int addCarRecord(@NotNull CarRecordModel carRecordModel) {
+    public int addCarRecord(CarRecordModel carRecordModel) {
         return carRecordMapper.addCarRecord(carRecordModel);
     }
 
-    public CarRecordModel findOneByResponseNo(@NotNull String responseNo) {
+    public CarRecordModel findOneByResponseNo(String responseNo) {
         return carRecordMapper.findOneByResponseNo(responseNo);
     }
 
-    public int updateCarRecord(@NotNull CarRecordModel carRecordModel) {
+    public int updateCarRecord(CarRecordModel carRecordModel) {
         return carRecordMapper.updateCarRecord(carRecordModel);
     }
 
