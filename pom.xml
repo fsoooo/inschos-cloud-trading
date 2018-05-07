@@ -143,6 +143,12 @@
             <version>2.0.36</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.sun.istack/maven-istack-commons-plugin -->
+        <dependency>
+            <groupId>com.sun.istack</groupId>
+            <artifactId>maven-istack-commons-plugin</artifactId>
+            <version>2.11</version>
+        </dependency>
     </dependencies>
 
 
