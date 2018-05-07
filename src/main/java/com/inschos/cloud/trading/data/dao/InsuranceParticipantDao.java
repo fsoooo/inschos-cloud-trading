@@ -2,8 +2,6 @@ package com.inschos.cloud.trading.data.dao;
 
 import com.inschos.cloud.trading.data.mapper.InsuranceParticipantMapper;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

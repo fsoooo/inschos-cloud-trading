@@ -2,7 +2,6 @@ package com.inschos.cloud.trading.data.dao;
 
 import com.inschos.cloud.trading.data.mapper.CarInfoMapper;
 import com.inschos.cloud.trading.model.CarInfoModel;
-import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
