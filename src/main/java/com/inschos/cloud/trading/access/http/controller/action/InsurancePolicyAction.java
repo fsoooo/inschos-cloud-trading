@@ -317,8 +317,6 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         if (StringKit.isEmpty(request.channelId)) {
-            insurancePolicyModel.channel_id = "-1";
-        } else {
             insurancePolicyModel.channel_id = request.channelId;
         }
 

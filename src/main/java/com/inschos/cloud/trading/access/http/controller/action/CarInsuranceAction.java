@@ -9,13 +9,11 @@ import com.inschos.cloud.trading.access.rpc.client.PersonClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.MD5Kit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.extend.car.*;
-import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
 import com.inschos.cloud.trading.model.fordao.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1085,13 +1083,13 @@ public class CarInsuranceAction extends BaseAction {
                 for (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail datum : result.data) {
                     datum.biBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
                     String s1 = nextYearMillisecond(datum.biBeginDateValue);
-                    if (StringKit.isInteger(s1)) {
+                    if (StringKit.isInteger(s1) && s1 != null) {
                         datum.biInsuranceTermText = dateSdf.format(new Date(Long.valueOf(datum.biBeginDateValue))) + "-" + dateSdf.format(new Date(Long.valueOf(s1)));
                     }
 
                     datum.ciBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.ciBeginDate);
                     s1 = nextYearMillisecond(datum.ciBeginDateValue);
-                    if (StringKit.isInteger(s1)) {
+                    if (StringKit.isInteger(s1) && s1 != null) {
                         datum.ciInsuranceTermText = dateSdf.format(new Date(Long.valueOf(datum.ciBeginDateValue))) + "-" + dateSdf.format(new Date(Long.valueOf(s1)));
                     }
 
@@ -2391,7 +2389,7 @@ public class CarInsuranceAction extends BaseAction {
      * @param list 投保的实际险别
      * @return 文案
      */
-    public String dealInsurancePolicyInfoForShowString(List<ExtendCarInsurancePolicy.InsurancePolicyInfo> list) {
+    private String dealInsurancePolicyInfoForShowString(List<ExtendCarInsurancePolicy.InsurancePolicyInfo> list) {
         StringBuilder stringBuilder = new StringBuilder();
         Map<String, ExtendCarInsurancePolicy.InsurancePolicyInfo> map = new HashMap<>();
         for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : list) {
@@ -2423,7 +2421,7 @@ public class CarInsuranceAction extends BaseAction {
      * @param list 投保的实际险别列表
      * @return 显示用险别列表
      */
-    public List<CarInsurance.InsuranceInfo> dealInsurancePolicyInfoForShowList(List<ExtendCarInsurancePolicy.InsurancePolicyInfo> list) {
+    private List<CarInsurance.InsuranceInfo> dealInsurancePolicyInfoForShowList(List<ExtendCarInsurancePolicy.InsurancePolicyInfo> list) {
         Map<String, ExtendCarInsurancePolicy.InsurancePolicyInfo> map = new HashMap<>();
         for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : list) {
             if (insurancePolicyInfo.coverageCode.startsWith("M")) {
@@ -2470,7 +2468,7 @@ public class CarInsuranceAction extends BaseAction {
      * @param ultimate 实际的投保险别列表
      * @return 是否一致
      */
-    public boolean checkCommitEqualsUltimate(List<ExtendCarInsurancePolicy.InsuranceInfoDetail> commit, List<ExtendCarInsurancePolicy.InsurancePolicyInfo> ultimate) {
+    private boolean checkCommitEqualsUltimate(List<ExtendCarInsurancePolicy.InsuranceInfoDetail> commit, List<ExtendCarInsurancePolicy.InsurancePolicyInfo> ultimate) {
 
         if (commit == null && ultimate == null) {
             return true;
@@ -2527,7 +2525,7 @@ public class CarInsuranceAction extends BaseAction {
                 return null;
             }
         } else {
-            return "";
+            return null;
         }
     }
 

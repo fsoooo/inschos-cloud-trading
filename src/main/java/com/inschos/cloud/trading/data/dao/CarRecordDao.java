@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.data.dao;
 
 import com.inschos.cloud.trading.data.mapper.CarRecordMapper;
 import com.inschos.cloud.trading.model.CarRecordModel;
+import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +17,15 @@ public class CarRecordDao extends BaseDao {
     @Autowired
     public CarRecordMapper carRecordMapper;
 
-    public int addCarRecord(CarRecordModel carRecordModel) {
+    public int addCarRecord(@NotNull CarRecordModel carRecordModel) {
         return carRecordMapper.addCarRecord(carRecordModel);
     }
 
-    public CarRecordModel findOneByResponseNo(String responseNo) {
+    public CarRecordModel findOneByResponseNo(@NotNull String responseNo) {
         return carRecordMapper.findOneByResponseNo(responseNo);
     }
 
-    public int updateCarRecord(CarRecordModel carRecordModel) {
+    public int updateCarRecord(@NotNull CarRecordModel carRecordModel) {
         return carRecordMapper.updateCarRecord(carRecordModel);
     }
 

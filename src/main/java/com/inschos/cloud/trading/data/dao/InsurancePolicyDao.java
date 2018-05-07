@@ -10,6 +10,7 @@ import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.PolicyListCountModel;
 import com.inschos.cloud.trading.model.fordao.*;
+import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +37,7 @@ public class InsurancePolicyDao extends BaseDao {
     @Autowired
     public CustWarrantyCostMapper custWarrantyCostMapper;
 
-    public int addInsurancePolicyAndParticipantForCarInsurance(InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance) {
+    public int addInsurancePolicyAndParticipantForCarInsurance(@NotNull InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance) {
         if (insurancePolicyAndParticipantForCarInsurance != null) {
             int add = 1;
             if (insurancePolicyAndParticipantForCarInsurance.ciProposal != null) {
@@ -134,7 +135,7 @@ public class InsurancePolicyDao extends BaseDao {
         }
     }
 
-    public int updateInsurancePolicyProPolicyNoForCarInsurance(UpdateInsurancePolicyProPolicyNoForCarInsurance updateInsurancePolicyProPolicyNoForCarInsurance) {
+    public int updateInsurancePolicyProPolicyNoForCarInsurance(@NotNull UpdateInsurancePolicyProPolicyNoForCarInsurance updateInsurancePolicyProPolicyNoForCarInsurance) {
         int update = 1;
         List<CarInfoModel> byBizId = carInfoMapper.findByBizId(updateInsurancePolicyProPolicyNoForCarInsurance.bizId);
         if (byBizId != null && !byBizId.isEmpty()) {
@@ -170,23 +171,23 @@ public class InsurancePolicyDao extends BaseDao {
         return update;
     }
 
-    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearch(InsurancePolicyModel insurancePolicyModel) {
+    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearch(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearch(insurancePolicyModel);
     }
 
-    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusStringOrSearch(InsurancePolicyModel insurancePolicyModel) {
+    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusStringOrSearch(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusStringOrSearch(insurancePolicyModel);
     }
 
-    public int addInsurancePolicy(InsurancePolicyModel insurancePolicyModel) {
+    public int addInsurancePolicy(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.addInsurancePolicy(insurancePolicyModel);
     }
 
-    public long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel) {
+    public long findInsurancePolicyCountByWarrantyStatus(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyCountByWarrantyStatus(insurancePolicyModel);
     }
 
-    public long findInsurancePolicyCountByWarrantyStatusString(InsurancePolicyModel insurancePolicyModel) {
+    public long findInsurancePolicyCountByWarrantyStatusString(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyCountByWarrantyStatusString(insurancePolicyModel);
     }
 
@@ -199,7 +200,7 @@ public class InsurancePolicyDao extends BaseDao {
         return null;
     }
 
-    public int updateInsurancePolicyStatusForCarInsurance(UpdateInsurancePolicyStatusForCarInsurance updateInsurancePolicyStatusForCarInsurance) {
+    public int updateInsurancePolicyStatusForCarInsurance(@NotNull UpdateInsurancePolicyStatusForCarInsurance updateInsurancePolicyStatusForCarInsurance) {
         int update = 1;
         List<CarInfoModel> carInfoModels = getCarInfoList(updateInsurancePolicyStatusForCarInsurance.bizId, updateInsurancePolicyStatusForCarInsurance.thpBizID);
         if (carInfoModels == null || carInfoModels.isEmpty()) {
@@ -244,7 +245,7 @@ public class InsurancePolicyDao extends BaseDao {
         return update;
     }
 
-    public int updateInsurancePolicyStatusForCarInsuranceWarrantyUuid(InsurancePolicyModel insurancePolicyModel) {
+    public int updateInsurancePolicyStatusForCarInsuranceWarrantyUuid(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.updateInsurancePolicyStatusForCarInsuranceWarrantyUuid(insurancePolicyModel);
     }
 
@@ -372,7 +373,7 @@ public class InsurancePolicyDao extends BaseDao {
         return update;
     }
 
-    private BigDecimal getBigDecimal(String premium) {
+    private BigDecimal getBigDecimal(@NotNull String premium) {
         if (StringKit.isNumeric(premium)) {
             return new BigDecimal(premium);
         } else {
@@ -380,15 +381,15 @@ public class InsurancePolicyDao extends BaseDao {
         }
     }
 
-    public int updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(InsurancePolicyModel insurancePolicyModel) {
+    public int updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(insurancePolicyModel);
     }
 
-    public int updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel) {
+    public int updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid(@NotNull CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid(custWarrantyCostModel);
     }
 
-    public int updateInsurancePolicyExpressInfoForCarInsurance(UpdateInsurancePolicyExpressInfoForCarInsurance updateInsurancePolicyExpressInfoForCarInsurance) {
+    public int updateInsurancePolicyExpressInfoForCarInsurance(@NotNull UpdateInsurancePolicyExpressInfoForCarInsurance updateInsurancePolicyExpressInfoForCarInsurance) {
         int update = 1;
         List<CarInfoModel> carInfoModels = getCarInfoList(updateInsurancePolicyExpressInfoForCarInsurance.bizId, updateInsurancePolicyExpressInfoForCarInsurance.thpBizID);
         if (carInfoModels == null || carInfoModels.isEmpty()) {
@@ -420,59 +421,59 @@ public class InsurancePolicyDao extends BaseDao {
         return update;
     }
 
-    public int updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid(InsurancePolicyModel insurancePolicyModel) {
+    public int updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid(insurancePolicyModel);
     }
 
-    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(InsurancePolicyModel insurancePolicyModel) {
+    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(insurancePolicyModel);
     }
 
-    public long findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(InsurancePolicyModel insurancePolicyModel) {
+    public long findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(insurancePolicyModel);
     }
 
-    public InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(String warrantyUuid) {
+    public InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(@NotNull String warrantyUuid) {
         return insurancePolicyMapper.findInsurancePolicyDetailByWarrantyUuid(warrantyUuid);
     }
 
-    public List<InsurancePolicyModel> findInsurancePolicyListBySearchOrTimeOrChannelId(InsurancePolicyModel insurancePolicyModel) {
+    public List<InsurancePolicyModel> findInsurancePolicyListBySearchOrTimeOrChannelId(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListBySearchOrTimeOrChannelId(insurancePolicyModel);
     }
 
-    public long findInsurancePolicyListBySearchOrTimeOrChannelIdCount(InsurancePolicyModel insurancePolicyModel) {
+    public long findInsurancePolicyListBySearchOrTimeOrChannelIdCount(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListBySearchOrTimeOrChannelIdCount(insurancePolicyModel);
     }
 
-    public List<InsurancePolicyModel> findEffectiveInsurancePolicyListByChannelId(String channelId) {
+    public List<InsurancePolicyModel> findEffectiveInsurancePolicyListByChannelId(@NotNull String channelId) {
         return insurancePolicyMapper.findEffectiveInsurancePolicyListByChannelId(channelId);
     }
 
-    public List<InsurancePolicyModel> findEffectiveInsurancePolicyByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel) {
+    public List<InsurancePolicyModel> findEffectiveInsurancePolicyByChannelIdAndTime(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findEffectiveInsurancePolicyByChannelIdAndTime(insurancePolicyModel);
     }
 
-    public long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel) {
+    public long findEffectiveInsurancePolicyCountByChannelIdAndTime(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findEffectiveInsurancePolicyCountByChannelIdAndTime(insurancePolicyModel);
     }
 
-    public long findInsurancePolicyListCountByTimeAndAccountUuid(InsurancePolicyModel insurancePolicyModel) {
+    public long findInsurancePolicyListCountByTimeAndAccountUuid(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListCount(insurancePolicyModel);
     }
 
-    public long findInsurancePolicyListCountByTimeAndManagerUuid(InsurancePolicyModel insurancePolicyModel) {
+    public long findInsurancePolicyListCountByTimeAndManagerUuid(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListCount(insurancePolicyModel);
     }
 
-    public List<PolicyListCountModel> findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(InsurancePolicyModel insurancePolicyModel) {
+    public List<PolicyListCountModel> findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
     }
 
-    public List<InsurancePolicyModel> findInsurancePolicyListForInsuring(InsurancePolicyModel insurancePolicyModel) {
+    public List<InsurancePolicyModel> findInsurancePolicyListForInsuring(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return custWarrantyCostMapper.findInsurancePolicyListForInsuring(insurancePolicyModel);
     }
 
-    public long findInsurancePolicyCountForInsuring(InsurancePolicyModel insurancePolicyModel) {
+    public long findInsurancePolicyCountForInsuring(@NotNull InsurancePolicyModel insurancePolicyModel) {
         return custWarrantyCostMapper.findInsurancePolicyCountForInsuring(insurancePolicyModel);
     }
 

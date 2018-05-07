@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.data.dao;
 
 import com.inschos.cloud.trading.data.mapper.CustWarrantyClaimsMapper;
 import com.inschos.cloud.trading.model.CustWarrantyClaims;
+import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,7 @@ public class CustWarrantyClaimsDao extends BaseDao{
     @Autowired
     private CustWarrantyClaimsMapper custWarrantyClaimsMapper;
 
-    public List<CustWarrantyClaims> findInsuranceClaimsListByUserId (CustWarrantyClaims custWarrantyClaims) {
+    public List<CustWarrantyClaims> findInsuranceClaimsListByUserId (@NotNull CustWarrantyClaims custWarrantyClaims) {
         return custWarrantyClaimsMapper.findInsuranceClaimsListByUserId(custWarrantyClaims);
     }
 

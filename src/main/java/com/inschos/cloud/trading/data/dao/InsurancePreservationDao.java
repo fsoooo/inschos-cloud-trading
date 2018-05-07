@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.data.dao;
 
 import com.inschos.cloud.trading.data.mapper.InsurancePreservationMapper;
 import com.inschos.cloud.trading.model.InsurancePreservationModel;
+import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,12 +19,12 @@ public class InsurancePreservationDao {
     @Autowired
     public InsurancePreservationMapper insurancePreservationMapper;
 
-    public int addInsurancePreservation(InsurancePreservationModel insurancePreservationModel) {
+    public int addInsurancePreservation(@NotNull InsurancePreservationModel insurancePreservationModel) {
         return insurancePreservationMapper.addInsurancePreservation(insurancePreservationModel);
     }
 
     // 理赔记录
-    public List<InsurancePreservationModel> findInsurancePreservationListPrivateCode (InsurancePreservationModel insurancePreservationModel) {
+    public List<InsurancePreservationModel> findInsurancePreservationListPrivateCode (@NotNull InsurancePreservationModel insurancePreservationModel) {
         return insurancePreservationMapper.findInsurancePreservationListPrivateCode(insurancePreservationModel);
     }
 
