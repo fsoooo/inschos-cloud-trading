@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -2325,7 +2326,8 @@ public class CarInsuranceAction extends BaseAction {
             // 玻璃险破碎险F，校验是否国产、进口
             if (StringKit.equals(insuranceInfoDetail.coverageCode, "F") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
                 boolean flag = false;
-                for (String s : insuranceInfo.sourceOption) {
+                CarInsurance.InsuranceInfo whole = map.get(insuranceInfoDetail.coverageCode);
+                for (String s : whole.sourceOption) {
                     flag = StringKit.equals(s, insuranceInfo.source);
                     if (flag) {
                         break;
@@ -2439,7 +2441,17 @@ public class CarInsuranceAction extends BaseAction {
             insuranceInfo.insuredPremium = insurancePolicyInfo.insuredPremium;
 
             if (!insurancePolicyInfo.coverageCode.startsWith("M")) {
-                insuranceInfo.isExcessOption = map.get(insurancePolicyInfo.coverageCode) != null ? "1" : "0";
+                ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo1 = map.get(insurancePolicyInfo.coverageCode);
+
+                if (insurancePolicyInfo1 == null) {
+                    insuranceInfo.isExcessOption = "0";
+                } else {
+                    insuranceInfo.isExcessOption = "1";
+
+                    if (StringKit.isNumeric(insurancePolicyInfo.insuredPremium) && StringKit.isNumeric(insurancePolicyInfo1.insuredPremium)) {
+                        insuranceInfo.insuredPremium = new DecimalFormat("#0.00").format(new BigDecimal(insurancePolicyInfo.insuredPremium).add(new BigDecimal(insurancePolicyInfo1.insuredPremium)).doubleValue());
+                    }
+                }
 
                 if (StringKit.equals(insuranceInfo.coverageCode, "F")) {
                     insuranceInfo.flag = insurancePolicyInfo.flag;
@@ -2454,9 +2466,9 @@ public class CarInsuranceAction extends BaseAction {
                         insuranceInfo.amount = split[1];
                     }
                 }
-            }
 
-            result.add(insuranceInfo);
+                result.add(insuranceInfo);
+            }
         }
         return result;
     }
