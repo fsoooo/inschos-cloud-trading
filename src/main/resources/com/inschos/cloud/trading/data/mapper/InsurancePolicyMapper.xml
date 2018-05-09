@@ -170,24 +170,24 @@
                     <if test="search!=null and search!=''">
                         and `warranty_code` like concat("%",#{search},"%")
                     </if>
-                    <if test="warranty_status!=0">
-                        and `warranty_status`=#{warranty_status}
-                    </if>
-                    <if test="channel_id!=-1">
-                        and `channel_id`=#{channel_id}
-                    </if>
-                    <if test="warranty_from!=0">
-                        and `warranty_from`=#{warranty_from}
-                    </if>
-                    <if test="type!=0">
+                    <if test="type!='0'">
                         and `type`=#{type}
                     </if>
-                    <if test="start_time!=null and start_time!='' and start_time!=0">
-                        and `start_time`&gt;=#{start_time}
-                    </if>
-                    <if test="end_time!=null and end_time!='' and end_time!=0">
-                        and `start_time`&lt;#{end_time}
-                    </if>
+                    <!--<if test="warranty_status!='0'">-->
+                    <!--and `warranty_status`=#{warranty_status}-->
+                    <!--</if>-->
+                    <!--<if test="channel_id!=null and channel_id!=''">-->
+                    <!--and `channel_id`=#{channel_id}-->
+                    <!--</if>-->
+                    <!--<if test="warranty_from!='0'">-->
+                    <!--and `warranty_from`=#{warranty_from}-->
+                    <!--</if>-->
+                    <!--<if test="start_time!=null and start_time!='' and start_time!='0'">-->
+                    <!--and `start_time`&gt;=#{start_time}-->
+                    <!--</if>-->
+                    <!--<if test="end_time!=null and end_time!='' and end_time!='0'">-->
+                    <!--and `start_time`&lt;#{end_time}-->
+                    <!--</if>-->
                     limit #{page.start},1
                     )
                 </when>
@@ -199,24 +199,24 @@
             <if test="search!=null and search!=''">
                 and `warranty_code` like concat("%",#{search},"%")
             </if>
-            <if test="warranty_status!=0">
-                and `warranty_status`=#{warranty_status}
-            </if>
-            <if test="channel_id!=-1">
-                and `channel_id`=#{channel_id}
-            </if>
-            <if test="warranty_from!=0">
-                and `warranty_from`=#{warranty_from}
-            </if>
-            <if test="type!=0">
+            <if test="type!='0'">
                 and `type`=#{type}
             </if>
-            <if test="start_time!=null and start_time!='' and start_time!=0">
-                and `start_time`&gt;=#{start_time}
-            </if>
-            <if test="end_time!=null and end_time!='' and end_time!=0">
-                and `start_time`&lt;#{end_time}
-            </if>
+            <!--<if test="warranty_status!='0'">-->
+            <!--and `warranty_status`=#{warranty_status}-->
+            <!--</if>-->
+            <!--<if test="channel_id!=null and channel_id!=''">-->
+            <!--and `channel_id`=#{channel_id}-->
+            <!--</if>-->
+            <!--<if test="warranty_from!='0'">-->
+            <!--and `warranty_from`=#{warranty_from}-->
+            <!--</if>-->
+            <!--<if test="start_time!=null and start_time!='' and start_time!='0'">-->
+            <!--and `start_time`&gt;=#{start_time}-->
+            <!--</if>-->
+            <!--<if test="end_time!=null and end_time!='' and end_time!='0'">-->
+            <!--and `start_time`&lt;#{end_time}-->
+            <!--</if>-->
             limit #{page.offset}
         </where>
     </select>
@@ -232,24 +232,24 @@
             <if test="search!=null and search!=''">
                 and `warranty_code` like concat("%",#{search},"%")
             </if>
-            <if test="warranty_status!=0">
-                and `warranty_status`=#{warranty_status}
-            </if>
-            <if test="channel_id!=-1">
-                and `channel_id`=#{channel_id}
-            </if>
-            <if test="warranty_from!=0">
-                and `warranty_from`=#{warranty_from}
-            </if>
-            <if test="type!=0">
+            <if test="type!='0'">
                 and `type`=#{type}
             </if>
-            <if test="start_time!=null and start_time!='' and start_time!=0">
-                and `start_time`&gt;=#{start_time}
-            </if>
-            <if test="end_time!=null and end_time!='' and end_time!=0">
-                and `start_time`&lt;#{end_time}
-            </if>
+            <!--<if test="warranty_status!='0'">-->
+            <!--and `warranty_status`=#{warranty_status}-->
+            <!--</if>-->
+            <!--<if test="channel_id!=null and channel_id!=''">-->
+            <!--and `channel_id`=#{channel_id}-->
+            <!--</if>-->
+            <!--<if test="warranty_from!='0'">-->
+            <!--and `warranty_from`=#{warranty_from}-->
+            <!--</if>-->
+            <!--<if test="start_time!=null and start_time!='' and start_time!='0'">-->
+            <!--and `start_time`&gt;=#{start_time}-->
+            <!--</if>-->
+            <!--<if test="end_time!=null and end_time!='' and end_time!='0'">-->
+            <!--and `start_time`&lt;#{end_time}-->
+            <!--</if>-->
         </where>
     </select>
 

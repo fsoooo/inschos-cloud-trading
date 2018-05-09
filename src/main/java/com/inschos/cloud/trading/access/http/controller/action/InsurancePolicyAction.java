@@ -295,7 +295,11 @@ public class InsurancePolicyAction extends BaseAction {
 
         InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
 
-        insurancePolicyModel.type = request.warrantyType;
+        if (StringKit.isEmpty(request.warrantyType)) {
+            insurancePolicyModel.type = "0";
+        } else {
+            insurancePolicyModel.type = request.warrantyType;
+        }
 
         if (StringKit.isEmpty(request.warrantyStatus)) {
             insurancePolicyModel.warranty_status = "0";

@@ -624,7 +624,7 @@ public class InsurancePolicy {
         // 保单渠道
         public String channelId;
         // 保单类型
-        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        @CheckParams
         public String warrantyType;
     }
 
