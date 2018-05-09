@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.access.http.controller.action;
 
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.PageBean;
+import com.inschos.cloud.trading.access.rpc.bean.IncomeBean;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -205,6 +206,11 @@ public class BaseAction {
         PageBean pageBean = new PageBean();
         pageBean.lastId = String.valueOf(lastId);
         pageBean.pageSize = StringKit.isInteger(page_size) ? page_size : "20";
+        long l = total / Integer.valueOf(pageBean.pageSize);
+        if (total % Integer.valueOf(pageBean.pageSize) != 0) {
+            l += 1;
+        }
+        pageBean.pageTotal = String.valueOf(l);
         pageBean.total = String.valueOf(total);
         pageBean.listSize = String.valueOf(listSize);
 
