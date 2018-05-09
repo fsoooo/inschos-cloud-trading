@@ -521,7 +521,7 @@ public class CarInsuranceAction extends BaseAction {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
 
-                List<ProductBean> productBeans = productClient.getPlatformProductAll(Long.valueOf(actionBean.managerUuid), 42);
+                List<ProductBean> productBeans = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
                 Map<String, ProductBean> hashMap = new HashMap<>();
 
                 if (productBeans != null && !productBeans.isEmpty()) {
@@ -1231,7 +1231,7 @@ public class CarInsuranceAction extends BaseAction {
                 }
             }
 
-            List<ProductBean> ciList = productClient.getPlatformProductAll(Long.valueOf(actionBean.managerUuid), 42);
+            List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
             ProductBean ciProduct = null;
             if (ciList != null && !ciList.isEmpty()) {
                 for (ProductBean productBean : ciList) {
@@ -1246,7 +1246,7 @@ public class CarInsuranceAction extends BaseAction {
                 return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
             }
 
-            List<ProductBean> biList = productClient.getPlatformProductAll(Long.valueOf(actionBean.managerUuid), 43);
+            List<ProductBean> biList = productClient.getPlatformProductAll(actionBean.managerUuid, 43);
             ProductBean biProduct = null;
             if (biList != null && !biList.isEmpty()) {
                 for (ProductBean productBean : biList) {

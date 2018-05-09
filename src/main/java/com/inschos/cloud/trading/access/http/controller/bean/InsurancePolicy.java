@@ -105,6 +105,8 @@ public class InsurancePolicy {
 
         //佣金 0表示未结算，1表示已结算（显示用）
         public String isSettlementText;
+        public String brokerage;
+        public String brokerageText;
 
         //电子保单下载地址
         public String warrantyUrl;
@@ -155,6 +157,8 @@ public class InsurancePolicy {
         public String bjCodeFlag;
         // 车险流水号
         public String bizId;
+        public String insuranceClaimsCount = "0";
+
 
         public GetInsurancePolicy() {
 

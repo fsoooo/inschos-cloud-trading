@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface ProductService {
 
-    List<ProductBean> getPlatformProductAll(long managerUuid, int categoryId);
+    List<ProductBean> getPlatformProductAll(String managerUuid, int categoryId);
 
     ProductBean getProduct(long productId);
 

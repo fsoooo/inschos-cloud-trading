@@ -171,14 +171,14 @@ public class InsurancePolicyAction extends BaseAction {
             if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
 
                 HashMap<String, ProductBean> map = new HashMap<>();
-                List<ProductBean> ciProduct = productClient.getPlatformProductAll(Long.valueOf(actionBean.managerUuid), 42);
+                List<ProductBean> ciProduct = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
                 if (ciProduct != null) {
                     for (ProductBean productBean : ciProduct) {
                         map.put(String.valueOf(productBean.id), productBean);
                     }
                 }
 
-                List<ProductBean> biProduct = productClient.getPlatformProductAll(Long.valueOf(actionBean.managerUuid), 43);
+                List<ProductBean> biProduct = productClient.getPlatformProductAll(actionBean.managerUuid, 43);
                 if (biProduct != null) {
                     for (ProductBean productBean : biProduct) {
                         map.put(String.valueOf(productBean.id), productBean);
@@ -389,8 +389,15 @@ public class InsurancePolicyAction extends BaseAction {
                     warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
                 }
             }
+            CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
+            custWarrantyBrokerageModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
+
+            String custWarrantyBrokerageTotalByManagerUuid = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByWarrantyUuid(custWarrantyBrokerageModel);
 
             InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
+
+            getInsurancePolicyForManagerSystem.brokerage = custWarrantyBrokerageTotalByManagerUuid;
+            getInsurancePolicyForManagerSystem.brokerageText = "¥" + custWarrantyBrokerageTotalByManagerUuid;
 
             if (StringKit.isInteger(getInsurancePolicyForManagerSystem.productId)) {
                 ProductBean product = productClient.getProduct(Long.valueOf(getInsurancePolicyForManagerSystem.productId));

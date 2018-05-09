@@ -30,7 +30,7 @@ public class ProductClient {
     }
 
 
-    public List<ProductBean> getPlatformProductAll(long managerUuid, int categoryId) {
+    public List<ProductBean> getPlatformProductAll(String managerUuid, int categoryId) {
         try {
             ProductService service = getService();
             return service != null ? service.getPlatformProductAll(managerUuid, categoryId) : null;

@@ -30,6 +30,20 @@ public class CustWarrantyBrokerageDao {
         return custWarrantyBrokerageMapper.addCustWarrantyBrokerage(custWarrantyBrokerageModel);
     }
 
+    public String findCustWarrantyBrokerageTotalByWarrantyUuid(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+        BigDecimal amount = new BigDecimal("0.00");
+        if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.warranty_uuid)) {
+            Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findCustWarrantyBrokerageTotal(custWarrantyBrokerageModel);
+
+            if (custWarrantyBrokerageTotal != null) {
+                amount = new BigDecimal(custWarrantyBrokerageTotal);
+            }
+
+        }
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        return decimalFormat.format(amount.doubleValue());
+    }
+
     public String findCustWarrantyBrokerageTotalByChannelId(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
         BigDecimal amount = new BigDecimal("0.00");
         if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.channel_id)) {

@@ -26,6 +26,9 @@
             <when test="channel_id!=null and channel_id!=''">
                 sum(`channel_money`)
             </when>
+            <when test="warranty_uuid!=null and warranty_uuid!=''">
+                sum(`warranty_money`)
+            </when>
             <otherwise>
                 sum(`warranty_money`)
             </otherwise>
@@ -39,6 +42,9 @@
             </if>
             <if test="channel_id!=null and channel_id!=''">
                 and cust_warranty_brokerage.channel_id=#{channel_id}
+            </if>
+            <if test="warranty_uuid!=null and warranty_uuid!=''">
+                and cust_warranty_brokerage.warranty_uuid=#{warranty_uuid}
             </if>
             <if test="start_time!=null and start_time!='' and start_time!=0">
                 and cust_warranty.start_time&gt;=#{start_time}
