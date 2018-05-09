@@ -4,6 +4,7 @@ import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
+import com.inschos.cloud.trading.model.PremiumStatisticModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -78,4 +79,7 @@ public class CustWarrantyCostDao extends BaseDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
+    public List<PremiumStatisticModel> findCustWarrantyCostStatistic(CustWarrantyCostModel custWarrantyCostModel){
+        return custWarrantyCostMapper.findCustWarrantyCostStatistic(custWarrantyCostModel);
+    }
 }

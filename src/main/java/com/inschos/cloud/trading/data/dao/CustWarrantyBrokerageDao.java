@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.data.dao;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.CustWarrantyBrokerageMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
+import com.inschos.cloud.trading.model.BrokerageStatisticModel;
 import com.inschos.cloud.trading.model.CustWarrantyBrokerageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -69,5 +70,9 @@ public class CustWarrantyBrokerageDao {
         }
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         return decimalFormat.format(amount.doubleValue());
+    }
+
+    public List<BrokerageStatisticModel> findCustWarrantyBrokerageStatistic (CustWarrantyBrokerageModel custWarrantyBrokerageModel){
+        return custWarrantyBrokerageMapper.findCustWarrantyBrokerageStatistic(custWarrantyBrokerageModel);
     }
 }

@@ -3,42 +3,42 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.ProductMapper">
 
     <sql id="Base_Column_List1">
-        `id`,`name`,`display_name`,`category_id`,`code`,`logo`,`bank_type`,`bank_num`,`email`,`url`,`phone`,`code_img`,`created_at`,`updated_at`,`state`
+        `id`,`name`,`display_name`,`category_id`,`code`,`logo`,`bank_num`,`email`,`url`,`phone`,`code_img`,`created_at`,`updated_at`,`state`
     </sql>
 
     <sql id="Base_Column_List2">
-        `id`,`name`,`display_name`,`content`,`product_company_id`,`product_category_id`,`product_brokerage_id`,`min_math`,`max_math`,`sell_status`,`base_price`,`system_commission_ratio`,`base_stages_way`,`base_ratio`,`type`,`pay_mode`,`business_support`,`observation_period`,`period_hesitation`,`latest_date`,`first_date`,`created_at`,`updated_at`,`state`
+        `id`,`name`,`display_name`,`content`,`insurance_co_id`,`category_id`,`min_people`,`max_people`,`sell_status`,`ins_status`,`base_price`,`base_brokerage`,`pay_type`,`observation_period`,`cooling_off_period`,`latest_date`,`earliest_date`,`code`,`created_at`,`updated_at`,`state`
     </sql>
 
     <sql id="Base_Column_List3">
-        `id`,`category_name`,`pid`,`level`,`category_type`,`created_at`,`updated_at`,`state`
+        `id`,`name`,`pid`,`level`
     </sql>
 
     <insert id="addCompany" parameterType="com.inschos.cloud.trading.access.rpc.bean.MyBean"
             useGeneratedKeys="true"
             keyProperty="id">
-        insert into product_company
-        (`id`,`name`,`display_name`,`category_id`,`code`,`logo`,`bank_type`,`bank_num`,`email`,`url`,`phone`,`code_img`,`created_at`,`updated_at`,`state`)
+        insert into ins_company
+        (`id`,`name`,`display_name`,`category_id`,`code`,`logo`,`bank_num`,`email`,`url`,`phone`,`code_img`,`created_at`,`updated_at`,`state`)
         values
-        (#{id},#{name},#{display_name},#{category_id},#{code},#{logo},#{bank_type},#{bank_num},#{email},#{url},#{phone},#{code_img},#{created_at},#{updated_at},#{state})
+        (#{id},#{name},#{display_name},#{category_id},#{code},#{logo},#{bank_num},#{email},#{url},#{phone},#{code_img},#{created_at},#{updated_at},#{state})
     </insert>
 
     <insert id="addProduct" parameterType="com.inschos.cloud.trading.access.rpc.bean.MyBean2"
             useGeneratedKeys="true"
             keyProperty="id">
         insert into product
-        (`id`,`name`,`display_name`,`content`,`product_company_id`,`product_category_id`,`product_brokerage_id`,`min_math`,`max_math`,`sell_status`,`base_price`,`system_commission_ratio`,`base_stages_way`,`base_ratio`,`type`,`pay_mode`,`business_support`,`observation_period`,`period_hesitation`,`latest_date`,`first_date`,`created_at`,`updated_at`,`state`)
+        (`id`,`name`,`display_name`,`content`,`insurance_co_id`,`category_id`,`min_people`,`max_people`,`sell_status`,`ins_status`,`base_price`,`base_brokerage`,`pay_type`,`observation_period`,`cooling_off_period`,`latest_date`,`earliest_date`,`code`,`created_at`,`updated_at`,`state`)
         values
-        (#{id},#{name},#{display_name},#{content},#{product_company_id},#{product_category_id},#{product_brokerage_id},#{min_math},#{max_math},#{sell_status},#{base_price},#{system_commission_ratio},#{base_stages_way},#{base_ratio},#{type},#{pay_mode},#{business_support},#{observation_period},#{period_hesitation},#{latest_date},#{first_date},#{created_at},#{updated_at},#{state})
+        (#{id},#{name},#{display_name},#{content},#{insurance_co_id},#{category_id},#{min_people},#{max_people},#{sell_status},#{ins_status},#{base_price},#{base_brokerage},#{pay_type},#{observation_period},#{cooling_off_period},#{latest_date},#{earliest_date},#{code},#{created_at},#{updated_at},#{state})
     </insert>
 
     <insert id="addCategory" parameterType="com.inschos.cloud.trading.access.rpc.bean.MyBean3"
             useGeneratedKeys="true"
             keyProperty="id">
-        insert into product
-        (`id`,`category_name`,`pid`,`level`,`category_type`,`created_at`,`updated_at`,`state`)
+        insert into product_category
+        (`id`,`name`,`pid`,`level`)
         values
-        (#{id},#{category_name},#{pid},#{level},#{category_type},#{created_at},#{updated_at},#{state})
+        (#{id},#{name},#{pid},#{level})
     </insert>
 
 

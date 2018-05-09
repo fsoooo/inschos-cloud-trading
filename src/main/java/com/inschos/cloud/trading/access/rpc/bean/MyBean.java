@@ -35,11 +35,6 @@ public class MyBean {
     public String logo;
 
     /**
-     * 账号银行卡类型
-     */
-    public String bank_type;
-
-    /**
      * 银行卡账号
      */
     public String bank_num;
@@ -63,11 +58,6 @@ public class MyBean {
      * 保险公司公众号二维码
      */
     public String code_img;
-
-    /**
-     * 状态，0删除，1未删除
-     */
-    public String status;
 
     /**
      * 创建时间

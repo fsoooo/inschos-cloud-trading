@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -651,42 +652,230 @@ public class InsurancePolicyAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        String startTime;
-        String endTime;
+        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+        CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        String startTime;
+        String endTime;
 
         // 时间范围类型，1-今日，2-本月，3-本年
         switch (request.timeRangeType) {
             case "1":
                 calendar.set(year, month, day, 0, 0, 0);
                 startTime = String.valueOf(calendar.getTimeInMillis());
-                calendar.add(Calendar.DAY_OF_MONTH,1);
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
                 endTime = String.valueOf(calendar.getTimeInMillis());
-
-
-
-
                 break;
             case "2":
                 calendar.set(year, month, 1, 0, 0, 0);
                 startTime = String.valueOf(calendar.getTimeInMillis());
-                calendar.add(Calendar.DAY_OF_MONTH,1);
+                calendar.add(Calendar.MONTH, 1);
                 endTime = String.valueOf(calendar.getTimeInMillis());
                 break;
             case "3":
                 calendar.set(year, Calendar.JANUARY, 1, 0, 0, 0);
                 startTime = String.valueOf(calendar.getTimeInMillis());
-                calendar.add(Calendar.DAY_OF_MONTH,1);
+                calendar.add(Calendar.YEAR, 1);
                 endTime = String.valueOf(calendar.getTimeInMillis());
                 break;
             default:
                 return json(BaseResponse.CODE_FAILURE, "时间范围类型错误", response);
         }
+        custWarrantyCostModel.start_time = startTime;
+        custWarrantyCostModel.end_time = endTime;
+        custWarrantyCostModel.time_range_type = request.timeRangeType;
+        custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
+
+        custWarrantyBrokerageModel.start_time = startTime;
+        custWarrantyBrokerageModel.end_time = endTime;
+        custWarrantyBrokerageModel.time_range_type = request.timeRangeType;
+        custWarrantyBrokerageModel.manager_uuid = actionBean.managerUuid;
+
+        List<PremiumStatisticModel> custWarrantyCostStatistic = custWarrantyCostDao.findCustWarrantyCostStatistic(custWarrantyCostModel);
+        List<BrokerageStatisticModel> custWarrantyBrokerageStatistic = custWarrantyBrokerageDao.findCustWarrantyBrokerageStatistic(custWarrantyBrokerageModel);
+
+        LinkedHashMap<String, InsurancePolicy.InsurancePolicyStatisticItem> map = new LinkedHashMap<>();
+
+        response.data = new InsurancePolicy.InsurancePolicyStatisticDetail();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        response.data.startTime = startTime;
+        response.data.startTimeText = sdf.format(new Date(Long.valueOf(startTime)));
+        response.data.endTime = endTime;
+        response.data.endTimeText = sdf.format(new Date(Long.valueOf(endTime)));
+
+        BigDecimal premium = new BigDecimal("0.00");
+        int count = 0;
+        if (custWarrantyCostStatistic != null && !custWarrantyCostStatistic.isEmpty()) {
+            for (PremiumStatisticModel premiumStatisticModel : custWarrantyCostStatistic) {
+                InsurancePolicy.InsurancePolicyStatisticItem item = new InsurancePolicy.InsurancePolicyStatisticItem(premiumStatisticModel.time_text);
+                item.setPremiumStatisticModel(premiumStatisticModel);
+                map.put(premiumStatisticModel.time_text, item);
+                premium = premium.add(new BigDecimal(premiumStatisticModel.premium));
+
+                if (StringKit.isInteger(premiumStatisticModel.insurance_policy_count)) {
+                    count += Integer.valueOf(premiumStatisticModel.insurance_policy_count);
+                }
+            }
+        }
+
+        BigDecimal brokerage = new BigDecimal("0.00");
+        if (custWarrantyBrokerageStatistic != null && !custWarrantyBrokerageStatistic.isEmpty()) {
+            for (BrokerageStatisticModel brokerageStatisticModel : custWarrantyBrokerageStatistic) {
+                InsurancePolicy.InsurancePolicyStatisticItem item = map.get(brokerageStatisticModel.time_text);
+                if (item == null) {
+                    item = new InsurancePolicy.InsurancePolicyStatisticItem(brokerageStatisticModel.time_text);
+                    map.put(brokerageStatisticModel.time_text, item);
+                }
+                item.setBrokerageStatisticModel(brokerageStatisticModel);
+                brokerage = brokerage.add(new BigDecimal(brokerageStatisticModel.brokerage));
+            }
+        }
+
+        if (map.isEmpty()) {
+            response.data.insurancePolicyCount = "0";
+            response.data.premium = "0.00";
+            response.data.premiumText = "¥0.00";
+
+            response.data.brokerage = "0.00";
+            response.data.brokerageText = "¥0.00";
+            response.data.brokeragePercentage = "0.0";
+            response.data.brokeragePercentageText = "0.00%";
+
+            response.data.averagePremium = "0.00";
+            response.data.averagePremiumText = "¥0.00";
+
+        } else {
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+            response.data.insurancePolicyCount = String.valueOf(count);
+            response.data.premium = decimalFormat.format(premium.doubleValue());
+            response.data.premiumText = "¥" + response.data.premium;
+
+            response.data.brokerage = decimalFormat.format(brokerage.doubleValue());
+            response.data.brokerageText = "¥" + response.data.brokerage;
+
+            if (premium.compareTo(BigDecimal.ZERO) != 0) {
+                BigDecimal divide = brokerage.divide(premium, BigDecimal.ROUND_HALF_DOWN);
+                response.data.brokeragePercentage = String.valueOf(divide.doubleValue());
+                divide = divide.multiply(new BigDecimal("100"));
+                response.data.brokeragePercentageText = decimalFormat.format(divide.doubleValue()) + "%";
+            } else {
+                response.data.brokeragePercentage = "0.0";
+                response.data.brokeragePercentageText = "0.00%";
+            }
+
+            if (map.size() != 0) {
+                BigDecimal divide = premium.divide(new BigDecimal(response.data.insurancePolicyCount), BigDecimal.ROUND_HALF_DOWN);
+                response.data.averagePremium = decimalFormat.format(divide.doubleValue());
+                response.data.averagePremiumText = "¥" + response.data.averagePremium;
+            } else {
+                response.data.averagePremium = "0.00";
+                response.data.averagePremiumText = "¥0.00";
+            }
+
+        }
+
+        response.data.insurancePolicyList = dealPercentageByList(map, premium, brokerage);
 
         return json(BaseResponse.CODE_SUCCESS, "获取统计信息成功", response);
+    }
+
+    private List<InsurancePolicy.InsurancePolicyStatisticItem> dealPercentageByList(LinkedHashMap<String, InsurancePolicy.InsurancePolicyStatisticItem> map, BigDecimal premium, BigDecimal brokerage) {
+        List<InsurancePolicy.InsurancePolicyStatisticItem> result = new ArrayList<>();
+        Set<String> strings = map.keySet();
+        if (!strings.isEmpty()) {
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+            for (String string : strings) {
+                InsurancePolicy.InsurancePolicyStatisticItem item = map.get(string);
+
+                BigDecimal itemPremium;
+                if (StringKit.isEmpty(item.premium) && !StringKit.isNumeric(item.premium)) {
+                    itemPremium = new BigDecimal("0.00");
+                    item.premium = "0.00";
+                    item.premiumText = "¥0.00";
+                    item.averagePremium = "0.00";
+                    item.averagePremiumText = "¥0.00";
+                    item.premiumPercentage = "0.0";
+                    item.premiumPercentageText = "0.00%";
+                } else {
+                    itemPremium = new BigDecimal(item.premium);
+                }
+
+                BigDecimal itemBrokerage;
+                if (StringKit.isEmpty(item.brokerage) && !StringKit.isNumeric(item.brokerage)) {
+                    itemBrokerage = new BigDecimal("0.00");
+                    item.brokerage = "0.00";
+                    item.brokerageText = "¥0.00";
+                    item.averageBrokeragePercentage = "0.0";
+                    item.averageBrokeragePercentageText = "0.00%";
+                } else {
+                    itemBrokerage = new BigDecimal(item.brokerage);
+                }
+
+                BigDecimal insurancePolicyCount;
+                if (StringKit.isEmpty(item.insurancePolicyCount) && !StringKit.isInteger(item.insurancePolicyCount)) {
+                    insurancePolicyCount = new BigDecimal("0");
+                    item.insurancePolicyCount = "0";
+                } else {
+                    insurancePolicyCount = new BigDecimal(item.insurancePolicyCount);
+                }
+
+                if (itemPremium.compareTo(BigDecimal.ZERO) != 0) {
+                    if (StringKit.equals(item.insurancePolicyCount, "0")) {
+                        BigDecimal divide = itemPremium.divide(insurancePolicyCount, BigDecimal.ROUND_HALF_DOWN);
+                        item.averagePremium = decimalFormat.format(divide.doubleValue());
+                        item.averagePremiumText = "¥" + item.averagePremium;
+                    } else {
+                        item.averagePremium = "0.00";
+                        item.averagePremiumText = "¥0.00";
+                    }
+
+                    if (premium.compareTo(BigDecimal.ZERO) != 0) {
+                        BigDecimal divide = itemPremium.divide(premium, BigDecimal.ROUND_HALF_DOWN);
+                        item.premiumPercentage = String.valueOf((divide.doubleValue()));
+                        divide = divide.multiply(new BigDecimal("100"));
+                        item.premiumPercentageText = decimalFormat.format(divide.doubleValue()) + "%";
+                        ;
+                    } else {
+                        item.premiumPercentage = "0.0";
+                        item.premiumPercentageText = "0.00%";
+                    }
+                } else {
+                    item.premium = "0.00";
+                    item.premiumText = "¥0.00";
+                    item.averagePremium = "0.00";
+                    item.averagePremiumText = "¥0.00";
+                    item.premiumPercentage = "0.0";
+                    item.premiumPercentageText = "0.00%";
+                }
+
+                if (itemPremium.compareTo(BigDecimal.ZERO) != 0 && itemBrokerage.compareTo(BigDecimal.ZERO) != 0 && insurancePolicyCount.compareTo(BigDecimal.ZERO) != 0) {
+                    BigDecimal divide = itemBrokerage.divide(itemPremium, BigDecimal.ROUND_HALF_DOWN).divide(insurancePolicyCount, BigDecimal.ROUND_HALF_DOWN);
+                    item.averageBrokeragePercentage = String.valueOf((divide.doubleValue()));
+                    divide = divide.multiply(new BigDecimal("100"));
+                    item.averageBrokeragePercentageText = decimalFormat.format(divide.doubleValue()) + "%";
+                } else {
+                    item.averageBrokeragePercentage = "0.0";
+                    item.averageBrokeragePercentageText = "0.00%";
+                }
+
+                item.premium = decimalFormat.format(itemPremium.doubleValue());
+                item.premiumText = "¥" + item.premium;
+                item.averagePremium = decimalFormat.format(new BigDecimal(item.averagePremium).doubleValue());
+                item.averagePremiumText = "¥" + item.averagePremium;
+                item.brokerage = decimalFormat.format(itemBrokerage.doubleValue());
+                item.brokerageText = "¥" + item.brokerage;
+
+                result.add(item);
+            }
+        }
+
+        return result;
     }
 
     private long getDayEndTime(int year, int month, int day) {

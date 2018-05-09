@@ -117,5 +117,24 @@
         </if>
     </select>
 
+    <select id="findCustWarrantyCostStatistic"
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
+            resultType="com.inschos.cloud.trading.model.PremiumStatisticModel">
+        <choose>
+            <when test="time_range_type=='1'">
+                select from_unixtime(cust_warranty_cost.actual_pay_time/1000,"%Y-%m-%d") `time_text`,sum(`cust_warranty_cost`.`premium`) `premium`,sum(`cust_warranty_cost`.`phase`=1) `insurance_policy_count`
+            </when>
+            <when test="time_range_type=='2'">
+                select from_unixtime(cust_warranty_cost.actual_pay_time/1000,"%Y-%m-%d") `time_text`,sum(`cust_warranty_cost`.`premium`) `premium`,sum(`cust_warranty_cost`.`phase`=1) `insurance_policy_count`
+            </when>
+            <otherwise>
+                select from_unixtime(cust_warranty_cost.actual_pay_time/1000,"%Y-%m") `time_text`,sum(`cust_warranty_cost`.`premium`) `premium`,sum(`cust_warranty_cost`.`phase`=1) `insurance_policy_count`
+            </otherwise>
+        </choose>
+        from cust_warranty_cost LEFT JOIN cust_warranty ON `cust_warranty_cost`.`warranty_uuid`=`cust_warranty`.`warranty_uuid`
+        where `cust_warranty_cost`.`actual_pay_time`>=#{start_time} AND `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time} AND `cust_warranty_cost`.`pay_status`= 206 AND `cust_warranty`.`manager_uuid`=#{manager_uuid}
+        group by `time_text`;
+    </select>
+
 
 </mapper>

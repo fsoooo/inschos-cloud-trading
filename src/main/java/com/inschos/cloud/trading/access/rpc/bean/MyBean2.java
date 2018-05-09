@@ -25,29 +25,24 @@ public class MyBean2 {
     public String content;
 
     /**
-     * 公司ID
+     * 保险公司id
      */
-    public String product_company_id;
+    public String insurance_co_id;
 
     /**
-     * 分类ID
+     * 保险产品类型id
      */
-    public String product_category_id;
-
-    /**
-     * 佣金比ID
-     */
-    public String product_brokerage_id;
+    public String category_id;
 
     /**
      * 最小投保人数
      */
-    public String min_math;
+    public String min_people;
 
     /**
      * 最大投保人数
      */
-    public String max_math;
+    public String max_people;
 
     /**
      * 可售状态 0停售 1可售
@@ -55,39 +50,24 @@ public class MyBean2 {
     public String sell_status;
 
     /**
+     * 天眼上下架状态，1上架，0下架
+     */
+    public String ins_status;
+
+    /**
      * 基础保费
      */
     public String base_price;
 
     /**
-     * 系统佣金比
+     * 基础佣金
      */
-    public String system_commission_ratio;
+    public String base_brokerage;
 
     /**
-     * 基础佣金比缴别
+     * 支付类型
      */
-    public String base_stages_way;
-
-    /**
-     * 基础佣金比
-     */
-    public String base_ratio;
-
-    /**
-     * 保险产品类型(险种)
-     */
-    public String type;
-
-    /**
-     * 支付方式
-     */
-    public String pay_mode;
-
-    /**
-     * 业务支持
-     */
-    public String business_support;
+    public String pay_type;
 
     /**
      * 观察期
@@ -97,17 +77,22 @@ public class MyBean2 {
     /**
      * 犹豫期
      */
-    public String period_hesitation;
+    public String cooling_off_period;
 
     /**
-     * 最大起保日期
+     * 最晚起保日期
      */
     public String latest_date;
 
     /**
-     * 最小起保日期
+     * 最早起保日期
      */
-    public String first_date;
+    public String earliest_date;
+
+    /**
+     * 产品编码
+     */
+    public String code;
 
     /**
      * 创建时间
@@ -124,29 +109,28 @@ public class MyBean2 {
      */
     public String state;
 
-    public MyBean2(String name, String company_id, String type, String category_id, long time) {
+
+    public MyBean2(String name, String company_id, String code, String category_id, long time) {
         this.name = name;
         this.display_name = name;
-        this.product_company_id = company_id;
-        this.product_category_id = category_id;
-        this.min_math = "1";
-        this.max_math = "1";
+        this.insurance_co_id = company_id;
+        this.category_id = category_id;
+        this.min_people = "1";
+        this.max_people = "1";
         this.sell_status = "1";
+        this.ins_status = "1";
         this.base_price = "0";
-        this.type = type;
-        this.pay_mode = "外链";
-        this.business_support = "线下理赔";
-        this.observation_period = "0";
-        this.period_hesitation = "0";
+        this.base_price = "0";
+        this.base_brokerage = "10";
+        this.pay_type = "1";
+        this.observation_period = "1";
+        this.cooling_off_period = "1";
         this.latest_date = "0";
-        this.first_date = "0";
+        this.earliest_date = "0";
+        this.code = code;
         this.created_at = String.valueOf(time);
         this.updated_at = String.valueOf(time);
         this.state = "1";
-        this.product_brokerage_id = "0.3";
-        this.system_commission_ratio = "0.3";
-        this.base_stages_way = "0.3";
-        this.base_ratio = "0.3";
     }
 
 }

@@ -72,4 +72,23 @@
         </where>
     </select>
 
+    <select id="findCustWarrantyBrokerageStatistic"
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
+            resultType="com.inschos.cloud.trading.model.BrokerageStatisticModel">
+        <choose>
+            <when test="time_range_type='1'">
+                select from_unixtime(created_at/1000,"%Y-%m-%d") `time_text`,sum(`manager_money`) `brokerage`
+            </when>
+            <when test="time_range_type='2'">
+                select from_unixtime(created_at/1000,"%Y-%m-%d") `time_text`,sum(`manager_money`) `brokerage`
+            </when>
+            <otherwise>
+                select from_unixtime(created_at/1000,"%Y-%m") `time_text`,sum(`manager_money`) `brokerage`
+            </otherwise>
+        </choose>
+        from cust_warranty_brokerage
+        where `created_at`>=#{start_time} AND `created_at`&lt;#{end_time} AND `manager_uuid`=#{manager_uuid}
+        group by `time_text`;
+    </select>
+
 </mapper>

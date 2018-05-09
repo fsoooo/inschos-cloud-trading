@@ -90,6 +90,7 @@ public class CustWarrantyBrokerageModel {
     public String account_uuid;
     public String start_time;
     public String end_time;
+    public String time_range_type;
 
 
 }

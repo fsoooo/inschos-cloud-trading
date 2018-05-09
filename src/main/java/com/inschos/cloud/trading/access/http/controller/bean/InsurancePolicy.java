@@ -3,15 +3,14 @@ package com.inschos.cloud.trading.access.http.controller.bean;
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
-import com.inschos.cloud.trading.model.CarInfoModel;
-import com.inschos.cloud.trading.model.InsuranceParticipantModel;
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -689,18 +688,12 @@ public class InsurancePolicy {
         public InsurancePolicyStatisticDetail data;
     }
 
-    public static class InsurancePolicyStatisticDetail extends InsurancePolicyStatisticItem {
+    public static class InsurancePolicyStatisticDetail {
         public String startTime;
         public String startTimeText;
         public String endTime;
         public String endTimeText;
 
-        public List<InsurancePolicyStatisticItem> insurancePolicyList;
-    }
-
-    public static class InsurancePolicyStatisticItem {
-        public String time;
-        public String timeText;
         public String insurancePolicyCount;
         public String premium;
         public String premiumText;
@@ -710,8 +703,71 @@ public class InsurancePolicy {
         public String brokeragePercentageText;
         public String averagePremium;
         public String averagePremiumText;
+
+        public List<InsurancePolicyStatisticItem> insurancePolicyList;
+    }
+
+    public static class InsurancePolicyStatisticItem {
+        public String timeText;
+        public String insurancePolicyCount;
+
+        public String premium;
+        public String premiumText;
+        public String averagePremium;
+        public String averagePremiumText;
         public String premiumPercentage;
         public String premiumPercentageText;
+
+        public String brokerage;
+        public String brokerageText;
+        //        public String brokeragePercentage;
+//        public String brokeragePercentageText;
+        public String averageBrokeragePercentage;
+        public String averageBrokeragePercentageText;
+
+
+        public InsurancePolicyStatisticItem() {
+
+        }
+
+        public InsurancePolicyStatisticItem(String timeText) {
+            this.timeText = timeText;
+        }
+
+        public void setPremiumStatisticModel(PremiumStatisticModel premiumStatisticModel) {
+            if (premiumStatisticModel == null) {
+                return;
+            }
+
+            if (!StringKit.isEmpty(premiumStatisticModel.premium) && StringKit.isNumeric(premiumStatisticModel.premium)) {
+                this.premium = premiumStatisticModel.premium;
+                this.premiumText = "¥" + this.premium;
+            } else {
+                this.premium = "0.00";
+                this.premiumText = "¥0.00";
+            }
+
+            if (!StringKit.isEmpty(premiumStatisticModel.insurance_policy_count) && StringKit.isInteger(premiumStatisticModel.insurance_policy_count)) {
+                this.insurancePolicyCount = premiumStatisticModel.insurance_policy_count;
+            } else {
+                this.insurancePolicyCount = "0";
+            }
+
+        }
+
+        public void setBrokerageStatisticModel(BrokerageStatisticModel brokerageStatisticModel) {
+            if (brokerageStatisticModel == null) {
+                return;
+            }
+
+            if (!StringKit.isEmpty(brokerageStatisticModel.brokerage) && StringKit.isNumeric(brokerageStatisticModel.brokerage)) {
+                this.brokerage = brokerageStatisticModel.brokerage;
+                this.brokerageText = "¥" + this.brokerage;
+            } else {
+                this.brokerage = "0.00";
+                this.brokerageText = "¥0.00";
+            }
+        }
     }
 
 }

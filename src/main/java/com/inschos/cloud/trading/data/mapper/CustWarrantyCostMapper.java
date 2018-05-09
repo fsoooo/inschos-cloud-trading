@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.data.mapper;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.PolicyListCountModel;
+import com.inschos.cloud.trading.model.PremiumStatisticModel;
 
 import java.util.List;
 
@@ -26,5 +27,7 @@ public interface CustWarrantyCostMapper {
     List<InsurancePolicyModel> findInsurancePolicyListForInsuring(InsurancePolicyModel insurancePolicyModel);
 
     long findInsurancePolicyCountForInsuring(InsurancePolicyModel insurancePolicyModel);
+
+    List<PremiumStatisticModel> findCustWarrantyCostStatistic(CustWarrantyCostModel custWarrantyCostModel);
 
 }
