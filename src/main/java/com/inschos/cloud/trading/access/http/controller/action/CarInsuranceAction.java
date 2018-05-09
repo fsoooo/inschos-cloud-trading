@@ -1266,7 +1266,10 @@ public class CarInsuranceAction extends BaseAction {
             InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance = new InsurancePolicyAndParticipantForCarInsurance();
             String time = String.valueOf(System.currentTimeMillis());
 
-            AgentBean agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid(actionBean.managerUuid, actionBean.userId);
+            AgentBean agentInfoByPersonIdManagerUuid = null;
+            if (actionBean.userType == 4) {
+                agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid(actionBean.managerUuid, actionBean.userId);
+            }
 
             // FORCEPREMIUM 强险
             if (request.applyUnderwriting.hasCompulsoryInsurance) {
