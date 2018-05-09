@@ -168,7 +168,7 @@
                     `cust_warranty_brokerage`.`id`&gt;=(select `cust_warranty_brokerage`.`id` from cust_warranty_cost
                     LEFT JOIN cust_warranty ON `cust_warranty_cost`.`warranty_uuid`=`cust_warranty`.`warranty_uuid` LEFT
                     JOIN cust_warranty_brokerage ON `cust_warranty_cost`.`id`=`cust_warranty_brokerage`.`cost_id` where
-                    `cust_warranty`.`warranty_status`!=1 AND `cust_warranty`.`warranty_status`!=2 AND
+                    `cust_warranty`.`warranty_status`!=1 AND `cust_warranty`.`warranty_status`!=6 AND
                     `cust_warranty`.`state` = 1 AND
                     `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time} AND `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time} AND `cust_warranty`.`manager_uuid`=#{manager_uuid}
                     <if test="search!=null and search!=''">
@@ -181,7 +181,7 @@
                     1=1
                 </otherwise>
             </choose>
-            and `cust_warranty`.`warranty_status`!=1 AND `cust_warranty`.`warranty_status`!=2 AND
+            and `cust_warranty`.`warranty_status`!=1 AND `cust_warranty`.`warranty_status`!=6 AND
             `cust_warranty`.`state` = 1 AND
             `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time} AND `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time}AND `cust_warranty`.`manager_uuid`=#{manager_uuid}
             <if test="search!=null and search!=''">
@@ -199,7 +199,7 @@
         from cust_warranty_cost LEFT JOIN cust_warranty ON
         `cust_warranty_cost`.`warranty_uuid`=`cust_warranty`.`warranty_uuid` LEFT JOIN cust_warranty_brokerage ON
         `cust_warranty_cost`.`id`=`cust_warranty_brokerage`.`cost_id`
-        WHERE `cust_warranty`.`warranty_status`!=1 AND `cust_warranty`.`warranty_status`!=2 AND `cust_warranty`.`state`= 1  AND `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time} AND
+        WHERE `cust_warranty`.`warranty_status`!=1 AND `cust_warranty`.`warranty_status`!=6 AND `cust_warranty`.`state`= 1  AND `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time} AND
         `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time}AND `cust_warranty`.`manager_uuid`=#{manager_uuid}
         <if test="search!=null and search!=''">
             and `warranty_code` like concat("%",#{search},"%")
