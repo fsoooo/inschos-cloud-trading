@@ -1100,8 +1100,10 @@ public class CarInsuranceAction extends BaseAction {
                         if (StringKit.isNumeric(insurancePolicyInfo.insuredPremium)) {
                             if (StringKit.equals(insurancePolicyInfo.coverageCode, "FORCEPREMIUM")) {
                                 ci = ci.add(new BigDecimal(insurancePolicyInfo.insuredPremium));
+                                datum.hasCompulsoryInsurance = true;
                             } else {
                                 bi = bi.add(new BigDecimal(insurancePolicyInfo.insuredPremium));
+                                datum.hasCommercialInsurance = true;
                             }
                         }
                     }
@@ -1254,7 +1256,12 @@ public class CarInsuranceAction extends BaseAction {
             AgentBean agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid(actionBean.managerUuid, actionBean.userId);
 
             // FORCEPREMIUM 强险
-            if (!StringKit.isEmpty(result.data.ciProposalNo)) {
+            if (request.applyUnderwriting.hasCompulsoryInsurance) {
+
+                if (result.data.ciProposalNo == null) {
+                    result.data.ciProposalNo = "";
+                }
+
                 InsurancePolicyModel ciProposal = new InsurancePolicyModel();
                 ciProposal.warranty_uuid = getThpBizID();
                 ciProposal.pre_policy_no = result.data.ciProposalNo;
@@ -1336,7 +1343,11 @@ public class CarInsuranceAction extends BaseAction {
                         request.premiumCalibrate.personInfo);
             }
 
-            if (!StringKit.isEmpty(result.data.biProposalNo)) {
+            if (request.applyUnderwriting.hasCommercialInsurance) {
+
+                if (result.data.biProposalNo == null) {
+                    result.data.biProposalNo = "";
+                }
                 // 商业险
                 InsurancePolicyModel biProposal = new InsurancePolicyModel();
                 biProposal.warranty_uuid = getThpBizID();
@@ -1482,6 +1493,8 @@ public class CarInsuranceAction extends BaseAction {
                     request.applyUnderwriting.coverageList = insurancePolicyPremiumDetail.coverageList;
                     request.applyUnderwriting.spAgreements = insurancePolicyPremiumDetail.spAgreement;
                     request.applyUnderwriting.integral = insurancePolicyPremiumDetail.integral;
+                    request.applyUnderwriting.hasCompulsoryInsurance = insurancePolicyPremiumDetail.hasCompulsoryInsurance;
+                    request.applyUnderwriting.hasCommercialInsurance = insurancePolicyPremiumDetail.hasCommercialInsurance;
                     flag = true;
                     break;
                 }

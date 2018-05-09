@@ -350,6 +350,8 @@ public class CarInsurance {
         public String showSumIntegral;
         public String bjCodeFlag;
         public String isChanged;
+        public boolean hasCommercialInsurance = false;
+        public boolean hasCompulsoryInsurance = false;
         public ExtendCarInsurancePolicy.DiscountInfo discountInfo;
         public List<ExtendCarInsurancePolicy.SpAgreement> spAgreement;
         public ExtendCarInsurancePolicy.VehicleInfo vehicleInfo;
@@ -383,6 +385,8 @@ public class CarInsurance {
             this.showCiCost = insurancePolicy.showCiCost;
             this.showBiCost = insurancePolicy.showBiCost;
             this.bjCodeFlag = insurancePolicy.bjCodeFlag;
+            this.hasCompulsoryInsurance = insurancePolicy.hasCompulsoryInsurance;
+            this.hasCommercialInsurance = insurancePolicy.hasCommercialInsurance;
             this.discountInfo = insurancePolicy.discountInfo;
             this.spAgreement = insurancePolicy.spAgreement;
             this.vehicleInfo = insurancePolicy.vehicleInfo;
@@ -434,6 +438,9 @@ public class CarInsurance {
         // 必传
         public String bjCodeFlag;
         public String integral;
+
+        public boolean hasCommercialInsurance = false;
+        public boolean hasCompulsoryInsurance = false;
 
         public List<InsuranceInfo> coverageList;
         public List<ExtendCarInsurancePolicy.SpAgreement> spAgreements;

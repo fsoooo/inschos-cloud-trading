@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
+import com.inschos.cloud.trading.access.rpc.bean.AccountBean;
 import com.inschos.cloud.trading.access.rpc.client.AccountClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
@@ -635,6 +636,57 @@ public class InsurancePolicyAction extends BaseAction {
         response.data.totalAmount = "累计佣金\n" + totalAmount;
 
         return json(BaseResponse.CODE_SUCCESS, "获取佣金统计成功", response);
+    }
+
+    public String getInsurancePolicyStatisticForManagerSystem(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyStatisticDetailForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatisticDetailForManagerSystemRequest.class);
+        InsurancePolicy.GetInsurancePolicyStatisticDetailForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyStatisticDetailForManagerSystemResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        String startTime;
+        String endTime;
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // 时间范围类型，1-今日，2-本月，3-本年
+        switch (request.timeRangeType) {
+            case "1":
+                calendar.set(year, month, day, 0, 0, 0);
+                startTime = String.valueOf(calendar.getTimeInMillis());
+                calendar.add(Calendar.DAY_OF_MONTH,1);
+                endTime = String.valueOf(calendar.getTimeInMillis());
+
+
+
+
+                break;
+            case "2":
+                calendar.set(year, month, 1, 0, 0, 0);
+                startTime = String.valueOf(calendar.getTimeInMillis());
+                calendar.add(Calendar.DAY_OF_MONTH,1);
+                endTime = String.valueOf(calendar.getTimeInMillis());
+                break;
+            case "3":
+                calendar.set(year, Calendar.JANUARY, 1, 0, 0, 0);
+                startTime = String.valueOf(calendar.getTimeInMillis());
+                calendar.add(Calendar.DAY_OF_MONTH,1);
+                endTime = String.valueOf(calendar.getTimeInMillis());
+                break;
+            default:
+                return json(BaseResponse.CODE_FAILURE, "时间范围类型错误", response);
+        }
+
+        return json(BaseResponse.CODE_SUCCESS, "获取统计信息成功", response);
     }
 
     private long getDayEndTime(int year, int month, int day) {

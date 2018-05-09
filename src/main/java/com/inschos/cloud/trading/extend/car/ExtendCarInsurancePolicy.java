@@ -407,6 +407,8 @@ public class ExtendCarInsurancePolicy {
         public String showBiCost;
         public String showSumIntegral;
         public String bjCodeFlag;
+        public boolean hasCommercialInsurance = false;
+        public boolean hasCompulsoryInsurance = false;;
         public DiscountInfo discountInfo;
         public List<SpAgreement> spAgreement;
         public VehicleInfo vehicleInfo;

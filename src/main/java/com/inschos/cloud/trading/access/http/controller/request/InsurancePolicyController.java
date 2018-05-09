@@ -77,4 +77,10 @@ public class InsurancePolicyController {
         return insurancePolicyAction.getInsurancePolicyBrokerageStatisticForManagerSystem(actionBean);
     }
 
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/get_insurance_policy_statistic_detail_for_manager_system")
+    @ResponseBody
+    public String getInsurancePolicyStatisticForManagerSystem(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyStatisticForManagerSystem(actionBean);
+    }
 }
