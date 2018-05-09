@@ -816,9 +816,13 @@ public class InsurancePolicy {
         public String agentMoneyText;
 
         public String warrantyRate;
+        public String warrantyRateText;
         public String managerRate;
+        public String managerRateText;
         public String channelRate;
+        public String channelRateText;
         public String agentRate;
+        public String agentRateText;
 
         public String insuranceName;
         public String productName;
@@ -866,7 +870,7 @@ public class InsurancePolicy {
 
             this.brokerageId = brokerageStatisticListModel.brokerage_id;
 
-            if (StringKit.isNumeric(this.warrantyMoney)) {
+            if (StringKit.isNumeric(brokerageStatisticListModel.warranty_money)) {
                 this.warrantyMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.warranty_money).doubleValue());
                 this.warrantyMoneyText = "¥" + this.warrantyMoney;
             } else {
@@ -874,7 +878,7 @@ public class InsurancePolicy {
                 this.warrantyMoneyText = "¥0.00";
             }
 
-            if (StringKit.isNumeric(this.managerMoney)) {
+            if (StringKit.isNumeric(brokerageStatisticListModel.manager_money)) {
                 this.managerMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.manager_money).doubleValue());
                 this.managerMoneyText = "¥" + this.managerMoney;
             } else {
@@ -882,7 +886,7 @@ public class InsurancePolicy {
                 this.managerMoneyText = "¥0.00";
             }
 
-            if (StringKit.isNumeric(this.channelMoney)) {
+            if (StringKit.isNumeric(brokerageStatisticListModel.channel_money)) {
                 this.channelMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.channel_money).doubleValue());
                 this.channelMoneyText = "¥" + this.channelMoney;
             } else {
@@ -890,7 +894,7 @@ public class InsurancePolicy {
                 this.channelMoneyText = "¥0.00";
             }
 
-            if (StringKit.isNumeric(this.agentMoney)) {
+            if (StringKit.isNumeric(brokerageStatisticListModel.agent_money)) {
                 this.agentMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.agent_money).doubleValue());
                 this.agentMoneyText = "¥" + this.agentMoney;
             } else {
@@ -898,10 +902,47 @@ public class InsurancePolicy {
                 this.agentMoneyText = "¥0.00";
             }
 
-            this.warrantyRate = brokerageStatisticListModel.warranty_rate;
-            this.managerRate = brokerageStatisticListModel.manager_rate;
-            this.channelRate = brokerageStatisticListModel.channel_rate;
-            this.agentRate = brokerageStatisticListModel.agent_rate;
+            if (StringKit.isNumeric(brokerageStatisticListModel.warranty_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticListModel.warranty_rate);
+                this.warrantyRate = decimalFormat.format(bigDecimal.doubleValue());
+                bigDecimal = bigDecimal.multiply(new BigDecimal("100"));
+                this.warrantyRateText = decimalFormat.format(bigDecimal.doubleValue()) + "%";
+            } else {
+                this.warrantyRate = "0.0";
+                this.warrantyRateText = "0.00%";
+            }
+
+            if (StringKit.isNumeric(brokerageStatisticListModel.manager_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticListModel.manager_rate);
+                this.managerRate = decimalFormat.format(bigDecimal.doubleValue());
+                bigDecimal = bigDecimal.multiply(new BigDecimal("100"));
+                this.managerRateText = decimalFormat.format(bigDecimal.doubleValue()) + "%";
+            } else {
+                this.managerRate = "0.0";
+                this.managerRateText = "0.00%";
+            }
+
+
+            if (StringKit.isNumeric(brokerageStatisticListModel.channel_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticListModel.channel_rate);
+                this.channelRate = decimalFormat.format(bigDecimal.doubleValue());
+                bigDecimal = bigDecimal.multiply(new BigDecimal("100"));
+                this.channelRateText = decimalFormat.format(bigDecimal.doubleValue()) + "%";
+            } else {
+                this.channelRate = "0.0";
+                this.channelRateText = "0.00%";
+            }
+
+
+            if (StringKit.isNumeric(brokerageStatisticListModel.agent_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticListModel.agent_rate);
+                this.agentRate = decimalFormat.format(bigDecimal.doubleValue());
+                bigDecimal = bigDecimal.multiply(new BigDecimal("100"));
+                this.agentRateText = decimalFormat.format(bigDecimal.doubleValue()) + "%";
+            } else {
+                this.agentRate = "0.0";
+                this.agentRateText = "0.00%";
+            }
 
         }
 
