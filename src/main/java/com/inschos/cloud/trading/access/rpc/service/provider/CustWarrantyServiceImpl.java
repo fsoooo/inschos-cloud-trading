@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.access.rpc.service.provider;
 
 import com.inschos.cloud.trading.access.rpc.bean.AccountUuidBean;
+import com.inschos.cloud.trading.access.rpc.bean.IncomeBean;
 import com.inschos.cloud.trading.access.rpc.bean.ManagerUuidBean;
 import com.inschos.cloud.trading.access.rpc.bean.PolicyholderCountBean;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
@@ -37,6 +38,13 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
             } else {
                 return result;
             }
+
+            if (!StringKit.isEmpty(custWarrantyPolicyholderCountBean.managerUuid)) {
+                insurancePolicyModel.manager_uuid = custWarrantyPolicyholderCountBean.managerUuid;
+            } else {
+                return result;
+            }
+
             insurancePolicyModel.start_time = custWarrantyPolicyholderCountBean.startTime;
             insurancePolicyModel.end_time = custWarrantyPolicyholderCountBean.endTime;
             long count = insurancePolicyDao.findInsurancePolicyListCountByTimeAndAccountUuid(insurancePolicyModel);
@@ -44,7 +52,6 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
         }
         return result;
     }
-
 
     @Override
     public List<PolicyholderCountBean> getPolicyholderCountByTimeOrManagerUuid(ManagerUuidBean custWarrantyPolicyholderCountBean) {

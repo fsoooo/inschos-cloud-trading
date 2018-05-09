@@ -8,6 +8,7 @@ package com.inschos.cloud.trading.access.rpc.bean;
 public class AccountUuidBean {
 
     public String accountUuid;
+    public String managerUuid;
     public String startTime;
     public String endTime;
 
