@@ -937,7 +937,18 @@ public class InsurancePolicyAction extends BaseAction {
 
         if (insurancePolicyBrokerageStatisticList != null && !insurancePolicyBrokerageStatisticList.isEmpty()) {
             for (BrokerageStatisticListModel brokerageStatisticListModel : insurancePolicyBrokerageStatisticList) {
-                response.data.add(new InsurancePolicy.InsurancePolicyBrokerageStatistic(brokerageStatisticListModel));
+                InsuranceParticipantModel holder = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(brokerageStatisticListModel.warranty_uuid);
+                InsurancePolicy.InsurancePolicyBrokerageStatistic insurancePolicyBrokerageStatistic = new InsurancePolicy.InsurancePolicyBrokerageStatistic(brokerageStatisticListModel);
+                insurancePolicyBrokerageStatistic.customerName = holder.name;
+                insurancePolicyBrokerageStatistic.customerMobile = holder.phone;
+                if (StringKit.isInteger(brokerageStatisticListModel.product_id)) {
+                    ProductBean product = productClient.getProduct(Long.valueOf(brokerageStatisticListModel.product_id));
+                    if (product != null) {
+                        insurancePolicyBrokerageStatistic.insuranceName = product.insuranceCoName;
+                        insurancePolicyBrokerageStatistic.productName = product.displayName;
+                    }
+                }
+                response.data.add(insurancePolicyBrokerageStatistic);
                 lastId = Long.valueOf(brokerageStatisticListModel.cost_id);
             }
         }

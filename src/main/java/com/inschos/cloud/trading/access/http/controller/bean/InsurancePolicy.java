@@ -725,7 +725,6 @@ public class InsurancePolicy {
         public String averageBrokeragePercentage;
         public String averageBrokeragePercentageText;
 
-
         public InsurancePolicyStatisticItem() {
 
         }
@@ -822,6 +821,9 @@ public class InsurancePolicy {
 
         public String insuranceName;
         public String productName;
+        public String customerName;
+        public String customerMobile;
+
 
         public InsurancePolicyBrokerageStatistic() {
 
@@ -848,7 +850,8 @@ public class InsurancePolicy {
             this.phase = brokerageStatisticListModel.phase;
 
             if (!StringKit.isEmpty(brokerageStatisticListModel.premium) && StringKit.isNumeric(brokerageStatisticListModel.premium)) {
-                this.premium = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.premium).doubleValue());;
+                this.premium = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.premium).doubleValue());
+                ;
                 this.premiumText = "¥" + this.premium;
             } else {
                 this.premium = "0.00";

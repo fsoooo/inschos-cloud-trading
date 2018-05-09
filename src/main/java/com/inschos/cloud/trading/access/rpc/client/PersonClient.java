@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class PersonClient {
 
-    @Value("${rpc.remote.person.host}")
+    @Value("${rpc.remote.agent.host}")
     private String host;
 
-    private final String uri = "/rpc/person";
+    private final String uri = "/rpc/agent";
 
     private PersonService getService() {
         return new HproseHttpClient(host + uri).useService(PersonService.class);
