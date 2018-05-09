@@ -1,10 +1,7 @@
 package com.inschos.cloud.trading.data.dao;
 
 import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.data.mapper.CarInfoMapper;
-import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
-import com.inschos.cloud.trading.data.mapper.InsuranceParticipantMapper;
-import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
+import com.inschos.cloud.trading.data.mapper.*;
 import com.inschos.cloud.trading.model.CarInfoModel;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
@@ -35,6 +32,9 @@ public class InsurancePolicyDao extends BaseDao {
 
     @Autowired
     public CustWarrantyCostMapper custWarrantyCostMapper;
+
+    @Autowired
+    public CustWarrantyBrokerageMapper custWarrantyBrokerageMapper;
 
     public int addInsurancePolicyAndParticipantForCarInsurance(InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance) {
         if (insurancePolicyAndParticipantForCarInsurance != null) {
@@ -122,6 +122,22 @@ public class InsurancePolicyDao extends BaseDao {
 
             if (insurancePolicyAndParticipantForCarInsurance.biCustWarrantyCostModel != null) {
                 add = custWarrantyCostMapper.addCustWarrantyCost(insurancePolicyAndParticipantForCarInsurance.biCustWarrantyCostModel);
+            }
+
+            if (add <= 0) {
+                rollBack();
+            }
+
+            if (insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel  != null) {
+                add = custWarrantyBrokerageMapper.addCustWarrantyBrokerage(insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel);
+            }
+
+            if (add <= 0) {
+                rollBack();
+            }
+
+            if (insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel  != null) {
+                add = custWarrantyBrokerageMapper.addCustWarrantyBrokerage(insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel);
             }
 
             if (add <= 0) {

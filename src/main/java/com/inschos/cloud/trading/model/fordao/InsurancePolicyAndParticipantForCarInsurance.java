@@ -1,9 +1,6 @@
 package com.inschos.cloud.trading.model.fordao;
 
-import com.inschos.cloud.trading.model.CarInfoModel;
-import com.inschos.cloud.trading.model.CustWarrantyCostModel;
-import com.inschos.cloud.trading.model.InsuranceParticipantModel;
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.model.*;
 
 /**
  * 创建日期：2018/4/11 on 18:24
@@ -22,5 +19,6 @@ public class InsurancePolicyAndParticipantForCarInsurance {
     public CarInfoModel biCarInfoModel;
     public CustWarrantyCostModel ciCustWarrantyCostModel;
     public CustWarrantyCostModel biCustWarrantyCostModel;
-
+    public CustWarrantyBrokerageModel ciCustWarrantyBrokerageModel;
+    public CustWarrantyBrokerageModel biCustWarrantyBrokerageModel;
 }

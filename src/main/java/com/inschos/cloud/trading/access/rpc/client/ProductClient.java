@@ -1,8 +1,7 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
-import com.inschos.cloud.trading.access.rpc.bean.MyBean;
-import com.inschos.cloud.trading.access.rpc.bean.MyBean2;
-import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
+import com.inschos.cloud.trading.access.rpc.bean.*;
+import com.inschos.cloud.trading.access.rpc.service.PersonService;
 import com.inschos.cloud.trading.access.rpc.service.ProductService;
 import com.inschos.cloud.trading.assist.kit.L;
 import hprose.client.HproseHttpClient;
@@ -26,14 +25,15 @@ public class ProductClient {
     private final String uri = "/rpc/product";
 
 
-    private ProductService getService(){
+    private ProductService getService() {
         return new HproseHttpClient(host + uri).useService(ProductService.class);
     }
 
-    public List<ProductInfo> listProduct() {
+
+    public List<ProductBean> getPlatformProductAll(long managerUuid, int categoryId) {
         try {
             ProductService service = getService();
-            return service != null ? service.listProduct() : null;
+            return service != null ? service.getPlatformProductAll(managerUuid, categoryId) : null;
 
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);
@@ -41,43 +41,10 @@ public class ProductClient {
         }
     }
 
-    public ProductInfo product_byId(String product_id) {
+    public ProductBean getProduct(long productId) {
         try {
             ProductService service = getService();
-            return service != null ? service.product_byId(product_id) : null;
-
-        } catch (Exception e) {
-            L.log.error("remote fail {}", e.getMessage(), e);
-            return null;
-        }
-    }
-
-    public String addCompany(List<MyBean> list) {
-        try {
-            ProductService service = getService();
-            return service != null ? service.addCompany(list) : null;
-
-        } catch (Exception e) {
-            L.log.error("remote fail {}", e.getMessage(), e);
-            return null;
-        }
-    }
-
-    public List<MyBean> listCompany() {
-        try {
-            ProductService service = getService();
-            return service != null ? service.listCompany() : null;
-
-        } catch (Exception e) {
-            L.log.error("remote fail {}", e.getMessage(), e);
-            return null;
-        }
-    }
-
-    public String addProduct(List<MyBean2> list) {
-        try {
-            ProductService service = getService();
-            return service != null ? service.addProduct(list) : null;
+            return service != null ? service.getProduct(productId) : null;
 
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);

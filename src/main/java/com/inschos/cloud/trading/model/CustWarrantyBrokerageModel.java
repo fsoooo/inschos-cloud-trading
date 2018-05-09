@@ -95,4 +95,31 @@ public class CustWarrantyBrokerageModel {
     public Page page;
 
 
+    public CustWarrantyBrokerageModel() {
+
+    }
+
+    public CustWarrantyBrokerageModel(String warranty_uuid, String manager_uuid, String channel_id, String agent_id, String time) {
+        this.warranty_uuid = warranty_uuid;
+        this.manager_uuid = manager_uuid;
+        this.channel_id = channel_id;
+        this.agent_id = agent_id;
+        this.created_at = time;
+        this.updated_at = time;
+    }
+
+    public void setBrokerage() {
+        this.warranty_money = "23.00";
+        this.manager_money = "20.00";
+        this.channel_money = "18.00";
+        this.agent_money = "15.00";
+    }
+
+    public void setBrokerageRate() {
+        this.warranty_rate = "0.23";
+        this.manager_rate = "0.20";
+        this.channel_rate = "0.18";
+        this.agent_rate = "0.15";
+    }
+
 }

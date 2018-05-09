@@ -4,7 +4,9 @@ import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.access.rpc.bean.AccountBean;
+import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
 import com.inschos.cloud.trading.access.rpc.client.AccountClient;
+import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -42,7 +44,7 @@ public class InsurancePolicyAction extends BaseAction {
     private CustWarrantyBrokerageDao custWarrantyBrokerageDao;
 
     @Autowired
-    private AccountClient accountClient;
+    private ProductClient productClient;
 
     public String getInsurancePolicyStatusList(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyStatusListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatusListRequest.class);
@@ -168,14 +170,20 @@ public class InsurancePolicyAction extends BaseAction {
 
             if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
 
-                // TODO: 2018/4/17 真实的，目前不能用
-                // List<InsuranceConciseInfo> insuranceConciseInfo = insuranceServiceClient.insList();
+                HashMap<String, ProductBean> map = new HashMap<>();
+                List<ProductBean> ciProduct = productClient.getPlatformProductAll(Long.valueOf(actionBean.managerUuid), 42);
+                if (ciProduct != null) {
+                    for (ProductBean productBean : ciProduct) {
+                        map.put(String.valueOf(productBean.id), productBean);
+                    }
+                }
 
-//                HashMap<String, InsuranceConciseInfo> map = new HashMap<>();
-//
-//                for (InsuranceConciseInfo conciseInfo : insuranceConciseInfo) {
-//                    map.put(conciseInfo.id, conciseInfo);
-//                }
+                List<ProductBean> biProduct = productClient.getPlatformProductAll(Long.valueOf(actionBean.managerUuid), 43);
+                if (biProduct != null) {
+                    for (ProductBean productBean : biProduct) {
+                        map.put(String.valueOf(productBean.id), productBean);
+                    }
+                }
 
                 CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
                 long time = System.currentTimeMillis();
@@ -221,14 +229,11 @@ public class InsurancePolicyAction extends BaseAction {
                         insurancePolicy.bizId = bjCodeFlagAndBizIdByWarrantyUuid.biz_id;
                     }
 
-//                    InsuranceConciseInfo product = map.get(insurancePolicy.productId);
-//                    if (product != null) {
-//                        insurancePolicy.insuranceProductName = product.ins_name;
-//                        insurancePolicy.insuranceCompanyName = product.company_name;
-//                    }
-
-                    insurancePolicy.insuranceProductName = "产品名";
-                    insurancePolicy.insuranceCompanyName = "保险公司名";
+                    ProductBean productBean = map.get(insurancePolicy.productId);
+                    if (productBean != null) {
+                        insurancePolicy.insuranceProductName = productBean.displayName;
+                        insurancePolicy.insuranceCompanyName = productBean.insuranceCoName;
+                    }
 
                     List<InsuranceParticipantModel> insuranceParticipantInsuredByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantInsuredNameByWarrantyUuid(insurancePolicy.warrantyUuid);
 
@@ -469,14 +474,16 @@ public class InsurancePolicyAction extends BaseAction {
             response.data.insuredList = new ArrayList<>();
             response.data.beneficiaryList = new ArrayList<>();
 
-            // TODO: 2018/4/17 真实的，目前不能用
-            // InsuranceConciseInfo insuranceConciseInfo = insuranceServiceClient.insList(insurancePolicyDetailByWarrantyCode.product_id);
+            ProductBean product = null;
+            if (StringKit.isInteger(insurancePolicyDetailByWarrantyCode.product_id)) {
+                product = productClient.getProduct(Long.valueOf(insurancePolicyDetailByWarrantyCode.product_id));
+            }
 
             if (insuranceParticipantByWarrantyCode != null && !insuranceParticipantByWarrantyCode.isEmpty()) {
-//            response.data.insuranceProductName = insuranceConciseInfo.ins_name;
-//            response.data.insuranceCompanyName = insuranceConciseInfo.company_name;
-                response.data.insuranceProductName = "产品名";
-                response.data.insuranceCompanyName = "保险公司名";
+                if (product != null) {
+                    response.data.insuranceProductName = product.displayName;
+                    response.data.insuranceCompanyName = product.insuranceCoName;
+                }
 
                 for (InsuranceParticipantModel insuranceParticipantModel : insuranceParticipantByWarrantyCode) {
                     InsurancePolicy.InsurancePolicyParticipantInfo insurancePolicyParticipantInfo = new InsurancePolicy.InsurancePolicyParticipantInfo(insuranceParticipantModel);
@@ -935,7 +942,7 @@ public class InsurancePolicyAction extends BaseAction {
             }
         }
 
-        response.page = setPageBean(lastId,request.pageSize,total,response.data.size());
+        response.page = setPageBean(lastId, request.pageSize, total, response.data.size());
 
         return json(BaseResponse.CODE_SUCCESS, "获取统计信息成功", response);
 

@@ -77,7 +77,6 @@ public class CarInsuranceAction extends BaseAction {
                 if (result.data != null && !result.data.isEmpty()) {
                     ActionBean bean = new ActionBean();
 
-
                     bean.buildCode = actionBean.buildCode;
                     bean.platform = actionBean.platform;
                     bean.apiCode = actionBean.apiCode;
@@ -521,39 +520,38 @@ public class CarInsuranceAction extends BaseAction {
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
-                str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
 
-                // TODO: 2018/4/25 先获取manager_uuid
-                List<ProductInfo> productInfos = productClient.listProduct();
+                List<ProductBean> productBeans = productClient.getPlatformProductAll(Long.valueOf(actionBean.managerUuid), 42);
+                Map<String, ProductBean> hashMap = new HashMap<>();
 
-                if (productInfos != null && !productInfos.isEmpty() && response.data != null && !response.data.isEmpty()) {
-                    Set<ProductInfo> hashSet = new HashSet<>(productInfos);
-                    Map<String, ProductInfo> hashMap = new HashMap<>();
-                    for (ProductInfo productInfo : hashSet) {
-                        if (StringKit.equals(productInfo.sell_status, "1")) {
-                            hashMap.put(productInfo.code, productInfo);
+                if (productBeans != null && !productBeans.isEmpty()) {
+                    for (ProductBean productBean : productBeans) {
+                        String[] split = productBean.code.split("_");
+                        if (split.length > 0) {
+                            if (productBean.sellStatus == 1) {
+                                hashMap.put(split[0], productBean);
+                            }
                         }
                     }
 
                     List<ExtendCarInsurancePolicy.InsuranceCompany> list = new ArrayList<>();
-                    for (ExtendCarInsurancePolicy.InsuranceCompany datum : response.data) {
-                        ProductInfo productInfo = hashMap.get(datum.insurerCode);
-                        if (productInfo != null) {
-                            datum.productId = productInfo.id;
-                            list.add(datum);
+                    if (!response.data.isEmpty()) {
+                        for (ExtendCarInsurancePolicy.InsuranceCompany datum : response.data) {
+                            if (hashMap.get(datum.insurerCode) != null) {
+                                list.add(datum);
+                            }
                         }
                     }
-
-                    response.data.clear();
-                    response.data.addAll(list);
-
+                    response.data = list;
                 } else {
                     if (response.data == null) {
                         response.data = new ArrayList<>();
+                    } else {
+                        response.data.clear();
                     }
-                    response.data.clear();
                 }
 
+                str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
             } else {
                 if (StringKit.equals(CarInsuranceResponse.ERROR_SI100100000063, result.msgCode)) {
                     response.data = new ArrayList<>();
@@ -1233,24 +1231,35 @@ public class CarInsuranceAction extends BaseAction {
                 }
             }
 
-            // TODO: 2018/4/25 先获取manager_uuid
-            List<ProductInfo> productInfos = productClient.listProduct();
-            Map<String, ProductInfo> hashMap = new HashMap<>();
-
-            if (productInfos != null && !productInfos.isEmpty()) {
-                Set<ProductInfo> hashSet = new HashSet<>(productInfos);
-                for (ProductInfo productInfo : hashSet) {
-                    if (StringKit.equals(productInfo.sell_status, "1")) {
-                        hashMap.put(productInfo.code, productInfo);
+            List<ProductBean> ciList = productClient.getPlatformProductAll(Long.valueOf(actionBean.managerUuid), 42);
+            ProductBean ciProduct = null;
+            if (ciList != null && !ciList.isEmpty()) {
+                for (ProductBean productBean : ciList) {
+                    if (productBean.code.contains(request.applyUnderwriting.insurerCode)) {
+                        ciProduct = productBean;
+                        break;
                     }
                 }
             }
 
-            ProductInfo productInfo = hashMap.get(request.premiumCalibrate.insurerCode);
-            productInfo = new ProductInfo();
-            productInfo.manager_uuid = "1";
-            productInfo.id = "1";
-            productInfo.product_company_id = "1";
+            if (ciProduct == null) {
+                return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
+            }
+
+            List<ProductBean> biList = productClient.getPlatformProductAll(Long.valueOf(actionBean.managerUuid), 43);
+            ProductBean biProduct = null;
+            if (biList != null && !biList.isEmpty()) {
+                for (ProductBean productBean : biList) {
+                    if (productBean.code.contains(request.applyUnderwriting.insurerCode)) {
+                        biProduct = productBean;
+                        break;
+                    }
+                }
+            }
+
+            if (biProduct == null) {
+                return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
+            }
 
             String warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
 
@@ -1298,8 +1307,8 @@ public class CarInsuranceAction extends BaseAction {
                 ciProposal.updated_at = time;
 
                 ciProposal.plan_id = "0";
-                ciProposal.product_id = productInfo.id;
-                ciProposal.ins_company_id = productInfo.product_company_id;
+                ciProposal.product_id = String.valueOf(ciProduct.id);
+                ciProposal.ins_company_id = String.valueOf(ciProduct.insuranceCoId);
                 ciProposal.is_settlement = "1";
 
                 insurancePolicyAndParticipantForCarInsurance.ciProposal = ciProposal;
@@ -1345,6 +1354,15 @@ public class CarInsuranceAction extends BaseAction {
                         request.applyUnderwriting.biBeginDateValue,
                         ciEndDateValue,
                         request.premiumCalibrate.personInfo);
+
+                insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel = new CustWarrantyBrokerageModel(ciProposal.warranty_uuid,
+                        actionBean.managerUuid,
+                        ciProposal.channel_id,
+                        ciProposal.agent_id,
+                        time);
+
+                insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerage();
+                insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerageRate();
             }
 
             if (request.applyUnderwriting.hasCommercialInsurance) {
@@ -1385,8 +1403,9 @@ public class CarInsuranceAction extends BaseAction {
                 biProposal.updated_at = time;
 
                 biProposal.plan_id = "0";
-                biProposal.product_id = productInfo.id;
-                biProposal.ins_company_id = productInfo.product_company_id;
+                biProposal.product_id = String.valueOf(biProduct.id);
+                biProposal.ins_company_id = String.valueOf(biProduct.insuranceCoId);
+                ;
                 biProposal.is_settlement = "1";
 
                 insurancePolicyAndParticipantForCarInsurance.biProposal = biProposal;
@@ -1432,6 +1451,15 @@ public class CarInsuranceAction extends BaseAction {
                         request.applyUnderwriting.biBeginDateValue,
                         biEndDateValue,
                         request.premiumCalibrate.personInfo);
+
+                insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel = new CustWarrantyBrokerageModel(biProposal.warranty_uuid,
+                        actionBean.managerUuid,
+                        biProposal.channel_id,
+                        biProposal.agent_id,
+                        time);
+
+                insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerage();
+                insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerageRate();
             }
 
             int i = insurancePolicyDao.addInsurancePolicyAndParticipantForCarInsurance(insurancePolicyAndParticipantForCarInsurance);
@@ -2792,9 +2820,6 @@ public class CarInsuranceAction extends BaseAction {
 //        Map<String, String> typeMap = new HashMap<>();
 //
 //
-
-
-
 
 
 //        交强险 000200040001
