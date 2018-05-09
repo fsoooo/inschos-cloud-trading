@@ -979,7 +979,7 @@ public class InsurancePolicyAction extends BaseAction {
             }
         }
 
-        response.page = setPageBean(lastId, request.pageSize, total, response.data.size());
+        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.size());
 
         return json(BaseResponse.CODE_SUCCESS, "获取统计信息成功", response);
 

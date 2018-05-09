@@ -82,10 +82,10 @@
             parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
             resultType="com.inschos.cloud.trading.model.BrokerageStatisticModel">
         <choose>
-            <when test="time_range_type='1'">
+            <when test="time_range_type=='1'">
                 select from_unixtime(created_at/1000,"%Y-%m-%d") `time_text`,sum(`manager_money`) `brokerage`
             </when>
-            <when test="time_range_type='2'">
+            <when test="time_range_type=='2'">
                 select from_unixtime(created_at/1000,"%Y-%m-%d") `time_text`,sum(`manager_money`) `brokerage`
             </when>
             <otherwise>
