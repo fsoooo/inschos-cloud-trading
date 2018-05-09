@@ -392,6 +392,13 @@ public class InsurancePolicyAction extends BaseAction {
 
             InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
 
+            if (StringKit.isInteger(getInsurancePolicyForManagerSystem.productId)) {
+                ProductBean product = productClient.getProduct(Long.valueOf(getInsurancePolicyForManagerSystem.productId));
+                if (product != null) {
+                    getInsurancePolicyForManagerSystem.productName = product.displayName;
+                }
+            }
+
             if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
                 InsuranceParticipantModel insuranceParticipantPolicyHolderNameByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
                 if (insuranceParticipantPolicyHolderNameByWarrantyUuid != null) {

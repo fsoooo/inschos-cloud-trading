@@ -62,6 +62,7 @@ public class InsurancePolicy {
 
         //产品ID
         public String productId;
+        public String productName;
 
         //保单价格
         public String premium;
