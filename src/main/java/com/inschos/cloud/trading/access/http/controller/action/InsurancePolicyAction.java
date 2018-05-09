@@ -859,7 +859,7 @@ public class InsurancePolicyAction extends BaseAction {
                 }
 
                 if (itemPremium.compareTo(BigDecimal.ZERO) != 0) {
-                    if (StringKit.equals(item.insurancePolicyCount, "0")) {
+                    if (!StringKit.equals(item.insurancePolicyCount, "0")) {
                         BigDecimal divide = itemPremium.divide(insurancePolicyCount, BigDecimal.ROUND_HALF_DOWN);
                         item.averagePremium = decimalFormat.format(divide.doubleValue());
                         item.averagePremiumText = "¥" + item.averagePremium;
