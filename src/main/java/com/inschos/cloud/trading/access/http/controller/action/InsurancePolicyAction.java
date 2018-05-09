@@ -878,6 +878,69 @@ public class InsurancePolicyAction extends BaseAction {
         return result;
     }
 
+    public String getInsurancePolicyBrokerageStatisticListForManagerSystem(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyBrokerageStatisticListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyBrokerageStatisticListRequest.class);
+        InsurancePolicy.GetInsurancePolicyBrokerageStatisticListResponse response = new InsurancePolicy.GetInsurancePolicyBrokerageStatisticListResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+        custWarrantyCostModel.search = request.searchKey;
+
+        if (StringKit.isEmpty(request.startTime)) {
+            long l = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000L);
+            custWarrantyCostModel.start_time = String.valueOf(l);
+        } else {
+            custWarrantyCostModel.start_time = request.startTime;
+        }
+
+        if (StringKit.isEmpty(request.endTime)) {
+            custWarrantyCostModel.end_time = String.valueOf(System.currentTimeMillis());
+        } else {
+            custWarrantyCostModel.end_time = request.endTime;
+        }
+
+        custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
+
+
+        if (StringKit.isEmpty(request.lastId)) {
+            request.lastId = "0";
+        }
+
+        if (StringKit.isEmpty(request.pageNum)) {
+            request.pageNum = "1";
+        }
+
+        if (StringKit.isEmpty(request.pageSize)) {
+            request.pageSize = "20";
+        }
+        custWarrantyCostModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+
+        List<BrokerageStatisticListModel> insurancePolicyBrokerageStatisticList = custWarrantyCostDao.findInsurancePolicyBrokerageStatisticList(custWarrantyCostModel);
+        long total = custWarrantyCostDao.findInsurancePolicyBrokerageStatisticListCount(custWarrantyCostModel);
+        response.data = new ArrayList<>();
+        long lastId = 0;
+
+        if (insurancePolicyBrokerageStatisticList != null && !insurancePolicyBrokerageStatisticList.isEmpty()) {
+            for (BrokerageStatisticListModel brokerageStatisticListModel : insurancePolicyBrokerageStatisticList) {
+                response.data.add(new InsurancePolicy.InsurancePolicyBrokerageStatistic(brokerageStatisticListModel));
+                lastId = Long.valueOf(brokerageStatisticListModel.cost_id);
+            }
+        }
+
+        response.page = setPageBean(lastId,request.pageSize,total,response.data.size());
+
+        return json(BaseResponse.CODE_SUCCESS, "获取统计信息成功", response);
+
+    }
+
     private long getDayEndTime(int year, int month, int day) {
         Calendar instance = Calendar.getInstance();
 

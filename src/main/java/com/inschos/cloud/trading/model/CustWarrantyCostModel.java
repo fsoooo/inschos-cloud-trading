@@ -62,6 +62,8 @@ public class CustWarrantyCostModel {
     public String start_time;
     public String end_time;
     public String time_range_type;
+    public String search;
+    public Page page;
 
     public CustWarrantyCostModel() {
 

@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.data.dao;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
+import com.inschos.cloud.trading.model.BrokerageStatisticListModel;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.PremiumStatisticModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,4 +83,13 @@ public class CustWarrantyCostDao extends BaseDao {
     public List<PremiumStatisticModel> findCustWarrantyCostStatistic(CustWarrantyCostModel custWarrantyCostModel){
         return custWarrantyCostMapper.findCustWarrantyCostStatistic(custWarrantyCostModel);
     }
+
+    public List<BrokerageStatisticListModel> findInsurancePolicyBrokerageStatisticList(CustWarrantyCostModel custWarrantyCostModel){
+        return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticList(custWarrantyCostModel);
+    }
+
+    public long findInsurancePolicyBrokerageStatisticListCount(CustWarrantyCostModel custWarrantyCostModel){
+        return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticListCount(custWarrantyCostModel);
+    }
+
 }

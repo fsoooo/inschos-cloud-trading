@@ -92,5 +92,7 @@ public class CustWarrantyBrokerageModel {
     public String end_time;
     public String time_range_type;
 
+    public Page page;
+
 
 }

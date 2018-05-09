@@ -770,4 +770,137 @@ public class InsurancePolicy {
         }
     }
 
+    public static class GetInsurancePolicyBrokerageStatisticListRequest extends BaseRequest {
+        // 起保开始时间
+        public String startTime;
+        // 起保结束时间
+        public String endTime;
+
+        public String searchKey;
+
+        @CheckParams
+        public String lastId;
+        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        public String pageSize;
+    }
+
+    public static class GetInsurancePolicyBrokerageStatisticListResponse extends BaseResponse {
+        public List<InsurancePolicyBrokerageStatistic> data;
+    }
+
+    public static class InsurancePolicyBrokerageStatistic {
+
+        public String costId;
+        public String warrantyId;
+        public String warrantyUuid;
+        public String warrantyCode;
+        public String productId;
+        public String insCompanyId;
+        public String count;
+        public String byStagesWay;
+        public String warrantyStatus;
+        public String phase;
+        public String premium;
+        public String premiumText;
+        public String actualPayTime;
+        public String actualPayTimeText;
+        public String brokerageId;
+
+        public String warrantyMoney;
+        public String warrantyMoneyText;
+        public String managerMoney;
+        public String managerMoneyText;
+        public String channelMoney;
+        public String channelMoneyText;
+        public String agentMoney;
+        public String agentMoneyText;
+
+        public String warrantyRate;
+        public String managerRate;
+        public String channelRate;
+        public String agentRate;
+
+        public String insuranceName;
+        public String productName;
+
+        public InsurancePolicyBrokerageStatistic() {
+
+        }
+
+        public InsurancePolicyBrokerageStatistic(BrokerageStatisticListModel brokerageStatisticListModel) {
+            if (brokerageStatisticListModel == null) {
+                return;
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+            this.costId = brokerageStatisticListModel.cost_id;
+            this.warrantyId = brokerageStatisticListModel.warranty_id;
+            this.warrantyUuid = brokerageStatisticListModel.warranty_uuid;
+            this.warrantyCode = brokerageStatisticListModel.warranty_code;
+            this.productId = brokerageStatisticListModel.product_id;
+            this.insCompanyId = brokerageStatisticListModel.ins_company_id;
+
+            this.count = brokerageStatisticListModel.count;
+            this.byStagesWay = brokerageStatisticListModel.by_stages_way;
+
+            this.warrantyStatus = brokerageStatisticListModel.warranty_status;
+            this.phase = brokerageStatisticListModel.phase;
+
+            if (!StringKit.isEmpty(brokerageStatisticListModel.premium) && StringKit.isNumeric(brokerageStatisticListModel.premium)) {
+                this.premium = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.premium).doubleValue());;
+                this.premiumText = "¥" + this.premium;
+            } else {
+                this.premium = "0.00";
+                this.premiumText = "¥0.00";
+            }
+
+            this.actualPayTime = brokerageStatisticListModel.actual_pay_time;
+            if (StringKit.isInteger(brokerageStatisticListModel.actual_pay_time)) {
+                this.actualPayTimeText = sdf.format(new Date(Long.valueOf(brokerageStatisticListModel.actual_pay_time)));
+            }
+
+            this.brokerageId = brokerageStatisticListModel.brokerage_id;
+
+            if (StringKit.isNumeric(this.warrantyMoney)) {
+                this.warrantyMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.warranty_money).doubleValue());
+                this.warrantyMoneyText = "¥" + this.warrantyMoney;
+            } else {
+                this.warrantyMoney = "0.00";
+                this.warrantyMoneyText = "¥0.00";
+            }
+
+            if (StringKit.isNumeric(this.managerMoney)) {
+                this.managerMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.manager_money).doubleValue());
+                this.managerMoneyText = "¥" + this.managerMoney;
+            } else {
+                this.managerMoney = "0.00";
+                this.managerMoneyText = "¥0.00";
+            }
+
+            if (StringKit.isNumeric(this.channelMoney)) {
+                this.channelMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.channel_money).doubleValue());
+                this.channelMoneyText = "¥" + this.channelMoney;
+            } else {
+                this.channelMoney = "0.00";
+                this.channelMoneyText = "¥0.00";
+            }
+
+            if (StringKit.isNumeric(this.agentMoney)) {
+                this.agentMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.agent_money).doubleValue());
+                this.agentMoneyText = "¥" + this.agentMoney;
+            } else {
+                this.agentMoney = "0.00";
+                this.agentMoneyText = "¥0.00";
+            }
+
+            this.warrantyRate = brokerageStatisticListModel.warranty_rate;
+            this.managerRate = brokerageStatisticListModel.manager_rate;
+            this.channelRate = brokerageStatisticListModel.channel_rate;
+            this.agentRate = brokerageStatisticListModel.agent_rate;
+
+        }
+
+    }
+
 }

@@ -91,4 +91,5 @@
         group by `time_text`;
     </select>
 
+
 </mapper>
