@@ -4,14 +4,13 @@ import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
 import com.inschos.cloud.trading.access.rpc.bean.*;
-import com.inschos.cloud.trading.access.rpc.client.PersonClient;
+import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
 import com.inschos.cloud.trading.access.rpc.service.PremiumService;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.CarRecordDao;
@@ -1267,8 +1266,8 @@ public class CarInsuranceAction extends BaseAction {
             String time = String.valueOf(System.currentTimeMillis());
 
             AgentBean agentInfoByPersonIdManagerUuid = null;
-            if (actionBean.userType == 4) {
-                agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid(actionBean.managerUuid, actionBean.userId);
+            if (actionBean.userType == 4 && StringKit.isInteger(actionBean.userId)) {
+                agentInfoByPersonIdManagerUuid = agentClient.getAgentInfoByPersonIdManagerUuid(actionBean.managerUuid, Long.valueOf(actionBean.userId));
             }
 
             // FORCEPREMIUM 强险
@@ -2683,7 +2682,7 @@ public class CarInsuranceAction extends BaseAction {
     private ProductClient productClient;
 
     @Autowired
-    private PersonClient personClient;
+    private AgentClient agentClient;
 
     @Autowired
     private BrokerageService brokerageService;

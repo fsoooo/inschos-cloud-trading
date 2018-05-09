@@ -7,8 +7,10 @@ import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
  * 描述：
  * 作者：zhangyunhe
  */
-public interface PersonService {
+public interface AgentService {
 
-    AgentBean getAgentInfoByPersonIdManagerUuid(String managerUuid, String personId);
+    AgentBean getAgentInfoByPersonIdManagerUuid(String managerUuid, long personId);
+
+    AgentBean getAgentById(long agentId);
 
 }

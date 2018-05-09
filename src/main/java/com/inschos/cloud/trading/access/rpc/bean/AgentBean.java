@@ -10,32 +10,34 @@ public class AgentBean {
     /**
      * 返回代理人id
      */
-    public int id;
+    public long id;
+
+    public String name;
 
     /**
      * 返回代理人的业管账号idmanager_uuid
      */
-    public int manager_uuid;
+    public String manager_uuid;
     /**
      * 返回代理人渠道id
      */
-    public int channel_id;
+    public long channel_id;
     /**
      * 返回代理人个人信息表id
      */
-    public int person_id;
+    public long person_id;
     /**
      * 返回代理人手机号
      */
-    public int phone;
+    public String phone;
     /**
      * 返回代理人工号
      */
-    public int job_num;
+    public String job_num;
     /**
      * 返回代理人职位id
      */
-    public int position_id;
+    public long position_id;
     /**
      * 返回代理人备注
      */

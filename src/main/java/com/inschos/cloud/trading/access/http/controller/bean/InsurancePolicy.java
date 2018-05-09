@@ -53,6 +53,7 @@ public class InsurancePolicy {
 
         //代理人ID为null则为用户自主购买
         public String agentId;
+        public String agentName;
 
         //渠道ID为0则为用户自主购买
         public String channelId;

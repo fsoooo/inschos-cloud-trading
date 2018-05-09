@@ -4,8 +4,10 @@ import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.access.rpc.bean.AccountBean;
+import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
 import com.inschos.cloud.trading.access.rpc.client.AccountClient;
+import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
@@ -45,6 +47,9 @@ public class InsurancePolicyAction extends BaseAction {
 
     @Autowired
     private ProductClient productClient;
+
+    @Autowired
+    private AgentClient agentClient;
 
     public String getInsurancePolicyStatusList(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyStatusListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatusListRequest.class);
@@ -345,10 +350,6 @@ public class InsurancePolicyAction extends BaseAction {
             request.pageSize = "10";
         }
 
-
-//        AccountBean agentBean = accountClientService.findByUuid(insurancePolicyModel.agent_auuid);
-//        agentBean.userId
-
         insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
         List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(insurancePolicyModel);
@@ -403,6 +404,13 @@ public class InsurancePolicyAction extends BaseAction {
                 ProductBean product = productClient.getProduct(Long.valueOf(getInsurancePolicyForManagerSystem.productId));
                 if (product != null) {
                     getInsurancePolicyForManagerSystem.productName = product.displayName;
+                }
+            }
+
+            if (StringKit.isInteger(getInsurancePolicyForManagerSystem.agentId)) {
+                AgentBean agentById = agentClient.getAgentById(Long.valueOf(getInsurancePolicyForManagerSystem.agentId));
+                if (agentById != null) {
+                    getInsurancePolicyForManagerSystem.agentName = agentById.name;
                 }
             }
 

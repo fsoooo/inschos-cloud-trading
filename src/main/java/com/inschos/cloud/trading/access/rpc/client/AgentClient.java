@@ -1,7 +1,7 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
 import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
-import com.inschos.cloud.trading.access.rpc.service.PersonService;
+import com.inschos.cloud.trading.access.rpc.service.AgentService;
 import com.inschos.cloud.trading.assist.kit.L;
 import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,21 +13,32 @@ import org.springframework.stereotype.Component;
  * 作者：zhangyunhe
  */
 @Component
-public class PersonClient {
+public class AgentClient {
 
     @Value("${rpc.remote.agent.host}")
     private String host;
 
     private final String uri = "/rpc/agent";
 
-    private PersonService getService() {
-        return new HproseHttpClient(host + uri).useService(PersonService.class);
+    private AgentService getService() {
+        return new HproseHttpClient(host + uri).useService(AgentService.class);
     }
 
-    public AgentBean getAgentInfoByPersonIdManagerUuid(String managerUuid, String personId) {
+    public AgentBean getAgentInfoByPersonIdManagerUuid(String managerUuid, long personId) {
         try {
-            PersonService service = getService();
+            AgentService service = getService();
             return service != null ? service.getAgentInfoByPersonIdManagerUuid(managerUuid, personId) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public AgentBean getAgentById(long agentId) {
+        try {
+            AgentService service = getService();
+            return service != null ? service.getAgentById(agentId) : null;
 
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);
