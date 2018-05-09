@@ -128,7 +128,8 @@ public class InsurancePolicyDao extends BaseDao {
                 rollBack();
             }
 
-            if (insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel  != null) {
+            if (insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel  != null && insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyCostModel != null) {
+                insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.cost_id = insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyCostModel.id;
                 add = custWarrantyBrokerageMapper.addCustWarrantyBrokerage(insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel);
             }
 
@@ -136,7 +137,8 @@ public class InsurancePolicyDao extends BaseDao {
                 rollBack();
             }
 
-            if (insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel  != null) {
+            if (insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel  != null && insurancePolicyAndParticipantForCarInsurance.biCustWarrantyCostModel != null) {
+                insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.cost_id = insurancePolicyAndParticipantForCarInsurance.biCustWarrantyCostModel.id;
                 add = custWarrantyBrokerageMapper.addCustWarrantyBrokerage(insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel);
             }
 
@@ -309,26 +311,6 @@ public class InsurancePolicyDao extends BaseDao {
         BigDecimal ciMoney = new BigDecimal("0.00");
         BigDecimal biMoney = new BigDecimal("0.00");
         BigDecimal total = new BigDecimal(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.payMoney);
-
-//        if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
-//            BigDecimal add1 = ciPremium.add(biPremium);
-//            if (add1.compareTo(total) == 0) {
-//                ciMoney = ciPremium;
-//                biMoney = biPremium;
-//            } else {
-//                BigDecimal k = biPremium.divide(ciPremium, BigDecimal.ROUND_HALF_UP);
-//                BigDecimal add = k.add(new BigDecimal(1));
-//                ciMoney = total.divide(add, BigDecimal.ROUND_HALF_UP);
-//                biMoney = total.subtract(ciMoney);
-//            }
-//        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) == 0 && biPremium.compareTo(BigDecimal.ZERO) != 0) {
-//            biMoney = total;
-//        } else if (ciPremium != null && ciPremium.compareTo(BigDecimal.ZERO) != 0 && biPremium.compareTo(BigDecimal.ZERO) == 0) {
-//            ciMoney = total;
-//        } else {
-//            // 理论上不可能
-//            ciMoney = total;
-//        }
 
         if (!StringKit.isEmpty(ciUuid) && !StringKit.isEmpty(biUuid)) {
             if (total.compareTo(ciPremium) >= 0) {

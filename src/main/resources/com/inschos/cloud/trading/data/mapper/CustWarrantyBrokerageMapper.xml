@@ -6,7 +6,7 @@
         `id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`created_at`,`updated_at`
     </sql>
 
-    <insert id="addBrokerageCommission" parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
+    <insert id="addCustWarrantyBrokerage" parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty_brokerage
