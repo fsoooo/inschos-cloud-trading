@@ -22,7 +22,7 @@ public class ProductClient {
     @Value("${rpc.remote.product.host}")
     private String host;
 
-    private final String uri = "/rpc/product";
+    private final String uri = "/api/rpc/product";
 
 
     private ProductService getService() {
