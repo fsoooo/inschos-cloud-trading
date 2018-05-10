@@ -338,14 +338,6 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyModel.manager_uuid = actionBean.managerUuid;
 
-        if (StringKit.isEmpty(request.lastId)) {
-            request.lastId = "0";
-        }
-
-        if (StringKit.isEmpty(request.pageNum)) {
-            request.pageNum = "1";
-        }
-
         if (StringKit.isEmpty(request.pageSize)) {
             request.pageSize = "10";
         }
@@ -941,15 +933,6 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
-
-
-        if (StringKit.isEmpty(request.lastId)) {
-            request.lastId = "0";
-        }
-
-        if (StringKit.isEmpty(request.pageNum)) {
-            request.pageNum = "1";
-        }
 
         if (StringKit.isEmpty(request.pageSize)) {
             request.pageSize = "20";
