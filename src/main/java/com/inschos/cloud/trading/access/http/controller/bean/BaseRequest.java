@@ -6,8 +6,8 @@ package com.inschos.cloud.trading.access.http.controller.bean;
 public class BaseRequest {
 
 	public String lastId;
-	public String pageNum = "1";
-	public String pageSize = "20";
+	public String pageNum;
+	public String pageSize;
 
 	public final static String FILEID_BUILDCODE = "buildCode";
 	public final static String FILEID_PLATFORM = "platform";
