@@ -942,7 +942,6 @@ public class InsurancePolicyAction extends BaseAction {
         List<BrokerageStatisticListModel> insurancePolicyBrokerageStatisticList = custWarrantyCostDao.findInsurancePolicyBrokerageStatisticList(custWarrantyCostModel);
         long total = custWarrantyCostDao.findInsurancePolicyBrokerageStatisticListCount(custWarrantyCostModel);
         response.data = new ArrayList<>();
-        long lastId = 0;
 
         if (insurancePolicyBrokerageStatisticList != null && !insurancePolicyBrokerageStatisticList.isEmpty()) {
             for (BrokerageStatisticListModel brokerageStatisticListModel : insurancePolicyBrokerageStatisticList) {
@@ -958,7 +957,6 @@ public class InsurancePolicyAction extends BaseAction {
                     }
                 }
                 response.data.add(insurancePolicyBrokerageStatistic);
-                lastId = Long.valueOf(brokerageStatisticListModel.cost_id);
             }
         }
 
