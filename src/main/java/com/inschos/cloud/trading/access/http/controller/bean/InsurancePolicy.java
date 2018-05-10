@@ -783,10 +783,6 @@ public class InsurancePolicy {
 
         public String searchKey;
 
-        @CheckParams
-        public String lastId;
-        @CheckParams(stringType = CheckParams.StringType.NUMBER)
-        public String pageSize;
     }
 
     public static class GetInsurancePolicyBrokerageStatisticListResponse extends BaseResponse {

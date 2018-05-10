@@ -5,7 +5,7 @@ package com.inschos.cloud.trading.access.http.controller.bean;
  */
 public class BaseRequest {
 
-	public String lastId = "0";
+	public String lastId;
 	public String pageNum = "1";
 	public String pageSize = "20";
 
