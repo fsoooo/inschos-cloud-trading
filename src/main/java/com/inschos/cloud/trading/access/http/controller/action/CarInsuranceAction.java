@@ -537,10 +537,25 @@ public class CarInsuranceAction extends BaseAction {
                     if (!response.data.isEmpty()) {
                         for (ExtendCarInsurancePolicy.InsuranceCompany datum : response.data) {
                             if (hashMap.get(datum.insurerCode) != null) {
+                                // PICC,PAIC,CPIC
                                 list.add(datum);
+                                if (StringKit.equals(datum.insurerCode, "PICC")) {
+                                    datum.sort = 1;
+                                } else if (StringKit.equals(datum.insurerCode, "PAIC")) {
+                                    datum.sort = 2;
+                                } else if (StringKit.equals(datum.insurerCode, "CPIC")) {
+                                    datum.sort = 3;
+                                }
                             }
                         }
                     }
+
+                    list.sort(new Comparator<ExtendCarInsurancePolicy.InsuranceCompany>() {
+                        @Override
+                        public int compare(ExtendCarInsurancePolicy.InsuranceCompany o1, ExtendCarInsurancePolicy.InsuranceCompany o2) {
+                            return o1.sort - o2.sort;
+                        }
+                    });
                     response.data = list;
                 } else {
                     if (response.data == null) {
@@ -965,7 +980,7 @@ public class CarInsuranceAction extends BaseAction {
         ExtendCarInsurancePolicy.GetPremiumCalibrateRequest getPremiumCalibrateRequest = new ExtendCarInsurancePolicy.GetPremiumCalibrateRequest();
 
         getPremiumCalibrateRequest.refId = request.refId;
-        // TODO: 2018/3/31 代理人下单，必须带
+        // 代理人下单，必须带
         getPremiumCalibrateRequest.agentMobile = request.agentMobile;
         getPremiumCalibrateRequest.payType = request.payType;
         getPremiumCalibrateRequest.invoiceType = request.invoiceType;
@@ -1407,7 +1422,7 @@ public class CarInsuranceAction extends BaseAction {
                 biProposal.plan_id = "0";
                 biProposal.product_id = String.valueOf(biProduct.id);
                 biProposal.ins_company_id = String.valueOf(biProduct.insuranceCoId);
-                ;
+
                 biProposal.is_settlement = "1";
 
                 insurancePolicyAndParticipantForCarInsurance.biProposal = biProposal;

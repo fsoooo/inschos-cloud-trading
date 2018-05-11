@@ -68,7 +68,8 @@ public class ExtendCarInsurancePolicy {
     public static class InsuranceCompany {
         public String insurerCode;
         public String insurerName;
-        public String productId;
+        // public String productId;
+        public int sort = Byte.MAX_VALUE;
     }
 
     public static class GetInsuranceInfoRequest extends CarInsuranceRequest {
@@ -378,7 +379,7 @@ public class ExtendCarInsurancePolicy {
                     !StringKit.isEmpty(this.applicantMobile) &&
                     CardCodeKit.isLegal(insuredIdType, insuredID) &&
                     CardCodeKit.isLegal(applicantIdType, applicantID) &&
-                    CardCodeKit.isLegal(ownerIdType, ownerID) ;
+                    CardCodeKit.isLegal(ownerIdType, ownerID);
         }
     }
 
@@ -408,7 +409,8 @@ public class ExtendCarInsurancePolicy {
         public String showSumIntegral;
         public String bjCodeFlag;
         public boolean hasCommercialInsurance = false;
-        public boolean hasCompulsoryInsurance = false;;
+        public boolean hasCompulsoryInsurance = false;
+        ;
         public DiscountInfo discountInfo;
         public List<SpAgreement> spAgreement;
         public VehicleInfo vehicleInfo;
