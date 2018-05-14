@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.data.mapper;
 
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
+import com.inschos.cloud.trading.model.InsurancePolicyModel;
 
 import java.util.List;
 
@@ -20,5 +21,9 @@ public interface InsuranceParticipantMapper {
     List<InsuranceParticipantModel> findInsuranceParticipantInsuredByWarrantyUuid(InsuranceParticipantModel insuranceParticipantModel);
 
     InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(InsuranceParticipantModel insuranceParticipantModel);
+
+    List<InsurancePolicyModel> findInsurancePolicyListBySearchType3(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountBySearchType3(InsurancePolicyModel insurancePolicyModel);
 
 }

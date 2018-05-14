@@ -621,14 +621,12 @@ public class InsurancePolicy {
         public String warrantyStatus;
         // 搜索关键字
         public String searchKey;
+        // 关键字字段类型
+        public String searchType;
         // 起保开始时间
         public String startTime;
         // 起保结束时间
         public String endTime;
-        // 保单来源
-        public String warrantyFrom;
-        // 保单渠道
-        public String channelId;
         // 保单类型
         @CheckParams
         public String warrantyType;

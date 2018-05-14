@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -128,7 +129,7 @@ public class InsurancePolicyDao extends BaseDao {
                 rollBack();
             }
 
-            if (insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel  != null && insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyCostModel != null) {
+            if (insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel != null && insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyCostModel != null) {
                 insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.cost_id = insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyCostModel.id;
                 add = custWarrantyBrokerageMapper.addCustWarrantyBrokerage(insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel);
             }
@@ -137,7 +138,7 @@ public class InsurancePolicyDao extends BaseDao {
                 rollBack();
             }
 
-            if (insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel  != null && insurancePolicyAndParticipantForCarInsurance.biCustWarrantyCostModel != null) {
+            if (insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel != null && insurancePolicyAndParticipantForCarInsurance.biCustWarrantyCostModel != null) {
                 insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.cost_id = insurancePolicyAndParticipantForCarInsurance.biCustWarrantyCostModel.id;
                 add = custWarrantyBrokerageMapper.addCustWarrantyBrokerage(insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel);
             }
@@ -422,8 +423,38 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid(insurancePolicyModel);
     }
 
-    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(insurancePolicyModel);
+//    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(InsurancePolicyModel insurancePolicyModel) {
+//        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(insurancePolicyModel);
+//    }
+
+    public List<InsurancePolicyModel> findInsurancePolicyListBySearchType(InsurancePolicyModel insurancePolicyModel) {
+        switch (insurancePolicyModel.searchType) {
+            case "":
+            case "1":
+                return insurancePolicyMapper.findInsurancePolicyListBySearchType1(insurancePolicyModel);
+            case "2":
+                return insurancePolicyMapper.findInsurancePolicyListBySearchType2(insurancePolicyModel);
+            case "3":
+                return insuranceParticipantMapper.findInsurancePolicyListBySearchType3(insurancePolicyModel);
+            case "4":
+                return insurancePolicyMapper.findInsurancePolicyListBySearchType4(insurancePolicyModel);
+        }
+        return new ArrayList<>();
+    }
+
+    public long findInsurancePolicyCountBySearchType(InsurancePolicyModel insurancePolicyModel) {
+        switch (insurancePolicyModel.searchType) {
+            case "":
+            case "1":
+                return insurancePolicyMapper.findInsurancePolicyCountBySearchType1(insurancePolicyModel);
+            case "2":
+                return insurancePolicyMapper.findInsurancePolicyCountBySearchType2(insurancePolicyModel);
+            case "3":
+                return insuranceParticipantMapper.findInsurancePolicyCountBySearchType3(insurancePolicyModel);
+            case "4":
+                return insurancePolicyMapper.findInsurancePolicyCountBySearchType4(insurancePolicyModel);
+        }
+        return 0;
     }
 
     public long findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(InsurancePolicyModel insurancePolicyModel) {

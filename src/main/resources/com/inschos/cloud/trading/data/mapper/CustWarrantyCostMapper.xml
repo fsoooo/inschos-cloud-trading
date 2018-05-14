@@ -62,7 +62,6 @@
         </where>
     </select>
 
-
     <select id="findInsurancePolicyListForInsuring"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">

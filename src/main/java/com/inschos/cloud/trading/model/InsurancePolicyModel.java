@@ -138,12 +138,15 @@ public class InsurancePolicyModel {
     public String state;
 
     public String search;
+    public String searchType;
 
     public Page page;
 
     public String status_string;
 
     public String product_id_string;
+    public String agent_id_string;
+    public long currentTime = System.currentTimeMillis();
 
     // 核保成功
     public static final String APPLY_UNDERWRITING_SUCCESS = "0";
@@ -332,5 +335,190 @@ public class InsurancePolicyModel {
         }
         return str;
     }
+
+    /**
+     * 投保人姓名
+     */
+    public String policy_holder_name;
+
+    /**
+     * 投保人电话
+     */
+    public String policy_holder_mobile;
+
+    /**
+     * 流水号
+     */
+    public String biz_id;
+
+    /**
+     * 第三方业务id
+     */
+    public String thp_biz_id;
+
+    /**
+     * 车险类型 1-强险，2-商业险
+     */
+    public String insurance_type;
+
+    /**
+     * 车牌号
+     */
+    public String car_code;
+
+    /**
+     * 车主姓名
+     */
+    public String name;
+
+    /**
+     * 车主证件号
+     */
+    public String card_code;
+
+    /**
+     * 车主证件类型
+     */
+    public String card_type;
+
+    /**
+     * 车主手机号
+     */
+    public String phone;
+
+    /**
+     * 生日
+     */
+    public String birthday;
+
+    /**
+     * 性别
+     */
+    public String sex;
+
+    /**
+     * 年龄
+     */
+    public String age;
+
+    /**
+     * 车架号
+     */
+    public String frame_no;
+
+    /**
+     * 发动机号
+     */
+    public String engine_no;
+
+    /**
+     * 发改委编码
+     */
+    public String vehicle_fgw_code;
+
+    /**
+     * 发改委名称
+     */
+    public String vehicle_fgw_name;
+
+    /**
+     * 品牌型号编码
+     */
+    public String brand_code;
+
+    /**
+     * 品牌名称
+     */
+    public String brand_name;
+
+    /**
+     * 年份款型
+     */
+    public String parent_veh_name;
+
+    /**
+     * 排量
+     */
+    public String engine_desc;
+
+    /**
+     * 投保时是否未上牌（0:否 1:是）
+     */
+    public String is_not_car_code;
+
+    /**
+     * 是否过户车（0:否 1:是）
+     */
+    public String is_trans;
+
+    /**
+     * 过户日期
+     */
+    public String trans_date;
+
+    /**
+     * 初登日期
+     */
+    public String first_register_date;
+
+    /**
+     * 车系名称
+     */
+    public String family_name;
+
+    /**
+     * 车挡类型
+     */
+    public String gearbox_type;
+
+    /**
+     * 备注
+     */
+    public String car_remark;
+
+    /**
+     * 新车购置价
+     */
+    public String new_car_price;
+
+    /**
+     * 含税价格
+     */
+    public String purchase_price_tax;
+
+    /**
+     * 进口标识，0：国产，1：合资，2：进口
+     */
+    public String import_flag;
+
+    /**
+     * 参考价
+     */
+    public String purchase_price;
+
+    /**
+     * 座位数
+     */
+    public String car_seat;
+
+    /**
+     * 款型名称
+     */
+    public String standard_name;
+
+    /**
+     * 险别列表json
+     */
+    public String coverage_list;
+
+    /**
+     * 特约条款json
+     */
+    public String sp_agreement;
+
+    /**
+     * 车险验证码标识
+     */
+    public String bj_code_flag;
 
 }
