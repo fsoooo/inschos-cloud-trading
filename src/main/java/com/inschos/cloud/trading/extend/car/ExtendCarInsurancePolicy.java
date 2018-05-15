@@ -68,6 +68,7 @@ public class ExtendCarInsurancePolicy {
     public static class InsuranceCompany {
         public String insurerCode;
         public String insurerName;
+        public String logoUrl;
         // public String productId;
         public int sort = Byte.MAX_VALUE;
     }

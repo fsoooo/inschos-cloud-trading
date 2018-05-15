@@ -88,7 +88,7 @@
             </choose>
             and `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1
             AND `cust_warranty_person`.`type`=1 AND `cust_warranty_person`.`record_start_time`&lt;=#{currentTime} AND `cust_warranty_person`.`record_end_time`&gt;#{currentTime}
-            <if test="search!=null and search!=''">
+            <if test="search!=null and search!='' and searchType=='3'">
                 and `cust_warranty_person`.`name` like concat("%",#{search},"%")
             </if>
             <if test="type!=null and type!=''">
@@ -115,7 +115,7 @@
         from cust_warranty_person LEFT JOIN cust_warranty ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
         WHERE `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1
         AND `cust_warranty_person`.`type`=1 AND `cust_warranty_person`.`record_start_time`&lt;=#{currentTime} AND `cust_warranty_person`.`record_end_time`&gt;#{currentTime}
-        <if test="search!=null and search!=''">
+        <if test="search!=null and search!='' and searchType=='3'">
             and `cust_warranty_person`.`name` like concat("%",#{search},"%")
         </if>
         <if test="type!=null and type!=''">

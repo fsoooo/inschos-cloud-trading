@@ -5,6 +5,7 @@ import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
 import com.inschos.cloud.trading.access.rpc.bean.*;
 import com.inschos.cloud.trading.access.rpc.client.AgentClient;
+import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
@@ -43,6 +44,9 @@ public class CarInsuranceAction extends BaseAction {
 
     @Autowired
     private InsurancePolicyDao insurancePolicyDao;
+
+    @Autowired
+    private FileClient fileClient;
 
     /**
      * 获取省级区域代码
@@ -538,7 +542,10 @@ public class CarInsuranceAction extends BaseAction {
                         for (ExtendCarInsurancePolicy.InsuranceCompany datum : response.data) {
                             if (hashMap.get(datum.insurerCode) != null) {
                                 // PICC,PAIC,CPIC
+                                datum.insurerName = String.format("%s车险", datum.insurerName);
+                                datum.logoUrl = fileClient.getFileUrl("property_key_" + datum.insurerCode);
                                 list.add(datum);
+
                                 if (StringKit.equals(datum.insurerCode, "PICC")) {
                                     datum.sort = 1;
                                 } else if (StringKit.equals(datum.insurerCode, "PAIC")) {
@@ -556,6 +563,8 @@ public class CarInsuranceAction extends BaseAction {
                             return o1.sort - o2.sort;
                         }
                     });
+
+
                     response.data = list;
                 } else {
                     if (response.data == null) {
