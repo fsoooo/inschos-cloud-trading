@@ -356,6 +356,21 @@
         </if>
     </select>
 
+    <select id="findEffectiveInsurancePolicyCountByAgentAndTime"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="int">
+        select
+        COUNT(id)
+        from cust_warranty
+        WHERE `warranty_uuid`=#{warranty_uuid} and `agent_id`=#{agent_id} AND `warranty_status`!= 1 AND `warranty_status`!= 6 AND state = 1
+        <if test='start_time!=null and start_time!="" and start_time!="0"'>
+            and `start_time`&gt;=#{start_time}
+        </if>
+        <if test='end_time!=null and end_time!="" and end_time!="0"'>
+            and `start_time`&lt;#{end_time}
+        </if>
+    </select>
+
     <select id="findInsurancePolicyListCount"
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             resultType="long">

@@ -20,4 +20,7 @@ public interface CustWarrantyBrokerageMapper {
 
     List<BrokerageStatisticModel> findCustWarrantyBrokerageStatistic (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
 
+    List<BrokerageStatisticModel> findStatisticByAgent (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
+
+
 }

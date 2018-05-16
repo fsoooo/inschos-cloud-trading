@@ -58,6 +58,7 @@ public class CustWarrantyCostModel {
 
     public String account_uuid;
     public String channel_id;
+    public String agent_id;
     public String manager_uuid;
     public String start_time;
     public String end_time;
