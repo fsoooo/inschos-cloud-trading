@@ -428,31 +428,59 @@ public class InsurancePolicyDao extends BaseDao {
 //    }
 
     public List<InsurancePolicyModel> findInsurancePolicyListBySearchType(InsurancePolicyModel insurancePolicyModel) {
-        switch (insurancePolicyModel.searchType) {
-            case "":
-            case "1":
-                return insurancePolicyMapper.findInsurancePolicyListBySearchType1(insurancePolicyModel);
-            case "2":
-                return insurancePolicyMapper.findInsurancePolicyListBySearchType2(insurancePolicyModel);
-            case "3":
-                return insuranceParticipantMapper.findInsurancePolicyListBySearchType3(insurancePolicyModel);
-            case "4":
-                return insurancePolicyMapper.findInsurancePolicyListBySearchType4(insurancePolicyModel);
+        if (StringKit.equals(insurancePolicyModel.warranty_status, "1")) {
+            switch (insurancePolicyModel.searchType) {
+                case "":
+                case "1":
+                    return insurancePolicyMapper.findInsurancePolicyListBySearchType1Status1(insurancePolicyModel);
+                case "2":
+                    return insurancePolicyMapper.findInsurancePolicyListBySearchType2Status1(insurancePolicyModel);
+                case "3":
+                    return insurancePolicyMapper.findInsurancePolicyListBySearchType3Status1(insurancePolicyModel);
+                case "4":
+                    return insurancePolicyMapper.findInsurancePolicyListBySearchType4Status1(insurancePolicyModel);
+            }
+        } else {
+            switch (insurancePolicyModel.searchType) {
+                case "":
+                case "1":
+                    return insurancePolicyMapper.findInsurancePolicyListBySearchType1(insurancePolicyModel);
+                case "2":
+                    return insurancePolicyMapper.findInsurancePolicyListBySearchType2(insurancePolicyModel);
+                case "3":
+                    return insurancePolicyMapper.findInsurancePolicyListBySearchType3(insurancePolicyModel);
+                case "4":
+                    return insurancePolicyMapper.findInsurancePolicyListBySearchType4(insurancePolicyModel);
+            }
         }
         return new ArrayList<>();
     }
 
     public long findInsurancePolicyCountBySearchType(InsurancePolicyModel insurancePolicyModel) {
-        switch (insurancePolicyModel.searchType) {
-            case "":
-            case "1":
-                return insurancePolicyMapper.findInsurancePolicyCountBySearchType1(insurancePolicyModel);
-            case "2":
-                return insurancePolicyMapper.findInsurancePolicyCountBySearchType2(insurancePolicyModel);
-            case "3":
-                return insuranceParticipantMapper.findInsurancePolicyCountBySearchType3(insurancePolicyModel);
-            case "4":
-                return insurancePolicyMapper.findInsurancePolicyCountBySearchType4(insurancePolicyModel);
+        if (StringKit.equals(insurancePolicyModel.warranty_status, "1")) {
+            switch (insurancePolicyModel.searchType) {
+                case "":
+                case "1":
+                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType1Status1(insurancePolicyModel);
+                case "2":
+                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType2Status1(insurancePolicyModel);
+                case "3":
+                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType3Status1(insurancePolicyModel);
+                case "4":
+                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType4Status1(insurancePolicyModel);
+            }
+        } else {
+            switch (insurancePolicyModel.searchType) {
+                case "":
+                case "1":
+                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType1(insurancePolicyModel);
+                case "2":
+                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType2(insurancePolicyModel);
+                case "3":
+                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType3(insurancePolicyModel);
+                case "4":
+                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType4(insurancePolicyModel);
+            }
         }
         return 0;
     }

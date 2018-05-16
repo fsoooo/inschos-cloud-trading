@@ -42,9 +42,29 @@ public interface InsurancePolicyMapper {
 
     long findInsurancePolicyCountBySearchType2(InsurancePolicyModel insurancePolicyModel);
 
+    List<InsurancePolicyModel> findInsurancePolicyListBySearchType3(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountBySearchType3(InsurancePolicyModel insurancePolicyModel);
+
     List<InsurancePolicyModel> findInsurancePolicyListBySearchType4(InsurancePolicyModel insurancePolicyModel);
 
     long findInsurancePolicyCountBySearchType4(InsurancePolicyModel insurancePolicyModel);
+
+    List<InsurancePolicyModel> findInsurancePolicyListBySearchType1Status1(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountBySearchType1Status1(InsurancePolicyModel insurancePolicyModel);
+
+    List<InsurancePolicyModel> findInsurancePolicyListBySearchType2Status1(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountBySearchType2Status1(InsurancePolicyModel insurancePolicyModel);
+
+    List<InsurancePolicyModel> findInsurancePolicyListBySearchType3Status1(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountBySearchType3Status1(InsurancePolicyModel insurancePolicyModel);
+
+    List<InsurancePolicyModel> findInsurancePolicyListBySearchType4Status1(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountBySearchType4Status1(InsurancePolicyModel insurancePolicyModel);
 
     long findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(InsurancePolicyModel insurancePolicyModel);
 

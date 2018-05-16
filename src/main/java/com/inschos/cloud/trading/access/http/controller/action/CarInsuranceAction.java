@@ -1284,6 +1284,18 @@ public class CarInsuranceAction extends BaseAction {
                 return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
             }
 
+            BigDecimal ciInsuredPremium = new BigDecimal(request.applyUnderwriting.ciInsuredPremium);
+            BigDecimal integral = new BigDecimal(request.applyUnderwriting.integral);
+            BigDecimal cIntegralRate = new BigDecimal(request.applyUnderwriting.cIntegral);
+
+            BigDecimal ciIntegral = ciInsuredPremium.multiply(cIntegralRate).divide(new BigDecimal("100"), BigDecimal.ROUND_HALF_DOWN);
+            BigDecimal biIntegral = new BigDecimal("0.00");
+            if (ciIntegral.compareTo(integral) < 0) {
+                biIntegral = integral.subtract(ciIntegral);
+            } else {
+                ciIntegral = integral;
+            }
+
             String warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
 
             InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance = new InsurancePolicyAndParticipantForCarInsurance();
@@ -1327,7 +1339,7 @@ public class CarInsuranceAction extends BaseAction {
                 ciProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
                 ciProposal.warranty_status = warrantyStatus;
                 ciProposal.by_stages_way = "趸缴";
-                ciProposal.integral = "0";
+                ciProposal.integral = String.valueOf(ciIntegral.doubleValue());
                 ciProposal.state = "1";
                 ciProposal.created_at = time;
                 ciProposal.updated_at = time;
@@ -1423,7 +1435,7 @@ public class CarInsuranceAction extends BaseAction {
                 biProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
                 biProposal.warranty_status = warrantyStatus;
                 biProposal.by_stages_way = "趸缴";
-                biProposal.integral = request.applyUnderwriting.integral;
+                biProposal.integral = String.valueOf(biIntegral.doubleValue());
                 biProposal.state = "1";
                 biProposal.created_at = time;
                 biProposal.updated_at = time;
@@ -1550,9 +1562,23 @@ public class CarInsuranceAction extends BaseAction {
                     request.applyUnderwriting.biBeginDateValue = insurancePolicyPremiumDetail.biBeginDateValue;
                     request.applyUnderwriting.coverageList = insurancePolicyPremiumDetail.coverageList;
                     request.applyUnderwriting.spAgreements = insurancePolicyPremiumDetail.spAgreement;
+
+                    if (StringKit.isEmpty(insurancePolicyPremiumDetail.integral) || !StringKit.isNumeric(insurancePolicyPremiumDetail.integral)) {
+                        insurancePolicyPremiumDetail.integral = "0";
+                    }
                     request.applyUnderwriting.integral = insurancePolicyPremiumDetail.integral;
+
                     request.applyUnderwriting.hasCompulsoryInsurance = insurancePolicyPremiumDetail.hasCompulsoryInsurance;
                     request.applyUnderwriting.hasCommercialInsurance = insurancePolicyPremiumDetail.hasCommercialInsurance;
+                    if (StringKit.isEmpty(insurancePolicyPremiumDetail.cIntegral) || !StringKit.isNumeric(insurancePolicyPremiumDetail.cIntegral)) {
+                        insurancePolicyPremiumDetail.cIntegral = "0";
+                    }
+                    request.applyUnderwriting.cIntegral = insurancePolicyPremiumDetail.cIntegral;
+
+                    if (StringKit.isEmpty(insurancePolicyPremiumDetail.bIntegral) || !StringKit.isNumeric(insurancePolicyPremiumDetail.bIntegral)) {
+                        insurancePolicyPremiumDetail.bIntegral = "0";
+                    }
+                    request.applyUnderwriting.bIntegral = insurancePolicyPremiumDetail.bIntegral;
                     flag = true;
                     break;
                 }
