@@ -438,6 +438,8 @@ public class CarInsurance {
         // 必传
         public String bjCodeFlag;
         public String integral;
+        public String cIntegral;
+        public String bIntegral;
 
         public boolean hasCommercialInsurance = false;
         public boolean hasCompulsoryInsurance = false;

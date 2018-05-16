@@ -321,7 +321,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
 
-        if (StringKit.isEmpty(request.warrantyType) || !StringKit.isNumeric(request.warrantyType) || Integer.valueOf(request.warrantyType) < 1 || Integer.valueOf(request.warrantyType) > 3) {
+        if (StringKit.isEmpty(request.warrantyType) || !StringKit.isNumeric(request.warrantyType) || Integer.valueOf(request.warrantyType) < 1 || Integer.valueOf(request.warrantyType) > 4) {
             return json(BaseResponse.CODE_FAILURE, "保单类型错误", response);
         }
         insurancePolicyModel.type = request.warrantyType;
@@ -350,16 +350,19 @@ public class InsurancePolicyAction extends BaseAction {
         // 1-保单号 2-代理人 3-投保人 4-车牌号
         if (!StringKit.isEmpty(request.searchType) && (!StringKit.isNumeric(request.searchType) || Integer.valueOf(request.searchType) < 1 || Integer.valueOf(request.searchType) > 4)) {
             return json(BaseResponse.CODE_FAILURE, "搜索类型错误", response);
-        } else if (StringKit.isEmpty(request.searchType)){
+        } else if (StringKit.isEmpty(request.searchType)) {
             request.searchType = "";
         }
+
+        if (!StringKit.isEmpty(request.searchType) && StringKit.isEmpty(request.searchKey)) {
+            return json(BaseResponse.CODE_FAILURE, "搜索关键字", response);
+        }
+
         insurancePolicyModel.searchType = request.searchType;
 
         Map<String, AgentBean> agentMap = new HashMap<>();
         if (StringKit.equals(request.searchType, "2")) {
-            // TODO: 2018/5/14
-            // List<AgentBean> list = agentClient.
-            List<AgentBean> list = new ArrayList<>();
+            List<AgentBean> list = agentClient.getAllBySearchName(actionBean.managerUuid, request.searchKey);
             StringBuilder sb = new StringBuilder();
             if (list != null && !list.isEmpty()) {
                 for (int i = 0; i < list.size(); i++) {
@@ -441,11 +444,15 @@ public class InsurancePolicyAction extends BaseAction {
                 }
             }
 
-            if (StringKit.isInteger(getInsurancePolicyForManagerSystem.agentId)) {
-                AgentBean agentById = agentClient.getAgentById(Long.valueOf(getInsurancePolicyForManagerSystem.agentId));
-                if (agentById != null) {
-                    getInsurancePolicyForManagerSystem.agentName = agentById.name;
-                }
+            AgentBean agentBean = null;
+            if (StringKit.equals(request.searchType, "2")) {
+                agentBean = agentMap.get(getInsurancePolicyForManagerSystem.agentId);
+            } else if (StringKit.isInteger(getInsurancePolicyForManagerSystem.agentId)) {
+                agentBean = agentClient.getAgentById(Long.valueOf(getInsurancePolicyForManagerSystem.agentId));
+            }
+
+            if (agentBean != null) {
+                getInsurancePolicyForManagerSystem.agentName = agentBean.name;
             }
 
             if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
@@ -514,34 +521,14 @@ public class InsurancePolicyAction extends BaseAction {
         if (StringKit.isEmpty(insurancePolicyModel.warranty_status)) {
             return insurancePolicyDao.findInsurancePolicyListBySearchType(insurancePolicyModel);
         }
-
-        switch (insurancePolicyModel.warranty_status) {
-            case "1":
-
-                break;
-            case "2":
-            case "3":
-            case "4":
-                return insurancePolicyDao.findInsurancePolicyListBySearchType(insurancePolicyModel);
-        }
-        return new ArrayList<>();
+        return insurancePolicyDao.findInsurancePolicyListBySearchType(insurancePolicyModel);
     }
 
     private long searchInsurancePolicyCount(InsurancePolicyModel insurancePolicyModel) {
         if (StringKit.isEmpty(insurancePolicyModel.warranty_status)) {
             return insurancePolicyDao.findInsurancePolicyCountBySearchType(insurancePolicyModel);
         }
-
-        switch (insurancePolicyModel.warranty_status) {
-            case "1":
-
-                break;
-            case "2":
-            case "3":
-            case "4":
-                return insurancePolicyDao.findInsurancePolicyCountBySearchType(insurancePolicyModel);
-        }
-        return 0;
+        return insurancePolicyDao.findInsurancePolicyCountBySearchType(insurancePolicyModel);
     }
 
     public String getInsurancePolicyDetailForManagerSystem(ActionBean actionBean) {

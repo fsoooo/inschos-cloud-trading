@@ -7,6 +7,8 @@ import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * 创建日期：2018/4/26 on 14:13
  * 描述：
@@ -39,6 +41,17 @@ public class AgentClient {
         try {
             AgentService service = getService();
             return service != null ? service.getAgentById(agentId) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public List<AgentBean> getAllBySearchName(String managerUuid, String searchName) {
+        try {
+            AgentService service = getService();
+            return service != null ? service.getAllBySearchName(managerUuid, searchName) : null;
 
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);
