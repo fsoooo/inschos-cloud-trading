@@ -4,6 +4,8 @@ import com.inschos.cloud.trading.access.http.controller.bean.*;
 import com.inschos.cloud.trading.access.http.controller.bean.StatisticBean.*;
 import com.inschos.cloud.trading.access.http.controller.bean.StatisticBean.InsureStsTotalForAgentSelfResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.StatisticBean.InsureTotalStatistic;
+import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
+import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.TimeKit;
@@ -32,6 +34,9 @@ public class StatisticAction extends BaseAction {
     private CustWarrantyBrokerageDao custWarrantyBrokerageDao;
     @Autowired
     private InsurancePolicyDao insurancePolicyDao;
+    @Autowired
+    private AgentClient agentClient;
+
 
     public String insureTotalForAgentSelf(ActionBean bean){
         BaseRequest request = requst2Bean(bean.body, BaseRequest.class);
@@ -50,11 +55,21 @@ public class StatisticAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "非代理人登录", response);
         }
 
-        response.data = new InsureTotalData();
-        response.data.premium= _agentTotalPremium(bean.managerUuid,bean.userId);
-        response.data.brokerage= _agentTotalBrokerage(bean.managerUuid,bean.userId);
-        response.data.warranty = _agentTotalWarrantyCount(bean.managerUuid,bean.userId);
-        return json(BaseResponse.CODE_SUCCESS, "获取保单统计成功", response);
+
+        AgentBean agentBean = agentClient.getAgentInfoByPersonIdManagerUuid(bean.managerUuid, Long.valueOf(bean.userId));
+
+        if(agentBean!=null){
+            String agentId = String.valueOf(agentBean.id);
+            response.data = new InsureTotalData();
+            response.data.premium= _agentTotalPremium(bean.managerUuid,agentId);
+            response.data.brokerage= _agentTotalBrokerage(bean.managerUuid,agentId);
+            response.data.warranty = _agentTotalWarrantyCount(bean.managerUuid,agentId);
+            return json(BaseResponse.CODE_SUCCESS, "获取保单统计成功", response);
+        }else{
+            return json(BaseResponse.CODE_FAILURE, "获取失败", response);
+        }
+
+
     }
     public String insureListForAgentSelf(ActionBean bean){
 
@@ -73,7 +88,14 @@ public class StatisticAction extends BaseAction {
         if(bean.userType!=4){
             return json(BaseResponse.CODE_FAILURE, "非代理人登录", response);
         }
-        String agentId = bean.userId;
+        String agentId = null;
+        AgentBean agentBean = agentClient.getAgentInfoByPersonIdManagerUuid(bean.managerUuid, Long.valueOf(bean.userId));
+        if(agentBean!=null) {
+            agentId = String.valueOf(agentBean.id);
+        }else{
+            return json(BaseResponse.CODE_FAILURE, "获取失败", response);
+        }
+
 
         CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
         CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
