@@ -893,8 +893,9 @@ public class InsurancePolicyAction extends BaseAction {
                 response.data.brokeragePercentageText = "0.00%";
             }
 
-            if (map.size() != 0) {
-                BigDecimal divide = premium.divide(new BigDecimal(response.data.insurancePolicyCount), BigDecimal.ROUND_HALF_DOWN);
+            BigDecimal bigDecimal = new BigDecimal(response.data.insurancePolicyCount);
+            if (map.size() != 0 && bigDecimal.compareTo(BigDecimal.ZERO) != 0) {
+                BigDecimal divide = premium.divide(bigDecimal, BigDecimal.ROUND_HALF_DOWN);
                 response.data.averagePremium = decimalFormat.format(divide.doubleValue());
                 response.data.averagePremiumText = "¥" + response.data.averagePremium;
             } else {
