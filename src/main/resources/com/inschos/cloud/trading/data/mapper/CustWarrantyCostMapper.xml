@@ -44,19 +44,22 @@
         from cust_warranty_cost LEFT JOIN cust_warranty ON cust_warranty.warranty_uuid=cust_warranty_cost.warranty_uuid
         <where>
             cust_warranty.state = 1 AND cust_warranty.warranty_status != 1 AND cust_warranty.warranty_status != 6
-            <if test="account_uuid!=null and account_uuid!=''">
+            <if test='account_uuid!=null and account_uuid!=""'>
                 and cust_warranty.account_uuid=#{account_uuid}
             </if>
-            <if test="channel_id!=null and channel_id!=''">
+            <if test='channel_id!=null and channel_id!=""'>
                 and cust_warranty.channel_id=#{channel_id}
             </if>
-            <if test="manager_uuid!=null and manager_uuid!=''">
+            <if test='manager_uuid!=null and manager_uuid!=""'>
                 and cust_warranty.manager_uuid=#{manager_uuid}
             </if>
-            <if test="start_time!=null and start_time!='' and start_time!=0">
+            <if test='agent_id!=null and agent_id!=""'>
+                and cust_warranty.agent_id=#{agent_id}
+            </if>
+            <if test='start_time!=null and start_time!="" and start_time!="0"'>
                 and cust_warranty.start_time&gt;=#{start_time}
             </if>
-            <if test="end_time!=null and end_time!='' and end_time!=0">
+            <if test='end_time!=null and end_time!="" and end_time!="0"'>
                 and cust_warranty.start_time&lt;#{end_time}
             </if>
         </where>
@@ -120,12 +123,12 @@
             parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
             resultType="com.inschos.cloud.trading.model.PremiumStatisticModel">
         <choose>
-            <when test="time_range_type=='1'">
+            <when test='time_range_type=="1"'>
                 select from_unixtime(cust_warranty_cost.actual_pay_time/1000,"%Y-%m-%d")
                 `time_text`,sum(`cust_warranty_cost`.`premium`) `premium`,sum(`cust_warranty_cost`.`phase`=1)
                 `insurance_policy_count`
             </when>
-            <when test="time_range_type=='2'">
+            <when test='time_range_type=="2"'>
                 select from_unixtime(cust_warranty_cost.actual_pay_time/1000,"%Y-%m-%d")
                 `time_text`,sum(`cust_warranty_cost`.`premium`) `premium`,sum(`cust_warranty_cost`.`phase`=1)
                 `insurance_policy_count`
@@ -138,10 +141,14 @@
         </choose>
         from cust_warranty_cost LEFT JOIN cust_warranty ON
         `cust_warranty_cost`.`warranty_uuid`=`cust_warranty`.`warranty_uuid`
-        where `cust_warranty_cost`.`actual_pay_time`>=#{start_time} AND `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time}
+        where `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time} AND `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time}
         AND `cust_warranty_cost`.`pay_status`= 206 AND `cust_warranty`.`manager_uuid`=#{manager_uuid}
+        <if test='agent_id!=null and agent_id!=""'>
+            and `cust_warranty`.`agent_id`=#{agent_id}
+        </if>
         group by `time_text`;
     </select>
+
 
 
     <select id="findInsurancePolicyBrokerageStatisticList"
@@ -201,7 +208,7 @@
         `cust_warranty_cost`.`warranty_uuid`=`cust_warranty`.`warranty_uuid` LEFT JOIN cust_warranty_brokerage ON
         `cust_warranty_cost`.`id`=`cust_warranty_brokerage`.`cost_id`
         WHERE `cust_warranty`.`warranty_status`!=1 AND `cust_warranty`.`warranty_status`!=6 AND `cust_warranty`.`state`= 1  AND `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time} AND
-        `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time}AND `cust_warranty`.`manager_uuid`=#{manager_uuid}
+        `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time} AND `cust_warranty`.`manager_uuid`=#{manager_uuid}
         <if test="search!=null and search!=''">
             and `warranty_code` like concat("%",#{search},"%")
         </if>

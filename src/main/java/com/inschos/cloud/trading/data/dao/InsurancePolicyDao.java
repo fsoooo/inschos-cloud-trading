@@ -533,4 +533,8 @@ public class InsurancePolicyDao extends BaseDao {
         return custWarrantyCostMapper.findInsurancePolicyCountForInsuring(insurancePolicyModel);
     }
 
+    public int findEffectiveInsurancePolicyCountByAgentAndTime(InsurancePolicyModel search){
+        return search!=null?insurancePolicyMapper.findEffectiveInsurancePolicyCountByAgentAndTime(search):0;
+    }
+
 }

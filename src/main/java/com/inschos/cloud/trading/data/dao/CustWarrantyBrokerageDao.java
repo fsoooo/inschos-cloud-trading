@@ -89,4 +89,7 @@ public class CustWarrantyBrokerageDao {
     public List<BrokerageStatisticModel> findCustWarrantyBrokerageStatistic (CustWarrantyBrokerageModel custWarrantyBrokerageModel){
         return custWarrantyBrokerageMapper.findCustWarrantyBrokerageStatistic(custWarrantyBrokerageModel);
     }
+    public List<BrokerageStatisticModel> findStatisticByAgent (CustWarrantyBrokerageModel search){
+        return search!=null? custWarrantyBrokerageMapper.findStatisticByAgent(search):null;
+    }
 }

@@ -20,14 +20,17 @@
             parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
         select
         <choose>
-            <when test="manager_uuid!=null and manager_uuid!=''">
-                sum(`manager_money`)
-            </when>
-            <when test="channel_id!=null and channel_id!=''">
+            <when test='channel_id!=null and channel_id!=""'>
                 sum(`channel_money`)
             </when>
-            <when test="warranty_uuid!=null and warranty_uuid!=''">
+            <when test='warranty_uuid!=null and warranty_uuid!=""'>
                 sum(`warranty_money`)
+            </when>
+            <when test='agent_id!=null and agent_id!=""'>
+                sum(`agent_money`)
+            </when>
+            <when test='manager_uuid!=null and manager_uuid!=""'>
+                sum(`manager_money`)
             </when>
             <otherwise>
                 sum(`warranty_money`)
@@ -37,19 +40,22 @@
         cust_warranty.warranty_uuid=cust_warranty_brokerage.warranty_uuid
         <where>
             cust_warranty.state = 1 AND cust_warranty.warranty_status != 1 AND cust_warranty.warranty_status != 6
-            <if test="manager_uuid!=null and manager_uuid!=''">
+            <if test='manager_uuid!=null and manager_uuid!=""'>
                 and cust_warranty_brokerage.manager_uuid=#{manager_uuid}
             </if>
-            <if test="channel_id!=null and channel_id!=''">
+            <if test='channel_id!=null and channel_id!=""'>
                 and cust_warranty_brokerage.channel_id=#{channel_id}
             </if>
-            <if test="warranty_uuid!=null and warranty_uuid!=''">
+            <if test='agent_id!=null and agent_id!=""'>
+                and cust_warranty_brokerage.agent_id=#{agent_id}
+            </if>
+            <if test='warranty_uuid!=null and warranty_uuid!=""'>
                 and cust_warranty_brokerage.warranty_uuid=#{warranty_uuid}
             </if>
-            <if test="start_time!=null and start_time!='' and start_time!=0">
+            <if test='start_time!=null and start_time!="" and start_time!="0"'>
                 and cust_warranty.start_time&gt;=#{start_time}
             </if>
-            <if test="end_time!=null and end_time!='' and end_time!=0">
+            <if test='end_time!=null and end_time!="" and end_time!="0"'>
                 and cust_warranty.start_time&lt;#{end_time}
             </if>
         </where>
@@ -63,16 +69,16 @@
         cust_warranty.warranty_uuid=cust_warranty_brokerage.warranty_uuid
         <where>
             cust_warranty.state = 1 AND cust_warranty.warranty_status != 1 AND cust_warranty.warranty_status != 6
-            <if test="manager_uuid!=null and manager_uuid!=''">
+            <if test='manager_uuid!=null and manager_uuid!=""'>
                 and cust_warranty_brokerage.manager_uuid=#{manager_uuid}
             </if>
-            <if test="account_uuid!=null and account_uuid!=''">
+            <if test='account_uuid!=null and account_uuid!=""'>
                 and cust_warranty.account_uuid=#{account_uuid}
             </if>
-            <if test="start_time!=null and start_time!='' and start_time!=0">
+            <if test='start_time!=null and start_time!="" and start_time!="0"'>
                 and cust_warranty.start_time&gt;=#{start_time}
             </if>
-            <if test="end_time!=null and end_time!='' and end_time!=0">
+            <if test='end_time!=null and end_time!="" and end_time!="0"'>
                 and cust_warranty.start_time&lt;#{end_time}
             </if>
         </where>
@@ -82,18 +88,37 @@
             parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
             resultType="com.inschos.cloud.trading.model.BrokerageStatisticModel">
         <choose>
-            <when test="time_range_type=='1'">
-                select from_unixtime(created_at/1000,"%Y-%m-%d") `time_text`,sum(`manager_money`) `brokerage`
+            <when test='time_range_type=="1"'>
+                select from_unixtime(cb.created_at/1000,"%Y-%m-%d") `time_text`,sum(cb.`manager_money`) `brokerage`
             </when>
-            <when test="time_range_type=='2'">
-                select from_unixtime(created_at/1000,"%Y-%m-%d") `time_text`,sum(`manager_money`) `brokerage`
+            <when test='time_range_type=="2"'>
+                select from_unixtime(cb.created_at/1000,"%Y-%m-%d") `time_text`,sum(cb.`manager_money`) `brokerage`
             </when>
             <otherwise>
-                select from_unixtime(created_at/1000,"%Y-%m") `time_text`,sum(`manager_money`) `brokerage`
+                select from_unixtime(cb.created_at/1000,"%Y-%m") `time_text`,sum(cb.`manager_money`) `brokerage`
             </otherwise>
         </choose>
-        from cust_warranty_brokerage
-        where `created_at`>=#{start_time} AND `created_at`&lt;#{end_time} AND `manager_uuid`=#{manager_uuid}
+        from cust_warranty_brokerage cb
+        where cb.`created_at`>=#{start_time} AND cb.`created_at`&lt;#{end_time} AND cb.`manager_uuid`=#{manager_uuid}
+        group by `time_text`;
+    </select>
+
+    <select id="findStatisticByAgent"
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
+            resultType="com.inschos.cloud.trading.model.BrokerageStatisticModel">
+        <choose>
+            <when test='time_range_type=="1"'>
+                select from_unixtime(cb.created_at/1000,"%Y-%m-%d") `time_text`,sum(cb.`agent_money`) `brokerage`
+            </when>
+            <when test='time_range_type=="2"'>
+                select from_unixtime(cb.created_at/1000,"%Y-%m-%d") `time_text`,sum(cb.`agent_money`) `brokerage`
+            </when>
+            <otherwise>
+                select from_unixtime(cb.created_at/1000,"%Y-%m") `time_text`,sum(cb.`agent_money`) `brokerage`
+            </otherwise>
+        </choose>
+        from cust_warranty_brokerage cb
+        where cb.`created_at` &gt;=#{start_time} AND cb.`created_at`&lt;#{end_time} AND cb.`manager_uuid`=#{manager_uuid} and cb.agent_id=#{agent_id}
         group by `time_text`;
     </select>
 
