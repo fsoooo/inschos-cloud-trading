@@ -446,10 +446,10 @@
                 and `type`=#{type}
             </if>
             <if test="start_time!=null and start_time!=''">
-                and `start_time`&gt;=#{start_time}
+                and `created_at`&gt;=#{start_time}
             </if>
             <if test="end_time!=null and end_time!=''">
-                and `start_time`&lt;#{end_time}
+                and `created_at`&lt;#{end_time}
             </if>
             <if test="status_string!=null and status_string!=''">
                 and `warranty_status` in (${status_string})
@@ -472,10 +472,10 @@
             and `type`=#{type}
         </if>
         <if test="start_time!=null and start_time!=''">
-            and `start_time`&gt;=#{start_time}
+            and `created_at`&gt;=#{start_time}
         </if>
         <if test="end_time!=null and end_time!=''">
-            and `start_time`&lt;#{end_time}
+            and `created_at`&lt;#{end_time}
         </if>
         <if test="status_string!=null and status_string!=''">
             and `warranty_status` in (${status_string})
@@ -503,10 +503,10 @@
                         and `type`=#{type}
                     </if>
                     <if test="start_time!=null and start_time!=''">
-                        and `start_time`&gt;=#{start_time}
+                        and `created_at`&gt;=#{start_time}
                     </if>
                     <if test="end_time!=null and end_time!=''">
-                        and `start_time`&lt;#{end_time}
+                        and `created_at`&lt;#{end_time}
                     </if>
                     <if test="status_string!=null and status_string!=''">
                         and `warranty_status` in (${status_string})
@@ -526,10 +526,10 @@
                 and `type`=#{type}
             </if>
             <if test="start_time!=null and start_time!=''">
-                and `start_time`&gt;=#{start_time}
+                and `created_at`&gt;=#{start_time}
             </if>
             <if test="end_time!=null and end_time!=''">
-                and `start_time`&lt;#{end_time}
+                and `created_at`&lt;#{end_time}
             </if>
             <if test="status_string!=null and status_string!=''">
                 and `warranty_status` in (${status_string})
@@ -552,10 +552,10 @@
             and `type`=#{type}
         </if>
         <if test="start_time!=null and start_time!=''">
-            and `start_time`&gt;=#{start_time}
+            and `created_at`&gt;=#{start_time}
         </if>
         <if test="end_time!=null and end_time!=''">
-            and `start_time`&lt;#{end_time}
+            and `created_at`&lt;#{end_time}
         </if>
         <if test="status_string!=null and status_string!=''">
             and `warranty_status` in (${status_string})
@@ -590,10 +590,10 @@
                         and `cust_warranty`.`type`=#{type}
                     </if>
                     <if test="start_time!=null and start_time!=''">
-                        and `cust_warranty`.`start_time`&gt;=#{start_time}
+                        and `cust_warranty`.`created_at`&gt;=#{start_time}
                     </if>
                     <if test="end_time!=null and end_time!=''">
-                        and `cust_warranty`.`start_time`&lt;#{end_time}
+                        and `cust_warranty`.`created_at`&lt;#{end_time}
                     </if>
                     <if test="status_string!=null and status_string!=''">
                         and `cust_warranty`.`warranty_status` in (${status_string})
@@ -613,10 +613,10 @@
                 and `cust_warranty`.`type`=#{type}
             </if>
             <if test="start_time!=null and start_time!=''">
-                and `cust_warranty`.`start_time`&gt;=#{start_time}
+                and `cust_warranty`.`created_at`&gt;=#{start_time}
             </if>
             <if test="end_time!=null and end_time!=''">
-                and `cust_warranty`.`start_time`&lt;#{end_time}
+                and `cust_warranty`.`created_at`&lt;#{end_time}
             </if>
             <if test="status_string!=null and status_string!=''">
                 and `cust_warranty`.`warranty_status` in (${status_string})
@@ -639,10 +639,10 @@
             and `cust_warranty`.`type`=#{type}
         </if>
         <if test="start_time!=null and start_time!=''">
-            and `cust_warranty`.`start_time`&gt;=#{start_time}
+            and `cust_warranty`.`created_at`&gt;=#{start_time}
         </if>
         <if test="end_time!=null and end_time!=''">
-            and `cust_warranty`.`start_time`&lt;#{end_time}
+            and `cust_warranty`.`created_at`&lt;#{end_time}
         </if>
         <if test="status_string!=null and status_string!=''">
             and `cust_warranty`.`warranty_status` in (${status_string})
@@ -679,10 +679,10 @@
                         and `cust_warranty`.`type`=#{type}
                     </if>
                     <if test="start_time!=null and start_time!=''">
-                        and `cust_warranty`.`start_time`&gt;=#{start_time}
+                        and `cust_warranty`.`created_at`&gt;=#{start_time}
                     </if>
                     <if test="end_time!=null and end_time!=''">
-                        and `cust_warranty`.`start_time`&lt;#{end_time}
+                        and `cust_warranty`.`created_at`&lt;#{end_time}
                     </if>
                     <if test="status_string!=null and status_string!=''">
                         and `cust_warranty`.`warranty_status` in (${status_string})
@@ -702,10 +702,10 @@
                 and `cust_warranty`.`type`=#{type}
             </if>
             <if test="start_time!=null and start_time!=''">
-                and `cust_warranty`.`start_time`&gt;=#{start_time}
+                and `cust_warranty`.`created_at`&gt;=#{start_time}
             </if>
             <if test="end_time!=null and end_time!=''">
-                and `cust_warranty`.`start_time`&lt;#{end_time}
+                and `cust_warranty`.`created_at`&lt;#{end_time}
             </if>
             <if test="status_string!=null and status_string!=''">
                 and `cust_warranty`.`warranty_status` in (${status_string})
@@ -728,10 +728,10 @@
             and `cust_warranty`.`type`=#{type}
         </if>
         <if test="start_time!=null and start_time!=''">
-            and `cust_warranty`.`start_time`&gt;=#{start_time}
+            and `cust_warranty`.`created_at`&gt;=#{start_time}
         </if>
         <if test="end_time!=null and end_time!=''">
-            and `cust_warranty`.`start_time`&lt;#{end_time}
+            and `cust_warranty`.`created_at`&lt;#{end_time}
         </if>
         <if test="status_string!=null and status_string!=''">
             and `cust_warranty`.`warranty_status` in (${status_string})
@@ -764,10 +764,10 @@
                         and `cust_warranty`.`type`=#{type}
                     </if>
                     <if test="start_time!=null and start_time!=''">
-                        and `cust_warranty`.`start_time`&gt;=#{start_time}
+                        and `cust_warranty`.`created_at`&gt;=#{start_time}
                     </if>
                     <if test="end_time!=null and end_time!=''">
-                        and `cust_warranty`.`start_time`&lt;#{end_time}
+                        and `cust_warranty`.`created_at`&lt;#{end_time}
                     </if>
                     ORDER BY `cust_warranty`.`id` DESC limit #{page.start},1
                     )
@@ -784,10 +784,10 @@
                 and `cust_warranty`.`type`=#{type}
             </if>
             <if test="start_time!=null and start_time!=''">
-                and `cust_warranty`.`start_time`&gt;=#{start_time}
+                and `cust_warranty`.`created_at`&gt;=#{start_time}
             </if>
             <if test="end_time!=null and end_time!=''">
-                and `cust_warranty`.`start_time`&lt;#{end_time}
+                and `cust_warranty`.`created_at`&lt;#{end_time}
             </if>
             ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
         </where>
@@ -807,10 +807,10 @@
             and `cust_warranty`.`type`=#{type}
         </if>
         <if test="start_time!=null and start_time!=''">
-            and `cust_warranty`.`start_time`&gt;=#{start_time}
+            and `cust_warranty`.`created_at`&gt;=#{start_time}
         </if>
         <if test="end_time!=null and end_time!=''">
-            and `cust_warranty`.`start_time`&lt;#{end_time}
+            and `cust_warranty`.`created_at`&lt;#{end_time}
         </if>
     </select>
 
@@ -839,10 +839,10 @@
                         and `cust_warranty`.`type`=#{type}
                     </if>
                     <if test="start_time!=null and start_time!=''">
-                        and `cust_warranty`.`start_time`&gt;=#{start_time}
+                        and `cust_warranty`.`created_at`&gt;=#{start_time}
                     </if>
                     <if test="end_time!=null and end_time!=''">
-                        and `cust_warranty`.`start_time`&lt;#{end_time}
+                        and `cust_warranty`.`created_at`&lt;#{end_time}
                     </if>
                     ORDER BY `cust_warranty`.`id` DESC limit #{page.start},1
                     )
@@ -859,10 +859,10 @@
                 and `cust_warranty`.`type`=#{type}
             </if>
             <if test="start_time!=null and start_time!=''">
-                and `cust_warranty`.`start_time`&gt;=#{start_time}
+                and `cust_warranty`.`created_at`&gt;=#{start_time}
             </if>
             <if test="end_time!=null and end_time!=''">
-                and `cust_warranty`.`start_time`&lt;#{end_time}
+                and `cust_warranty`.`created_at`&lt;#{end_time}
             </if>
             ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
         </where>
@@ -882,10 +882,10 @@
             and `cust_warranty`.`type`=#{type}
         </if>
         <if test="start_time!=null and start_time!=''">
-            and `cust_warranty`.`start_time`&gt;=#{start_time}
+            and `cust_warranty`.`created_at`&gt;=#{start_time}
         </if>
         <if test="end_time!=null and end_time!=''">
-            and `cust_warranty`.`start_time`&lt;#{end_time}
+            and `cust_warranty`.`created_at`&lt;#{end_time}
         </if>
     </select>
 
@@ -915,10 +915,10 @@
                         and `cust_warranty`.`type`=#{type}
                     </if>
                     <if test="start_time!=null and start_time!=''">
-                        and `cust_warranty`.`start_time`&gt;=#{start_time}
+                        and `cust_warranty`.`created_at`&gt;=#{start_time}
                     </if>
                     <if test="end_time!=null and end_time!=''">
-                        and `cust_warranty`.`start_time`&lt;#{end_time}
+                        and `cust_warranty`.`created_at`&lt;#{end_time}
                     </if>
                     ORDER BY `cust_warranty`.`id` DESC limit #{page.start},1
                     )
@@ -935,10 +935,10 @@
                 and `cust_warranty`.`type`=#{type}
             </if>
             <if test="start_time!=null and start_time!=''">
-                and `cust_warranty`.`start_time`&gt;=#{start_time}
+                and `cust_warranty`.`created_at`&gt;=#{start_time}
             </if>
             <if test="end_time!=null and end_time!=''">
-                and `cust_warranty`.`start_time`&lt;#{end_time}
+                and `cust_warranty`.`created_at`&lt;#{end_time}
             </if>
             ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
         </where>
@@ -958,10 +958,10 @@
             and `cust_warranty`.`type`=#{type}
         </if>
         <if test="start_time!=null and start_time!=''">
-            and `cust_warranty`.`start_time`&gt;=#{start_time}
+            and `cust_warranty`.`created_at`&gt;=#{start_time}
         </if>
         <if test="end_time!=null and end_time!=''">
-            and `cust_warranty`.`start_time`&lt;#{end_time}
+            and `cust_warranty`.`created_at`&lt;#{end_time}
         </if>
     </select>
 
@@ -995,10 +995,10 @@
                         and `cust_warranty`.`type`=#{type}
                     </if>
                     <if test="start_time!=null and start_time!=''">
-                        and `cust_warranty`.`start_time`&gt;=#{start_time}
+                        and `cust_warranty`.`created_at`&gt;=#{start_time}
                     </if>
                     <if test="end_time!=null and end_time!=''">
-                        and `cust_warranty`.`start_time`&lt;#{end_time}
+                        and `cust_warranty`.`created_at`&lt;#{end_time}
                     </if>
                     ORDER BY `cust_warranty`.`id` DESC limit #{page.start},1
                     )
@@ -1015,10 +1015,10 @@
                 and `cust_warranty`.`type`=#{type}
             </if>
             <if test="start_time!=null and start_time!=''">
-                and `cust_warranty`.`start_time`&gt;=#{start_time}
+                and `cust_warranty`.`created_at`&gt;=#{start_time}
             </if>
             <if test="end_time!=null and end_time!=''">
-                and `cust_warranty`.`start_time`&lt;#{end_time}
+                and `cust_warranty`.`created_at`&lt;#{end_time}
             </if>
             ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
         </where>
@@ -1038,10 +1038,10 @@
             and `cust_warranty`.`type`=#{type}
         </if>
         <if test="start_time!=null and start_time!=''">
-            and `cust_warranty`.`start_time`&gt;=#{start_time}
+            and `cust_warranty`.`created_at`&gt;=#{start_time}
         </if>
         <if test="end_time!=null and end_time!=''">
-            and `cust_warranty`.`start_time`&lt;#{end_time}
+            and `cust_warranty`.`created_at`&lt;#{end_time}
         </if>
     </select>
 
