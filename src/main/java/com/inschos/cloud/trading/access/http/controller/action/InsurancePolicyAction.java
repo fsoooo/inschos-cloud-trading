@@ -875,13 +875,14 @@ public class InsurancePolicyAction extends BaseAction {
 
         } else {
             DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+            DecimalFormat moneyFormat = new DecimalFormat("###,###,###,###,##0.00");
 
             response.data.insurancePolicyCount = String.valueOf(count);
             response.data.premium = decimalFormat.format(premium.doubleValue());
-            response.data.premiumText = "¥" + response.data.premium;
+            response.data.premiumText = "¥" + moneyFormat.format(response.data.premium);
 
             response.data.brokerage = decimalFormat.format(brokerage.doubleValue());
-            response.data.brokerageText = "¥" + response.data.brokerage;
+            response.data.brokerageText = "¥" + moneyFormat.format(response.data.brokerage);
 
             if (premium.compareTo(BigDecimal.ZERO) != 0) {
                 BigDecimal divide = brokerage.divide(premium, BigDecimal.ROUND_HALF_DOWN);
@@ -893,10 +894,11 @@ public class InsurancePolicyAction extends BaseAction {
                 response.data.brokeragePercentageText = "0.00%";
             }
 
-            if (map.size() != 0) {
-                BigDecimal divide = premium.divide(new BigDecimal(response.data.insurancePolicyCount), BigDecimal.ROUND_HALF_DOWN);
+            BigDecimal bigDecimal = new BigDecimal(response.data.insurancePolicyCount);
+            if (map.size() != 0 && bigDecimal.compareTo(BigDecimal.ZERO) != 0) {
+                BigDecimal divide = premium.divide(bigDecimal, BigDecimal.ROUND_HALF_DOWN);
                 response.data.averagePremium = decimalFormat.format(divide.doubleValue());
-                response.data.averagePremiumText = "¥" + response.data.averagePremium;
+                response.data.averagePremiumText = "¥" + moneyFormat.format(response.data.averagePremium);
             } else {
                 response.data.averagePremium = "0.00";
                 response.data.averagePremiumText = "¥0.00";
@@ -914,6 +916,7 @@ public class InsurancePolicyAction extends BaseAction {
         Set<String> strings = map.keySet();
         if (!strings.isEmpty()) {
             DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+            DecimalFormat moneyFormat = new DecimalFormat("###,###,###,###,##0.00");
             for (String string : strings) {
                 InsurancePolicy.InsurancePolicyStatisticItem item = map.get(string);
 
@@ -952,7 +955,7 @@ public class InsurancePolicyAction extends BaseAction {
                 if (itemPremium.compareTo(BigDecimal.ZERO) != 0) {
                     if (!StringKit.equals(item.insurancePolicyCount, "0")) {
                         BigDecimal divide = itemPremium.divide(insurancePolicyCount, BigDecimal.ROUND_HALF_DOWN);
-                        item.averagePremium = decimalFormat.format(divide.doubleValue());
+                        item.averagePremium = moneyFormat.format(divide.doubleValue());
                         item.averagePremiumText = "¥" + item.averagePremium;
                     } else {
                         item.averagePremium = "0.00";
@@ -989,11 +992,11 @@ public class InsurancePolicyAction extends BaseAction {
                 }
 
                 item.premium = decimalFormat.format(itemPremium.doubleValue());
-                item.premiumText = "¥" + item.premium;
+                item.premiumText = "¥" + moneyFormat.format(item.premium);
                 item.averagePremium = decimalFormat.format(new BigDecimal(item.averagePremium).doubleValue());
-                item.averagePremiumText = "¥" + item.averagePremium;
+                item.averagePremiumText = "¥" + moneyFormat.format(item.averagePremium);
                 item.brokerage = decimalFormat.format(itemBrokerage.doubleValue());
-                item.brokerageText = "¥" + item.brokerage;
+                item.brokerageText = "¥" + moneyFormat.format(item.brokerage);
 
                 result.add(item);
             }
