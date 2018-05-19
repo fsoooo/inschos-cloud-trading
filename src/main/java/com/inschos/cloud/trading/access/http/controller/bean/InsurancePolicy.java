@@ -839,6 +839,7 @@ public class InsurancePolicy {
             }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+            DecimalFormat money = new DecimalFormat("###,###,###,###,##0.00");
 
             this.costId = brokerageStatisticListModel.cost_id;
             this.warrantyId = brokerageStatisticListModel.warranty_id;
@@ -855,7 +856,6 @@ public class InsurancePolicy {
 
             if (!StringKit.isEmpty(brokerageStatisticListModel.premium) && StringKit.isNumeric(brokerageStatisticListModel.premium)) {
                 this.premium = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.premium).doubleValue());
-                ;
                 this.premiumText = "¥" + this.premium;
             } else {
                 this.premium = "0.00";
@@ -871,7 +871,7 @@ public class InsurancePolicy {
 
             if (StringKit.isNumeric(brokerageStatisticListModel.warranty_money)) {
                 this.warrantyMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.warranty_money).doubleValue());
-                this.warrantyMoneyText = "¥" + this.warrantyMoney;
+                this.warrantyMoneyText = "¥" + money.format(this.warrantyMoney);
             } else {
                 this.warrantyMoney = "0.00";
                 this.warrantyMoneyText = "¥0.00";
@@ -879,7 +879,7 @@ public class InsurancePolicy {
 
             if (StringKit.isNumeric(brokerageStatisticListModel.manager_money)) {
                 this.managerMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.manager_money).doubleValue());
-                this.managerMoneyText = "¥" + this.managerMoney;
+                this.managerMoneyText = "¥" + money.format(this.managerMoney);
             } else {
                 this.managerMoney = "0.00";
                 this.managerMoneyText = "¥0.00";
@@ -887,7 +887,7 @@ public class InsurancePolicy {
 
             if (StringKit.isNumeric(brokerageStatisticListModel.channel_money)) {
                 this.channelMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.channel_money).doubleValue());
-                this.channelMoneyText = "¥" + this.channelMoney;
+                this.channelMoneyText = "¥" + money.format(this.channelMoney);
             } else {
                 this.channelMoney = "0.00";
                 this.channelMoneyText = "¥0.00";
@@ -895,7 +895,7 @@ public class InsurancePolicy {
 
             if (StringKit.isNumeric(brokerageStatisticListModel.agent_money)) {
                 this.agentMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.agent_money).doubleValue());
-                this.agentMoneyText = "¥" + this.agentMoney;
+                this.agentMoneyText = "¥" + money.format(this.agentMoney);
             } else {
                 this.agentMoney = "0.00";
                 this.agentMoneyText = "¥0.00";

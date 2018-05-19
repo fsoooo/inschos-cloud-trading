@@ -2746,7 +2746,7 @@ public class CarInsuranceAction extends BaseAction {
     @Autowired
     private ProductDao productDao;
 
-    public String setData(ActionBean actionBean) {
+//    public String setData(ActionBean actionBean) {
 //        CarInsurance.GetProvinceCodeRequest request1 = new CarInsurance.GetProvinceCodeRequest();
 //
 //        request1.type = "0";
@@ -2878,100 +2878,100 @@ public class CarInsuranceAction extends BaseAction {
 //        商业险 000200040002
 //        typeMap.put("", "");
 
-        MyBean3 root1 = new MyBean3("人身保险", "0", "1", "100000000");
-        productDao.addCategory(root1);
-        MyBean3 root2 = new MyBean3("财产保险", "0", "1", "200000000");
-        productDao.addCategory(root2);
-
-
-        MyBean3 children1 = new MyBean3("养老险", root1.id, "2", "100010000");
-        productDao.addCategory(children1);
-        MyBean3 children2 = new MyBean3("人寿险", root1.id, "2", "100020000");
-        productDao.addCategory(children2);
-        MyBean3 children3 = new MyBean3("健康险", root1.id, "2", "100030000");
-        productDao.addCategory(children3);
-        MyBean3 children4 = new MyBean3("意外险", root1.id, "2", "100040000");
-        productDao.addCategory(children4);
-        MyBean3 children5 = new MyBean3("重疾险", root1.id, "2", "100050000");
-        productDao.addCategory(children5);
-        MyBean3 children6 = new MyBean3("其他", root1.id, "2", "199990000");
-        productDao.addCategory(children6);
-        MyBean3 children7 = new MyBean3("财产损失险", root2.id, "2", "200010000");
-        productDao.addCategory(children7);
-        MyBean3 children8 = new MyBean3("责任保险", root2.id, "2", "200020000");
-        productDao.addCategory(children8);
-        MyBean3 children9 = new MyBean3("信用保证险", root2.id, "2", "200030000");
-        productDao.addCategory(children9);
-        MyBean3 children10 = new MyBean3("车险", root2.id, "2", "200040000");
-        productDao.addCategory(children10);
-        MyBean3 children11 = new MyBean3("农险", root2.id, "2", "200050000");
-        productDao.addCategory(children11);
-        MyBean3 children12 = new MyBean3("其他", root2.id, "2", "200060000");
-        productDao.addCategory(children12);
-
-
-        MyBean3 children13 = new MyBean3("生存保险", children2.id, "3", "100020001");
-        productDao.addCategory(children13);
-        MyBean3 children14 = new MyBean3("死亡保险", children2.id, "3", "100020002");
-        productDao.addCategory(children14);
-        MyBean3 children15 = new MyBean3("两全保险", children2.id, "3", "100020003");
-        productDao.addCategory(children15);
-
-
-        MyBean3 children16 = new MyBean3("医疗保险", children3.id, "3", "100030001");
-        productDao.addCategory(children16);
-        MyBean3 children17 = new MyBean3("失能收入保险", children3.id, "3", "100030002");
-        productDao.addCategory(children17);
-        MyBean3 children18 = new MyBean3("护理保险", children3.id, "3", "100030003");
-        productDao.addCategory(children18);
-
-        MyBean3 children19 = new MyBean3("个人意外险", children4.id, "3", "100040001");
-        productDao.addCategory(children19);
-        MyBean3 children20 = new MyBean3("团体意外险", children4.id, "3", "100040002");
-        productDao.addCategory(children20);
-
-        MyBean3 children21 = new MyBean3("企财险", children7.id, "3", "200010001");
-        productDao.addCategory(children21);
-        MyBean3 children22 = new MyBean3("家财险", children7.id, "3", "200010002");
-        productDao.addCategory(children22);
-        MyBean3 children23 = new MyBean3("运输工具险", children7.id, "3", "200010003");
-        productDao.addCategory(children23);
-        MyBean3 children24 = new MyBean3("工程险", children7.id, "3", "200010004");
-        productDao.addCategory(children24);
-        MyBean3 children25 = new MyBean3("特殊风险", children7.id, "3", "200010005");
-        productDao.addCategory(children25);
-        MyBean3 children26 = new MyBean3("指数险", children7.id, "3", "200010006");
-        productDao.addCategory(children26);
-
-        MyBean3 children27 = new MyBean3("公众责任险", children8.id, "3", "200020001");
-        productDao.addCategory(children27);
-        MyBean3 children28 = new MyBean3("第三者责任险", children8.id, "3", "200020002");
-        productDao.addCategory(children28);
-        MyBean3 children29 = new MyBean3("产品责任险", children8.id, "3", "200020003");
-        productDao.addCategory(children29);
-        MyBean3 children30 = new MyBean3("雇主责任险", children8.id, "3", "200020004");
-        productDao.addCategory(children30);
-        MyBean3 children31 = new MyBean3("职业责任险", children8.id, "3", "200020005");
-        productDao.addCategory(children31);
-        MyBean3 children32 = new MyBean3("物流责任险", children8.id, "3", "200020006");
-        productDao.addCategory(children32);
-
-
-        MyBean3 children33 = new MyBean3("出口信用险", children9.id, "3", "200030001");
-        productDao.addCategory(children33);
-        MyBean3 children34 = new MyBean3("投资保险", children9.id, "3", "200030002");
-        productDao.addCategory(children34);
-        MyBean3 children35 = new MyBean3("雇员忠诚保证险", children9.id, "3", "200030003");
-        productDao.addCategory(children35);
-        MyBean3 children36 = new MyBean3("履约保证险", children9.id, "3", "200030004");
-        productDao.addCategory(children36);
-
-        MyBean3 children37 = new MyBean3("交强险", children9.id, "3", "200040001");
-        productDao.addCategory(children37);
-        MyBean3 children38 = new MyBean3("商业险", children9.id, "3", "200040002");
-        productDao.addCategory(children38);
-
-        return "haha";
-    }
+//        MyBean3 root1 = new MyBean3("人身保险", "0", "1", "100000000");
+//        productDao.addCategory(root1);
+//        MyBean3 root2 = new MyBean3("财产保险", "0", "1", "200000000");
+//        productDao.addCategory(root2);
+//
+//
+//        MyBean3 children1 = new MyBean3("养老险", root1.id, "2", "100010000");
+//        productDao.addCategory(children1);
+//        MyBean3 children2 = new MyBean3("人寿险", root1.id, "2", "100020000");
+//        productDao.addCategory(children2);
+//        MyBean3 children3 = new MyBean3("健康险", root1.id, "2", "100030000");
+//        productDao.addCategory(children3);
+//        MyBean3 children4 = new MyBean3("意外险", root1.id, "2", "100040000");
+//        productDao.addCategory(children4);
+//        MyBean3 children5 = new MyBean3("重疾险", root1.id, "2", "100050000");
+//        productDao.addCategory(children5);
+//        MyBean3 children6 = new MyBean3("其他", root1.id, "2", "199990000");
+//        productDao.addCategory(children6);
+//        MyBean3 children7 = new MyBean3("财产损失险", root2.id, "2", "200010000");
+//        productDao.addCategory(children7);
+//        MyBean3 children8 = new MyBean3("责任保险", root2.id, "2", "200020000");
+//        productDao.addCategory(children8);
+//        MyBean3 children9 = new MyBean3("信用保证险", root2.id, "2", "200030000");
+//        productDao.addCategory(children9);
+//        MyBean3 children10 = new MyBean3("车险", root2.id, "2", "200040000");
+//        productDao.addCategory(children10);
+//        MyBean3 children11 = new MyBean3("农险", root2.id, "2", "200050000");
+//        productDao.addCategory(children11);
+//        MyBean3 children12 = new MyBean3("其他", root2.id, "2", "200060000");
+//        productDao.addCategory(children12);
+//
+//
+//        MyBean3 children13 = new MyBean3("生存保险", children2.id, "3", "100020001");
+//        productDao.addCategory(children13);
+//        MyBean3 children14 = new MyBean3("死亡保险", children2.id, "3", "100020002");
+//        productDao.addCategory(children14);
+//        MyBean3 children15 = new MyBean3("两全保险", children2.id, "3", "100020003");
+//        productDao.addCategory(children15);
+//
+//
+//        MyBean3 children16 = new MyBean3("医疗保险", children3.id, "3", "100030001");
+//        productDao.addCategory(children16);
+//        MyBean3 children17 = new MyBean3("失能收入保险", children3.id, "3", "100030002");
+//        productDao.addCategory(children17);
+//        MyBean3 children18 = new MyBean3("护理保险", children3.id, "3", "100030003");
+//        productDao.addCategory(children18);
+//
+//        MyBean3 children19 = new MyBean3("个人意外险", children4.id, "3", "100040001");
+//        productDao.addCategory(children19);
+//        MyBean3 children20 = new MyBean3("团体意外险", children4.id, "3", "100040002");
+//        productDao.addCategory(children20);
+//
+//        MyBean3 children21 = new MyBean3("企财险", children7.id, "3", "200010001");
+//        productDao.addCategory(children21);
+//        MyBean3 children22 = new MyBean3("家财险", children7.id, "3", "200010002");
+//        productDao.addCategory(children22);
+//        MyBean3 children23 = new MyBean3("运输工具险", children7.id, "3", "200010003");
+//        productDao.addCategory(children23);
+//        MyBean3 children24 = new MyBean3("工程险", children7.id, "3", "200010004");
+//        productDao.addCategory(children24);
+//        MyBean3 children25 = new MyBean3("特殊风险", children7.id, "3", "200010005");
+//        productDao.addCategory(children25);
+//        MyBean3 children26 = new MyBean3("指数险", children7.id, "3", "200010006");
+//        productDao.addCategory(children26);
+//
+//        MyBean3 children27 = new MyBean3("公众责任险", children8.id, "3", "200020001");
+//        productDao.addCategory(children27);
+//        MyBean3 children28 = new MyBean3("第三者责任险", children8.id, "3", "200020002");
+//        productDao.addCategory(children28);
+//        MyBean3 children29 = new MyBean3("产品责任险", children8.id, "3", "200020003");
+//        productDao.addCategory(children29);
+//        MyBean3 children30 = new MyBean3("雇主责任险", children8.id, "3", "200020004");
+//        productDao.addCategory(children30);
+//        MyBean3 children31 = new MyBean3("职业责任险", children8.id, "3", "200020005");
+//        productDao.addCategory(children31);
+//        MyBean3 children32 = new MyBean3("物流责任险", children8.id, "3", "200020006");
+//        productDao.addCategory(children32);
+//
+//
+//        MyBean3 children33 = new MyBean3("出口信用险", children9.id, "3", "200030001");
+//        productDao.addCategory(children33);
+//        MyBean3 children34 = new MyBean3("投资保险", children9.id, "3", "200030002");
+//        productDao.addCategory(children34);
+//        MyBean3 children35 = new MyBean3("雇员忠诚保证险", children9.id, "3", "200030003");
+//        productDao.addCategory(children35);
+//        MyBean3 children36 = new MyBean3("履约保证险", children9.id, "3", "200030004");
+//        productDao.addCategory(children36);
+//
+//        MyBean3 children37 = new MyBean3("交强险", children9.id, "3", "200040001");
+//        productDao.addCategory(children37);
+//        MyBean3 children38 = new MyBean3("商业险", children9.id, "3", "200040002");
+//        productDao.addCategory(children38);
+//
+//        return "haha";
+//    }
 
 }
