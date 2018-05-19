@@ -132,6 +132,7 @@ public class StatisticAction extends BaseAction {
             for (PremiumStatisticModel premiumStatisticModel : custWarrantyCostStatistic) {
                 InsureStsItem item = new InsureStsItem(premiumStatisticModel.time_text,request.timeRangeType);
                 item.setPremiumStatisticModel(premiumStatisticModel);
+                item.insurancePolicyCount = premiumStatisticModel.insurance_policy_count;
                 map.put(premiumStatisticModel.time_text, item);
                 premium = premium.add(new BigDecimal(premiumStatisticModel.premium));
 
@@ -199,6 +200,7 @@ public class StatisticAction extends BaseAction {
                 item.premiumText = "¥" + item.premium;
                 item.brokerage = decimalFormat.format(itemBrokerage.doubleValue());
                 item.brokerageText = "¥" + item.brokerage;
+
 
                 result.add(item);
             }
