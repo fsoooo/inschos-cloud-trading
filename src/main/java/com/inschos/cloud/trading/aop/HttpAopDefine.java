@@ -64,7 +64,7 @@ public class HttpAopDefine {
             if (!isAccess(joinPoint, bean,accountBean)) {
                 response.code = BaseResponse.CODE_ACCESS_FAILURE;
                 CheckParamsKit.Entry<String, String> entry = CheckParamsKit.getDefaultEntry();
-                entry.details = "未登录";
+                entry.details = accountBean!=null&&!StringKit.isEmpty(accountBean.message)?accountBean.message:"未登录";
                 List<CheckParamsKit.Entry<String, String>> list = new ArrayList<>();
                 list.add(entry);
                 response.message = list;
@@ -112,7 +112,7 @@ public class HttpAopDefine {
         }
 
         if(isAuthCheck){
-            if(accountBean!=null){
+            if(accountBean!=null && accountBean.code==200){
                 bean.managerUuid = accountBean.managerUuid;
                 bean.accountUuid = accountBean.accountUuid;
                 bean.userId = accountBean.userId;
