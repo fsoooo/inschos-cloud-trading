@@ -879,10 +879,10 @@ public class InsurancePolicyAction extends BaseAction {
 
             response.data.insurancePolicyCount = String.valueOf(count);
             response.data.premium = decimalFormat.format(premium.doubleValue());
-            response.data.premiumText = "¥" + moneyFormat.format(response.data.premium);
+            response.data.premiumText = "¥" + moneyFormat.format(new BigDecimal(response.data.premium));
 
             response.data.brokerage = decimalFormat.format(brokerage.doubleValue());
-            response.data.brokerageText = "¥" + moneyFormat.format(response.data.brokerage);
+            response.data.brokerageText = "¥" + moneyFormat.format(new BigDecimal(response.data.brokerage));
 
             if (premium.compareTo(BigDecimal.ZERO) != 0) {
                 BigDecimal divide = brokerage.divide(premium, BigDecimal.ROUND_HALF_DOWN);
@@ -898,7 +898,7 @@ public class InsurancePolicyAction extends BaseAction {
             if (map.size() != 0 && bigDecimal.compareTo(BigDecimal.ZERO) != 0) {
                 BigDecimal divide = premium.divide(bigDecimal, BigDecimal.ROUND_HALF_DOWN);
                 response.data.averagePremium = decimalFormat.format(divide.doubleValue());
-                response.data.averagePremiumText = "¥" + moneyFormat.format(response.data.averagePremium);
+                response.data.averagePremiumText = "¥" + moneyFormat.format(new BigDecimal(response.data.averagePremium));
             } else {
                 response.data.averagePremium = "0.00";
                 response.data.averagePremiumText = "¥0.00";
@@ -992,11 +992,9 @@ public class InsurancePolicyAction extends BaseAction {
                 }
 
                 item.premium = decimalFormat.format(itemPremium.doubleValue());
-                item.premiumText = "¥" + moneyFormat.format(item.premium);
-                item.averagePremium = decimalFormat.format(new BigDecimal(item.averagePremium).doubleValue());
-                item.averagePremiumText = "¥" + moneyFormat.format(item.averagePremium);
+                item.premiumText = "¥" + moneyFormat.format(new BigDecimal(item.premium));
                 item.brokerage = decimalFormat.format(itemBrokerage.doubleValue());
-                item.brokerageText = "¥" + moneyFormat.format(item.brokerage);
+                item.brokerageText = "¥" + moneyFormat.format(new BigDecimal(item.brokerage));
 
                 result.add(item);
             }

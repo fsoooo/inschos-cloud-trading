@@ -1,9 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.service;
 
-import com.inschos.cloud.trading.access.rpc.bean.MyBean;
-import com.inschos.cloud.trading.access.rpc.bean.MyBean2;
-import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
-import com.inschos.cloud.trading.access.rpc.bean.ProductInfo;
+import com.inschos.cloud.trading.access.rpc.bean.*;
 
 import java.util.List;
 
@@ -18,4 +15,5 @@ public interface ProductService {
 
     ProductBean getProduct(long productId);
 
+    ProductBrokerageInfoBean getBrokerage(ProductBrokerageBean search);
 }

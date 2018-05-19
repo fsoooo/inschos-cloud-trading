@@ -1296,6 +1296,13 @@ public class CarInsuranceAction extends BaseAction {
                 ciIntegral = integral;
             }
 
+            BigDecimal biInsuredPremium = new BigDecimal(request.applyUnderwriting.biInsuredPremium);
+            BigDecimal bIntegralRate = new BigDecimal(request.applyUnderwriting.bIntegral);
+
+            if (biInsuredPremium.compareTo(BigDecimal.ZERO) > 0) {
+                bIntegralRate = biIntegral.divide(biInsuredPremium, BigDecimal.ROUND_HALF_DOWN);
+            }
+
             String warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
 
             InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance = new InsurancePolicyAndParticipantForCarInsurance();
@@ -1399,8 +1406,44 @@ public class CarInsuranceAction extends BaseAction {
                         ciProposal.agent_id,
                         time);
 
-                insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerage();
-                insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerageRate();
+
+                if (StringKit.isInteger(ciProposal.product_id)) {
+                    ProductBrokerageBean productBrokerageBean = new ProductBrokerageBean();
+                    productBrokerageBean.productId = Long.valueOf(ciProposal.product_id);
+                    productBrokerageBean.managerUuid = ciProposal.manager_uuid;
+                    productBrokerageBean.payTimes = 1;
+
+                    if (StringKit.isInteger(ciProposal.channel_id)) {
+                        productBrokerageBean.channelId = Long.valueOf(ciProposal.channel_id);
+                    }
+
+                    if (StringKit.isInteger(ciProposal.agent_id)) {
+                        productBrokerageBean.agentId = Long.valueOf(ciProposal.agent_id);
+                    }
+
+                    ProductBrokerageInfoBean brokerage = productClient.getBrokerage(productBrokerageBean);
+
+                    BigDecimal managerBrokerage = new BigDecimal("0.00");
+                    BigDecimal channelBrokerage = new BigDecimal("0.00");
+                    BigDecimal agentBrokerage = new BigDecimal("0.00");
+
+                    BigDecimal managerRate = new BigDecimal("0.00");
+                    BigDecimal channelRate = new BigDecimal("0.00");
+                    BigDecimal agentRate = new BigDecimal("0.00");
+
+                    if (brokerage != null) {
+                        managerRate = new BigDecimal(brokerage.platformBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+                        channelRate = new BigDecimal(brokerage.channelBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+                        agentRate = new BigDecimal(brokerage.agentBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+
+                        managerBrokerage = managerRate.multiply(ciInsuredPremium);
+                        channelBrokerage = channelRate.multiply(ciInsuredPremium);
+                        agentBrokerage = agentRate.multiply(ciInsuredPremium);
+                    }
+
+                    insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerage(ciIntegral, ciIntegral, managerBrokerage, channelBrokerage, agentBrokerage);
+                    insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerageRate(cIntegralRate, cIntegralRate, managerRate, channelRate, agentRate);
+                }
             }
 
             if (request.applyUnderwriting.hasCommercialInsurance) {
@@ -1496,8 +1539,43 @@ public class CarInsuranceAction extends BaseAction {
                         biProposal.agent_id,
                         time);
 
-                insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerage();
-                insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerageRate();
+                if (StringKit.isInteger(biProposal.product_id)) {
+                    ProductBrokerageBean productBrokerageBean = new ProductBrokerageBean();
+                    productBrokerageBean.productId = Long.valueOf(biProposal.product_id);
+                    productBrokerageBean.managerUuid = biProposal.manager_uuid;
+                    productBrokerageBean.payTimes = 1;
+
+                    if (StringKit.isInteger(biProposal.channel_id)) {
+                        productBrokerageBean.channelId = Long.valueOf(biProposal.channel_id);
+                    }
+
+                    if (StringKit.isInteger(biProposal.agent_id)) {
+                        productBrokerageBean.agentId = Long.valueOf(biProposal.agent_id);
+                    }
+
+                    ProductBrokerageInfoBean brokerage = productClient.getBrokerage(productBrokerageBean);
+
+                    BigDecimal managerBrokerage = new BigDecimal("0.00");
+                    BigDecimal channelBrokerage = new BigDecimal("0.00");
+                    BigDecimal agentBrokerage = new BigDecimal("0.00");
+
+                    BigDecimal managerRate = new BigDecimal("0.00");
+                    BigDecimal channelRate = new BigDecimal("0.00");
+                    BigDecimal agentRate = new BigDecimal("0.00");
+
+                    if (brokerage != null) {
+                        managerRate = new BigDecimal(brokerage.platformBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+                        channelRate = new BigDecimal(brokerage.channelBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+                        agentRate = new BigDecimal(brokerage.agentBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+
+                        managerBrokerage = managerRate.multiply(biInsuredPremium);
+                        channelBrokerage = channelRate.multiply(biInsuredPremium);
+                        agentBrokerage = agentRate.multiply(biInsuredPremium);
+                    }
+
+                    insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerage(biIntegral, biIntegral, managerBrokerage, channelBrokerage, agentBrokerage);
+                    insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerageRate(bIntegralRate, bIntegralRate, managerRate, channelRate, agentRate);
+                }
             }
 
             int i = insurancePolicyDao.addInsurancePolicyAndParticipantForCarInsurance(insurancePolicyAndParticipantForCarInsurance);
