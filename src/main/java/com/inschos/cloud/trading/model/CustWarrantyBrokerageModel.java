@@ -1,5 +1,8 @@
 package com.inschos.cloud.trading.model;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
 /**
  * 创建日期：2018/3/28 on 17:11
  * 描述：
@@ -43,6 +46,11 @@ public class CustWarrantyBrokerageModel {
     public String warranty_money;
 
     /**
+     * 天眼佣金
+     */
+    public String ins_money;
+
+    /**
      * 业管佣金
      */
     public String manager_money;
@@ -61,6 +69,11 @@ public class CustWarrantyBrokerageModel {
      * 保单佣金比例
      */
     public String warranty_rate;
+
+    /**
+     * 天眼佣金比例
+     */
+    public String ins_rate;
 
     /**
      * 业管佣金比例
@@ -109,18 +122,22 @@ public class CustWarrantyBrokerageModel {
         this.updated_at = time;
     }
 
-    public void setBrokerage() {
-        this.warranty_money = "23.00";
-        this.manager_money = "20.00";
-        this.channel_money = "18.00";
-        this.agent_money = "15.00";
+    public void setBrokerage(BigDecimal warranty_money, BigDecimal ins_money, BigDecimal manager_money, BigDecimal channel_money, BigDecimal agent_money) {
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        this.warranty_money = decimalFormat.format(warranty_money);
+        this.ins_money = decimalFormat.format(ins_money);
+        this.manager_money = decimalFormat.format(manager_money);
+        this.channel_money = decimalFormat.format(channel_money);
+        this.agent_money = decimalFormat.format(agent_money);
     }
 
-    public void setBrokerageRate() {
-        this.warranty_rate = "0.23";
-        this.manager_rate = "0.20";
-        this.channel_rate = "0.18";
-        this.agent_rate = "0.15";
+    public void setBrokerageRate(BigDecimal warranty_rate, BigDecimal ins_rate, BigDecimal manager_rate, BigDecimal channel_rate, BigDecimal agent_rate) {
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        this.warranty_rate = decimalFormat.format(warranty_rate);
+        this.ins_rate = decimalFormat.format(ins_rate);
+        this.manager_rate = decimalFormat.format(manager_rate);
+        this.channel_rate = decimalFormat.format(channel_rate);
+        this.agent_rate = decimalFormat.format(agent_rate);
     }
 
 }

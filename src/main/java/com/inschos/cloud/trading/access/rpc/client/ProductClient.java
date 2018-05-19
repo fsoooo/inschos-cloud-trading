@@ -50,4 +50,15 @@ public class ProductClient {
         }
     }
 
+    public ProductBrokerageInfoBean getBrokerage(ProductBrokerageBean search) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getBrokerage(search) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
 }
