@@ -7,6 +7,7 @@ import com.inschos.cloud.trading.access.rpc.bean.*;
 import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
+import com.inschos.cloud.trading.access.rpc.client.TaskResultClient;
 import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
 import com.inschos.cloud.trading.access.rpc.service.PremiumService;
@@ -14,9 +15,7 @@ import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
-import com.inschos.cloud.trading.data.dao.CarRecordDao;
-import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
-import com.inschos.cloud.trading.data.dao.ProductDao;
+import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.car.*;
 import com.inschos.cloud.trading.model.*;
 import com.inschos.cloud.trading.model.fordao.*;
@@ -43,10 +42,19 @@ public class CarInsuranceAction extends BaseAction {
     private CarRecordDao carRecordDao;
 
     @Autowired
+    private CarInfoDao carInfoDao;
+
+    @Autowired
     private InsurancePolicyDao insurancePolicyDao;
 
     @Autowired
+    private CustWarrantyCostDao custWarrantyCostDao;
+
+    @Autowired
     private FileClient fileClient;
+
+    @Autowired
+    private TaskResultClient taskResultClient;
 
     /**
      * 获取省级区域代码
@@ -2107,8 +2115,85 @@ public class CarInsuranceAction extends BaseAction {
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = request.data.ciPolicyNo;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = request.data.biPolicyNo;
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.actual_pay_time = parseMillisecondByShowDate(sdf, request.data.payTime);
+                String time = parseMillisecondByShowDate(sdf, request.data.payTime);
+                if (StringKit.isEmpty(time)) {
+                    time = String.valueOf(System.currentTimeMillis());
+                }
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.actual_pay_time = time;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_WAITING;
+
+                List<CarInfoModel> warrantyUuidByBizId = carInfoDao.findWarrantyUuidByBizId(request.data.bizID);
+
+                CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+                for (CarInfoModel carInfoModel : warrantyUuidByBizId) {
+                    if (!StringKit.isEmpty(carInfoModel.warranty_uuid)) {
+                        custWarrantyCostModel.warranty_uuid = carInfoModel.warranty_uuid;
+                        InsurancePolicyModel insurancePolicyDetailByWarrantyUuid = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(carInfoModel.warranty_uuid);
+                        if (insurancePolicyDetailByWarrantyUuid == null) {
+                            continue;
+                        }
+                        List<CustWarrantyCostModel> custWarrantyCost = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
+                        if (custWarrantyCost == null) {
+                            continue;
+                        }
+                        for (CustWarrantyCostModel warrantyCostModel : custWarrantyCost) {
+                            if (warrantyCostModel != null) {
+                                if (!StringKit.isEmpty(insurancePolicyDetailByWarrantyUuid.channel_id)) {
+                                    TaskResultDataBean taskResultDataBean1 = new TaskResultDataBean();
+                                    taskResultDataBean1.dataType = "2";
+                                    taskResultDataBean1.dataAmount = warrantyCostModel.premium;
+                                    taskResultDataBean1.userType = "1";
+                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
+                                    taskResultDataBean1.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean1);
+
+                                    TaskResultDataBean taskResultDataBean2 = new TaskResultDataBean();
+                                    taskResultDataBean2.dataType = "2";
+                                    taskResultDataBean1.dataAmount = warrantyCostModel.premium;
+                                    taskResultDataBean1.userType = "1";
+                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
+                                    taskResultDataBean1.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean2);
+
+                                    TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
+                                    taskResultDataBean3.dataType = "4";
+                                    taskResultDataBean1.dataAmount = "2";
+                                    taskResultDataBean1.userType = "1";
+                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
+                                    taskResultDataBean1.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean3);
+                                }
+
+                                if (!StringKit.isEmpty(insurancePolicyDetailByWarrantyUuid.agent_id)) {
+                                    TaskResultDataBean taskResultDataBean1 = new TaskResultDataBean();
+                                    taskResultDataBean1.dataType = "2";
+                                    taskResultDataBean1.dataAmount = warrantyCostModel.premium;
+                                    taskResultDataBean1.userType = "2";
+                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
+                                    taskResultDataBean1.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean1);
+
+                                    TaskResultDataBean taskResultDataBean2 = new TaskResultDataBean();
+                                    taskResultDataBean2.dataType = "2";
+                                    taskResultDataBean1.dataAmount = warrantyCostModel.premium;
+                                    taskResultDataBean1.userType = "2";
+                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
+                                    taskResultDataBean1.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean2);
+
+                                    TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
+                                    taskResultDataBean3.dataType = "4";
+                                    taskResultDataBean1.dataAmount = "2";
+                                    taskResultDataBean1.userType = "2";
+                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
+                                    taskResultDataBean1.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean3);
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
 
             int update = insurancePolicyDao.updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance);
