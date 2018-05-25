@@ -164,7 +164,7 @@ public class CheckParamsKit {
 
                 if (isBasic(name)) {
                     try {
-                        String s = checkBasic(fieldName, field.get(o), chk);
+                        String s = checkBasic(chk.hintName(), field.get(o), chk);
                         flag = StringKit.isEmpty(s);
                         if (!flag) {
                             result.add(new Entry<>(fieldName, s));
@@ -178,7 +178,7 @@ public class CheckParamsKit {
                 } else if (isString(name)) {
                     try {
                         Object o1 = field.get(o);
-                        String s = checkStringType(fieldName, o1, chk);
+                        String s = checkStringType(chk.hintName(), o1, chk);
                         flag = StringKit.isEmpty(s);
                         if (!flag) {
                             result.add(new Entry<>(fieldName, s));
@@ -192,7 +192,7 @@ public class CheckParamsKit {
                 } else if (isList(name)) {
                     try {
                         Object o1 = field.get(o);
-                        Entry<String, String> stringStringEntry = checkListFirst(fieldName, o1, chk);
+                        Entry<String, String> stringStringEntry = checkListFirst(chk.hintName(), o1, chk);
                         flag = stringStringEntry == null;
                         if (!flag) {
                             result.add(stringStringEntry);
@@ -209,7 +209,7 @@ public class CheckParamsKit {
                         Object o1 = field.get(o);
                         if (necessity) {
                             if (o1 == null) {
-                                result.add(new Entry<>(fieldName, "缺少" + fieldName + "参数"));
+                                result.add(new Entry<>(fieldName, "缺少" + chk.hintName() + "参数"));
                             } else {
                                 checkToArray(o1, result);
                             }

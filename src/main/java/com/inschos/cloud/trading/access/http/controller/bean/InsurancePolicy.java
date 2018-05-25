@@ -230,7 +230,7 @@ public class InsurancePolicy {
 
     public static class GetInsurancePolicyDetailForOnlineStoreRequestRequest extends BaseRequest {
         // 保单唯一id
-        @CheckParams
+        @CheckParams(hintName = "保单id")
         public String warrantyUuid;
     }
 

@@ -61,6 +61,13 @@ public @interface CheckParams {
     StringType stringType() default STRING;
 
     /**
+     * 提示字段的名称
+     *
+     * @return 字段的名称
+     */
+    String hintName() default "";
+
+    /**
      * String型参数的类型枚举
      */
     enum StringType {
