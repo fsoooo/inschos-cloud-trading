@@ -415,7 +415,7 @@
                 and `product_id` in (${product_id_string})
             </if>
         </where>
-        GROUP BY `product_id` ORDER BY `cust_warranty`.`id` DESC
+        GROUP BY `product_id`
     </select>
 
     <select id="findInsurancePolicyListBySearchType1"
