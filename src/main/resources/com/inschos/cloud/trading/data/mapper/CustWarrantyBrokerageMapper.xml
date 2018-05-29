@@ -94,6 +94,9 @@
             <when test='time_range_type=="2"'>
                 select from_unixtime(cb.created_at/1000,"%Y-%m-%d") `time_text`,sum(cb.`manager_money`) `brokerage`
             </when>
+            <when test='time_range_type=="4"'>
+                select from_unixtime(cb.created_at/1000,"%Y") `time_text`,sum(cb.`manager_money`) `brokerage`
+            </when>
             <otherwise>
                 select from_unixtime(cb.created_at/1000,"%Y-%m") `time_text`,sum(cb.`manager_money`) `brokerage`
             </otherwise>
@@ -112,6 +115,9 @@
             </when>
             <when test='time_range_type=="2"'>
                 select from_unixtime(cb.created_at/1000,"%Y-%m-%d") `time_text`,sum(cb.`agent_money`) `brokerage`
+            </when>
+            <when test='time_range_type=="4"'>
+                select from_unixtime(cb.created_at/1000,"%Y") `time_text`,sum(cb.`agent_money`) `brokerage`
             </when>
             <otherwise>
                 select from_unixtime(cb.created_at/1000,"%Y-%m") `time_text`,sum(cb.`agent_money`) `brokerage`

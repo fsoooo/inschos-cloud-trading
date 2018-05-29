@@ -193,11 +193,4 @@ public class CarInsuranceController {
         return carInsuranceAction.sendExpressInfo(actionBean);
     }
 
-//    @GetActionBeanAnnotation(isCheckAccess = false)
-//    @RequestMapping("car_insurance/set_data")
-//    @ResponseBody
-//    public String setData(ActionBean actionBean) {
-//        return carInsuranceAction.setData(actionBean);
-//    }
-
 }

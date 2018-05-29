@@ -806,6 +806,12 @@ public class InsurancePolicyAction extends BaseAction {
                 calendar.add(Calendar.YEAR, 1);
                 endTime = String.valueOf(calendar.getTimeInMillis());
                 break;
+            case "4":
+                startTime = "0";
+                calendar.set(year, Calendar.JANUARY, 1, 0, 0, 0);
+                calendar.add(Calendar.YEAR, 1);
+                endTime = String.valueOf(calendar.getTimeInMillis());
+                break;
             default:
                 return json(BaseResponse.CODE_FAILURE, "时间范围类型错误", response);
         }

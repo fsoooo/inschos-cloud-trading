@@ -480,7 +480,7 @@
         COUNT(id)
         from cust_warranty
         WHERE manager_uuid=#{manager_uuid} AND state = 1
-        <if test="search!=null and search!='' and searchType=='1'">
+        <if test="search!=null and search!=''">
             and `warranty_code` like concat("%",#{search},"%")
         </if>
         <if test="type!=null and type!=''">
@@ -687,7 +687,7 @@
                     `cust_warranty`.`id`&lt;=(select `cust_warranty`.`id` from cust_warranty LEFT JOIN cust_warranty_car ON
                     `cust_warranty`.`warranty_uuid`=`cust_warranty_car`.`warranty_uuid`
                     where `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1
-                    <if test="search!=null and search!='' and searchType=='4'">
+                    <if test="search!=null and search!=''">
                         and `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
                     </if>
                     <if test="type!=null and type!=''">
@@ -815,7 +815,7 @@
         COUNT(`cust_warranty`.`id`)
         from cust_warranty LEFT JOIN cust_warranty_cost ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid` and `cust_warranty_cost`.`phase`=1
         WHERE `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND `cust_warranty`.`warranty_status`=1 AND (`cust_warranty_cost`.`pay_status`=201 OR `cust_warranty_cost`.`pay_status`=203 OR `cust_warranty_cost`.`pay_status`=204)
-        <if test="search!=null and search!='' and searchType=='1'">
+        <if test="search!=null and search!=''">
             and `cust_warranty`.`warranty_code` like concat("%",#{search},"%")
         </if>
         <if test="type!=null and type!=''">

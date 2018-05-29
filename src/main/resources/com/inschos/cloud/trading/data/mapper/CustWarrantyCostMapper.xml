@@ -133,6 +133,11 @@
                 `time_text`,sum(`cust_warranty_cost`.`premium`) `premium`,sum(`cust_warranty_cost`.`phase`=1)
                 `insurance_policy_count`
             </when>
+            <when test='time_range_type=="4"'>
+                select from_unixtime(cust_warranty_cost.actual_pay_time/1000,"%Y")
+                `time_text`,sum(`cust_warranty_cost`.`premium`) `premium`,sum(`cust_warranty_cost`.`phase`=1)
+                `insurance_policy_count`
+            </when>
             <otherwise>
                 select from_unixtime(cust_warranty_cost.actual_pay_time/1000,"%Y-%m")
                 `time_text`,sum(`cust_warranty_cost`.`premium`) `premium`,sum(`cust_warranty_cost`.`phase`=1)
@@ -148,8 +153,6 @@
         </if>
         group by `time_text`;
     </select>
-
-
 
     <select id="findInsurancePolicyBrokerageStatisticList"
             parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
