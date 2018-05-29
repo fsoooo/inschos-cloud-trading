@@ -2155,18 +2155,18 @@ public class CarInsuranceAction extends BaseAction {
 
                                     TaskResultDataBean taskResultDataBean2 = new TaskResultDataBean();
                                     taskResultDataBean2.dataType = "2";
-                                    taskResultDataBean1.dataAmount = warrantyCostModel.premium;
-                                    taskResultDataBean1.userType = "1";
-                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
-                                    taskResultDataBean1.time = time;
+                                    taskResultDataBean2.dataAmount = warrantyCostModel.premium;
+                                    taskResultDataBean2.userType = "1";
+                                    taskResultDataBean2.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
+                                    taskResultDataBean2.time = time;
                                     taskResultClient.updateTaskResult(taskResultDataBean2);
 
                                     TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
                                     taskResultDataBean3.dataType = "4";
-                                    taskResultDataBean1.dataAmount = "2";
-                                    taskResultDataBean1.userType = "1";
-                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
-                                    taskResultDataBean1.time = time;
+                                    taskResultDataBean3.dataAmount = "2";
+                                    taskResultDataBean3.userType = "1";
+                                    taskResultDataBean3.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
+                                    taskResultDataBean3.time = time;
                                     taskResultClient.updateTaskResult(taskResultDataBean3);
                                 }
 
@@ -2181,18 +2181,18 @@ public class CarInsuranceAction extends BaseAction {
 
                                     TaskResultDataBean taskResultDataBean2 = new TaskResultDataBean();
                                     taskResultDataBean2.dataType = "2";
-                                    taskResultDataBean1.dataAmount = warrantyCostModel.premium;
-                                    taskResultDataBean1.userType = "2";
-                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
-                                    taskResultDataBean1.time = time;
+                                    taskResultDataBean2.dataAmount = warrantyCostModel.premium;
+                                    taskResultDataBean2.userType = "2";
+                                    taskResultDataBean2.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
+                                    taskResultDataBean2.time = time;
                                     taskResultClient.updateTaskResult(taskResultDataBean2);
 
                                     TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
                                     taskResultDataBean3.dataType = "4";
-                                    taskResultDataBean1.dataAmount = "2";
-                                    taskResultDataBean1.userType = "2";
-                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
-                                    taskResultDataBean1.time = time;
+                                    taskResultDataBean3.dataAmount = "2";
+                                    taskResultDataBean3.userType = "2";
+                                    taskResultDataBean3.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
+                                    taskResultDataBean3.time = time;
                                     taskResultClient.updateTaskResult(taskResultDataBean3);
                                 }
                             }
@@ -2895,6 +2895,27 @@ public class CarInsuranceAction extends BaseAction {
             str = str.replaceAll("city", "children");
         }
         return str;
+    }
+
+    public String addTaskResult(ActionBean bean) {
+        String time = String.valueOf(System.currentTimeMillis());
+        TaskResultDataBean taskResultDataBean1 = new TaskResultDataBean();
+        taskResultDataBean1.dataType = "2";
+        taskResultDataBean1.dataAmount = "1000";
+        taskResultDataBean1.userType = "1";
+        taskResultDataBean1.userId = "347";
+        taskResultDataBean1.time = time;
+        long l = taskResultClient.updateTaskResult(taskResultDataBean1);
+
+        TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
+        taskResultDataBean3.dataType = "4";
+        taskResultDataBean1.dataAmount = "2";
+        taskResultDataBean1.userType = "1";
+        taskResultDataBean1.userId = "348";
+        taskResultDataBean1.time = time;
+        long l1 = taskResultClient.updateTaskResult(taskResultDataBean3);
+
+        return l + "haha" + l1;
     }
 
 }

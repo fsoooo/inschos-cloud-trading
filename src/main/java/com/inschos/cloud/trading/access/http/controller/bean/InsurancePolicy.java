@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 创建日期：2018/3/22 on 14:03
@@ -942,6 +939,40 @@ public class InsurancePolicy {
                 this.agentRate = "0.0";
                 this.agentRateText = "0.00%";
             }
+
+        }
+
+    }
+
+    public static class OfflineInsurancePolicyInputRequest extends BaseRequest {
+        @CheckParams(hintName = "文件")
+        public String fileKey;
+    }
+
+    public static class OfflineInsurancePolicyInputResponse extends BaseResponse {
+        public OfflineInsurancePolicyDetail data;
+    }
+
+    public static class OfflineInsurancePolicyDetail {
+        public String excelFileKey;
+        public List<OfflineInsurancePolicy> list;
+    }
+
+    public static class OfflineInsurancePolicy {
+
+        public String warrantyCode;
+
+        public String reason;
+
+        public OfflineInsurancePolicy() {
+
+        }
+
+        public OfflineInsurancePolicy(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
+
+        }
+
+        public OfflineInsurancePolicy(OfflineInsurancePolicyModel offlineInsurancePolicyModel, String reason) {
 
         }
 

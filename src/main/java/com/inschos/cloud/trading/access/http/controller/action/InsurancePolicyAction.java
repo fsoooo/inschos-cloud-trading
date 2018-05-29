@@ -3,20 +3,23 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
-import com.inschos.cloud.trading.access.rpc.bean.AccountBean;
 import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
-import com.inschos.cloud.trading.access.rpc.client.AccountClient;
 import com.inschos.cloud.trading.access.rpc.client.AgentClient;
+import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.*;
+import com.inschos.cloud.trading.extend.file.FileUpload;
+import com.inschos.cloud.trading.extend.file.FileUploadResponse;
 import com.inschos.cloud.trading.model.*;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -46,10 +49,16 @@ public class InsurancePolicyAction extends BaseAction {
     private CustWarrantyBrokerageDao custWarrantyBrokerageDao;
 
     @Autowired
+    private OfflineInsurancePolicyDao offlineInsurancePolicyDao;
+
+    @Autowired
     private ProductClient productClient;
 
     @Autowired
     private AgentClient agentClient;
+
+    @Autowired
+    private FileClient fileClient;
 
     public String getInsurancePolicyStatusList(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyStatusListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatusListRequest.class);
@@ -1070,6 +1079,108 @@ public class InsurancePolicyAction extends BaseAction {
 
         return json(BaseResponse.CODE_SUCCESS, "获取统计信息成功", response);
 
+    }
+
+    public String offlineInsurancePolicyInput(ActionBean actionBean) {
+        InsurancePolicy.OfflineInsurancePolicyInputRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.OfflineInsurancePolicyInputRequest.class);
+        InsurancePolicy.OfflineInsurancePolicyInputResponse response = new InsurancePolicy.OfflineInsurancePolicyInputResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        String fileUrl = fileClient.getFileUrl(request.fileKey);
+
+        if (StringKit.isEmpty(fileUrl)) {
+            return json(BaseResponse.CODE_FAILURE, "无法获取报表文件", response);
+        }
+
+        InputStream inputStream = HttpClientKit.downloadFile(fileUrl);
+
+        if (inputStream == null) {
+            return json(BaseResponse.CODE_FAILURE, "获取报表文件失败", response);
+        }
+
+
+        response.data = new InsurancePolicy.OfflineInsurancePolicyDetail();
+        response.data.list = new ArrayList<>();
+
+        boolean flag = false;
+
+        Workbook wb = null;
+        try {
+            wb = WorkbookFactory.create(inputStream);
+
+            for (Sheet sheet : wb) {
+                for (Row row : sheet) {
+                    OfflineInsurancePolicyModel offlineInsurancePolicyModel = ExcelModelKit.initModel(OfflineInsurancePolicyModel.class, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, row);
+
+                    if (offlineInsurancePolicyModel == null) {
+                        continue;
+                    }
+
+                    if (!offlineInsurancePolicyModel.isEnable()) {
+                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel, "缺少必填字段"));
+                        continue;
+                    }
+
+                    OfflineInsurancePolicyModel offlineInsurance = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyCode(offlineInsurancePolicyModel.warranty_code);
+
+                    if (offlineInsurance != null) {
+                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel, "该保单已存在"));
+                    } else {
+                        long l = offlineInsurancePolicyDao.addOfflineInsurancePolicy(offlineInsurancePolicyModel);
+                        if (l <= 0) {
+                            response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel, "导入失败"));
+                        }
+                    }
+                }
+            }
+
+            flag = response.data.list == null || response.data.list.isEmpty();
+
+        } catch (IOException | InvalidFormatException e) {
+            e.printStackTrace();
+            flag = false;
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!flag && response.data.list != null && !response.data.list.isEmpty()) {
+            byte[] data = ExcelModelKit.createExcelByteArray(OfflineInsurancePolicyModel.TITLE_NAME_LIST, response.data.list, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, "导入失败保单数据");
+
+            if (data == null) {
+                return json(BaseResponse.CODE_FAILURE, "导入失败", response);
+            }
+
+            FileUpload.UploadByBase64Request fileUploadRequest = new FileUpload.UploadByBase64Request();
+            fileUploadRequest.base64 = Base64.getEncoder().encodeToString(data);
+            fileUploadRequest.fileKey = MD5Kit.MD5Digest(actionBean.managerUuid + System.currentTimeMillis() + (Math.random() * 10000000L));
+            fileUploadRequest.fileName = fileUploadRequest.fileKey + ".xls";
+            FileUploadResponse response1 = FileUpload.getInstance().uploadByBase64(fileUploadRequest);
+
+            if (response1 != null) {
+                if (response1.code == BaseResponse.CODE_SUCCESS) {
+                    response.data.excelFileKey = fileUploadRequest.fileKey;
+                    return json(BaseResponse.CODE_FAILURE, "部分导入失败", response);
+                } else {
+                    return json(BaseResponse.CODE_FAILURE, "导入失败", response);
+                }
+            } else {
+                return json(BaseResponse.CODE_FAILURE, "导入失败", response);
+            }
+        }
+
+        return json((flag ? BaseResponse.CODE_SUCCESS : BaseResponse.CODE_FAILURE), (flag ? "导入成功" : "部分导入失败"), response);
     }
 
     private long getDayEndTime(int year, int month, int day) {

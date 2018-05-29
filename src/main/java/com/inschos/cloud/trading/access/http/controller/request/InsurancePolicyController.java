@@ -90,4 +90,11 @@ public class InsurancePolicyController {
     public String getInsurancePolicyBrokerageStatisticListForManagerSystem(ActionBean actionBean) {
         return insurancePolicyAction.getInsurancePolicyBrokerageStatisticListForManagerSystem(actionBean);
     }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/offline_insurance_policy_input")
+    @ResponseBody
+    public String offlineInsurancePolicyInput(ActionBean actionBean) {
+        return insurancePolicyAction.offlineInsurancePolicyInput(actionBean);
+    }
 }
