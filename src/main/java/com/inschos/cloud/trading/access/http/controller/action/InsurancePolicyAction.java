@@ -360,7 +360,7 @@ public class InsurancePolicyAction extends BaseAction {
         if (!StringKit.isEmpty(request.searchType) && (!StringKit.isNumeric(request.searchType) || Integer.valueOf(request.searchType) < 1 || Integer.valueOf(request.searchType) > 4)) {
             return json(BaseResponse.CODE_FAILURE, "搜索类型错误", response);
         } else if (StringKit.isEmpty(request.searchType)) {
-            request.searchType = "";
+            request.searchKey = "";
         }
 
         if (!StringKit.isEmpty(request.searchType) && StringKit.isEmpty(request.searchKey)) {
@@ -1144,7 +1144,7 @@ public class InsurancePolicyAction extends BaseAction {
                     OfflineInsurancePolicyModel offlineInsurance = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyCode(offlineInsurancePolicyModel.warranty_code);
 
                     if (offlineInsurance != null) {
-                        offlineInsurancePolicyModel.reason = "该保单已存在";
+                        offlineInsurancePolicyModel.reason = "保单号重复";
                         response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
                         errorList.add(offlineInsurancePolicyModel);
                     } else {
