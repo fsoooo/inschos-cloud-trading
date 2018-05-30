@@ -61,7 +61,7 @@ public class ExcelModelKit {
                 Field field = fieldMap.get(fieldName);
 
                 if (field != null) {
-                    field.set(t, formatter.formatCellValue(cell));
+                    field.set(t, formatter.formatCellValue(cell).trim());
                 }
             }
 

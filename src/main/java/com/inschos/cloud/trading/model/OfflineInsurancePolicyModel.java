@@ -38,6 +38,12 @@ public class OfflineInsurancePolicyModel {
 //        COLUMN_FIELD_MAP.put("R", "");
 //        COLUMN_FIELD_MAP.put("S", "");
 //        COLUMN_FIELD_MAP.put("T", "");
+//        COLUMN_FIELD_MAP.put("U", "");
+//        COLUMN_FIELD_MAP.put("V", "");
+//        COLUMN_FIELD_MAP.put("W", "");
+//        COLUMN_FIELD_MAP.put("X", "");
+//        COLUMN_FIELD_MAP.put("Y", "");
+//        COLUMN_FIELD_MAP.put("Z", "");
     }
 
     public final static List<String> TITLE_NAME_LIST;
@@ -51,6 +57,11 @@ public class OfflineInsurancePolicyModel {
      * 主键id
      */
     public String id;
+
+    /**
+     * 业管id
+     */
+    public String manager_uuid;
 
     /**
      * 保单唯一标识

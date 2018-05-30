@@ -3,16 +3,16 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.OfflineInsurancePolicyMapper">
 
     <sql id="Base_Column_List">
-        `id`,`warranty_uuid`,`warranty_code`,`created_at`,`updated_at`,`state`
+        `id`,`manager_uuid`,`warranty_uuid`,`warranty_code`,`created_at`,`updated_at`,`state`
     </sql>
 
     <insert id="addOfflineInsurancePolicy" parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert into offline_cust_warranty
-        (`id`,`warranty_uuid`,`warranty_code`,`created_at`,`updated_at`,`state`)
+        (`id`,`manager_uuid`,`warranty_uuid`,`warranty_code`,`created_at`,`updated_at`,`state`)
         values
-        (#{id},#{warranty_uuid},#{warranty_code},#{created_at},#{updated_at},#{state})
+        (#{id},#{manager_uuid},#{warranty_uuid},#{warranty_code},#{created_at},#{updated_at},#{state})
     </insert>
 
     <select id="findOfflineInsurancePolicyByWarrantyCode" parameterType="java.lang.String"
@@ -20,7 +20,7 @@
         select
         <include refid="Base_Column_List"/>
         from offline_cust_warranty
-        WHERE `warranty_code`=#{_parameter}
+        WHERE `warranty_code`=#{_parameter} AND `state`=1
     </select>
 
     <select id="findOfflineInsurancePolicyByWarrantyUuid" parameterType="java.lang.String"
@@ -28,7 +28,7 @@
         select
         <include refid="Base_Column_List"/>
         from offline_cust_warranty
-        WHERE `warranty_uuid`=#{_parameter}
+        WHERE `warranty_uuid`=#{_parameter} AND `state`=1
     </select>
 
 </mapper>
