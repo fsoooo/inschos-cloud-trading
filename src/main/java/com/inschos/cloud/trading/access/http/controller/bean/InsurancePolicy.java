@@ -955,6 +955,7 @@ public class InsurancePolicy {
 
     public static class OfflineInsurancePolicyDetail {
         public String excelFileKey;
+        public String excelFileUrl;
         public List<OfflineInsurancePolicy> list;
     }
 
@@ -969,11 +970,8 @@ public class InsurancePolicy {
         }
 
         public OfflineInsurancePolicy(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
-
-        }
-
-        public OfflineInsurancePolicy(OfflineInsurancePolicyModel offlineInsurancePolicyModel, String reason) {
-
+            this.warrantyCode = offlineInsurancePolicyModel.warranty_code;
+            this.reason = offlineInsurancePolicyModel.reason;
         }
 
     }

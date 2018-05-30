@@ -20,7 +20,7 @@
         select
         <include refid="Base_Column_List"/>
         from offline_cust_warranty
-        WHERE `warranty_code`={_parameter}
+        WHERE `warranty_code`=#{_parameter}
     </select>
 
     <select id="findOfflineInsurancePolicyByWarrantyUuid" parameterType="java.lang.String"
@@ -28,7 +28,7 @@
         select
         <include refid="Base_Column_List"/>
         from offline_cust_warranty
-        WHERE `warranty_uuid`={_parameter}
+        WHERE `warranty_uuid`=#{_parameter}
     </select>
 
 </mapper>

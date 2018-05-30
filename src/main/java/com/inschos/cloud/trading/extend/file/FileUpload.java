@@ -50,7 +50,7 @@ public class FileUpload {
         }
 
         try {
-            String result = HttpClientKit.post(FileUploadCommon.upload_by_base64, JsonKit.bean2Json(request));
+            String result = HttpClientKit.uploadFile(FileUploadCommon.upload_by_base64, JsonKit.bean2Json(request));
 
             if (result != null) {
                 response = JsonKit.json2Bean(result, FileUploadResponse.class);

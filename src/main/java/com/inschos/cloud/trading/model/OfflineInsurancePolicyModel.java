@@ -19,7 +19,7 @@ public class OfflineInsurancePolicyModel {
     static {
         COLUMN_FIELD_MAP = new HashMap<>();
         COLUMN_FIELD_MAP.put("A", "warranty_code");
-//        COLUMN_FIELD_MAP.put("B", "");
+        COLUMN_FIELD_MAP.put("B", "reason");
 //        COLUMN_FIELD_MAP.put("C", "");
 //        COLUMN_FIELD_MAP.put("D", "");
 //        COLUMN_FIELD_MAP.put("E", "");
@@ -77,9 +77,22 @@ public class OfflineInsurancePolicyModel {
      */
     public String state;
 
+    public String reason;
+
 
     public boolean isEnable() {
         return !StringKit.isEmpty(warranty_code);
+    }
+
+    public boolean isEmptyLine () {
+        return StringKit.isEmpty(warranty_code);
+    }
+
+    public static OfflineInsurancePolicyModel getTitleModel() {
+        OfflineInsurancePolicyModel title = new OfflineInsurancePolicyModel();
+        title.warranty_code = "保单";
+        title.reason = "导入失败原因";
+        return title;
     }
 
 }

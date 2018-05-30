@@ -1113,8 +1113,10 @@ public class InsurancePolicyAction extends BaseAction {
         boolean flag = false;
 
         Workbook wb = null;
+        List<OfflineInsurancePolicyModel> errorList = new ArrayList<>();
         try {
             wb = WorkbookFactory.create(inputStream);
+            String time = String.valueOf(System.currentTimeMillis());
 
             for (Sheet sheet : wb) {
                 for (Row row : sheet) {
@@ -1124,19 +1126,35 @@ public class InsurancePolicyAction extends BaseAction {
                         continue;
                     }
 
+                    if (offlineInsurancePolicyModel.isEmptyLine()) {
+                        continue;
+                    }
+
                     if (!offlineInsurancePolicyModel.isEnable()) {
-                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel, "缺少必填字段"));
+                        offlineInsurancePolicyModel.reason = "缺少必填字段";
+                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
+                        errorList.add(offlineInsurancePolicyModel);
                         continue;
                     }
 
                     OfflineInsurancePolicyModel offlineInsurance = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyCode(offlineInsurancePolicyModel.warranty_code);
 
                     if (offlineInsurance != null) {
-                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel, "该保单已存在"));
+                        offlineInsurancePolicyModel.reason = "该保单已存在";
+                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
+                        errorList.add(offlineInsurancePolicyModel);
                     } else {
+
+                        offlineInsurancePolicyModel.warranty_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
+                        offlineInsurancePolicyModel.created_at = time;
+                        offlineInsurancePolicyModel.updated_at = time;
+                        offlineInsurancePolicyModel.state = "1";
+
                         long l = offlineInsurancePolicyDao.addOfflineInsurancePolicy(offlineInsurancePolicyModel);
                         if (l <= 0) {
-                            response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel, "导入失败"));
+                            offlineInsurancePolicyModel.reason = "添加数据失败";
+                            response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
+                            errorList.add(offlineInsurancePolicyModel);
                         }
                     }
                 }
@@ -1156,7 +1174,9 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         if (!flag && response.data.list != null && !response.data.list.isEmpty()) {
-            byte[] data = ExcelModelKit.createExcelByteArray(OfflineInsurancePolicyModel.TITLE_NAME_LIST, response.data.list, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, "导入失败保单数据");
+            OfflineInsurancePolicyModel titleModel = OfflineInsurancePolicyModel.getTitleModel();
+            errorList.add(0, titleModel);
+            byte[] data = ExcelModelKit.createExcelByteArray(errorList, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, "导入失败保单数据");
 
             if (data == null) {
                 return json(BaseResponse.CODE_FAILURE, "导入失败", response);
@@ -1171,6 +1191,7 @@ public class InsurancePolicyAction extends BaseAction {
             if (response1 != null) {
                 if (response1.code == BaseResponse.CODE_SUCCESS) {
                     response.data.excelFileKey = fileUploadRequest.fileKey;
+                    response.data.excelFileUrl = fileClient.getFileUrl(fileUploadRequest.fileKey);
                     return json(BaseResponse.CODE_FAILURE, "部分导入失败", response);
                 } else {
                     return json(BaseResponse.CODE_FAILURE, "导入失败", response);

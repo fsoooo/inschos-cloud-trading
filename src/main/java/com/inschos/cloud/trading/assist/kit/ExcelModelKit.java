@@ -5,11 +5,11 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.functions.T;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -73,67 +73,72 @@ public class ExcelModelKit {
         return t;
     }
 
-    public static <T> byte[] createExcelByteArray(List<String> title, List<T> data, Map<String, String> map, String sheetName) {
+    public static <T> byte[] createExcelByteArray(List<T> data, Map<String, String> map, String sheetName) {
         byte[] result = null;
 
-        if (title == null || title.isEmpty()) {
+        if (data == null || data.isEmpty()) {
             return null;
         }
 
         HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet(sheetName);
-        HSSFRow row = sheet.createRow(0);
+        Sheet sheet = workbook.createSheet(sheetName);
+        int size = data.size();
+        Field[] declaredFields = data.get(0).getClass().getDeclaredFields();
 
-        int size = title.size();
-        for (int i = 0; i < size; i++) {
-            HSSFCell cell = row.createCell(i);
-            cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-            cell.setCellValue(title.get(i));
+        if (declaredFields == null) {
+            return null;
         }
 
-        if (data != null && !data.isEmpty()) {
-            for (int i = 1; i < data.size() + 1; i++) {
-                HSSFRow contentRow = sheet.createRow(i);
-                T t = data.get(i);
-                Class<?> aClass = t.getClass();
+        int length = declaredFields.length;
+        Map<String, Field> fieldMap = new HashMap<>();
 
-                Field[] farray = aClass.getDeclaredFields();
+        for (int i = 0; i < size; i++) {
+            Row row = sheet.createRow(i);
+            T t = data.get(i);
+            Class<?> aClass = t.getClass();
+            Field[] fArray = aClass.getDeclaredFields();
 
-                if (farray == null || farray.length == 0) {
-                    break;
-                }
+            fieldMap.clear();
+            for (Field field : fArray) {
+                fieldMap.put(field.getName(), field);
+            }
 
-                Map<String, Field> fieldMap = new HashMap<>();
+            for (int j = 0; j < length; j++) {
+                Cell cell = row.createCell(j);
 
-                for (Field field : farray) {
-                    fieldMap.put(field.getName(), field);
-                }
+                String columnName = CellReference.convertNumToColString(cell.getAddress().getColumn());
+                String fieldName = map.get(columnName);
 
-                for (int j = 0; j < size; j++) {
-                    HSSFCell cell = contentRow.createCell(j);
+                Field field = fieldMap.get(fieldName);
 
-                    String columnName = CellReference.convertNumToColString(cell.getAddress().getColumn());
-                    String fieldName = map.get(columnName);
-
-                    Field field = fieldMap.get(fieldName);
-
-                    if (field != null) {
-                        field.setAccessible(true);
-                        try {
-                            Object o = field.get(t);
-
-                            cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-                            cell.setCellValue(o.toString());
-
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
+                if (field != null) {
+                    field.setAccessible(true);
+                    try {
+                        Object o = field.get(t);
+                        L.log.debug("createExcelByteArray ===========> row = " + i + " column = " + j + " value = " + o);
+                        cell.setCellValue(o.toString());
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         }
 
-        result = workbook.getBytes();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+        try {
+            workbook.write(os);
+            result = os.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = null;
+        } finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         return result;
     }
