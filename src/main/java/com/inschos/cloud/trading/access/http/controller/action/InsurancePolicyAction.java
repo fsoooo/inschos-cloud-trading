@@ -1130,6 +1130,10 @@ public class InsurancePolicyAction extends BaseAction {
                         continue;
                     }
 
+                    if (offlineInsurancePolicyModel.isTitle()) {
+                        continue;
+                    }
+
                     if (!offlineInsurancePolicyModel.isEnable()) {
                         offlineInsurancePolicyModel.reason = "缺少必填字段";
                         response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));

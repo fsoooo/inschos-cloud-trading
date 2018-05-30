@@ -84,13 +84,17 @@ public class OfflineInsurancePolicyModel {
         return !StringKit.isEmpty(warranty_code);
     }
 
-    public boolean isEmptyLine () {
+    public boolean isEmptyLine() {
         return StringKit.isEmpty(warranty_code);
+    }
+
+    public boolean isTitle() {
+        return StringKit.equals(this.warranty_code, "保单号");
     }
 
     public static OfflineInsurancePolicyModel getTitleModel() {
         OfflineInsurancePolicyModel title = new OfflineInsurancePolicyModel();
-        title.warranty_code = "保单";
+        title.warranty_code = "保单号";
         title.reason = "导入失败原因";
         return title;
     }

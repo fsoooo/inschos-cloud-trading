@@ -92,7 +92,7 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/offline_insurance_policy_input")
+    @RequestMapping("offline_insurance_policy_input")
     @ResponseBody
     public String offlineInsurancePolicyInput(ActionBean actionBean) {
         return insurancePolicyAction.offlineInsurancePolicyInput(actionBean);
