@@ -963,6 +963,12 @@ public class CarInsuranceAction extends BaseAction {
                     boolean b = checkCommitEqualsUltimate(checkCoverageListResult.coverageList, datum.coverageList);
                     insurancePolicy.isChanged = b ? "0" : "1";
 
+                    for (CarInsurance.InsuranceInfo info : insurancePolicy.coverageList) {
+                        if (StringKit.equals(info.hasExcessOption, "1") && StringKit.equals(info.isExcessOption, "1")) {
+                            info.coverageName = info.coverageName + "(不计免赔)";
+                        }
+                    }
+
                     response.data.insurancePolicies.add(insurancePolicy);
                 }
 
@@ -1176,6 +1182,13 @@ public class CarInsuranceAction extends BaseAction {
                     insurancePolicyPremiumDetail.coverageList = dealInsurancePolicyInfoForShowList(datum.coverageList);
                     boolean b = checkCommitEqualsUltimate(checkCoverageListResult.coverageList, datum.coverageList);
                     insurancePolicyPremiumDetail.isChanged = b ? "0" : "1";
+
+                    for (CarInsurance.InsuranceInfo info : insurancePolicyPremiumDetail.coverageList) {
+                        if (StringKit.equals(info.hasExcessOption, "1") && StringKit.equals(info.isExcessOption, "1")) {
+                            info.coverageName = info.coverageName + "(不计免赔)";
+                        }
+                    }
+
                     response.data.insurancePolicyPremiumDetails.add(insurancePolicyPremiumDetail);
                 }
 
