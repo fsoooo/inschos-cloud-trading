@@ -202,6 +202,7 @@ public class CarInsurance {
         public String minDay;
         public String maxAmount;
         public String minAmount;
+        public String insuredPremiumText;
 
 
     }

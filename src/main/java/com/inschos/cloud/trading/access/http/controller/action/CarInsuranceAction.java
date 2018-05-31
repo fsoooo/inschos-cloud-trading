@@ -964,8 +964,9 @@ public class CarInsuranceAction extends BaseAction {
                     insurancePolicy.isChanged = b ? "0" : "1";
 
                     for (CarInsurance.InsuranceInfo info : insurancePolicy.coverageList) {
-                        if (StringKit.equals(info.hasExcessOption, "1") && StringKit.equals(info.isExcessOption, "1")) {
-                            info.coverageName = info.coverageName + "(不计免赔)";
+                        if (StringKit.equals(info.isExcessOption, "1")) {
+                            info.coverageName = String.format("%s(不计免赔)", info.coverageName);
+                            info.insuredPremiumText = "¥" + info.insuredPremium;
                         }
                     }
 
@@ -1184,8 +1185,9 @@ public class CarInsuranceAction extends BaseAction {
                     insurancePolicyPremiumDetail.isChanged = b ? "0" : "1";
 
                     for (CarInsurance.InsuranceInfo info : insurancePolicyPremiumDetail.coverageList) {
-                        if (StringKit.equals(info.hasExcessOption, "1") && StringKit.equals(info.isExcessOption, "1")) {
-                            info.coverageName = info.coverageName + "(不计免赔)";
+                        if (StringKit.equals(info.isExcessOption, "1")) {
+                            info.coverageName = String.format("%s(不计免赔)", info.coverageName);
+                            info.insuredPremiumText = "¥" + info.insuredPremium;
                         }
                     }
 
