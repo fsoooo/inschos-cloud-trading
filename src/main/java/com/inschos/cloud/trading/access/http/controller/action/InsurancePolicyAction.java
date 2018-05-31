@@ -270,6 +270,10 @@ public class InsurancePolicyAction extends BaseAction {
                     if (productBean != null) {
                         insurancePolicy.insuranceProductName = productBean.displayName;
                         insurancePolicy.insuranceCompanyName = productBean.insuranceCoName;
+                        String[] split = productBean.code.split("_");
+                        if (split.length > 1) {
+                            insurancePolicy.insuranceCompanyLogo = fileClient.getFileUrl("property_key_" + split[0]);
+                        }
                     }
 
                     List<InsuranceParticipantModel> insuranceParticipantInsuredByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantInsuredNameByWarrantyUuid(insurancePolicy.warrantyUuid);
