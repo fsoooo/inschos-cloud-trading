@@ -965,12 +965,13 @@ public class CarInsuranceAction extends BaseAction {
                         datum.carshipTax = "0.00";
                         datum.carshipTaxText = "¥" + datum.carshipTax;
                     }
-                    total = total.add(new BigDecimal(datum.carshipTax));
 
-                    BigDecimal add = bi.add(ci);
-                    datum.totalPremium = decimalFormat.format(add.doubleValue());
+                    BigDecimal bigDecimal = new BigDecimal(datum.carshipTax);
+                    bigDecimal = bigDecimal.add(bi).add(ci);
+                    total = total.add(bigDecimal);
+
+                    datum.totalPremium = decimalFormat.format(bigDecimal.doubleValue());
                     datum.totalPremiumText = "¥" + datum.totalPremium;
-                    total = total.add(add);
 
                     CarInsurance.InsurancePolicy insurancePolicy = new CarInsurance.InsurancePolicy(datum);
 

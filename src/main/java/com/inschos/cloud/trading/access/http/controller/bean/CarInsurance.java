@@ -429,7 +429,6 @@ public class CarInsurance {
         public String addresseeCity;
         @CheckParams(hintName = "保单寄送省级代码")
         public String addresseeProvince;
-        @CheckParams(hintName = "税费")
         public String carshipTax;
         public String ciInsuredPremium;
         public String biInsuredPremium;
