@@ -157,7 +157,6 @@ public class InsurancePolicy {
         public String bizId;
         public String insuranceClaimsCount = "0";
 
-
         public GetInsurancePolicy() {
 
         }
@@ -633,6 +632,10 @@ public class InsurancePolicy {
         public List<GetInsurancePolicyForManagerSystem> data;
     }
 
+    public static class DownloadInsurancePolicyListForManagerSystemResponse extends BaseResponse {
+        public String data;
+    }
+
     public static class GetInsurancePolicyForManagerSystem extends GetInsurancePolicy {
         public String contactsName;
         public String contactsMobile;
@@ -648,6 +651,50 @@ public class InsurancePolicy {
         public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
             super(model, premium, pay_money, warrantyStatusForPay, warrantyStatusForPayText);
         }
+
+        public static GetInsurancePolicyForManagerSystem getCarInsurancePolicyTitle() {
+            GetInsurancePolicyForManagerSystem insurancePolicy = new GetInsurancePolicyForManagerSystem();
+
+            insurancePolicy.prePolicyNo = "投保单号";
+            insurancePolicy.warrantyCode = "保单号";
+            insurancePolicy.productName = "保险产品";
+            insurancePolicy.policyHolderName = "投保人";
+            insurancePolicy.policyHolderMobile = "投保人电话";
+            insurancePolicy.carCode = "车牌号";
+            insurancePolicy.premiumText = "保费（元）";
+            insurancePolicy.startTimeText = "投保时间";
+            insurancePolicy.warrantyStatusText = "保单状态";
+
+            return insurancePolicy;
+        }
+
+    }
+
+    public static final Map<String,String> CAR_FIELD_MAP;
+
+    static {
+        CAR_FIELD_MAP = new HashMap<>();
+        CAR_FIELD_MAP.put("A","prePolicyNo");
+        CAR_FIELD_MAP.put("B","warrantyCode");
+        CAR_FIELD_MAP.put("C","productName");
+        CAR_FIELD_MAP.put("D","policyHolderName");
+        CAR_FIELD_MAP.put("E","policyHolderMobile");
+        CAR_FIELD_MAP.put("F","carCode");
+        CAR_FIELD_MAP.put("G","premiumText");
+        CAR_FIELD_MAP.put("H","startTimeText");
+        CAR_FIELD_MAP.put("I","warrantyStatusText");
+    }
+
+    public static final Map<String,String> PERSON_FIELD_MAP;
+
+    static {
+        PERSON_FIELD_MAP = new HashMap<>();
+    }
+
+    public static final Map<String,String> TEAM_FIELD_MAP;
+
+    static {
+        TEAM_FIELD_MAP = new HashMap<>();
     }
 
     public static class GetInsurancePolicyDetailForManagerSystemRequest extends BaseRequest {

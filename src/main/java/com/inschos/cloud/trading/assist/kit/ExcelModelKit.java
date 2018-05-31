@@ -13,9 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 创建日期：2018/5/29 on 19:30
@@ -74,7 +72,6 @@ public class ExcelModelKit {
     }
 
     public static <T> byte[] createExcelByteArray(List<T> data, Map<String, String> map, String sheetName) {
-        byte[] result = null;
 
         if (data == null || data.isEmpty()) {
             return null;
@@ -82,21 +79,39 @@ public class ExcelModelKit {
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet(sheetName);
-        int size = data.size();
-        Field[] declaredFields = data.get(0).getClass().getDeclaredFields();
 
-        if (declaredFields == null) {
-            return null;
+        writeExcel(sheet, data, map, 0);
+
+        return getWorkbookByteArray(workbook);
+    }
+
+    public static <T> int writeExcel(Sheet sheet, List<T> data, Map<String, String> map, int startRow) {
+
+        if (data == null || data.isEmpty()) {
+            return 0;
         }
 
+        int size = data.size();
+        Field[] declaredFields = getClassFieldArray(data.get(0));
+
+        if (declaredFields == null || declaredFields.length == 0) {
+            return 0;
+        }
+
+        int count = 0;
         int length = declaredFields.length;
         Map<String, Field> fieldMap = new HashMap<>();
 
-        for (int i = 0; i < size; i++) {
+        for (int i = startRow; i < size + startRow; i++) {
+            T t = data.get(i - startRow);
+            Field[] fArray = getClassFieldArray(t);
+
+            if (fArray == null || fArray.length == 0) {
+                continue;
+            }
+
             Row row = sheet.createRow(i);
-            T t = data.get(i);
-            Class<?> aClass = t.getClass();
-            Field[] fArray = aClass.getDeclaredFields();
+            count++;
 
             fieldMap.clear();
             for (Field field : fArray) {
@@ -115,8 +130,12 @@ public class ExcelModelKit {
                     field.setAccessible(true);
                     try {
                         Object o = field.get(t);
-                        L.log.debug("createExcelByteArray ===========> row = " + i + " column = " + j + " value = " + o);
-                        cell.setCellValue(o.toString());
+                        L.log.debug("writeExcel ===========> row = " + i + " column = " + j + " value = " + o);
+                        if (o == null) {
+                            cell.setCellValue("");
+                        } else {
+                            cell.setCellValue(o.toString());
+                        }
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -124,6 +143,11 @@ public class ExcelModelKit {
             }
         }
 
+        return count;
+    }
+
+    public static byte[] getWorkbookByteArray (Workbook workbook) {
+        byte[] result;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         try {
@@ -141,6 +165,32 @@ public class ExcelModelKit {
         }
 
         return result;
+    }
+
+    private static Field[] getClassFieldArray(Object t) {
+        Class<?> aClass = t.getClass();
+
+        Field[] declaredFields = aClass.getDeclaredFields();
+        ArrayList<Field> fields = new ArrayList<>();
+        if (declaredFields != null) {
+            fields = new ArrayList<>(Arrays.asList(declaredFields));
+        }
+
+        Class<?> superclass = aClass.getSuperclass();
+        L.log.debug("getClassFieldArray ===========> name = " + superclass.getName());
+        L.log.debug("getClassFieldArray ===========> simpleName = " + superclass.getSimpleName());
+        while (!StringKit.equals(superclass.getSimpleName(), "Object")) {
+            Field[] declaredFields1 = superclass.getDeclaredFields();
+
+            if (declaredFields1 != null) {
+                fields.addAll(Arrays.asList(declaredFields1));
+            }
+
+            superclass = superclass.getSuperclass();
+        }
+
+        declaredFields = fields.toArray(new Field[0]);
+        return declaredFields;
     }
 
 }

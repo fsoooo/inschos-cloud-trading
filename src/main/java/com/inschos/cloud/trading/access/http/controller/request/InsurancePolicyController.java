@@ -97,4 +97,11 @@ public class InsurancePolicyController {
     public String offlineInsurancePolicyInput(ActionBean actionBean) {
         return insurancePolicyAction.offlineInsurancePolicyInput(actionBean);
     }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("download_insurance_policy_list_for_manager_system")
+    @ResponseBody
+    public String downInsurancePolicyListForManagerSystem(ActionBean actionBean) {
+        return insurancePolicyAction.downInsurancePolicyListForManagerSystem(actionBean);
+    }
 }

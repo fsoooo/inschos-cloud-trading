@@ -14,12 +14,14 @@ import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.extend.file.FileUploadResponse;
 import com.inschos.cloud.trading.model.*;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -329,9 +331,137 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
 
+        String s = checkGetInsurancePolicyListParams(request, insurancePolicyModel);
+
+        if (!StringKit.isEmpty(s)) {
+            return json(BaseResponse.CODE_FAILURE, s, response);
+        }
+
+        Map<String, AgentBean> agentMap = new HashMap<>();
+        if (StringKit.equals(request.searchType, "2")) {
+            agentMap.putAll(getAgentMap(actionBean.managerUuid, request.searchKey, insurancePolicyModel));
+        }
+
+        List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
+        long total = searchInsurancePolicyCount(insurancePolicyModel);
+
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, request, insurancePolicyModel, agentMap);
+
+        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.size());
+
+        return json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
+    }
+
+    public String downInsurancePolicyListForManagerSystem(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyListForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListForManagerSystemRequest.class);
+        InsurancePolicy.DownloadInsurancePolicyListForManagerSystemResponse response = new InsurancePolicy.DownloadInsurancePolicyListForManagerSystemResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+
+        String s = checkGetInsurancePolicyListParams(request, insurancePolicyModel);
+
+        if (!StringKit.isEmpty(s)) {
+            return json(BaseResponse.CODE_FAILURE, s, response);
+        }
+
+        // insurancePolicyModel.page = setPage(request.lastId, request.pageNum, "100");
+
+        Map<String, AgentBean> agentMap = new HashMap<>();
+        if (StringKit.equals(request.searchType, "2")) {
+            agentMap.putAll(getAgentMap(actionBean.managerUuid, request.searchKey, insurancePolicyModel));
+        }
+
+        boolean flag = true;
+        String lastId = "0";
+        String pageNum = null;
+        String pageSize = "100";
+
+        String name = "";
+        // 1-个人保单，2-团险保单，3-车险保单
+        switch (request.warrantyType) {
+            case "1":
+                name = "个人";
+                break;
+            case "2":
+                name = "团险";
+                break;
+            case "3":
+                name = "车险";
+                break;
+        }
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        Sheet sheet = workbook.createSheet(name + "-保单列表");
+
+        InsurancePolicy.GetInsurancePolicyForManagerSystem carInsurancePolicyTitle = InsurancePolicy.GetInsurancePolicyForManagerSystem.getCarInsurancePolicyTitle();
+        List<InsurancePolicy.GetInsurancePolicyForManagerSystem> list = new ArrayList<>();
+        list.add(carInsurancePolicyTitle);
+        int startRow = 0;
+
+        int i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow);
+        startRow += i;
+
+        do {
+            insurancePolicyModel.page = setPage(lastId, pageNum, pageSize);
+
+            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
+            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, request, insurancePolicyModel, agentMap);
+
+            i = ExcelModelKit.writeExcel(sheet, getInsurancePolicyForManagerSystems, InsurancePolicy.CAR_FIELD_MAP, startRow);
+            startRow += i;
+
+            if (getInsurancePolicyForManagerSystems != null && !getInsurancePolicyForManagerSystems.isEmpty()) {
+                lastId = getInsurancePolicyForManagerSystems.get(getInsurancePolicyForManagerSystems.size() - 1).id;
+            }
+
+            flag = getInsurancePolicyForManagerSystems != null && !getInsurancePolicyForManagerSystems.isEmpty() && getInsurancePolicyForManagerSystems.size() >= Integer.valueOf(pageSize);
+
+        } while (flag);
+
+        byte[] workbookByteArray = ExcelModelKit.getWorkbookByteArray(workbook);
+
+        if (workbookByteArray == null) {
+            return json(BaseResponse.CODE_FAILURE, "获取下载地址失败", response);
+        }
+
+        FileUpload.UploadByBase64Request fileUploadRequest = new FileUpload.UploadByBase64Request();
+        fileUploadRequest.base64 = Base64.getEncoder().encodeToString(workbookByteArray);
+        fileUploadRequest.fileKey = MD5Kit.MD5Digest(actionBean.managerUuid + System.currentTimeMillis() + (Math.random() * 10000000L));
+        fileUploadRequest.fileName = fileUploadRequest.fileKey + ".xls";
+        FileUploadResponse response1 = FileUpload.getInstance().uploadByBase64(fileUploadRequest);
+
+        if (response1 == null) {
+            return json(BaseResponse.CODE_FAILURE, "获取下载地址失败", response);
+        }
+
+
+        if (response1.code == BaseResponse.CODE_SUCCESS) {
+            response.data = fileClient.getFileUrl(fileUploadRequest.fileKey);
+            if (StringKit.isEmpty(response.data)) {
+                return json(BaseResponse.CODE_FAILURE, "获取下载地址失败", response);
+            }
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "获取下载地址失败", response);
+        }
+
+        return json(BaseResponse.CODE_SUCCESS, "获取下载地址成功", response);
+    }
+
+    public String checkGetInsurancePolicyListParams(InsurancePolicy.GetInsurancePolicyListForManagerSystemRequest request, InsurancePolicyModel insurancePolicyModel) {
         if (StringKit.isEmpty(request.warrantyType) || !StringKit.isNumeric(request.warrantyType) || Integer.valueOf(request.warrantyType) < 1 || Integer.valueOf(request.warrantyType) > 4) {
-            return json(BaseResponse.CODE_FAILURE, "保单类型错误", response);
+            return "保单类型错误";
         }
         insurancePolicyModel.type = request.warrantyType;
 
@@ -350,7 +480,7 @@ public class InsurancePolicyAction extends BaseAction {
                     insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_INVALID + "," + InsurancePolicyModel.POLICY_STATUS_EXPIRED;
                     break;
                 default:
-                    return json(BaseResponse.CODE_FAILURE, "保单状态错误", response);
+                    return "保单状态错误";
             }
         }
         insurancePolicyModel.warranty_status = request.warrantyStatus;
@@ -358,38 +488,19 @@ public class InsurancePolicyAction extends BaseAction {
         insurancePolicyModel.search = request.searchKey;
         // 1-保单号 2-代理人 3-投保人 4-车牌号
         if (!StringKit.isEmpty(request.searchType) && (!StringKit.isNumeric(request.searchType) || Integer.valueOf(request.searchType) < 1 || Integer.valueOf(request.searchType) > 4)) {
-            return json(BaseResponse.CODE_FAILURE, "搜索类型错误", response);
+            return "搜索类型错误";
         } else if (StringKit.isEmpty(request.searchType)) {
             request.searchKey = "";
         }
 
         if (!StringKit.isEmpty(request.searchType) && StringKit.isEmpty(request.searchKey)) {
-            return json(BaseResponse.CODE_FAILURE, "搜索关键字", response);
+            return "搜索关键字";
         }
 
         insurancePolicyModel.searchType = request.searchType;
 
-        Map<String, AgentBean> agentMap = new HashMap<>();
-        if (StringKit.equals(request.searchType, "2")) {
-            List<AgentBean> list = agentClient.getAllBySearchName(actionBean.managerUuid, request.searchKey);
-            StringBuilder sb = new StringBuilder();
-            if (list != null && !list.isEmpty()) {
-                for (int i = 0; i < list.size(); i++) {
-                    AgentBean agentBean = list.get(i);
-                    sb.append(agentBean.id);
-                    agentMap.put(String.valueOf(agentBean.id), agentBean);
-                    if (i != list.size() - 1) {
-                        sb.append(",");
-                    }
-                }
-            }
-            insurancePolicyModel.agent_id_string = sb.toString();
-        }
-
         insurancePolicyModel.start_time = request.startTime;
         insurancePolicyModel.end_time = request.endTime;
-
-        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
 
         if (StringKit.isEmpty(request.pageSize)) {
             request.pageSize = "10";
@@ -397,9 +508,14 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
-        List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
-        long total = searchInsurancePolicyCount(insurancePolicyModel);
-        response.data = new ArrayList<>();
+        return null;
+    }
+
+    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch, InsurancePolicy.GetInsurancePolicyListForManagerSystemRequest request, InsurancePolicyModel insurancePolicyModel, Map<String, AgentBean> agentMap) {
+        List<InsurancePolicy.GetInsurancePolicyForManagerSystem> result = new ArrayList<>();
+        if (insurancePolicyListByWarrantyStatusOrSearch == null) {
+            return result;
+        }
 
         for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
 
@@ -436,6 +552,7 @@ public class InsurancePolicyAction extends BaseAction {
                     warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
                 }
             }
+
             CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
             custWarrantyBrokerageModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
 
@@ -518,12 +635,28 @@ public class InsurancePolicyAction extends BaseAction {
             } else if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_TEAM)) {
 
             }
-            response.data.add(getInsurancePolicyForManagerSystem);
+            result.add(getInsurancePolicyForManagerSystem);
         }
 
-        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.size());
+        return result;
+    }
 
-        return json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
+    private Map<String, AgentBean> getAgentMap(String managerUuid, String searchKey, InsurancePolicyModel insurancePolicyModel) {
+        List<AgentBean> list = agentClient.getAllBySearchName(managerUuid, searchKey);
+        Map<String, AgentBean> agentMap = new HashMap<>();
+        StringBuilder sb = new StringBuilder();
+        if (list != null && !list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                AgentBean agentBean = list.get(i);
+                sb.append(agentBean.id);
+                agentMap.put(String.valueOf(agentBean.id), agentBean);
+                if (i != list.size() - 1) {
+                    sb.append(",");
+                }
+            }
+        }
+        insurancePolicyModel.agent_id_string = sb.toString();
+        return agentMap;
     }
 
     private List<InsurancePolicyModel> searchInsurancePolicyList(InsurancePolicyModel insurancePolicyModel) {

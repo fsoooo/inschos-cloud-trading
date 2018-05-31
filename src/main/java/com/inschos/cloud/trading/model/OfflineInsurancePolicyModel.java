@@ -46,13 +46,6 @@ public class OfflineInsurancePolicyModel {
 //        COLUMN_FIELD_MAP.put("Z", "");
     }
 
-    public final static List<String> TITLE_NAME_LIST;
-
-    static {
-        TITLE_NAME_LIST = new ArrayList<>();
-        TITLE_NAME_LIST.add("保单号");
-    }
-
     /**
      * 主键id
      */
