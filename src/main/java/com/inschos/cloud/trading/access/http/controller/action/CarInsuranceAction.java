@@ -1000,6 +1000,8 @@ public class CarInsuranceAction extends BaseAction {
                         return json(BaseResponse.CODE_FAILURE, "获取参考保费错误", response);
                     }
 
+                    insurancePolicy.companyLogo = fileClient.getFileUrl("property_key_" + datum.insurerCode);
+
                     insurancePolicy.productName = ciProduct.displayName;
 
                     response.data.insurancePolicies.add(insurancePolicy);
@@ -1221,6 +1223,8 @@ public class CarInsuranceAction extends BaseAction {
                     carshipTax = carshipTax.add(new BigDecimal(datum.carshipTax));
 
                     CarInsurance.InsurancePolicyPremiumDetail insurancePolicyPremiumDetail = new CarInsurance.InsurancePolicyPremiumDetail(datum);
+
+                    insurancePolicyPremiumDetail.companyLogo = fileClient.getFileUrl("property_key_" + datum.insurerCode);
 
                     insurancePolicyPremiumDetail.coverageList = dealInsurancePolicyInfoForShowList(datum.coverageList);
                     boolean b = checkCommitEqualsUltimate(checkCoverageListResult.coverageList, datum.coverageList);
@@ -2738,7 +2742,7 @@ public class CarInsuranceAction extends BaseAction {
     // 维修期间补偿险，最高保额
     private static final double Z2_MAX_AMOUNT = 500;
 
-    private static class CheckCoverageListResult {
+    public static class CheckCoverageListResult {
 
         // 是否有效
         public boolean result;
@@ -2750,12 +2754,24 @@ public class CarInsuranceAction extends BaseAction {
         List<ExtendCarInsurancePolicy.InsuranceInfoDetail> coverageList;
 
         // 获取玻璃险的对应type，只有确定玻璃险提交数据正确才有意义
-        String getFType(String text) {
+        public String getFType(String text) {
             switch (text) {
                 case "国产":
                     return "1";
                 case "进口":
                     return "2";
+                default:
+                    return "";
+            }
+        }
+
+        // 获取玻璃险的对应type，只有确定玻璃险提交数据正确才有意义
+        public String getFText(String text) {
+            switch (text) {
+                case "1":
+                    return "国产";
+                case "2":
+                    return "进口";
                 default:
                     return "";
             }

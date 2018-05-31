@@ -154,6 +154,7 @@ public class CarInsurance {
         public String carshipTaxText;
         public String isChanged;
         public String productName;
+        public String companyLogo;
 
         public String totalPremium;
         public String totalPremiumText;
@@ -191,6 +192,7 @@ public class CarInsurance {
         @CheckParams(hintName = "是否不计免赔")
         public String isExcessOption;
         public List<String> insuredAmountList;
+        public String insuredAmountText;
 
         // 玻璃破碎险 1-国产，2-进口
         public String source;
@@ -336,6 +338,7 @@ public class CarInsurance {
         public String bizID;
         public String thpBizID;
         public String productName;
+        public String companyLogo;
         public String insurerCode;
         public String channelCode;
         public String biBeginDate;

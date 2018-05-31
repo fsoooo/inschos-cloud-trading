@@ -730,6 +730,7 @@ public class InsurancePolicyAction extends BaseAction {
             }
 
             response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
+
             response.data.insuredList = new ArrayList<>();
             response.data.beneficiaryList = new ArrayList<>();
 
@@ -742,6 +743,11 @@ public class InsurancePolicyAction extends BaseAction {
                 if (product != null) {
                     response.data.insuranceProductName = product.displayName;
                     response.data.insuranceCompanyName = product.insuranceCoName;
+
+                    String[] split = product.code.split("_");
+                    if (split.length > 1) {
+                        response.data.insuranceCompanyLogo = fileClient.getFileUrl("property_key_" + split[0]);
+                    }
                 }
 
                 for (InsuranceParticipantModel insuranceParticipantModel : insuranceParticipantByWarrantyCode) {

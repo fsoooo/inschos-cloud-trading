@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
+import com.inschos.cloud.trading.access.http.controller.action.CarInsuranceAction;
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
@@ -150,6 +151,7 @@ public class InsurancePolicy {
         public String insuranceProductName;
 
         public String insuranceCompanyName;
+        public String insuranceCompanyLogo;
 
         // 车险用验证码（仅车险存在）
         public String bjCodeFlag;
@@ -464,6 +466,18 @@ public class InsurancePolicy {
                         }
                         this.coverageList.add(o);
                     }
+
+                    o.insuredAmountText = "";
+                    if (StringKit.isNumeric(o.insuredAmount)) {
+                        o.insuredAmountText = "¥" + o.insuredAmount;
+                    }
+
+                    if (StringKit.equals(o.coverageCode, "F")) {
+                        CarInsuranceAction.CheckCoverageListResult coverageListResult = new CarInsuranceAction.CheckCoverageListResult();
+                        o.insuredAmountText = coverageListResult.getFText(o.flag);
+                    } else if (StringKit.equals(o.coverageCode, "Z2")) {
+                        o.insuredAmountText = o.amount + "元/天 × " + o.day + "天";
+                    }
                 }
             }
             this.spAgreement = model.parseSpAgreement(model.sp_agreement);
@@ -670,28 +684,28 @@ public class InsurancePolicy {
 
     }
 
-    public static final Map<String,String> CAR_FIELD_MAP;
+    public static final Map<String, String> CAR_FIELD_MAP;
 
     static {
         CAR_FIELD_MAP = new HashMap<>();
-        CAR_FIELD_MAP.put("A","prePolicyNo");
-        CAR_FIELD_MAP.put("B","warrantyCode");
-        CAR_FIELD_MAP.put("C","productName");
-        CAR_FIELD_MAP.put("D","policyHolderName");
-        CAR_FIELD_MAP.put("E","policyHolderMobile");
-        CAR_FIELD_MAP.put("F","carCode");
-        CAR_FIELD_MAP.put("G","premiumText");
-        CAR_FIELD_MAP.put("H","startTimeText");
-        CAR_FIELD_MAP.put("I","warrantyStatusText");
+        CAR_FIELD_MAP.put("A", "prePolicyNo");
+        CAR_FIELD_MAP.put("B", "warrantyCode");
+        CAR_FIELD_MAP.put("C", "productName");
+        CAR_FIELD_MAP.put("D", "policyHolderName");
+        CAR_FIELD_MAP.put("E", "policyHolderMobile");
+        CAR_FIELD_MAP.put("F", "carCode");
+        CAR_FIELD_MAP.put("G", "premiumText");
+        CAR_FIELD_MAP.put("H", "startTimeText");
+        CAR_FIELD_MAP.put("I", "warrantyStatusText");
     }
 
-    public static final Map<String,String> PERSON_FIELD_MAP;
+    public static final Map<String, String> PERSON_FIELD_MAP;
 
     static {
         PERSON_FIELD_MAP = new HashMap<>();
     }
 
-    public static final Map<String,String> TEAM_FIELD_MAP;
+    public static final Map<String, String> TEAM_FIELD_MAP;
 
     static {
         TEAM_FIELD_MAP = new HashMap<>();
