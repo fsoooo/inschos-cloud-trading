@@ -936,24 +936,39 @@ public class CarInsuranceAction extends BaseAction {
                 response.data = new CarInsurance.GetPremiumDetail();
                 response.data.insurancePolicies = new ArrayList<>();
 
-                BigDecimal total = new BigDecimal("0.0");
+                BigDecimal total = new BigDecimal("0.00");
+                DecimalFormat decimalFormat = new DecimalFormat("#0.00");
                 for (ExtendCarInsurancePolicy.InsurancePolicy datum : result.data) {
+
                     BigDecimal bi;
                     if (StringKit.isNumeric(datum.biPremium)) {
                         bi = new BigDecimal(datum.biPremium);
                     } else {
-                        bi = new BigDecimal("0.0");
+                        bi = new BigDecimal("0.00");
                     }
+
+                    datum.biPremium = decimalFormat.format(bi.doubleValue());
 
                     BigDecimal ci;
                     if (StringKit.isNumeric(datum.ciPremium)) {
                         ci = new BigDecimal(datum.ciPremium);
                     } else {
-                        ci = new BigDecimal("0.0");
+                        ci = new BigDecimal("0.00");
                     }
 
+                    datum.ciPremium = decimalFormat.format(ci.doubleValue());
+
+                    if (StringKit.isNumeric(datum.carshipTax)) {
+                        datum.carshipTax = decimalFormat.format(new BigDecimal(datum.carshipTax).doubleValue());
+                        datum.carshipTaxText = "¥" + datum.carshipTax;
+                    } else {
+                        datum.carshipTax = "0.00";
+                        datum.carshipTaxText = "¥" + datum.carshipTax;
+                    }
+                    total = total.add(new BigDecimal(datum.carshipTax));
+
                     BigDecimal add = bi.add(ci);
-                    datum.totalPremium = add.toString();
+                    datum.totalPremium = decimalFormat.format(add.doubleValue());
                     datum.totalPremiumText = "¥" + datum.totalPremium;
                     total = total.add(add);
 
@@ -964,11 +979,27 @@ public class CarInsuranceAction extends BaseAction {
                     insurancePolicy.isChanged = b ? "0" : "1";
 
                     for (CarInsurance.InsuranceInfo info : insurancePolicy.coverageList) {
-                        if (StringKit.equals(info.isExcessOption, "1")) {
-                            info.coverageName = String.format("%s(不计免赔)", info.coverageName);
-                            info.insuredPremiumText = "¥" + info.insuredPremium;
+                        info.insuredPremiumText = "¥" + info.insuredPremium;
+                    }
+
+                    insurancePolicy.productName = "";
+
+                    List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
+                    ProductBean ciProduct = null;
+                    if (ciList != null && !ciList.isEmpty()) {
+                        for (ProductBean productBean : ciList) {
+                            if (productBean.code.contains(datum.insurerCode)) {
+                                ciProduct = productBean;
+                                break;
+                            }
                         }
                     }
+
+                    if (ciProduct == null) {
+                        return json(BaseResponse.CODE_FAILURE, "获取参考保费错误", response);
+                    }
+
+                    insurancePolicy.productName = ciProduct.displayName;
 
                     response.data.insurancePolicies.add(insurancePolicy);
                 }
@@ -1123,10 +1154,12 @@ public class CarInsuranceAction extends BaseAction {
 
                 BigDecimal ci = new BigDecimal("0.0");
                 BigDecimal bi = new BigDecimal("0.0");
+                BigDecimal carshipTax = new BigDecimal("0.0");
                 SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd");
                 StringBuilder stringBuilder = new StringBuilder();
                 boolean flag = false;
                 response.data.insurancePolicyPremiumDetails = new ArrayList<>();
+                DecimalFormat decimalFormat = new DecimalFormat("#0.00");
                 for (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail datum : result.data) {
                     datum.biBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
                     String s1 = nextYearMillisecond(datum.biBeginDateValue);
@@ -1178,6 +1211,14 @@ public class CarInsuranceAction extends BaseAction {
                     stringBuilder.append(dealInsurancePolicyInfoForShowString(datum.coverageList));
                     flag = true;
 
+                    if (StringKit.isNumeric(datum.carshipTax)) {
+                        datum.carshipTax = decimalFormat.format(new BigDecimal(datum.carshipTax).doubleValue());
+                    } else {
+                        datum.carshipTax = "0.00";
+                    }
+                    datum.carshipTaxText = "¥" + datum.carshipTax;
+                    carshipTax = carshipTax.add(new BigDecimal(datum.carshipTax));
+
                     CarInsurance.InsurancePolicyPremiumDetail insurancePolicyPremiumDetail = new CarInsurance.InsurancePolicyPremiumDetail(datum);
 
                     insurancePolicyPremiumDetail.coverageList = dealInsurancePolicyInfoForShowList(datum.coverageList);
@@ -1185,10 +1226,7 @@ public class CarInsuranceAction extends BaseAction {
                     insurancePolicyPremiumDetail.isChanged = b ? "0" : "1";
 
                     for (CarInsurance.InsuranceInfo info : insurancePolicyPremiumDetail.coverageList) {
-                        if (StringKit.equals(info.isExcessOption, "1")) {
-                            info.coverageName = String.format("%s(不计免赔)", info.coverageName);
-                            info.insuredPremiumText = "¥" + info.insuredPremium;
-                        }
+                        info.insuredPremiumText = "¥" + info.insuredPremium;
                     }
 
                     response.data.insurancePolicyPremiumDetails.add(insurancePolicyPremiumDetail);
@@ -1198,7 +1236,7 @@ public class CarInsuranceAction extends BaseAction {
                 response.data.ciInsuredPremium = ci.toString();
                 response.data.ciInsuredPremiumText = "¥" + ci.toString();
                 response.data.biInsuredPremiumText = "¥" + bi.toString();
-                BigDecimal add = bi.add(ci);
+                BigDecimal add = bi.add(ci).add(carshipTax);
                 response.data.totalInsuredPremium = add.toString();
                 response.data.totalInsuredPremiumText = "¥" + add.toString();
 
@@ -1410,6 +1448,7 @@ public class CarInsuranceAction extends BaseAction {
                 ciCustWarrantyCostModel.pay_time = ciProposal.start_time;
                 ciCustWarrantyCostModel.phase = "1";
                 ciCustWarrantyCostModel.premium = request.applyUnderwriting.ciInsuredPremium;
+                ciCustWarrantyCostModel.tax_money = request.applyUnderwriting.ciCarShipTax;
                 ciCustWarrantyCostModel.pay_status = payState;
                 ciCustWarrantyCostModel.created_at = time;
                 ciCustWarrantyCostModel.updated_at = time;
@@ -1542,6 +1581,7 @@ public class CarInsuranceAction extends BaseAction {
                 biCustWarrantyCostModel.pay_time = biProposal.start_time;
                 biCustWarrantyCostModel.phase = "1";
                 biCustWarrantyCostModel.premium = request.applyUnderwriting.biInsuredPremium;
+                biCustWarrantyCostModel.tax_money = request.applyUnderwriting.biCarShipTax;
                 biCustWarrantyCostModel.pay_status = payState;
                 biCustWarrantyCostModel.created_at = time;
                 biCustWarrantyCostModel.updated_at = time;
@@ -1673,8 +1713,16 @@ public class CarInsuranceAction extends BaseAction {
         }
 
         if (getPremiumCalibrateResponse.data != null && !getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails.isEmpty()) {
+            if (StringKit.isEmpty(getPremiumCalibrateResponse.data.ciInsuredPremium) || !StringKit.isNumeric(getPremiumCalibrateResponse.data.ciInsuredPremium)) {
+                getPremiumCalibrateResponse.data.ciInsuredPremium = "0";
+            }
             request.applyUnderwriting.ciInsuredPremium = getPremiumCalibrateResponse.data.ciInsuredPremium;
+
+            if (StringKit.isEmpty(getPremiumCalibrateResponse.data.biInsuredPremium) || !StringKit.isNumeric(getPremiumCalibrateResponse.data.biInsuredPremium)) {
+                getPremiumCalibrateResponse.data.biInsuredPremium = "0";
+            }
             request.applyUnderwriting.biInsuredPremium = getPremiumCalibrateResponse.data.biInsuredPremium;
+
             // request.applyUnderwriting.bjCodeFlag = getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails.get(0).;
             boolean flag = false;
             for (CarInsurance.InsurancePolicyPremiumDetail insurancePolicyPremiumDetail : getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails) {
@@ -1686,6 +1734,11 @@ public class CarInsuranceAction extends BaseAction {
                     request.applyUnderwriting.biBeginDateValue = insurancePolicyPremiumDetail.biBeginDateValue;
                     request.applyUnderwriting.coverageList = insurancePolicyPremiumDetail.coverageList;
                     request.applyUnderwriting.spAgreements = insurancePolicyPremiumDetail.spAgreement;
+
+                    if (StringKit.isEmpty(insurancePolicyPremiumDetail.carshipTax) || !StringKit.isNumeric(insurancePolicyPremiumDetail.carshipTax)) {
+                        insurancePolicyPremiumDetail.carshipTax = "0";
+                    }
+                    request.applyUnderwriting.carshipTax = insurancePolicyPremiumDetail.carshipTax;
 
                     if (StringKit.isEmpty(insurancePolicyPremiumDetail.integral) || !StringKit.isNumeric(insurancePolicyPremiumDetail.integral)) {
                         insurancePolicyPremiumDetail.integral = "0";
@@ -1703,6 +1756,31 @@ public class CarInsuranceAction extends BaseAction {
                         insurancePolicyPremiumDetail.bIntegral = "0";
                     }
                     request.applyUnderwriting.bIntegral = insurancePolicyPremiumDetail.bIntegral;
+
+                    BigDecimal carShipTax = new BigDecimal(request.applyUnderwriting.carshipTax);
+
+                    BigDecimal ciInsuredPremium = new BigDecimal(getPremiumCalibrateResponse.data.ciInsuredPremium);
+                    BigDecimal biInsuredPremium = new BigDecimal(getPremiumCalibrateResponse.data.biInsuredPremium);
+                    BigDecimal ciCarShipTax = new BigDecimal("0.00");
+                    BigDecimal biCarShipTax = new BigDecimal("0.00");
+                    if (request.applyUnderwriting.hasCompulsoryInsurance && request.applyUnderwriting.hasCommercialInsurance) {
+                        ciCarShipTax = carShipTax;
+                        ciInsuredPremium = ciInsuredPremium.add(ciCarShipTax);
+                    } else if (!request.applyUnderwriting.hasCompulsoryInsurance && request.applyUnderwriting.hasCommercialInsurance) {
+                        biCarShipTax = carShipTax;
+                        biInsuredPremium = biInsuredPremium.add(biCarShipTax);
+                    } else if (request.applyUnderwriting.hasCompulsoryInsurance) {
+                        ciCarShipTax = carShipTax;
+                        ciInsuredPremium = ciInsuredPremium.add(ciCarShipTax);
+                    } else {
+                        return json(BaseResponse.CODE_FAILURE, "投保失败", response);
+                    }
+
+                    request.applyUnderwriting.ciInsuredPremium = String.valueOf(ciInsuredPremium.doubleValue());
+                    request.applyUnderwriting.biInsuredPremium = String.valueOf(biInsuredPremium.doubleValue());
+                    request.applyUnderwriting.ciCarShipTax = String.valueOf(ciCarShipTax.doubleValue());
+                    request.applyUnderwriting.biCarShipTax = String.valueOf(biCarShipTax.doubleValue());
+
                     flag = true;
                     break;
                 }

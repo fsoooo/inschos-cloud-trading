@@ -4,6 +4,7 @@ import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -150,7 +151,9 @@ public class CarInsurance {
         public String ciBeginDate;
         public String ciPremium;
         public String carshipTax;
+        public String carshipTaxText;
         public String isChanged;
+        public String productName;
 
         public String totalPremium;
         public String totalPremiumText;
@@ -170,6 +173,7 @@ public class CarInsurance {
             this.ciBeginDate = insurancePolicy.ciBeginDate;
             this.ciPremium = insurancePolicy.ciPremium;
             this.carshipTax = insurancePolicy.carshipTax;
+            this.carshipTaxText = insurancePolicy.carshipTaxText;
             this.totalPremium = insurancePolicy.totalPremium;
             this.totalPremiumText = insurancePolicy.totalPremiumText;
         }
@@ -343,6 +347,7 @@ public class CarInsurance {
         public String ciInsuranceTermText;
         public String ciPremium;
         public String carshipTax;
+        public String carshipTaxText;
         public String integral;
         public String cIntegral;
         public String bIntegral;
@@ -380,6 +385,7 @@ public class CarInsurance {
             this.ciInsuranceTermText = insurancePolicy.ciInsuranceTermText;
             this.ciPremium = insurancePolicy.ciPremium;
             this.carshipTax = insurancePolicy.carshipTax;
+            this.carshipTaxText = insurancePolicy.carshipTaxText;
             this.integral = insurancePolicy.integral;
             this.cIntegral = insurancePolicy.cIntegral;
             this.bIntegral = insurancePolicy.bIntegral;
@@ -423,8 +429,12 @@ public class CarInsurance {
         public String addresseeCity;
         @CheckParams(hintName = "保单寄送省级代码")
         public String addresseeProvince;
+        @CheckParams(hintName = "税费")
+        public String carshipTax;
         public String ciInsuredPremium;
         public String biInsuredPremium;
+        public String ciCarShipTax;
+        public String biCarShipTax;
         public String ciBeginDateValue;
         public String biBeginDateValue;
 

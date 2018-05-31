@@ -39,7 +39,7 @@ public class InsurancePolicyDao extends BaseDao {
 
     public int addInsurancePolicyAndParticipantForCarInsurance(InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance) {
         if (insurancePolicyAndParticipantForCarInsurance != null) {
-            int add = -1;
+            int add = 1;
             if (insurancePolicyAndParticipantForCarInsurance.ciProposal != null) {
                 add = addInsurancePolicy(insurancePolicyAndParticipantForCarInsurance.ciProposal);
             }

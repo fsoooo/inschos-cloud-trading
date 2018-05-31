@@ -31,6 +31,11 @@ public class CustWarrantyCostModel {
      * 保单价格
      */
     public String premium;
+
+    /**
+     * 税费
+     */
+    public String tax_money;
     /**
      * 实际支付时间
      */
