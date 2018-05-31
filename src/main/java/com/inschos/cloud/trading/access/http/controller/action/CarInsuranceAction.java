@@ -1135,6 +1135,23 @@ public class CarInsuranceAction extends BaseAction {
 
                     datum.productName = "";
 
+                    List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
+                    ProductBean ciProduct = null;
+                    if (ciList != null && !ciList.isEmpty()) {
+                        for (ProductBean productBean : ciList) {
+                            if (productBean.code.contains(datum.insurerCode)) {
+                                ciProduct = productBean;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (ciProduct == null) {
+                        return json(BaseResponse.CODE_FAILURE, "获取精准保费错误", response);
+                    }
+
+                    datum.productName = ciProduct.displayName;
+
                     for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : datum.coverageList) {
                         if (StringKit.isNumeric(insurancePolicyInfo.insuredPremium)) {
                             if (StringKit.equals(insurancePolicyInfo.coverageCode, "FORCEPREMIUM")) {
