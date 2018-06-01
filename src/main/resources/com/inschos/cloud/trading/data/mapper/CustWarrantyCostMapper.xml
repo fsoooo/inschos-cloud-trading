@@ -75,10 +75,10 @@
         <where>
             <choose>
                 <when test="page.lastId>0">
-                    id&gt;#{page.lastId}
+                    id&lt;#{page.lastId}
                 </when>
                 <when test="page.start>0">
-                    id&gt;=(select id from cust_warranty LEFT JOIN cust_warranty ON
+                    id&lt;=(select `cust_warranty_cost`.`id` from cust_warranty_cost LEFT JOIN cust_warranty ON
                     cust_warranty.warranty_uuid=cust_warranty_cost.warranty_uuid
                     where cust_warranty.account_uuid=#{account_uuid} AND cust_warranty.state = 1 AND
                     cust_warranty.warranty_status = 1 AND cust_warranty_cost.phase= 1 AND
@@ -87,7 +87,7 @@
                     <if test="search!=null and search!=''">
                         and `cust_warranty`.`warranty_code` like concat("%",#{search},"%")
                     </if>
-                    limit #{page.start},1
+                    ORDER BY `cust_warranty_cost`.`id` DESC limit #{page.start},1
                     )
                 </when>
                 <otherwise>
@@ -100,7 +100,7 @@
             <if test="search!=null and search!=''">
                 and `cust_warranty`.`warranty_code` like concat("%",#{search},"%")
             </if>
-            limit #{page.offset}
+            ORDER BY `cust_warranty_cost`.`id` DESC limit #{page.offset}
         </where>
     </select>
 

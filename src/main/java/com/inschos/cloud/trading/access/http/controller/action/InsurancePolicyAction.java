@@ -204,6 +204,7 @@ public class InsurancePolicyAction extends BaseAction {
             }
 
             response.data = new ArrayList<>();
+            String lastId = "0";
 
             if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
 
@@ -289,11 +290,13 @@ public class InsurancePolicyAction extends BaseAction {
                             insurancePolicy.insuredText = insuranceParticipantModel.name + "等" + insuranceParticipantInsuredByWarrantyUuid.size() + "人";
                         }
                     }
+
+                    lastId = policyListByWarrantyStatusOrSearch.id;
                     response.data.add(insurancePolicy);
                 }
             }
 
-            response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.size());
+            response.page = setPageBean(lastId, request.pageNum, request.pageSize, total, response.data.size());
 
             str = json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
         } else {
@@ -353,7 +356,13 @@ public class InsurancePolicyAction extends BaseAction {
 
         response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, request, insurancePolicyModel, agentMap);
 
-        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.size());
+        String lastId = "0";
+        if (response.data != null && !response.data.isEmpty()) {
+            lastId = response.data.get(response.data.size() - 1).id;
+        }
+
+        response.page = setPageBean(lastId, request.pageNum, request.pageSize, total, response.data.size());
+
 
         return json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
     }
@@ -1200,6 +1209,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<BrokerageStatisticListModel> insurancePolicyBrokerageStatisticList = custWarrantyCostDao.findInsurancePolicyBrokerageStatisticList(custWarrantyCostModel);
         long total = custWarrantyCostDao.findInsurancePolicyBrokerageStatisticListCount(custWarrantyCostModel);
         response.data = new ArrayList<>();
+        String lastId = "0";
 
         if (insurancePolicyBrokerageStatisticList != null && !insurancePolicyBrokerageStatisticList.isEmpty()) {
             for (BrokerageStatisticListModel brokerageStatisticListModel : insurancePolicyBrokerageStatisticList) {
@@ -1214,11 +1224,12 @@ public class InsurancePolicyAction extends BaseAction {
                         insurancePolicyBrokerageStatistic.productName = product.displayName;
                     }
                 }
+                lastId = insurancePolicyBrokerageStatistic.costId;
                 response.data.add(insurancePolicyBrokerageStatistic);
             }
         }
 
-        response.page = setPageBean(request.pageNum, request.pageSize, total, response.data.size());
+        response.page = setPageBean(lastId, request.pageNum, request.pageSize, total, response.data.size());
 
         return json(BaseResponse.CODE_SUCCESS, "获取统计信息成功", response);
 

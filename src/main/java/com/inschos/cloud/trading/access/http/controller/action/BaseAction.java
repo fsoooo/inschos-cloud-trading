@@ -202,40 +202,57 @@ public class BaseAction {
         return page;
     }
 
-    protected PageBean setPageBean(long lastId, String page_size, long total, int listSize) {
+//    protected PageBean setPageBean(long lastId, String page_size, long total, int listSize) {
+//        PageBean pageBean = new PageBean();
+//        pageBean.lastId = String.valueOf(lastId);
+//        pageBean.pageSize = StringKit.isInteger(page_size) ? page_size : "20";
+//        long l = total / Integer.valueOf(pageBean.pageSize);
+//        if (total % Integer.valueOf(pageBean.pageSize) != 0) {
+//            l += 1;
+//        }
+//        pageBean.pageTotal = String.valueOf(l);
+//        pageBean.total = String.valueOf(total);
+//        pageBean.listSize = String.valueOf(listSize);
+//
+//        return pageBean;
+//    }
+//
+//    protected PageBean setPageBean(String page_num, String page_size, long total, int listSize) {
+//        PageBean pageBean = new PageBean();
+//
+//        long pageTotal = 0;
+//
+//        if (StringKit.isInteger(page_size)) {
+//            int pageSize = Integer.valueOf(page_size);
+//            if (pageSize > 0) {
+//                pageTotal = total / pageSize;
+//
+//                if (total % pageSize > 0) {
+//                    pageTotal += 1;
+//                }
+//            }
+//        }
+//
+//        pageBean.pageNum = StringKit.isInteger(page_num) ? page_num : "1";
+//        pageBean.pageSize = StringKit.isInteger(page_size) ? page_size : "20";
+//        pageBean.pageTotal = String.valueOf(pageTotal);
+//        pageBean.total = String.valueOf(total);
+//        pageBean.listSize = String.valueOf(listSize);
+//
+//        return pageBean;
+//    }
+
+    protected PageBean setPageBean(String lastId, String page_num, String page_size, long total, int listSize) {
         PageBean pageBean = new PageBean();
-        pageBean.lastId = String.valueOf(lastId);
+
+        pageBean.lastId = lastId;
         pageBean.pageSize = StringKit.isInteger(page_size) ? page_size : "20";
         long l = total / Integer.valueOf(pageBean.pageSize);
         if (total % Integer.valueOf(pageBean.pageSize) != 0) {
             l += 1;
         }
-        pageBean.pageTotal = String.valueOf(l);
-        pageBean.total = String.valueOf(total);
-        pageBean.listSize = String.valueOf(listSize);
-
-        return pageBean;
-    }
-
-    protected PageBean setPageBean(String page_num, String page_size, long total, int listSize) {
-        PageBean pageBean = new PageBean();
-
-        long pageTotal = 0;
-
-        if (StringKit.isInteger(page_size)) {
-            int pageSize = Integer.valueOf(page_size);
-            if (pageSize > 0) {
-                pageTotal = total / pageSize;
-
-                if (total % pageSize > 0) {
-                    pageTotal += 1;
-                }
-            }
-        }
-
         pageBean.pageNum = StringKit.isInteger(page_num) ? page_num : "1";
-        pageBean.pageSize = StringKit.isInteger(page_size) ? page_size : "20";
-        pageBean.pageTotal = String.valueOf(pageTotal);
+        pageBean.pageTotal = String.valueOf(l);
         pageBean.total = String.valueOf(total);
         pageBean.listSize = String.valueOf(listSize);
 
