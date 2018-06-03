@@ -193,11 +193,13 @@ public class CarInsuranceController {
         return carInsuranceAction.sendExpressInfo(actionBean);
     }
 
-//    @GetActionBeanAnnotation(isCheckAccess = false)
-//    @RequestMapping("car_insurance/set_data")
-//    @ResponseBody
-//    public String setData(ActionBean actionBean) {
-//        return carInsuranceAction.setData(actionBean);
-//    }
+    // 回调接口
+    @GetActionBeanAnnotation(isCheckAccess = false)
+    @RequestMapping("car_insurance/add_task_result")
+    @ResponseBody
+    public String addTaskResult(ActionBean actionBean) {
+        return carInsuranceAction.addTaskResult(actionBean);
+    }
+
 
 }

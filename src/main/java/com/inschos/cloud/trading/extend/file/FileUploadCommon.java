@@ -7,7 +7,7 @@ package com.inschos.cloud.trading.extend.file;
  */
 public class FileUploadCommon {
 
-    private static final String SERVER_HOST = "http://59.110.136.249:9200";
+    private static final String SERVER_HOST = "http://122.14.202.146:9200/file";
 
     public static final String upload_by_base64 = getServerHost() + "/file/upBase";
 

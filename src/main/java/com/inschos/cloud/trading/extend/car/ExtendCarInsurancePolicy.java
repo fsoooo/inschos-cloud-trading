@@ -308,6 +308,7 @@ public class ExtendCarInsurancePolicy {
         public String ciBeginDate;
         public String ciPremium;
         public String carshipTax;
+        public String carshipTaxText;
 
         public String totalPremium;
         public String totalPremiumText;
@@ -402,6 +403,7 @@ public class ExtendCarInsurancePolicy {
         public String ciInsuranceTermText;
         public String ciPremium;
         public String carshipTax;
+        public String carshipTaxText;
         public String integral;
         public String cIntegral;
         public String bIntegral;

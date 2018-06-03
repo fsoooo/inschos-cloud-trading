@@ -4,6 +4,7 @@ import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public class CarInsurance {
     // 获取市级信息
     public static class GetCityCodeRequest extends BaseRequest {
         // 省级代码
-        @CheckParams
+        @CheckParams(hintName = "省级代码")
         public String provinceCode;
         // 自己用，0-不处理，1-处理一下字段名
         public String type = "1";
@@ -54,22 +55,22 @@ public class CarInsurance {
     }
 
     public static class GetCarModelRequest extends BaseRequest {
-        @CheckParams
+        @CheckParams(hintName = "车辆信息")
         public ExtendCarInsurancePolicy.CarInfo carInfo;
-        @CheckParams
+        @CheckParams(hintName = "签名")
         public String signToken;
         // 0-不是，1-是
-        @CheckParams
+        @CheckParams(hintName = "是否为过户")
         public String isTrans;
         // 0-不是，1-是
-        @CheckParams
+        @CheckParams(hintName = "是否存在车牌")
         public String notLicenseNo;
 
         public String brandName;
     }
 
     public static class SearchCarModelRequest extends BaseRequest {
-        @CheckParams
+        @CheckParams(hintName = "品牌名称")
         public String brandName;
     }
 
@@ -78,7 +79,7 @@ public class CarInsurance {
     }
 
     public static class GetCarModelInfoRequest extends BaseRequest {
-        @CheckParams
+        @CheckParams(hintName = "车牌号")
         public String licenseNo;
     }
 
@@ -88,7 +89,7 @@ public class CarInsurance {
     }
 
     public static class GetInsuranceCompanyRequest extends BaseRequest {
-        @CheckParams
+        @CheckParams(hintName = "省级代码")
         public String provinceCode;
     }
 
@@ -97,13 +98,13 @@ public class CarInsurance {
     }
 
     public static class GetInsuranceStartTimeRequest extends BaseRequest {
-        @CheckParams
+        @CheckParams(hintName = "车辆信息")
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
-        @CheckParams
+        @CheckParams(hintName = "市级代码")
         public String cityCode;
-        @CheckParams
+        @CheckParams(hintName = "签名")
         public String signToken;
-        @CheckParams
+        @CheckParams(hintName = "是否存在车牌")
         public String notLicenseNo;
 
         // 非必传
@@ -115,19 +116,19 @@ public class CarInsurance {
     }
 
     public static class GetPremiumRequest extends BaseRequest {
-        @CheckParams
+        @CheckParams(hintName = "市级代码")
         public String cityCode;
-        @CheckParams
+        @CheckParams(hintName = "险种代码")
         public String insurerCode;
-        @CheckParams
+        @CheckParams(hintName = "签名")
         public String signToken;
-        @CheckParams
+        @CheckParams(hintName = "是否存在车牌")
         public String notLicenseNo;
-        @CheckParams
+        @CheckParams(hintName = "车辆信息")
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
-        @CheckParams
+        @CheckParams(hintName = "险别列表")
         public List<InsuranceInfo> coverageList;
-        @CheckParams
+        @CheckParams(hintName = "人员信息")
         public ExtendCarInsurancePolicy.VehicleOwnerInfo personInfo;
     }
 
@@ -141,7 +142,7 @@ public class CarInsurance {
         public List<InsurancePolicy> insurancePolicies;
     }
 
-    public static class InsurancePolicy{
+    public static class InsurancePolicy {
         public String refId;
         public String insurerCode;
         public String biBeginDate;
@@ -150,18 +151,21 @@ public class CarInsurance {
         public String ciBeginDate;
         public String ciPremium;
         public String carshipTax;
+        public String carshipTaxText;
         public String isChanged;
+        public String productName;
+        public String companyLogo;
 
         public String totalPremium;
         public String totalPremiumText;
 
         public List<InsuranceInfo> coverageList;
 
-        public InsurancePolicy () {
+        public InsurancePolicy() {
 
         }
 
-        public InsurancePolicy (ExtendCarInsurancePolicy.InsurancePolicy insurancePolicy) {
+        public InsurancePolicy(ExtendCarInsurancePolicy.InsurancePolicy insurancePolicy) {
             this.refId = insurancePolicy.refId;
             this.insurerCode = insurancePolicy.insurerCode;
             this.biBeginDate = insurancePolicy.biBeginDate;
@@ -170,6 +174,7 @@ public class CarInsurance {
             this.ciBeginDate = insurancePolicy.ciBeginDate;
             this.ciPremium = insurancePolicy.ciPremium;
             this.carshipTax = insurancePolicy.carshipTax;
+            this.carshipTaxText = insurancePolicy.carshipTaxText;
             this.totalPremium = insurancePolicy.totalPremium;
             this.totalPremiumText = insurancePolicy.totalPremiumText;
         }
@@ -184,38 +189,40 @@ public class CarInsurance {
 
     public static class InsuranceInfo extends ExtendCarInsurancePolicy.InsurancePolicyInfo {
         public String hasExcessOption;
-        @CheckParams
+        @CheckParams(hintName = "是否不计免赔")
         public String isExcessOption;
         public List<String> insuredAmountList;
+        public String insuredAmountText;
 
         // 玻璃破碎险 1-国产，2-进口
         public String source;
         public List<String> sourceOption;
 
         // 修理期间费用补偿险
-        @CheckParams(stringType = CheckParams.StringType.NUMBER, isNecessity = false)
+        @CheckParams(stringType = CheckParams.StringType.NUMBER, isNecessity = false, hintName = "修理期间费用补偿险天数")
         public String day;
 
-        @CheckParams(stringType = CheckParams.StringType.NUMBER, isNecessity = false)
+        @CheckParams(stringType = CheckParams.StringType.NUMBER, isNecessity = false, hintName = "修理期间费用补偿险保额")
         public String amount;
         public String maxDay;
         public String minDay;
         public String maxAmount;
         public String minAmount;
+        public String insuredPremiumText;
 
 
     }
 
     public static class GetInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoRequest extends BaseRequest {
-        @CheckParams
+        @CheckParams(hintName = "市级代码")
         public String cityCode;
-        @CheckParams
+        @CheckParams(hintName = "省级代码")
         public String provinceCode;
-        @CheckParams
+        @CheckParams(hintName = "签名")
         public String signToken;
-        @CheckParams
+        @CheckParams(hintName = "是否存在车牌")
         public String notLicenseNo;
-        @CheckParams
+        @CheckParams(hintName = "车辆信息")
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
 
     }
@@ -234,15 +241,15 @@ public class CarInsurance {
     }
 
     public static class GetInsuranceCompanyAndInsuranceStartTimeAndPremiumRequest extends BaseRequest {
-        @CheckParams
+        @CheckParams(hintName = "市级代码")
         public String cityCode;
-        @CheckParams
+        @CheckParams(hintName = "省级代码")
         public String provinceCode;
-        @CheckParams
+        @CheckParams(hintName = "签名")
         public String signToken;
-        @CheckParams
+        @CheckParams(hintName = "是否存在车牌")
         public String notLicenseNo;
-        @CheckParams
+        @CheckParams(hintName = "车辆信息")
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
 
         // 非必传
@@ -279,28 +286,28 @@ public class CarInsurance {
         // 非必传，是否代缴车船税 1-不代缴，null-代缴，目前只支持人保、太保、平安
         public String remittingTax;
 
-        @CheckParams
+        @CheckParams(hintName = "签名")
         public String signToken;
         public String thpBizID;
-        @CheckParams
+        @CheckParams(hintName = "市级代码")
         public String cityCode;
         public String biBeginDate;
         public String ciBeginDate;
-        @CheckParams
+        @CheckParams(hintName = "商业险承保时间")
         public String biBeginDateValue;
-        @CheckParams
+        @CheckParams(hintName = "交强险承保时间")
         public String ciBeginDateValue;
-        @CheckParams
+        @CheckParams(hintName = "险种代码")
         public String insurerCode;
-        @CheckParams
+        @CheckParams(hintName = "响应码")
         public String responseNo;
-        @CheckParams
+        @CheckParams(hintName = "是否存在车牌")
         public String notLicenseNo;
-        @CheckParams
+        @CheckParams(hintName = "车辆信息")
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
-        @CheckParams
+        @CheckParams(hintName = "人员信息")
         public ExtendCarInsurancePolicy.InsuranceParticipant personInfo;
-        @CheckParams
+        @CheckParams(hintName = "险别列表")
         public List<InsuranceInfo> coverageList;
 
     }
@@ -331,6 +338,7 @@ public class CarInsurance {
         public String bizID;
         public String thpBizID;
         public String productName;
+        public String companyLogo;
         public String insurerCode;
         public String channelCode;
         public String biBeginDate;
@@ -342,6 +350,7 @@ public class CarInsurance {
         public String ciInsuranceTermText;
         public String ciPremium;
         public String carshipTax;
+        public String carshipTaxText;
         public String integral;
         public String cIntegral;
         public String bIntegral;
@@ -357,11 +366,11 @@ public class CarInsurance {
         public ExtendCarInsurancePolicy.VehicleInfo vehicleInfo;
         public List<InsuranceInfo> coverageList;
 
-        public InsurancePolicyPremiumDetail () {
+        public InsurancePolicyPremiumDetail() {
 
         }
 
-        public InsurancePolicyPremiumDetail (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail  insurancePolicy) {
+        public InsurancePolicyPremiumDetail(ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail insurancePolicy) {
             this.state = insurancePolicy.state;
             this.msg = insurancePolicy.msg;
             this.msgCode = insurancePolicy.msgCode;
@@ -379,6 +388,7 @@ public class CarInsurance {
             this.ciInsuranceTermText = insurancePolicy.ciInsuranceTermText;
             this.ciPremium = insurancePolicy.ciPremium;
             this.carshipTax = insurancePolicy.carshipTax;
+            this.carshipTaxText = insurancePolicy.carshipTaxText;
             this.integral = insurancePolicy.integral;
             this.cIntegral = insurancePolicy.cIntegral;
             this.bIntegral = insurancePolicy.bIntegral;
@@ -404,26 +414,29 @@ public class CarInsurance {
 
     public static class ApplyUnderwritingRequest extends BaseRequest {
         public String channelCode;
-        @CheckParams
+        @CheckParams(hintName = "险种代码")
         public String insurerCode;
         public String productId;
         public String bizID;
-        @CheckParams
+        @CheckParams(hintName = "收件人名称")
         public String addresseeName;
-        @CheckParams
+        @CheckParams(hintName = "收件人电话")
         public String addresseeMobile;
-        @CheckParams
+        @CheckParams(hintName = "收件人详细地址")
         public String addresseeDetails;
-        @CheckParams
+        @CheckParams(hintName = "保单寄送电子邮箱")
         public String policyEmail;
-        @CheckParams
+        @CheckParams(hintName = "保单寄送地区代码")
         public String addresseeCounty;
-        @CheckParams
+        @CheckParams(hintName = "保单寄送市级代码")
         public String addresseeCity;
-        @CheckParams
+        @CheckParams(hintName = "保单寄送省级代码")
         public String addresseeProvince;
+        public String carshipTax;
         public String ciInsuredPremium;
         public String biInsuredPremium;
+        public String ciCarShipTax;
+        public String biCarShipTax;
         public String ciBeginDateValue;
         public String biBeginDateValue;
 
@@ -457,9 +470,9 @@ public class CarInsurance {
     }
 
     public static class PremiumCalibrateAndApplyUnderwritingRequest extends BaseRequest {
-        @CheckParams
+        @CheckParams(hintName = "精准报价信息")
         public GetPremiumCalibrateRequest premiumCalibrate;
-        @CheckParams
+        @CheckParams(hintName = "核保信息")
         public ApplyUnderwritingRequest applyUnderwriting;
 
 
@@ -519,7 +532,7 @@ public class CarInsurance {
     }
 
     public static class GetPayLinkRequest extends BaseRequest {
-        @CheckParams
+        @CheckParams(hintName = "流水号")
         public String bizID;
     }
 

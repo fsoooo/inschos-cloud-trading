@@ -7,6 +7,7 @@ import com.inschos.cloud.trading.access.rpc.bean.*;
 import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
+import com.inschos.cloud.trading.access.rpc.client.TaskResultClient;
 import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
 import com.inschos.cloud.trading.access.rpc.service.PremiumService;
@@ -14,9 +15,7 @@ import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
-import com.inschos.cloud.trading.data.dao.CarRecordDao;
-import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
-import com.inschos.cloud.trading.data.dao.ProductDao;
+import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.car.*;
 import com.inschos.cloud.trading.model.*;
 import com.inschos.cloud.trading.model.fordao.*;
@@ -43,10 +42,25 @@ public class CarInsuranceAction extends BaseAction {
     private CarRecordDao carRecordDao;
 
     @Autowired
+    private CarInfoDao carInfoDao;
+
+    @Autowired
     private InsurancePolicyDao insurancePolicyDao;
 
     @Autowired
+    private CustWarrantyCostDao custWarrantyCostDao;
+
+    @Autowired
     private FileClient fileClient;
+
+    @Autowired
+    private TaskResultClient taskResultClient;
+
+    @Autowired
+    private ProductClient productClient;
+
+    @Autowired
+    private AgentClient agentClient;
 
     /**
      * 获取省级区域代码
@@ -922,32 +936,73 @@ public class CarInsuranceAction extends BaseAction {
                 response.data = new CarInsurance.GetPremiumDetail();
                 response.data.insurancePolicies = new ArrayList<>();
 
-                BigDecimal total = new BigDecimal("0.0");
+                BigDecimal total = new BigDecimal("0.00");
+                DecimalFormat decimalFormat = new DecimalFormat("#0.00");
                 for (ExtendCarInsurancePolicy.InsurancePolicy datum : result.data) {
+
                     BigDecimal bi;
                     if (StringKit.isNumeric(datum.biPremium)) {
                         bi = new BigDecimal(datum.biPremium);
                     } else {
-                        bi = new BigDecimal("0.0");
+                        bi = new BigDecimal("0.00");
                     }
+
+                    datum.biPremium = decimalFormat.format(bi.doubleValue());
 
                     BigDecimal ci;
                     if (StringKit.isNumeric(datum.ciPremium)) {
                         ci = new BigDecimal(datum.ciPremium);
                     } else {
-                        ci = new BigDecimal("0.0");
+                        ci = new BigDecimal("0.00");
                     }
 
-                    BigDecimal add = bi.add(ci);
-                    datum.totalPremium = add.toString();
+                    datum.ciPremium = decimalFormat.format(ci.doubleValue());
+
+                    if (StringKit.isNumeric(datum.carshipTax)) {
+                        datum.carshipTax = decimalFormat.format(new BigDecimal(datum.carshipTax).doubleValue());
+                        datum.carshipTaxText = "¥" + datum.carshipTax;
+                    } else {
+                        datum.carshipTax = "0.00";
+                        datum.carshipTaxText = "¥" + datum.carshipTax;
+                    }
+
+                    BigDecimal bigDecimal = new BigDecimal(datum.carshipTax);
+                    bigDecimal = bigDecimal.add(bi).add(ci);
+                    total = total.add(bigDecimal);
+
+                    datum.totalPremium = decimalFormat.format(bigDecimal.doubleValue());
                     datum.totalPremiumText = "¥" + datum.totalPremium;
-                    total = total.add(add);
 
                     CarInsurance.InsurancePolicy insurancePolicy = new CarInsurance.InsurancePolicy(datum);
 
                     insurancePolicy.coverageList = dealInsurancePolicyInfoForShowList(datum.coverageList);
                     boolean b = checkCommitEqualsUltimate(checkCoverageListResult.coverageList, datum.coverageList);
                     insurancePolicy.isChanged = b ? "0" : "1";
+
+                    for (CarInsurance.InsuranceInfo info : insurancePolicy.coverageList) {
+                        info.insuredPremiumText = "¥" + info.insuredPremium;
+                    }
+
+                    insurancePolicy.productName = "";
+
+                    List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
+                    ProductBean ciProduct = null;
+                    if (ciList != null && !ciList.isEmpty()) {
+                        for (ProductBean productBean : ciList) {
+                            if (productBean.code.contains(datum.insurerCode)) {
+                                ciProduct = productBean;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (ciProduct == null) {
+                        return json(BaseResponse.CODE_FAILURE, "获取参考保费错误", response);
+                    }
+
+                    insurancePolicy.companyLogo = fileClient.getFileUrl("property_key_" + datum.insurerCode);
+
+                    insurancePolicy.productName = ciProduct.displayName;
 
                     response.data.insurancePolicies.add(insurancePolicy);
                 }
@@ -1102,10 +1157,12 @@ public class CarInsuranceAction extends BaseAction {
 
                 BigDecimal ci = new BigDecimal("0.0");
                 BigDecimal bi = new BigDecimal("0.0");
+                BigDecimal carshipTax = new BigDecimal("0.0");
                 SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd");
                 StringBuilder stringBuilder = new StringBuilder();
                 boolean flag = false;
                 response.data.insurancePolicyPremiumDetails = new ArrayList<>();
+                DecimalFormat decimalFormat = new DecimalFormat("#0.00");
                 for (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail datum : result.data) {
                     datum.biBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
                     String s1 = nextYearMillisecond(datum.biBeginDateValue);
@@ -1120,6 +1177,23 @@ public class CarInsuranceAction extends BaseAction {
                     }
 
                     datum.productName = "";
+
+                    List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
+                    ProductBean ciProduct = null;
+                    if (ciList != null && !ciList.isEmpty()) {
+                        for (ProductBean productBean : ciList) {
+                            if (productBean.code.contains(datum.insurerCode)) {
+                                ciProduct = productBean;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (ciProduct == null) {
+                        return json(BaseResponse.CODE_FAILURE, "获取精准保费错误", response);
+                    }
+
+                    datum.productName = ciProduct.displayName;
 
                     for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : datum.coverageList) {
                         if (StringKit.isNumeric(insurancePolicyInfo.insuredPremium)) {
@@ -1140,11 +1214,26 @@ public class CarInsuranceAction extends BaseAction {
                     stringBuilder.append(dealInsurancePolicyInfoForShowString(datum.coverageList));
                     flag = true;
 
+                    if (StringKit.isNumeric(datum.carshipTax)) {
+                        datum.carshipTax = decimalFormat.format(new BigDecimal(datum.carshipTax).doubleValue());
+                    } else {
+                        datum.carshipTax = "0.00";
+                    }
+                    datum.carshipTaxText = "¥" + datum.carshipTax;
+                    carshipTax = carshipTax.add(new BigDecimal(datum.carshipTax));
+
                     CarInsurance.InsurancePolicyPremiumDetail insurancePolicyPremiumDetail = new CarInsurance.InsurancePolicyPremiumDetail(datum);
+
+                    insurancePolicyPremiumDetail.companyLogo = fileClient.getFileUrl("property_key_" + datum.insurerCode);
 
                     insurancePolicyPremiumDetail.coverageList = dealInsurancePolicyInfoForShowList(datum.coverageList);
                     boolean b = checkCommitEqualsUltimate(checkCoverageListResult.coverageList, datum.coverageList);
                     insurancePolicyPremiumDetail.isChanged = b ? "0" : "1";
+
+                    for (CarInsurance.InsuranceInfo info : insurancePolicyPremiumDetail.coverageList) {
+                        info.insuredPremiumText = "¥" + info.insuredPremium;
+                    }
+
                     response.data.insurancePolicyPremiumDetails.add(insurancePolicyPremiumDetail);
                 }
 
@@ -1152,7 +1241,7 @@ public class CarInsuranceAction extends BaseAction {
                 response.data.ciInsuredPremium = ci.toString();
                 response.data.ciInsuredPremiumText = "¥" + ci.toString();
                 response.data.biInsuredPremiumText = "¥" + bi.toString();
-                BigDecimal add = bi.add(ci);
+                BigDecimal add = bi.add(ci).add(carshipTax);
                 response.data.totalInsuredPremium = add.toString();
                 response.data.totalInsuredPremiumText = "¥" + add.toString();
 
@@ -1364,6 +1453,7 @@ public class CarInsuranceAction extends BaseAction {
                 ciCustWarrantyCostModel.pay_time = ciProposal.start_time;
                 ciCustWarrantyCostModel.phase = "1";
                 ciCustWarrantyCostModel.premium = request.applyUnderwriting.ciInsuredPremium;
+                ciCustWarrantyCostModel.tax_money = request.applyUnderwriting.ciCarShipTax;
                 ciCustWarrantyCostModel.pay_status = payState;
                 ciCustWarrantyCostModel.created_at = time;
                 ciCustWarrantyCostModel.updated_at = time;
@@ -1496,6 +1586,7 @@ public class CarInsuranceAction extends BaseAction {
                 biCustWarrantyCostModel.pay_time = biProposal.start_time;
                 biCustWarrantyCostModel.phase = "1";
                 biCustWarrantyCostModel.premium = request.applyUnderwriting.biInsuredPremium;
+                biCustWarrantyCostModel.tax_money = request.applyUnderwriting.biCarShipTax;
                 biCustWarrantyCostModel.pay_status = payState;
                 biCustWarrantyCostModel.created_at = time;
                 biCustWarrantyCostModel.updated_at = time;
@@ -1627,8 +1718,16 @@ public class CarInsuranceAction extends BaseAction {
         }
 
         if (getPremiumCalibrateResponse.data != null && !getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails.isEmpty()) {
+            if (StringKit.isEmpty(getPremiumCalibrateResponse.data.ciInsuredPremium) || !StringKit.isNumeric(getPremiumCalibrateResponse.data.ciInsuredPremium)) {
+                getPremiumCalibrateResponse.data.ciInsuredPremium = "0";
+            }
             request.applyUnderwriting.ciInsuredPremium = getPremiumCalibrateResponse.data.ciInsuredPremium;
+
+            if (StringKit.isEmpty(getPremiumCalibrateResponse.data.biInsuredPremium) || !StringKit.isNumeric(getPremiumCalibrateResponse.data.biInsuredPremium)) {
+                getPremiumCalibrateResponse.data.biInsuredPremium = "0";
+            }
             request.applyUnderwriting.biInsuredPremium = getPremiumCalibrateResponse.data.biInsuredPremium;
+
             // request.applyUnderwriting.bjCodeFlag = getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails.get(0).;
             boolean flag = false;
             for (CarInsurance.InsurancePolicyPremiumDetail insurancePolicyPremiumDetail : getPremiumCalibrateResponse.data.insurancePolicyPremiumDetails) {
@@ -1640,6 +1739,11 @@ public class CarInsuranceAction extends BaseAction {
                     request.applyUnderwriting.biBeginDateValue = insurancePolicyPremiumDetail.biBeginDateValue;
                     request.applyUnderwriting.coverageList = insurancePolicyPremiumDetail.coverageList;
                     request.applyUnderwriting.spAgreements = insurancePolicyPremiumDetail.spAgreement;
+
+                    if (StringKit.isEmpty(insurancePolicyPremiumDetail.carshipTax) || !StringKit.isNumeric(insurancePolicyPremiumDetail.carshipTax)) {
+                        insurancePolicyPremiumDetail.carshipTax = "0";
+                    }
+                    request.applyUnderwriting.carshipTax = insurancePolicyPremiumDetail.carshipTax;
 
                     if (StringKit.isEmpty(insurancePolicyPremiumDetail.integral) || !StringKit.isNumeric(insurancePolicyPremiumDetail.integral)) {
                         insurancePolicyPremiumDetail.integral = "0";
@@ -1657,6 +1761,31 @@ public class CarInsuranceAction extends BaseAction {
                         insurancePolicyPremiumDetail.bIntegral = "0";
                     }
                     request.applyUnderwriting.bIntegral = insurancePolicyPremiumDetail.bIntegral;
+
+                    BigDecimal carShipTax = new BigDecimal(request.applyUnderwriting.carshipTax);
+
+                    BigDecimal ciInsuredPremium = new BigDecimal(getPremiumCalibrateResponse.data.ciInsuredPremium);
+                    BigDecimal biInsuredPremium = new BigDecimal(getPremiumCalibrateResponse.data.biInsuredPremium);
+                    BigDecimal ciCarShipTax = new BigDecimal("0.00");
+                    BigDecimal biCarShipTax = new BigDecimal("0.00");
+                    if (request.applyUnderwriting.hasCompulsoryInsurance && request.applyUnderwriting.hasCommercialInsurance) {
+                        ciCarShipTax = carShipTax;
+                        ciInsuredPremium = ciInsuredPremium.add(ciCarShipTax);
+                    } else if (!request.applyUnderwriting.hasCompulsoryInsurance && request.applyUnderwriting.hasCommercialInsurance) {
+                        biCarShipTax = carShipTax;
+                        biInsuredPremium = biInsuredPremium.add(biCarShipTax);
+                    } else if (request.applyUnderwriting.hasCompulsoryInsurance) {
+                        ciCarShipTax = carShipTax;
+                        ciInsuredPremium = ciInsuredPremium.add(ciCarShipTax);
+                    } else {
+                        return json(BaseResponse.CODE_FAILURE, "投保失败", response);
+                    }
+
+                    request.applyUnderwriting.ciInsuredPremium = String.valueOf(ciInsuredPremium.doubleValue());
+                    request.applyUnderwriting.biInsuredPremium = String.valueOf(biInsuredPremium.doubleValue());
+                    request.applyUnderwriting.ciCarShipTax = String.valueOf(ciCarShipTax.doubleValue());
+                    request.applyUnderwriting.biCarShipTax = String.valueOf(biCarShipTax.doubleValue());
+
                     flag = true;
                     break;
                 }
@@ -2107,8 +2236,85 @@ public class CarInsuranceAction extends BaseAction {
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = request.data.ciPolicyNo;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = request.data.biPolicyNo;
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.actual_pay_time = parseMillisecondByShowDate(sdf, request.data.payTime);
+                String time = parseMillisecondByShowDate(sdf, request.data.payTime);
+                if (StringKit.isEmpty(time)) {
+                    time = String.valueOf(System.currentTimeMillis());
+                }
+                updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.actual_pay_time = time;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.warranty_status = InsurancePolicyModel.POLICY_STATUS_WAITING;
+
+                List<CarInfoModel> warrantyUuidByBizId = carInfoDao.findWarrantyUuidByBizId(request.data.bizID);
+
+                CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+                for (CarInfoModel carInfoModel : warrantyUuidByBizId) {
+                    if (!StringKit.isEmpty(carInfoModel.warranty_uuid)) {
+                        custWarrantyCostModel.warranty_uuid = carInfoModel.warranty_uuid;
+                        InsurancePolicyModel insurancePolicyDetailByWarrantyUuid = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(carInfoModel.warranty_uuid);
+                        if (insurancePolicyDetailByWarrantyUuid == null) {
+                            continue;
+                        }
+                        List<CustWarrantyCostModel> custWarrantyCost = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
+                        if (custWarrantyCost == null) {
+                            continue;
+                        }
+                        for (CustWarrantyCostModel warrantyCostModel : custWarrantyCost) {
+                            if (warrantyCostModel != null) {
+                                if (!StringKit.isEmpty(insurancePolicyDetailByWarrantyUuid.channel_id)) {
+                                    TaskResultDataBean taskResultDataBean1 = new TaskResultDataBean();
+                                    taskResultDataBean1.dataType = "2";
+                                    taskResultDataBean1.dataAmount = warrantyCostModel.premium;
+                                    taskResultDataBean1.userType = "1";
+                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
+                                    taskResultDataBean1.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean1);
+
+                                    TaskResultDataBean taskResultDataBean2 = new TaskResultDataBean();
+                                    taskResultDataBean2.dataType = "2";
+                                    taskResultDataBean2.dataAmount = warrantyCostModel.premium;
+                                    taskResultDataBean2.userType = "1";
+                                    taskResultDataBean2.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
+                                    taskResultDataBean2.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean2);
+
+                                    TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
+                                    taskResultDataBean3.dataType = "4";
+                                    taskResultDataBean3.dataAmount = "2";
+                                    taskResultDataBean3.userType = "1";
+                                    taskResultDataBean3.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
+                                    taskResultDataBean3.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean3);
+                                }
+
+                                if (!StringKit.isEmpty(insurancePolicyDetailByWarrantyUuid.agent_id)) {
+                                    TaskResultDataBean taskResultDataBean1 = new TaskResultDataBean();
+                                    taskResultDataBean1.dataType = "2";
+                                    taskResultDataBean1.dataAmount = warrantyCostModel.premium;
+                                    taskResultDataBean1.userType = "2";
+                                    taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
+                                    taskResultDataBean1.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean1);
+
+                                    TaskResultDataBean taskResultDataBean2 = new TaskResultDataBean();
+                                    taskResultDataBean2.dataType = "2";
+                                    taskResultDataBean2.dataAmount = warrantyCostModel.premium;
+                                    taskResultDataBean2.userType = "2";
+                                    taskResultDataBean2.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
+                                    taskResultDataBean2.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean2);
+
+                                    TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
+                                    taskResultDataBean3.dataType = "4";
+                                    taskResultDataBean3.dataAmount = "2";
+                                    taskResultDataBean3.userType = "2";
+                                    taskResultDataBean3.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
+                                    taskResultDataBean3.time = time;
+                                    taskResultClient.updateTaskResult(taskResultDataBean3);
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
 
             int update = insurancePolicyDao.updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance(updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance);
@@ -2536,7 +2742,7 @@ public class CarInsuranceAction extends BaseAction {
     // 维修期间补偿险，最高保额
     private static final double Z2_MAX_AMOUNT = 500;
 
-    private static class CheckCoverageListResult {
+    public static class CheckCoverageListResult {
 
         // 是否有效
         public boolean result;
@@ -2548,12 +2754,24 @@ public class CarInsuranceAction extends BaseAction {
         List<ExtendCarInsurancePolicy.InsuranceInfoDetail> coverageList;
 
         // 获取玻璃险的对应type，只有确定玻璃险提交数据正确才有意义
-        String getFType(String text) {
+        public String getFType(String text) {
             switch (text) {
                 case "国产":
                     return "1";
                 case "进口":
                     return "2";
+                default:
+                    return "";
+            }
+        }
+
+        // 获取玻璃险的对应type，只有确定玻璃险提交数据正确才有意义
+        public String getFText(String text) {
+            switch (text) {
+                case "1":
+                    return "国产";
+                case "2":
+                    return "进口";
                 default:
                     return "";
             }
@@ -2806,250 +3024,25 @@ public class CarInsuranceAction extends BaseAction {
         return str;
     }
 
-    @Autowired
-    private ProductClient productClient;
+    public String addTaskResult(ActionBean bean) {
+        String time = String.valueOf(System.currentTimeMillis());
+        TaskResultDataBean taskResultDataBean1 = new TaskResultDataBean();
+        taskResultDataBean1.dataType = "2";
+        taskResultDataBean1.dataAmount = "1000";
+        taskResultDataBean1.userType = "1";
+        taskResultDataBean1.userId = "347";
+        taskResultDataBean1.time = time;
+        long l = taskResultClient.updateTaskResult(taskResultDataBean1);
 
-    @Autowired
-    private AgentClient agentClient;
+        TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
+        taskResultDataBean3.dataType = "4";
+        taskResultDataBean1.dataAmount = "2";
+        taskResultDataBean1.userType = "1";
+        taskResultDataBean1.userId = "348";
+        taskResultDataBean1.time = time;
+        long l1 = taskResultClient.updateTaskResult(taskResultDataBean3);
 
-    @Autowired
-    private BrokerageService brokerageService;
-
-    @Autowired
-    private CustWarrantyService custWarrantyService;
-
-    @Autowired
-    private PremiumService premiumService;
-
-    @Autowired
-    private ProductDao productDao;
-
-//    public String setData(ActionBean actionBean) {
-//        CarInsurance.GetProvinceCodeRequest request1 = new CarInsurance.GetProvinceCodeRequest();
-//
-//        request1.type = "0";
-//
-//        actionBean.body = JsonKit.bean2Json(request1);
-//
-//        String provinceCode = getProvinceCode(actionBean);
-//
-//        Map<String, String> nameMap = new HashMap<>();
-//        nameMap.put("ACIC", "安诚财产保险股份有限公司");
-//        nameMap.put("ASTP", "安盛天平财产保险股份有限公司");
-//        nameMap.put("AXIC", "安心财产保险有限责任公司");
-//        nameMap.put("CCIC", "中国大地财产保险股份有限公司");
-//        nameMap.put("CHAC", "诚泰财产保险股份有限公司");
-//        nameMap.put("CICP", "中华联合财产保险股份有限公司");
-//        nameMap.put("LIHI", "利宝保险有限公司");
-//        nameMap.put("PAIC", "中国平安财产保险股份有限公司");
-//        nameMap.put("PICC", "中国人民财产保险股份有限公司");
-//        nameMap.put("TAIC", "天安财产保险股份有限公司");
-//        nameMap.put("TPIC", "太平财产保险有限公司");
-//        nameMap.put("YAIC", "永安财产保险股份有限公司");
-//        nameMap.put("YGBX", "阳光财产保险股份有限公司");
-//        nameMap.put("ZFIC", "珠峰财产保险股份有限公司");
-//        nameMap.put("ZHONGAN", "众安在线财产保险股份有限公司");
-//
-//        nameMap.put("APIC", "永诚财产保险股份有限公司");
-//        nameMap.put("TSBX", "泰山财产保险股份有限公司");
-//        nameMap.put("CLPC", "中国人寿财产保险股份有限公司");
-//        nameMap.put("CPIC", "中国太平洋财产保险股份有限公司");
-//
-//        ExtendCarInsurancePolicy.GetProvinceCodeResponse codeResponse = JsonKit.json2Bean(provinceCode, ExtendCarInsurancePolicy.GetProvinceCodeResponse.class);
-//
-//        LinkedHashMap<String, MyBean> map = new LinkedHashMap<>();
-//        long time = System.currentTimeMillis();
-//
-//        if (codeResponse != null && codeResponse.data != null && !codeResponse.data.isEmpty()) {
-//            for (ExtendCarInsurancePolicy.ProvinceCodeDetail datum : codeResponse.data) {
-//                CarInsurance.GetInsuranceCompanyRequest request = new CarInsurance.GetInsuranceCompanyRequest();
-//
-//                request.provinceCode = datum.provinceCode;
-//                actionBean.body = JsonKit.bean2Json(request);
-//
-//                String insuranceByArea = getInsuranceByArea(actionBean);
-//                ExtendCarInsurancePolicy.GetInsuranceCompanyResponse getInsuranceCompanyResponse = JsonKit.json2Bean(insuranceByArea, ExtendCarInsurancePolicy.GetInsuranceCompanyResponse.class);
-//
-//                if (getInsuranceCompanyResponse != null && getInsuranceCompanyResponse.data != null && !getInsuranceCompanyResponse.data.isEmpty()) {
-//
-//                    for (ExtendCarInsurancePolicy.InsuranceCompany insuranceCompany : getInsuranceCompanyResponse.data) {
-//                        String s = nameMap.get(insuranceCompany.insurerCode);
-//                        if (s != null) {
-//                            map.put(insuranceCompany.insurerCode, new MyBean(insuranceCompany.insurerCode, s, insuranceCompany.insurerName, time));
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        Set<String> strings = map.keySet();
-//        ArrayList<MyBean> myBeans = new ArrayList<>();
-//
-//        for (String string : strings) {
-//            myBeans.add(map.get(string));
-//        }
-//
-//        L.log.debug(JsonKit.bean2Json(myBeans));
-//
-//        Map<String, String> idMap = new HashMap<>();
-//
-//        if (!myBeans.isEmpty()) {
-//            for (MyBean myBean : myBeans) {
-//                long l = productDao.addCompany(myBean);
-//                idMap.put(myBean.code, myBean.id);
-//            }
-//        }
-//
-//        List<MyBean2> list = new ArrayList<>();
-//        for (MyBean myBean : myBeans) {
-//            MyBean2 myBean2_2 = new MyBean2(myBean.display_name + "交强险", idMap.get(myBean.code), myBean.code + "_CAR_COMPULSORY", "200040001", time);
-//            MyBean2 myBean2_1 = new MyBean2(myBean.display_name + "商业险", idMap.get(myBean.code), myBean.code + "_CAR_BUSINESS", "200040002", time);
-//            list.add(myBean2_2);
-//            list.add(myBean2_1);
-//        }
-//
-//        if (!list.isEmpty()) {
-//            for (MyBean2 myBean2 : list) {
-//                productDao.addProduct(myBean2);
-//            }
-//        }
-
-
-//        ChannelIdBean channelIdBean = new ChannelIdBean();
-//        channelIdBean.channelId = "1";
-//
-//        String brokerageByChannelIdForManagerSystem = brokerageService.getBrokerageByChannelIdForManagerSystem(channelIdBean);
-//
-//        IncomeBean incomeBean = new IncomeBean();
-//        incomeBean.managerUuid = "1";
-//        incomeBean.accountUuid = "1";
-//
-//        String incomeByManagerUuidAndAccountUuidForManagerSystem = brokerageService.getIncomeByManagerUuidAndAccountUuidForManagerSystem(incomeBean);
-//
-//        AccountUuidBean accountUuid = new AccountUuidBean();
-//        accountUuid.accountUuid = "1";
-//
-//        String policyholderCountByTimeOrAccountId = custWarrantyService.getPolicyholderCountByTimeOrAccountId(accountUuid);
-//
-//        String premiumByAccountUuidForManagerSystem = premiumService.getPremiumByAccountUuidForManagerSystem(accountUuid);
-//
-//        String premiumByChannelIdForManagerSystem = premiumService.getPremiumByChannelIdForManagerSystem(channelIdBean);
-//
-//        String premiumCountByChannelIdForManagerSystem = premiumService.getPremiumCountByChannelIdForManagerSystem(channelIdBean);
-
-//        AgentBean agentInfoByPersonIdManagerUuid = personClient.getAgentInfoByPersonIdManagerUuid("2", "92");
-//
-//        return agentInfoByPersonIdManagerUuid != null ? agentInfoByPersonIdManagerUuid.toString() : "null";
-
-//        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
-//        insurancePolicyModel.manager_uuid = "2";
-//        insurancePolicyModel.product_id_string = "0,1";
-//
-//        List<PolicyListCountModel> insurancePolicyListCountByTimeAndManagerUuidAndProductId = insurancePolicyDao.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
-
-//        Map<String, String> typeMap = new HashMap<>();
-//
-//
-
-
-//        交强险 000200040001
-//        商业险 000200040002
-//        typeMap.put("", "");
-
-//        MyBean3 root1 = new MyBean3("人身保险", "0", "1", "100000000");
-//        productDao.addCategory(root1);
-//        MyBean3 root2 = new MyBean3("财产保险", "0", "1", "200000000");
-//        productDao.addCategory(root2);
-//
-//
-//        MyBean3 children1 = new MyBean3("养老险", root1.id, "2", "100010000");
-//        productDao.addCategory(children1);
-//        MyBean3 children2 = new MyBean3("人寿险", root1.id, "2", "100020000");
-//        productDao.addCategory(children2);
-//        MyBean3 children3 = new MyBean3("健康险", root1.id, "2", "100030000");
-//        productDao.addCategory(children3);
-//        MyBean3 children4 = new MyBean3("意外险", root1.id, "2", "100040000");
-//        productDao.addCategory(children4);
-//        MyBean3 children5 = new MyBean3("重疾险", root1.id, "2", "100050000");
-//        productDao.addCategory(children5);
-//        MyBean3 children6 = new MyBean3("其他", root1.id, "2", "199990000");
-//        productDao.addCategory(children6);
-//        MyBean3 children7 = new MyBean3("财产损失险", root2.id, "2", "200010000");
-//        productDao.addCategory(children7);
-//        MyBean3 children8 = new MyBean3("责任保险", root2.id, "2", "200020000");
-//        productDao.addCategory(children8);
-//        MyBean3 children9 = new MyBean3("信用保证险", root2.id, "2", "200030000");
-//        productDao.addCategory(children9);
-//        MyBean3 children10 = new MyBean3("车险", root2.id, "2", "200040000");
-//        productDao.addCategory(children10);
-//        MyBean3 children11 = new MyBean3("农险", root2.id, "2", "200050000");
-//        productDao.addCategory(children11);
-//        MyBean3 children12 = new MyBean3("其他", root2.id, "2", "200060000");
-//        productDao.addCategory(children12);
-//
-//
-//        MyBean3 children13 = new MyBean3("生存保险", children2.id, "3", "100020001");
-//        productDao.addCategory(children13);
-//        MyBean3 children14 = new MyBean3("死亡保险", children2.id, "3", "100020002");
-//        productDao.addCategory(children14);
-//        MyBean3 children15 = new MyBean3("两全保险", children2.id, "3", "100020003");
-//        productDao.addCategory(children15);
-//
-//
-//        MyBean3 children16 = new MyBean3("医疗保险", children3.id, "3", "100030001");
-//        productDao.addCategory(children16);
-//        MyBean3 children17 = new MyBean3("失能收入保险", children3.id, "3", "100030002");
-//        productDao.addCategory(children17);
-//        MyBean3 children18 = new MyBean3("护理保险", children3.id, "3", "100030003");
-//        productDao.addCategory(children18);
-//
-//        MyBean3 children19 = new MyBean3("个人意外险", children4.id, "3", "100040001");
-//        productDao.addCategory(children19);
-//        MyBean3 children20 = new MyBean3("团体意外险", children4.id, "3", "100040002");
-//        productDao.addCategory(children20);
-//
-//        MyBean3 children21 = new MyBean3("企财险", children7.id, "3", "200010001");
-//        productDao.addCategory(children21);
-//        MyBean3 children22 = new MyBean3("家财险", children7.id, "3", "200010002");
-//        productDao.addCategory(children22);
-//        MyBean3 children23 = new MyBean3("运输工具险", children7.id, "3", "200010003");
-//        productDao.addCategory(children23);
-//        MyBean3 children24 = new MyBean3("工程险", children7.id, "3", "200010004");
-//        productDao.addCategory(children24);
-//        MyBean3 children25 = new MyBean3("特殊风险", children7.id, "3", "200010005");
-//        productDao.addCategory(children25);
-//        MyBean3 children26 = new MyBean3("指数险", children7.id, "3", "200010006");
-//        productDao.addCategory(children26);
-//
-//        MyBean3 children27 = new MyBean3("公众责任险", children8.id, "3", "200020001");
-//        productDao.addCategory(children27);
-//        MyBean3 children28 = new MyBean3("第三者责任险", children8.id, "3", "200020002");
-//        productDao.addCategory(children28);
-//        MyBean3 children29 = new MyBean3("产品责任险", children8.id, "3", "200020003");
-//        productDao.addCategory(children29);
-//        MyBean3 children30 = new MyBean3("雇主责任险", children8.id, "3", "200020004");
-//        productDao.addCategory(children30);
-//        MyBean3 children31 = new MyBean3("职业责任险", children8.id, "3", "200020005");
-//        productDao.addCategory(children31);
-//        MyBean3 children32 = new MyBean3("物流责任险", children8.id, "3", "200020006");
-//        productDao.addCategory(children32);
-//
-//
-//        MyBean3 children33 = new MyBean3("出口信用险", children9.id, "3", "200030001");
-//        productDao.addCategory(children33);
-//        MyBean3 children34 = new MyBean3("投资保险", children9.id, "3", "200030002");
-//        productDao.addCategory(children34);
-//        MyBean3 children35 = new MyBean3("雇员忠诚保证险", children9.id, "3", "200030003");
-//        productDao.addCategory(children35);
-//        MyBean3 children36 = new MyBean3("履约保证险", children9.id, "3", "200030004");
-//        productDao.addCategory(children36);
-//
-//        MyBean3 children37 = new MyBean3("交强险", children9.id, "3", "200040001");
-//        productDao.addCategory(children37);
-//        MyBean3 children38 = new MyBean3("商业险", children9.id, "3", "200040002");
-//        productDao.addCategory(children38);
-//
-//        return "haha";
-//    }
+        return l + "haha" + l1;
+    }
 
 }

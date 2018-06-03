@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
+import com.inschos.cloud.trading.access.http.controller.action.CarInsuranceAction;
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
@@ -9,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 创建日期：2018/3/22 on 14:03
@@ -153,13 +151,13 @@ public class InsurancePolicy {
         public String insuranceProductName;
 
         public String insuranceCompanyName;
+        public String insuranceCompanyLogo;
 
         // 车险用验证码（仅车险存在）
         public String bjCodeFlag;
         // 车险流水号
         public String bizId;
         public String insuranceClaimsCount = "0";
-
 
         public GetInsurancePolicy() {
 
@@ -230,7 +228,7 @@ public class InsurancePolicy {
 
     public static class GetInsurancePolicyDetailForOnlineStoreRequestRequest extends BaseRequest {
         // 保单唯一id
-        @CheckParams
+        @CheckParams(hintName = "保单id")
         public String warrantyUuid;
     }
 
@@ -468,6 +466,18 @@ public class InsurancePolicy {
                         }
                         this.coverageList.add(o);
                     }
+
+                    o.insuredAmountText = "";
+                    if (StringKit.isNumeric(o.insuredAmount)) {
+                        o.insuredAmountText = "¥" + o.insuredAmount;
+                    }
+
+                    if (StringKit.equals(o.coverageCode, "F")) {
+                        CarInsuranceAction.CheckCoverageListResult coverageListResult = new CarInsuranceAction.CheckCoverageListResult();
+                        o.insuredAmountText = coverageListResult.getFText(o.flag);
+                    } else if (StringKit.equals(o.coverageCode, "Z2")) {
+                        o.insuredAmountText = o.amount + "元/天 × " + o.day + "天";
+                    }
                 }
             }
             this.spAgreement = model.parseSpAgreement(model.sp_agreement);
@@ -636,6 +646,10 @@ public class InsurancePolicy {
         public List<GetInsurancePolicyForManagerSystem> data;
     }
 
+    public static class DownloadInsurancePolicyListForManagerSystemResponse extends BaseResponse {
+        public String data;
+    }
+
     public static class GetInsurancePolicyForManagerSystem extends GetInsurancePolicy {
         public String contactsName;
         public String contactsMobile;
@@ -651,6 +665,50 @@ public class InsurancePolicy {
         public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
             super(model, premium, pay_money, warrantyStatusForPay, warrantyStatusForPayText);
         }
+
+        public static GetInsurancePolicyForManagerSystem getCarInsurancePolicyTitle() {
+            GetInsurancePolicyForManagerSystem insurancePolicy = new GetInsurancePolicyForManagerSystem();
+
+            insurancePolicy.prePolicyNo = "投保单号";
+            insurancePolicy.warrantyCode = "保单号";
+            insurancePolicy.productName = "保险产品";
+            insurancePolicy.policyHolderName = "投保人";
+            insurancePolicy.policyHolderMobile = "投保人电话";
+            insurancePolicy.carCode = "车牌号";
+            insurancePolicy.premiumText = "保费（元）";
+            insurancePolicy.startTimeText = "投保时间";
+            insurancePolicy.warrantyStatusText = "保单状态";
+
+            return insurancePolicy;
+        }
+
+    }
+
+    public static final Map<String, String> CAR_FIELD_MAP;
+
+    static {
+        CAR_FIELD_MAP = new HashMap<>();
+        CAR_FIELD_MAP.put("A", "prePolicyNo");
+        CAR_FIELD_MAP.put("B", "warrantyCode");
+        CAR_FIELD_MAP.put("C", "productName");
+        CAR_FIELD_MAP.put("D", "policyHolderName");
+        CAR_FIELD_MAP.put("E", "policyHolderMobile");
+        CAR_FIELD_MAP.put("F", "carCode");
+        CAR_FIELD_MAP.put("G", "premiumText");
+        CAR_FIELD_MAP.put("H", "startTimeText");
+        CAR_FIELD_MAP.put("I", "warrantyStatusText");
+    }
+
+    public static final Map<String, String> PERSON_FIELD_MAP;
+
+    static {
+        PERSON_FIELD_MAP = new HashMap<>();
+    }
+
+    public static final Map<String, String> TEAM_FIELD_MAP;
+
+    static {
+        TEAM_FIELD_MAP = new HashMap<>();
     }
 
     public static class GetInsurancePolicyDetailForManagerSystemRequest extends BaseRequest {
@@ -943,6 +1001,38 @@ public class InsurancePolicy {
                 this.agentRateText = "0.00%";
             }
 
+        }
+
+    }
+
+    public static class OfflineInsurancePolicyInputRequest extends BaseRequest {
+        @CheckParams(hintName = "文件")
+        public String fileKey;
+    }
+
+    public static class OfflineInsurancePolicyInputResponse extends BaseResponse {
+        public OfflineInsurancePolicyDetail data;
+    }
+
+    public static class OfflineInsurancePolicyDetail {
+        public String excelFileKey;
+        public String excelFileUrl;
+        public List<OfflineInsurancePolicy> list;
+    }
+
+    public static class OfflineInsurancePolicy {
+
+        public String warrantyCode;
+
+        public String reason;
+
+        public OfflineInsurancePolicy() {
+
+        }
+
+        public OfflineInsurancePolicy(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
+            this.warrantyCode = offlineInsurancePolicyModel.warranty_code;
+            this.reason = offlineInsurancePolicyModel.reason;
         }
 
     }

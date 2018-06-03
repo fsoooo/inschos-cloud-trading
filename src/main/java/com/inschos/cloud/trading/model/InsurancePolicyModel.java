@@ -2,8 +2,10 @@ package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.StringKit;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 创建日期：2018/3/22 on 16:43
@@ -520,5 +522,24 @@ public class InsurancePolicyModel {
      * 车险验证码标识
      */
     public String bj_code_flag;
+
+    public static final Map<String,String> CAR_FIELD_MAP;
+
+    static {
+        CAR_FIELD_MAP = new HashMap<>();
+
+    }
+
+    public static final Map<String,String> PERSON_FIELD_MAP;
+
+    static {
+        PERSON_FIELD_MAP = new HashMap<>();
+    }
+
+    public static final Map<String,String> TEAM_FIELD_MAP;
+
+    static {
+        TEAM_FIELD_MAP = new HashMap<>();
+    }
 
 }

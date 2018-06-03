@@ -7,6 +7,7 @@ import com.inschos.cloud.trading.access.rpc.service.TaskResultService;
 import com.inschos.cloud.trading.assist.kit.L;
 import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * 描述：
  * 作者：zhangyunhe
  */
+@Component
 public class TaskResultClient {
 
     @Value("${rpc.remote.task.host}")
