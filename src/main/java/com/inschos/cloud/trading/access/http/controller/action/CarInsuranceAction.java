@@ -133,11 +133,6 @@ public class CarInsuranceAction extends BaseAction {
                         }
 
                         str = json(BaseResponse.CODE_SUCCESS, "获取省级列表成功", response);
-//                        if (request == null) {
-//                            str = dealFieldName("1", str);
-//                        } else {
-//                            str = dealFieldName(request.type, str);
-//                        }
 
                     } else {
                         str = json(BaseResponse.CODE_FAILURE, "获取省级列表失败", response);
@@ -200,7 +195,6 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 str = json(BaseResponse.CODE_SUCCESS, "获取市级列表成功", response);
-                // str = dealFieldName(request.type, str);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
             }
@@ -3029,42 +3023,6 @@ public class CarInsuranceAction extends BaseAction {
             }
         }
         return applyState;
-    }
-
-
-//    private String dealFieldName(String type, String str) {
-//        if (StringKit.equals(type, "1")) {
-//            str = str.replaceAll("provinceCode", "code");
-//            str = str.replaceAll("provinceName", "name");
-//            str = str.replaceAll("cityCode", "code");
-//            str = str.replaceAll("cityName", "name");
-//            str = str.replaceAll("countyCode", "code");
-//            str = str.replaceAll("countyName", "name");
-//            str = str.replaceAll("countyList", "children");
-//            str = str.replaceAll("city", "children");
-//        }
-//        return str;
-//    }
-
-    public String addTaskResult(ActionBean bean) {
-        String time = String.valueOf(System.currentTimeMillis());
-        TaskResultDataBean taskResultDataBean1 = new TaskResultDataBean();
-        taskResultDataBean1.dataType = "2";
-        taskResultDataBean1.dataAmount = "1000";
-        taskResultDataBean1.userType = "1";
-        taskResultDataBean1.userId = "347";
-        taskResultDataBean1.time = time;
-        long l = taskResultClient.updateTaskResult(taskResultDataBean1);
-
-        TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
-        taskResultDataBean3.dataType = "4";
-        taskResultDataBean1.dataAmount = "2";
-        taskResultDataBean1.userType = "1";
-        taskResultDataBean1.userId = "348";
-        taskResultDataBean1.time = time;
-        long l1 = taskResultClient.updateTaskResult(taskResultDataBean3);
-
-        return l + "haha" + l1;
     }
 
 }

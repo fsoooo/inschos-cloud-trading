@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -415,8 +414,8 @@ public class InsurancePolicyAction extends BaseAction {
         Sheet sheet = workbook.createSheet(name + "-保单列表");
 
         InsurancePolicy.GetInsurancePolicyForManagerSystem carInsurancePolicyTitle = InsurancePolicy.GetInsurancePolicyForManagerSystem.getCarInsurancePolicyTitle();
-        List<InsurancePolicy.GetInsurancePolicyForManagerSystem> list = new ArrayList<>();
-        list.add(carInsurancePolicyTitle);
+        List<ExcelModel<InsurancePolicy.GetInsurancePolicyForManagerSystem>> list = new ArrayList<>();
+        list.add(new ExcelModel<>(carInsurancePolicyTitle));
         int startRow = 0;
 
         int i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow);
@@ -427,11 +426,16 @@ public class InsurancePolicyAction extends BaseAction {
 
             List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
             List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, request, insurancePolicyModel, agentMap);
-
-            i = ExcelModelKit.writeExcel(sheet, getInsurancePolicyForManagerSystems, InsurancePolicy.CAR_FIELD_MAP, startRow);
-            startRow += i;
+            list.clear();
 
             if (getInsurancePolicyForManagerSystems != null && !getInsurancePolicyForManagerSystems.isEmpty()) {
+                for (InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem : getInsurancePolicyForManagerSystems) {
+                    list.add(new ExcelModel<>(getInsurancePolicyForManagerSystem));
+                }
+
+                i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow);
+                startRow += i;
+
                 lastId = getInsurancePolicyForManagerSystems.get(getInsurancePolicyForManagerSystems.size() - 1).id;
             }
 
@@ -1266,7 +1270,7 @@ public class InsurancePolicyAction extends BaseAction {
 
             for (Sheet sheet : wb) {
                 for (Row row : sheet) {
-                    OfflineInsurancePolicyModel offlineInsurancePolicyModel = ExcelModelKit.initModel(OfflineInsurancePolicyModel.class, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, row);
+                    OfflineInsurancePolicyModel offlineInsurancePolicyModel = ExcelModelKit.createModel(OfflineInsurancePolicyModel.class, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, row);
 
                     if (offlineInsurancePolicyModel == null) {
                         continue;
@@ -1327,7 +1331,13 @@ public class InsurancePolicyAction extends BaseAction {
         if (!flag && response.data.list != null && !response.data.list.isEmpty()) {
             OfflineInsurancePolicyModel titleModel = OfflineInsurancePolicyModel.getTitleModel();
             errorList.add(0, titleModel);
-            byte[] data = ExcelModelKit.createExcelByteArray(errorList, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, "导入失败保单数据");
+
+            List<ExcelModel<OfflineInsurancePolicyModel>> dataList = new ArrayList<>();
+            for (OfflineInsurancePolicyModel offlineInsurancePolicyModel : errorList) {
+                dataList.add(new ExcelModel<>(offlineInsurancePolicyModel));
+            }
+
+            byte[] data = ExcelModelKit.createExcelByteArray(dataList, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, "导入失败保单数据");
 
             if (data == null) {
                 return json(BaseResponse.CODE_FAILURE, "导入失败", response);

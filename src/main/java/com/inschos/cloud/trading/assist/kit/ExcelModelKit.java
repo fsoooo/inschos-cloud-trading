@@ -30,7 +30,7 @@ public class ExcelModelKit {
      * @param row Excel每行数据
      * @return Model类
      */
-    public static <T> T initModel(Class<T> cls, Map<String, String> map, Row row) {
+    public static <T> T createModel(Class<T> cls, Map<String, String> map, Row row) {
         if (cls == null || map == null || row == null) {
             return null;
         }
@@ -71,7 +71,7 @@ public class ExcelModelKit {
         return t;
     }
 
-    public static <T> byte[] createExcelByteArray(List<T> data, Map<String, String> map, String sheetName) {
+    public static <T> byte[] createExcelByteArray(List<ExcelModel<T>> data, Map<String, String> map, String sheetName) {
 
         if (data == null || data.isEmpty()) {
             return null;
@@ -85,14 +85,14 @@ public class ExcelModelKit {
         return getWorkbookByteArray(workbook);
     }
 
-    public static <T> int writeExcel(Sheet sheet, List<T> data, Map<String, String> map, int startRow) {
+    public static <T> int writeExcel(Sheet sheet, List<ExcelModel<T>> data, Map<String, String> map, int startRow) {
 
         if (data == null || data.isEmpty()) {
             return 0;
         }
 
         int size = data.size();
-        Field[] declaredFields = getClassFieldArray(data.get(0));
+        Field[] declaredFields = getClassFieldArray(data.get(0).getData());
 
         if (declaredFields == null || declaredFields.length == 0) {
             return 0;
@@ -103,7 +103,16 @@ public class ExcelModelKit {
         Map<String, Field> fieldMap = new HashMap<>();
 
         for (int i = startRow; i < size + startRow; i++) {
-            T t = data.get(i - startRow);
+            ExcelModel<T> tExcelModel = data.get(i - startRow);
+
+            T t = tExcelModel.getData();
+
+            if (t == null) {
+                continue;
+            }
+
+            L.log.debug("writeExcel ===========> data = " + t.toString());
+
             Field[] fArray = getClassFieldArray(t);
 
             if (fArray == null || fArray.length == 0) {
@@ -134,6 +143,9 @@ public class ExcelModelKit {
                         if (o == null) {
                             cell.setCellValue("");
                         } else {
+                            if (tExcelModel.hasStyle) {
+                                cell.setCellStyle(tExcelModel.cellStyle);
+                            }
                             cell.setCellValue(o.toString());
                         }
                     } catch (IllegalAccessException e) {
@@ -146,7 +158,35 @@ public class ExcelModelKit {
         return count;
     }
 
-    public static byte[] getWorkbookByteArray (Workbook workbook) {
+//    public static <T> byte[] createExcelByteArray(List<T> data, Map<String, String> map, String sheetName) {
+//
+//        if (data == null || data.isEmpty()) {
+//            return null;
+//        }
+//
+//        List<ExcelModel<T>> list = new ArrayList<>();
+//        for (T datum : data) {
+//            list.add(new ExcelModel<>(datum));
+//        }
+//
+//        return createExcelByteArray(list, map, sheetName);
+//    }
+//
+//    public static <T> int writeExcel(Sheet sheet, List<T> data, Map<String, String> map, int startRow) {
+//
+//        if (data == null || data.isEmpty()) {
+//            return 0;
+//        }
+//
+//        List<ExcelModel<T>> list = new ArrayList<>();
+//        for (T datum : data) {
+//            list.add(new ExcelModel<>(datum));
+//        }
+//
+//        return writeExcel(sheet, list, map, startRow);
+//    }
+
+    public static byte[] getWorkbookByteArray(Workbook workbook) {
         byte[] result;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 

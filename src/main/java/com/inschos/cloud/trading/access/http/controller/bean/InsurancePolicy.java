@@ -5,6 +5,8 @@ import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 import com.inschos.cloud.trading.model.*;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -682,6 +684,66 @@ public class InsurancePolicy {
             return insurancePolicy;
         }
 
+        @Override
+        public String toString() {
+            return "GetInsurancePolicyForManagerSystem{" +
+                    "id='" + id + '\'' +
+                    ", warrantyUuid='" + warrantyUuid + '\'' +
+                    ", prePolicyNo='" + prePolicyNo + '\'' +
+                    ", warrantyCode='" + warrantyCode + '\'' +
+                    ", accountUuid='" + accountUuid + '\'' +
+                    ", buyerAuuid='" + buyerAuuid + '\'' +
+                    ", agentId='" + agentId + '\'' +
+                    ", agentName='" + agentName + '\'' +
+                    ", channelId='" + channelId + '\'' +
+                    ", planId='" + planId + '\'' +
+                    ", productId='" + productId + '\'' +
+                    ", productName='" + productName + '\'' +
+                    ", premium='" + premium + '\'' +
+                    ", premiumText='" + premiumText + '\'' +
+                    ", payMoney='" + payMoney + '\'' +
+                    ", payMoneyText='" + payMoneyText + '\'' +
+                    ", startTime='" + startTime + '\'' +
+                    ", startTimeText='" + startTimeText + '\'' +
+                    ", endTime='" + endTime + '\'' +
+                    ", endTimeText='" + endTimeText + '\'' +
+                    ", term='" + term + '\'' +
+                    ", insCompanyId='" + insCompanyId + '\'' +
+                    ", count='" + count + '\'' +
+                    ", byStagesWay='" + byStagesWay + '\'' +
+                    ", isSettlement='" + isSettlement + '\'' +
+                    ", isSettlementText='" + isSettlementText + '\'' +
+                    ", brokerage='" + brokerage + '\'' +
+                    ", brokerageText='" + brokerageText + '\'' +
+                    ", warrantyUrl='" + warrantyUrl + '\'' +
+                    ", warrantyFrom='" + warrantyFrom + '\'' +
+                    ", warrantyFromText='" + warrantyFromText + '\'' +
+                    ", type='" + type + '\'' +
+                    ", warrantyStatus='" + warrantyStatus + '\'' +
+                    ", payStatus='" + payStatus + '\'' +
+                    ", warrantyStatusText='" + warrantyStatusText + '\'' +
+                    ", integral='" + integral + '\'' +
+                    ", expressNo='" + expressNo + '\'' +
+                    ", expressCompanyName='" + expressCompanyName + '\'' +
+                    ", deliveryType='" + deliveryType + '\'' +
+                    ", deliveryTypeText='" + deliveryTypeText + '\'' +
+                    ", updatedAt='" + updatedAt + '\'' +
+                    ", updatedAtText='" + updatedAtText + '\'' +
+                    ", insuredText='" + insuredText + '\'' +
+                    ", insuranceProductName='" + insuranceProductName + '\'' +
+                    ", insuranceCompanyName='" + insuranceCompanyName + '\'' +
+                    ", insuranceCompanyLogo='" + insuranceCompanyLogo + '\'' +
+                    ", bjCodeFlag='" + bjCodeFlag + '\'' +
+                    ", bizId='" + bizId + '\'' +
+                    ", insuranceClaimsCount='" + insuranceClaimsCount + '\'' +
+                    ", contactsName='" + contactsName + '\'' +
+                    ", contactsMobile='" + contactsMobile + '\'' +
+                    ", policyHolderName='" + policyHolderName + '\'' +
+                    ", policyHolderMobile='" + policyHolderMobile + '\'' +
+                    ", frameNo='" + frameNo + '\'' +
+                    ", carCode='" + carCode + '\'' +
+                    '}';
+        }
     }
 
     public static final Map<String, String> CAR_FIELD_MAP;
