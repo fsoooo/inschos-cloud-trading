@@ -151,10 +151,6 @@ public class InsurancePolicyAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        if (StringKit.isEmpty(request.lastId)) {
-            request.lastId = "0";
-        }
-
         if (StringKit.isEmpty(request.pageNum)) {
             request.pageNum = "1";
         }
@@ -877,11 +873,7 @@ public class InsurancePolicyAction extends BaseAction {
             custWarrantyBrokerageModel.end_time = request.endTime;
         }
 
-        if (StringKit.isEmpty(request.channelId)) {
-            custWarrantyBrokerageModel.channel_id = "-1";
-        } else {
-            custWarrantyBrokerageModel.channel_id = request.channelId;
-        }
+        custWarrantyBrokerageModel.channel_id = request.channelId;
 
         custWarrantyBrokerageModel.manager_uuid = actionBean.managerUuid;
 

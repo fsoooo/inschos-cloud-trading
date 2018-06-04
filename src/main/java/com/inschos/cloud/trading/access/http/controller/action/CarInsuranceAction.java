@@ -1056,21 +1056,6 @@ public class CarInsuranceAction extends BaseAction {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        long current = System.currentTimeMillis();
-        Long biBeginDate = formatterDate(request.biBeginDateValue);
-        if (biBeginDate == null || current >= biBeginDate) {
-            return json(BaseResponse.CODE_FAILURE, "商业险起保日期错误或时间早于" + sdf.format(new Date(current + 24 * 60 * 60 * 1000)), response);
-        }
-
-        getPremiumCalibrateRequest.biBeginDate = sdf.format(new Date(biBeginDate));
-
-        Long ciBeginDate = formatterDate(request.ciBeginDateValue);
-        if (ciBeginDate == null || current >= biBeginDate) {
-            return json(BaseResponse.CODE_FAILURE, "强险起保日期错误或时间早于" + sdf.format(new Date(current + 24 * 60 * 60 * 1000)), response);
-        }
-
-        getPremiumCalibrateRequest.ciBeginDate = sdf.format(new Date(ciBeginDate));
-
         getPremiumCalibrateRequest.insurerCode = request.insurerCode;
         getPremiumCalibrateRequest.responseNo = request.responseNo;
 
@@ -1138,6 +1123,23 @@ public class CarInsuranceAction extends BaseAction {
 
         if (!checkCoverageListResult.result) {
             return json(BaseResponse.CODE_FAILURE, checkCoverageListResult.message, response);
+        }
+
+        long current = System.currentTimeMillis();
+        if (checkCoverageListResult.hasCommercialInsurance) {
+            Long biBeginDate = formatterDate(request.biBeginDateValue);
+            if (biBeginDate == null || current >= biBeginDate) {
+                return json(BaseResponse.CODE_FAILURE, "商业险起保日期错误或时间早于" + sdf.format(new Date(current + 24 * 60 * 60 * 1000)), response);
+            }
+            getPremiumCalibrateRequest.biBeginDate = sdf.format(new Date(biBeginDate));
+        }
+
+        if (checkCoverageListResult.hasCompulsoryInsurance) {
+            Long ciBeginDate = formatterDate(request.ciBeginDateValue);
+            if (ciBeginDate == null || current >= ciBeginDate) {
+                return json(BaseResponse.CODE_FAILURE, "强险起保日期错误或时间早于" + sdf.format(new Date(current + 24 * 60 * 60 * 1000)), response);
+            }
+            getPremiumCalibrateRequest.ciBeginDate = sdf.format(new Date(ciBeginDate));
         }
 
         getPremiumCalibrateRequest.coverageList = checkCoverageListResult.coverageList;
@@ -2726,6 +2728,11 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             if (!StringKit.equals(insuranceInfo.insuredAmount, "N")) {
+                if (!checkCoverageListResult.hasCompulsoryInsurance && StringKit.equals(insuranceInfo.coverageCode, "FORCEPREMIUM")) {
+                    checkCoverageListResult.hasCompulsoryInsurance = true;
+                } else if (!checkCoverageListResult.hasCommercialInsurance && !StringKit.equals(insuranceInfo.coverageCode, "FORCEPREMIUM")) {
+                    checkCoverageListResult.hasCommercialInsurance = true;
+                }
                 checkCoverageListResult.coverageList.add(insuranceInfoDetail);
             }
         }
@@ -2752,6 +2759,9 @@ public class CarInsuranceAction extends BaseAction {
 
         // 校验正常后的实际提交险别列表
         List<ExtendCarInsurancePolicy.InsuranceInfoDetail> coverageList;
+
+        public boolean hasCompulsoryInsurance = false;
+        public boolean hasCommercialInsurance = false;
 
         // 获取玻璃险的对应type，只有确定玻璃险提交数据正确才有意义
         public String getFType(String text) {

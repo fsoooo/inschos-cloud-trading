@@ -293,9 +293,9 @@ public class CarInsurance {
         public String cityCode;
         public String biBeginDate;
         public String ciBeginDate;
-        @CheckParams(hintName = "商业险承保时间")
+        @CheckParams(isNecessity = false, hintName = "商业险承保时间")
         public String biBeginDateValue;
-        @CheckParams(hintName = "交强险承保时间")
+        @CheckParams(isNecessity = false, hintName = "交强险承保时间")
         public String ciBeginDateValue;
         @CheckParams(hintName = "险种代码")
         public String insurerCode;
