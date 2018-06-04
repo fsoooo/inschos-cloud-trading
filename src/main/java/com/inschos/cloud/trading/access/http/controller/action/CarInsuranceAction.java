@@ -109,30 +109,35 @@ public class CarInsuranceAction extends BaseAction {
                     CarInsurance.GetCityCodeResponse getCityCodeResponse = JsonKit.json2Bean(getCityCode(bean), CarInsurance.GetCityCodeResponse.class);
 
                     if (getCityCodeResponse != null && getCityCodeResponse.data != null && getCityCodeResponse.code == BaseResponse.CODE_SUCCESS) {
-                        response.data = result.data;
-                        response.data.get(0).city = getCityCodeResponse.data.city;
+
+                        response.data = new ArrayList<>();
+                        for (ExtendCarInsurancePolicy.ProvinceCodeDetail datum : result.data) {
+                            response.data.add(new CarInsurance.ProvinceCodeDetail(datum));
+                        }
+
+                        response.data.get(0).children = getCityCodeResponse.data.children;
 
                         for (int i = 1; i < response.data.size(); i++) {
-                            response.data.get(i).city = new ArrayList<>();
-                            ExtendCarInsurancePolicy.CityCode cityCode = new ExtendCarInsurancePolicy.CityCode();
-                            cityCode.cityName = "";
-                            cityCode.cityCode = "";
-                            cityCode.countyList = new ArrayList<>();
+                            response.data.get(i).children = new ArrayList<>();
+                            CarInsurance.CityCode cityCode = new CarInsurance.CityCode();
+                            cityCode.name = "";
+                            cityCode.code = "";
+                            cityCode.children = new ArrayList<>();
 
-                            ExtendCarInsurancePolicy.AreaCode areaCode = new ExtendCarInsurancePolicy.AreaCode();
-                            areaCode.countyName = "";
-                            areaCode.countyCode = "";
-                            cityCode.countyList.add(areaCode);
+                            CarInsurance.AreaCode areaCode = new CarInsurance.AreaCode();
+                            areaCode.name = "";
+                            areaCode.code = "";
+                            cityCode.children.add(areaCode);
 
-                            response.data.get(i).city.add(cityCode);
+                            response.data.get(i).children.add(cityCode);
                         }
 
                         str = json(BaseResponse.CODE_SUCCESS, "获取省级列表成功", response);
-                        if (request == null) {
-                            str = dealFieldName("1", str);
-                        } else {
-                            str = dealFieldName(request.type, str);
-                        }
+//                        if (request == null) {
+//                            str = dealFieldName("1", str);
+//                        } else {
+//                            str = dealFieldName(request.type, str);
+//                        }
 
                     } else {
                         str = json(BaseResponse.CODE_FAILURE, "获取省级列表失败", response);
@@ -184,11 +189,18 @@ public class CarInsuranceAction extends BaseAction {
         String str;
         if (result.verify) {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
-                response.data = new ExtendCarInsurancePolicy.ProvinceCodeDetail();
-                response.data.provinceCode = request.provinceCode;
-                response.data.city = result.data;
+                response.data = new CarInsurance.ProvinceCodeDetail();
+                response.data.code = request.provinceCode;
+                response.data.children = new ArrayList<>();
+
+                if (result.data != null && !result.data.isEmpty()) {
+                    for (ExtendCarInsurancePolicy.CityCode datum : result.data) {
+                        response.data.children.add(new CarInsurance.CityCode(datum));
+                    }
+                }
+
                 str = json(BaseResponse.CODE_SUCCESS, "获取市级列表成功", response);
-                str = dealFieldName(request.type, str);
+                // str = dealFieldName(request.type, str);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "（" + result.msgCode + "）", response);
             }
@@ -3020,19 +3032,19 @@ public class CarInsuranceAction extends BaseAction {
     }
 
 
-    private String dealFieldName(String type, String str) {
-        if (StringKit.equals(type, "1")) {
-            str = str.replaceAll("provinceCode", "code");
-            str = str.replaceAll("provinceName", "name");
-            str = str.replaceAll("cityCode", "code");
-            str = str.replaceAll("cityName", "name");
-            str = str.replaceAll("countyCode", "code");
-            str = str.replaceAll("countyName", "name");
-            str = str.replaceAll("countyList", "children");
-            str = str.replaceAll("city", "children");
-        }
-        return str;
-    }
+//    private String dealFieldName(String type, String str) {
+//        if (StringKit.equals(type, "1")) {
+//            str = str.replaceAll("provinceCode", "code");
+//            str = str.replaceAll("provinceName", "name");
+//            str = str.replaceAll("cityCode", "code");
+//            str = str.replaceAll("cityName", "name");
+//            str = str.replaceAll("countyCode", "code");
+//            str = str.replaceAll("countyName", "name");
+//            str = str.replaceAll("countyList", "children");
+//            str = str.replaceAll("city", "children");
+//        }
+//        return str;
+//    }
 
     public String addTaskResult(ActionBean bean) {
         String time = String.valueOf(System.currentTimeMillis());

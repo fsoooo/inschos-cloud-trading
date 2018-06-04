@@ -2,9 +2,12 @@ package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.extend.car.CarInsuranceRequest;
+import com.inschos.cloud.trading.extend.car.CarInsuranceResponse;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +26,7 @@ public class CarInsurance {
     }
 
     public static class GetProvinceCodeResponse extends BaseResponse {
-        public List<ExtendCarInsurancePolicy.ProvinceCodeDetail> data;
+        public List<ProvinceCodeDetail> data;
     }
 
     // 获取市级信息
@@ -36,7 +39,97 @@ public class CarInsurance {
     }
 
     public static class GetCityCodeResponse extends BaseResponse {
-        public ExtendCarInsurancePolicy.ProvinceCodeDetail data;
+        public ProvinceCodeDetail data;
+    }
+
+    public static class ProvinceCode {
+        public String code;
+        public String name;
+
+        public ProvinceCode() {
+
+        }
+
+        public ProvinceCode(ExtendCarInsurancePolicy.ProvinceCode provinceCode) {
+            if (provinceCode == null) {
+                return;
+            }
+
+            this.code = provinceCode.provinceCode;
+            this.name = provinceCode.provinceName;
+        }
+    }
+
+    public static class ProvinceCodeDetail extends ProvinceCode {
+        public List<CityCode> children;
+
+        public ProvinceCodeDetail() {
+
+        }
+
+        public ProvinceCodeDetail(ExtendCarInsurancePolicy.ProvinceCodeDetail provinceCodeDetail) {
+            if (provinceCodeDetail == null) {
+                return;
+            }
+            this.code = provinceCodeDetail.provinceCode;
+            this.name = provinceCodeDetail.provinceName;
+            this.children = new ArrayList<>();
+
+            if (provinceCodeDetail.city != null && !provinceCodeDetail.city.isEmpty()) {
+                for (ExtendCarInsurancePolicy.CityCode cityCode : provinceCodeDetail.city) {
+                    this.children.add(new CityCode(cityCode));
+                }
+            }
+        }
+    }
+
+    public static class CityCode {
+        // 市级代码
+        public String code;
+        // 城市名称
+        public String name;
+        // 车牌号字段
+        public String childrenPlate;
+        public List<AreaCode> children;
+
+        public CityCode() {
+
+        }
+
+        public CityCode(ExtendCarInsurancePolicy.CityCode cityCode) {
+            if (cityCode == null) {
+                return;
+            }
+            this.code = cityCode.cityCode;
+            this.name = cityCode.cityName;
+            this.childrenPlate = cityCode.cityPlate;
+            this.children = new ArrayList<>();
+
+            if (cityCode.countyList != null && !cityCode.countyList.isEmpty()) {
+                for (ExtendCarInsurancePolicy.AreaCode areaCode : cityCode.countyList) {
+                    this.children.add(new AreaCode(areaCode));
+                }
+            }
+        }
+    }
+
+    public static class AreaCode {
+        // 地区代码
+        public String code;
+        // 地区名称
+        public String name;
+
+        public AreaCode() {
+
+        }
+
+        public AreaCode(ExtendCarInsurancePolicy.AreaCode areaCode) {
+            if (areaCode == null) {
+                return;
+            }
+            this.code = areaCode.countyCode;
+            this.name = areaCode.countyName;
+        }
     }
 
     /**
