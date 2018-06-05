@@ -8,9 +8,6 @@ import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.access.rpc.client.TaskResultClient;
-import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
-import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
-import com.inschos.cloud.trading.access.rpc.service.PremiumService;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -1205,7 +1202,7 @@ public class CarInsuranceAction extends BaseAction {
 
                     for (ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo : datum.coverageList) {
                         if (StringKit.isNumeric(insurancePolicyInfo.insuredPremium)) {
-                            if (StringKit.equals(insurancePolicyInfo.coverageCode, "FORCEPREMIUM")) {
+                            if (StringKit.equals(insurancePolicyInfo.coverageCode, CarInfoModel.COVERAGE_CODE_FORCEPREMIUM)) {
                                 ci = ci.add(new BigDecimal(insurancePolicyInfo.insuredPremium));
                                 datum.hasCompulsoryInsurance = true;
                             } else {
@@ -2734,9 +2731,9 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             if (!StringKit.equals(insuranceInfo.insuredAmount, "N")) {
-                if (!checkCoverageListResult.hasCompulsoryInsurance && StringKit.equals(insuranceInfo.coverageCode, "FORCEPREMIUM")) {
+                if (!checkCoverageListResult.hasCompulsoryInsurance && StringKit.equals(insuranceInfo.coverageCode, CarInfoModel.COVERAGE_CODE_FORCEPREMIUM)) {
                     checkCoverageListResult.hasCompulsoryInsurance = true;
-                } else if (!checkCoverageListResult.hasCommercialInsurance && !StringKit.equals(insuranceInfo.coverageCode, "FORCEPREMIUM")) {
+                } else if (!checkCoverageListResult.hasCommercialInsurance && !StringKit.equals(insuranceInfo.coverageCode, CarInfoModel.COVERAGE_CODE_FORCEPREMIUM)) {
                     checkCoverageListResult.hasCommercialInsurance = true;
                 }
                 checkCoverageListResult.coverageList.add(insuranceInfoDetail);
@@ -2876,7 +2873,7 @@ public class CarInsuranceAction extends BaseAction {
                     }
                 }
 
-                if (StringKit.equals(insurancePolicyInfo.coverageCode, "FORCEPREMIUM")) {
+                if (StringKit.equals(insurancePolicyInfo.coverageCode, CarInfoModel.COVERAGE_CODE_FORCEPREMIUM)) {
                     result.add(0, insuranceInfo);
                 } else {
                     result.add(insuranceInfo);

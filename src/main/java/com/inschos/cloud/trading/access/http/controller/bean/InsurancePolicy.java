@@ -172,6 +172,7 @@ public class InsurancePolicy {
         // 车险流水号
         public String bizId;
         public String insuranceClaimsCount = "0";
+        public String groupName;
 
         public GetInsurancePolicy() {
 
@@ -183,6 +184,7 @@ public class InsurancePolicy {
             }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy.MM.dd");
+            SimpleDateFormat group = new SimpleDateFormat("yyyy-MM");
             this.id = model.id;
             this.warrantyUuid = model.warranty_uuid;
             this.prePolicyNo = model.pre_policy_no;
@@ -236,7 +238,9 @@ public class InsurancePolicy {
             this.deliveryTypeText = model.deliveryTypeText(deliveryType);
             this.createdAt = model.created_at;
             if (StringKit.isInteger(model.created_at)) {
-                this.createdAtText = sdf.format(new Date(Long.valueOf(model.created_at)));
+                Date date = new Date(Long.valueOf(model.created_at));
+                this.createdAtText = sdf.format(date);
+                this.groupName = group.format(date);
             }
             this.updatedAt = model.updated_at;
             if (StringKit.isInteger(model.updated_at)) {

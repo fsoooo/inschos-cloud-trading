@@ -216,7 +216,7 @@ public class CarInfoModel {
 
     }
 
-    public CarInfoModel(String warrantyUuid, String bizId, String thpBizId, String insuranceType, String time, String coverageList, String spAgreement,String bjCodeFlag, ExtendCarInsurancePolicy.CarInfoDetail carInfoDetail, ExtendCarInsurancePolicy.InsuranceParticipant participant) {
+    public CarInfoModel(String warrantyUuid, String bizId, String thpBizId, String insuranceType, String time, String coverageList, String spAgreement, String bjCodeFlag, ExtendCarInsurancePolicy.CarInfoDetail carInfoDetail, ExtendCarInsurancePolicy.InsuranceParticipant participant) {
         this.warranty_uuid = warrantyUuid;
         this.biz_id = bizId;
         this.thp_biz_id = thpBizId;
@@ -325,7 +325,7 @@ public class CarInfoModel {
         });
     }
 
-    public List<ExtendCarInsurancePolicy.SpAgreement> parseSpAgreement (String spAgreement) {
+    public List<ExtendCarInsurancePolicy.SpAgreement> parseSpAgreement(String spAgreement) {
         return JsonKit.json2Bean(spAgreement, new TypeReference<List<ExtendCarInsurancePolicy.SpAgreement>>() {
         });
     }
