@@ -201,7 +201,7 @@ public class ExcelModelKit {
 
         for (int i = 0; i < columnNum; i++) {
             sheet.autoSizeColumn(i);
-            sheet.setColumnWidth(i, sheet.getColumnWidth(i) * 17 / 10);
+            // sheet.setColumnWidth(i, sheet.getColumnWidth(i) * 17 / 10);
         }
     }
 
