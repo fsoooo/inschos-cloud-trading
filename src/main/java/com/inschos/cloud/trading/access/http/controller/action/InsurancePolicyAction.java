@@ -420,7 +420,7 @@ public class InsurancePolicyAction extends BaseAction {
         } while (flag);
 
 
-        ExcelModelKit.autoSizeColumn(sheet,InsurancePolicy.CAR_FIELD_MAP.size());
+        ExcelModelKit.autoSizeColumn(sheet, InsurancePolicy.CAR_FIELD_MAP.size());
 
         byte[] workbookByteArray = ExcelModelKit.getWorkbookByteArray(workbook);
 
@@ -1269,22 +1269,21 @@ public class InsurancePolicyAction extends BaseAction {
             }
 
             FileUpload.UploadByBase64Request fileUploadRequest = new FileUpload.UploadByBase64Request();
-            fileUploadRequest.base64 = Base64.getEncoder().encodeToString(data);
+            // fileUploadRequest.base64 = Base64.getEncoder().encodeToString(data);
             fileUploadRequest.fileKey = MD5Kit.MD5Digest(actionBean.managerUuid + System.currentTimeMillis() + (Math.random() * 10000000L));
             fileUploadRequest.fileName = fileUploadRequest.fileKey + ".xls";
-            FileUploadResponse response1 = FileUpload.getInstance().uploadByBase64(fileUploadRequest);
 
-            if (response1 != null) {
-                if (response1.code == BaseResponse.CODE_SUCCESS) {
-                    response.data.excelFileKey = fileUploadRequest.fileKey;
-                    response.data.excelFileUrl = fileClient.getFileUrl(fileUploadRequest.fileKey);
-                    return json(BaseResponse.CODE_FAILURE, "部分导入失败", response);
-                } else {
-                    return json(BaseResponse.CODE_FAILURE, "导入失败", response);
-                }
+            boolean upload = fileClient.upload(fileUploadRequest.fileKey, fileUploadRequest.fileName, data);
+            // FileUploadResponse response1 = FileUpload.getInstance().uploadByBase64(fileUploadRequest);
+
+            if (upload) {
+                response.data.excelFileKey = fileUploadRequest.fileKey;
+                response.data.excelFileUrl = fileClient.getFileUrl(fileUploadRequest.fileKey);
+                return json(BaseResponse.CODE_FAILURE, "部分导入失败", response);
             } else {
                 return json(BaseResponse.CODE_FAILURE, "导入失败", response);
             }
+
         }
 
         return json((flag ? BaseResponse.CODE_SUCCESS : BaseResponse.CODE_FAILURE), (flag ? "导入成功" : "部分导入失败"), response);

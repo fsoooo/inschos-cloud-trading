@@ -39,43 +39,43 @@ public class FileUpload {
         public String fileName;
     }
 
-    public FileUploadResponse uploadByBase64(UploadByBase64Request request) {
-
-        FileUploadResponse response = new FileUploadResponse();
-        if (request == null) {
-            response.code = CarInsuranceResponse.RESULT_FAIL;
-            response.message = new ArrayList<>();
-            response.message.add(new CheckParamsKit.Entry<>("default", "请求体为null"));
-            return response;
-        }
-
-        try {
-            String result = HttpClientKit.uploadFile(FileUploadCommon.upload_by_base64, JsonKit.bean2Json(request));
-
-            if (result != null) {
-                response = JsonKit.json2Bean(result, FileUploadResponse.class);
-
-                if (response == null) {
-                    response = new FileUploadResponse();
-                    response.code = CarInsuranceResponse.RESULT_FAIL;
-                    response.message = new ArrayList<>();
-                    response.message.add(new CheckParamsKit.Entry<>("default", "请求失败"));
-                }
-
-            } else {
-                response.code = CarInsuranceResponse.RESULT_FAIL;
-                response.message = new ArrayList<>();
-                response.message.add(new CheckParamsKit.Entry<>("default", "请求失败"));
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            response.code = CarInsuranceResponse.RESULT_FAIL;
-            response.message = new ArrayList<>();
-            response.message.add(new CheckParamsKit.Entry<>("default", "请求失败"));
-        }
-
-        return response;
-    }
+//    public FileUploadResponse uploadByBase64(UploadByBase64Request request) {
+//
+//        FileUploadResponse response = new FileUploadResponse();
+//        if (request == null) {
+//            response.code = CarInsuranceResponse.RESULT_FAIL;
+//            response.message = new ArrayList<>();
+//            response.message.add(new CheckParamsKit.Entry<>("default", "请求体为null"));
+//            return response;
+//        }
+//
+//        try {
+//            String result = HttpClientKit.uploadFile(FileUploadCommon.upload_by_base64, JsonKit.bean2Json(request));
+//
+//            if (result != null) {
+//                response = JsonKit.json2Bean(result, FileUploadResponse.class);
+//
+//                if (response == null) {
+//                    response = new FileUploadResponse();
+//                    response.code = CarInsuranceResponse.RESULT_FAIL;
+//                    response.message = new ArrayList<>();
+//                    response.message.add(new CheckParamsKit.Entry<>("default", "请求失败"));
+//                }
+//
+//            } else {
+//                response.code = CarInsuranceResponse.RESULT_FAIL;
+//                response.message = new ArrayList<>();
+//                response.message.add(new CheckParamsKit.Entry<>("default", "请求失败"));
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            response.code = CarInsuranceResponse.RESULT_FAIL;
+//            response.message = new ArrayList<>();
+//            response.message.add(new CheckParamsKit.Entry<>("default", "请求失败"));
+//        }
+//
+//        return response;
+//    }
 
 }
