@@ -77,6 +77,12 @@ public class InsurancePolicy {
         //实际支付金额（显示用）
         public String payMoneyText;
 
+        //税费
+        public String taxMoney;
+
+        //税费（显示用）
+        public String taxMoneyText;
+
         //起保时间
         public String startTime;
 
@@ -141,6 +147,12 @@ public class InsurancePolicy {
         public String deliveryType;
         public String deliveryTypeText;
 
+        //下单时间
+        public String createdAt;
+
+        //下单时间（显示用）
+        public String createdAtText;
+
         //更新时间
         public String updatedAt;
 
@@ -165,7 +177,7 @@ public class InsurancePolicy {
 
         }
 
-        public GetInsurancePolicy(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+        public GetInsurancePolicy(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
             if (model == null) {
                 return;
             }
@@ -186,6 +198,8 @@ public class InsurancePolicy {
             this.premiumText = "¥" + this.premium;
             this.payMoney = decimalFormat.format(pay_money.doubleValue());
             this.payMoneyText = "¥" + this.payMoney;
+            this.taxMoney = decimalFormat.format(tax_money.doubleValue());
+            this.taxMoneyText = "¥" + this.taxMoney;
             this.startTime = model.start_time;
             String start = "";
             if (StringKit.isInteger(model.start_time)) {
@@ -220,6 +234,10 @@ public class InsurancePolicy {
             this.expressCompanyName = model.express_company_name;
             this.deliveryType = model.delivery_type;
             this.deliveryTypeText = model.deliveryTypeText(deliveryType);
+            this.createdAt = model.created_at;
+            if (StringKit.isInteger(model.created_at)) {
+                this.createdAtText = sdf.format(new Date(Long.valueOf(model.created_at)));
+            }
             this.updatedAt = model.updated_at;
             if (StringKit.isInteger(model.updated_at)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
@@ -252,8 +270,8 @@ public class InsurancePolicy {
             super();
         }
 
-        public GetInsurancePolicyDetail(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
-            super(model, premium, pay_money, warrantyStatusForPay, warrantyStatusForPayText);
+        public GetInsurancePolicyDetail(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+            super(model, premium, pay_money, tax_money, warrantyStatusForPay, warrantyStatusForPayText);
         }
     }
 
@@ -664,8 +682,8 @@ public class InsurancePolicy {
 
         }
 
-        public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
-            super(model, premium, pay_money, warrantyStatusForPay, warrantyStatusForPayText);
+        public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+            super(model, premium, pay_money, tax_money, warrantyStatusForPay, warrantyStatusForPayText);
         }
 
         public static GetInsurancePolicyForManagerSystem getCarInsurancePolicyTitle() {

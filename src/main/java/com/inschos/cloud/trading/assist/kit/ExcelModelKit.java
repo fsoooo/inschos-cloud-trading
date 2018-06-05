@@ -22,6 +22,13 @@ import java.util.*;
  */
 public class ExcelModelKit {
 
+    public static final Map<String, CellStyle> CELL_STYLE_MAP;
+
+    static {
+        // 每次getWorkbookByteArray的时候，就会清空一次
+        CELL_STYLE_MAP = new HashMap<>();
+    }
+
     /**
      * Model的所有字段都必须是String
      *
@@ -91,6 +98,13 @@ public class ExcelModelKit {
             return 0;
         }
 
+        Workbook workbook = sheet.getWorkbook();
+        CellStyle defaultStyle = CELL_STYLE_MAP.get("defaultStyle");
+        if (defaultStyle == null) {
+            defaultStyle = workbook.createCellStyle();
+            CELL_STYLE_MAP.put("defaultStyle", defaultStyle);
+        }
+
         int size = data.size();
         Field[] declaredFields = getClassFieldArray(data.get(0).getData());
 
@@ -127,7 +141,7 @@ public class ExcelModelKit {
                 fieldMap.put(field.getName(), field);
             }
 
-            for (int j = 0; j < length; j++) {
+            for (int j = 0; j < map.size(); j++) {
                 Cell cell = row.createCell(j);
 
                 String columnName = CellReference.convertNumToColString(cell.getAddress().getColumn());
@@ -139,13 +153,25 @@ public class ExcelModelKit {
                     field.setAccessible(true);
                     try {
                         Object o = field.get(t);
+
+                        if (tExcelModel.hasStyle && !StringKit.isEmpty(tExcelModel.styleName)) {
+                            CellStyle cellStyle = CELL_STYLE_MAP.get(tExcelModel.styleName);
+
+                            if (cellStyle == null) {
+                                cellStyle = workbook.createCellStyle();
+                                Font font = workbook.createFont();
+                                font.setBoldweight(tExcelModel.boldWeight);
+                                cellStyle.setFont(font);
+                                CELL_STYLE_MAP.put(tExcelModel.styleName, cellStyle);
+                            }
+
+                            cell.setCellStyle(cellStyle);
+                        }
+
                         L.log.debug("writeExcel ===========> row = " + i + " column = " + j + " value = " + o);
                         if (o == null) {
                             cell.setCellValue("");
                         } else {
-                            if (tExcelModel.hasStyle) {
-                                cell.setCellStyle(tExcelModel.cellStyle);
-                            }
                             cell.setCellValue(o.toString());
                         }
                     } catch (IllegalAccessException e) {
@@ -157,6 +183,27 @@ public class ExcelModelKit {
 
         return count;
     }
+
+    public static void setColumnWidth(Sheet sheet, List<Integer> columnWidth) {
+        if (sheet == null || columnWidth == null || columnWidth.isEmpty()) {
+            return;
+        }
+
+        for (Integer aColumnWidth : columnWidth) {
+            sheet.setColumnWidth(0, aColumnWidth);
+        }
+    }
+
+    public static void autoSizeColumn(Sheet sheet, int columnNum) {
+        if (sheet == null || columnNum == 0) {
+            return;
+        }
+
+        for (int i = 0; i < columnNum; i++) {
+            sheet.autoSizeColumn(i);
+        }
+    }
+
 
 //    public static <T> byte[] createExcelByteArray(List<T> data, Map<String, String> map, String sheetName) {
 //
@@ -193,6 +240,7 @@ public class ExcelModelKit {
         try {
             workbook.write(os);
             result = os.toByteArray();
+            CELL_STYLE_MAP.clear();
         } catch (IOException e) {
             e.printStackTrace();
             result = null;

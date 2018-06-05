@@ -226,35 +226,9 @@ public class InsurancePolicyAction extends BaseAction {
 
                     List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
 
-                    BigDecimal premium = new BigDecimal("0.00");
-                    BigDecimal payMoney = new BigDecimal("0.00");
+                    CustWarrantyCostListResult custWarrantyCostListResult = dealCustWarrantyCostList(custWarrantyCostByWarrantyUuid);
 
-                    boolean isFindLast = false;
-                    int size1 = custWarrantyCostByWarrantyUuid.size();
-                    String warrantyStatusForPay = "";
-                    String warrantyStatusForPayText = "";
-
-                    for (int i = size1 - 1; i > -1; i--) {
-                        CustWarrantyCostModel custWarrantyCostModel1 = custWarrantyCostByWarrantyUuid.get(i);
-                        if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
-                            premium = premium.add(new BigDecimal(custWarrantyCostModel1.premium));
-                        }
-
-                        if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
-                            payMoney = payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
-                        }
-
-                        if (!isFindLast) {
-                            isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
-                        }
-
-                        if (isFindLast || i == 0) {
-                            warrantyStatusForPay = custWarrantyCostModel1.pay_status;
-                            warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
-                        }
-                    }
-
-                    InsurancePolicy.GetInsurancePolicy insurancePolicy = new InsurancePolicy.GetInsurancePolicy(policyListByWarrantyStatusOrSearch, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
+                    InsurancePolicy.GetInsurancePolicy insurancePolicy = new InsurancePolicy.GetInsurancePolicy(policyListByWarrantyStatusOrSearch, custWarrantyCostListResult.premium, custWarrantyCostListResult.payMoney, custWarrantyCostListResult.taxMoney, custWarrantyCostListResult.warrantyStatusForPay, custWarrantyCostListResult.warrantyStatusForPayText);
 
                     if (StringKit.equals(insurancePolicy.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
                         CarInfoModel bjCodeFlagAndBizIdByWarrantyUuid = carInfoDao.findBjCodeFlagAndBizIdByWarrantyUuid(insurancePolicy.warrantyUuid);
@@ -415,7 +389,9 @@ public class InsurancePolicyAction extends BaseAction {
 
         InsurancePolicy.GetInsurancePolicyForManagerSystem carInsurancePolicyTitle = InsurancePolicy.GetInsurancePolicyForManagerSystem.getCarInsurancePolicyTitle();
         List<ExcelModel<InsurancePolicy.GetInsurancePolicyForManagerSystem>> list = new ArrayList<>();
-        list.add(new ExcelModel<>(carInsurancePolicyTitle));
+        ExcelModel<InsurancePolicy.GetInsurancePolicyForManagerSystem> title = new ExcelModel<>(carInsurancePolicyTitle, true, "title");
+        title.boldWeight = Font.BOLDWEIGHT_BOLD;
+        list.add(title);
         int startRow = 0;
 
         int i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow);
@@ -442,6 +418,9 @@ public class InsurancePolicyAction extends BaseAction {
             flag = getInsurancePolicyForManagerSystems != null && !getInsurancePolicyForManagerSystems.isEmpty() && getInsurancePolicyForManagerSystems.size() >= Integer.valueOf(pageSize);
 
         } while (flag);
+
+
+        ExcelModelKit.autoSizeColumn(sheet,InsurancePolicy.CAR_FIELD_MAP.size());
 
         byte[] workbookByteArray = ExcelModelKit.getWorkbookByteArray(workbook);
 
@@ -538,40 +517,14 @@ public class InsurancePolicyAction extends BaseAction {
 
             List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
 
-            BigDecimal premium = new BigDecimal("0.00");
-            BigDecimal payMoney = new BigDecimal("0.00");
-
-            boolean isFindLast = false;
-            int size1 = custWarrantyCostByWarrantyUuid.size();
-            String warrantyStatusForPay = "";
-            String warrantyStatusForPayText = "";
-
-            for (int i = size1 - 1; i > -1; i--) {
-                CustWarrantyCostModel custWarrantyCostModel1 = custWarrantyCostByWarrantyUuid.get(i);
-                if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
-                    premium = premium.add(new BigDecimal(custWarrantyCostModel1.premium));
-                }
-
-                if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
-                    payMoney = payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
-                }
-
-                if (!isFindLast) {
-                    isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
-                }
-
-                if (isFindLast || i == 0) {
-                    warrantyStatusForPay = custWarrantyCostModel1.pay_status;
-                    warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
-                }
-            }
+            CustWarrantyCostListResult custWarrantyCostListResult = dealCustWarrantyCostList(custWarrantyCostByWarrantyUuid);
 
             CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
             custWarrantyBrokerageModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
 
             String custWarrantyBrokerageTotalByManagerUuid = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByWarrantyUuid(custWarrantyBrokerageModel);
 
-            InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
+            InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch, custWarrantyCostListResult.premium, custWarrantyCostListResult.payMoney, custWarrantyCostListResult.taxMoney, custWarrantyCostListResult.warrantyStatusForPay, custWarrantyCostListResult.warrantyStatusForPayText);
 
             getInsurancePolicyForManagerSystem.brokerage = custWarrantyBrokerageTotalByManagerUuid;
             getInsurancePolicyForManagerSystem.brokerageText = "¥" + custWarrantyBrokerageTotalByManagerUuid;
@@ -673,9 +626,6 @@ public class InsurancePolicyAction extends BaseAction {
     }
 
     private List<InsurancePolicyModel> searchInsurancePolicyList(InsurancePolicyModel insurancePolicyModel) {
-        if (StringKit.isEmpty(insurancePolicyModel.warranty_status)) {
-            return insurancePolicyDao.findInsurancePolicyListBySearchType(insurancePolicyModel);
-        }
         return insurancePolicyDao.findInsurancePolicyListBySearchType(insurancePolicyModel);
     }
 
@@ -709,40 +659,13 @@ public class InsurancePolicyAction extends BaseAction {
             List<InsuranceParticipantModel> insuranceParticipantByWarrantyCode = insuranceParticipantDao.findInsuranceParticipantByWarrantyUuid(warrantyUuid);
 
             CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-            long time = System.currentTimeMillis();
             custWarrantyCostModel.warranty_uuid = insurancePolicyDetailByWarrantyCode.warranty_uuid;
 
             List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
 
-            BigDecimal premium = new BigDecimal("0.00");
-            BigDecimal payMoney = new BigDecimal("0.00");
+            CustWarrantyCostListResult custWarrantyCostListResult = dealCustWarrantyCostList(custWarrantyCostByWarrantyUuid);
 
-            boolean isFindLast = false;
-            int size1 = custWarrantyCostByWarrantyUuid.size();
-            String warrantyStatusForPay = "";
-            String warrantyStatusForPayText = "";
-
-            for (int i = size1 - 1; i > -1; i--) {
-                CustWarrantyCostModel custWarrantyCostModel1 = custWarrantyCostByWarrantyUuid.get(i);
-                if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
-                    premium = premium.add(new BigDecimal(custWarrantyCostModel1.premium));
-                }
-
-                if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
-                    payMoney = payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
-                }
-
-                if (!isFindLast) {
-                    isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
-                }
-
-                if (isFindLast || i == 0) {
-                    warrantyStatusForPay = custWarrantyCostModel1.pay_status;
-                    warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
-                }
-            }
-
-            response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode, premium, payMoney, warrantyStatusForPay, warrantyStatusForPayText);
+            response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode, custWarrantyCostListResult.premium, custWarrantyCostListResult.payMoney, custWarrantyCostListResult.taxMoney, custWarrantyCostListResult.warrantyStatusForPay, custWarrantyCostListResult.warrantyStatusForPayText);
 
             response.data.insuredList = new ArrayList<>();
             response.data.beneficiaryList = new ArrayList<>();
@@ -1402,6 +1325,47 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         return instance.getTimeInMillis();
+    }
+
+    static class CustWarrantyCostListResult {
+        BigDecimal premium = new BigDecimal("0.00");
+        BigDecimal payMoney = new BigDecimal("0.00");
+        BigDecimal taxMoney = new BigDecimal("0.00");
+        String warrantyStatusForPay = "";
+        String warrantyStatusForPayText = "";
+    }
+
+    private CustWarrantyCostListResult dealCustWarrantyCostList(List<CustWarrantyCostModel> list) {
+        CustWarrantyCostListResult custWarrantyCostListResult = new CustWarrantyCostListResult();
+
+        boolean isFindLast = false;
+        int size1 = list.size();
+
+        for (int i = size1 - 1; i > -1; i--) {
+            CustWarrantyCostModel custWarrantyCostModel1 = list.get(i);
+            if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
+                custWarrantyCostListResult.premium = custWarrantyCostListResult.premium.add(new BigDecimal(custWarrantyCostModel1.premium));
+            }
+
+            if (StringKit.isNumeric(custWarrantyCostModel1.tax_money)) {
+                custWarrantyCostListResult.taxMoney = custWarrantyCostListResult.taxMoney.add(new BigDecimal(custWarrantyCostModel1.tax_money));
+            }
+
+            if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
+                custWarrantyCostListResult.payMoney = custWarrantyCostListResult.payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
+            }
+
+            if (!isFindLast) {
+                isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
+            }
+
+            if (isFindLast || i == 0) {
+                custWarrantyCostListResult.warrantyStatusForPay = custWarrantyCostModel1.pay_status;
+                custWarrantyCostListResult.warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
+            }
+        }
+
+        return custWarrantyCostListResult;
     }
 
 }

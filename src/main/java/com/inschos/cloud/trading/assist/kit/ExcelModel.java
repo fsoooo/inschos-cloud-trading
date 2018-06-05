@@ -2,6 +2,8 @@ package com.inschos.cloud.trading.assist.kit;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -12,29 +14,34 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class ExcelModel<T> {
 
     public T t;
-    public boolean hasStyle = false;
-    public CellStyle cellStyle;
+    public boolean hasStyle = true;
+    public String styleName = "";
 
     public ExcelModel(T t) {
         if (t == null) {
             return;
         }
         this.t = t;
+        hasStyle = false;
+        styleName = "";
     }
 
-    public ExcelModel(T t, boolean hasStyle) {
+    public ExcelModel(T t, boolean hasStyle, String styleName) {
         this(t);
         this.hasStyle = hasStyle;
+        if (hasStyle) {
+            if (StringKit.isEmpty(styleName)) {
+                hasStyle = false;
+            } else {
+                this.styleName = styleName;
+            }
+        }
     }
 
     public T getData() {
         return t;
     }
 
-    public void setCellStyle(CellStyle cellStyle) {
-        if (hasStyle) {
-            this.cellStyle = cellStyle;
-        }
-    }
+    public short boldWeight = Font.BOLDWEIGHT_NORMAL;
 
 }
