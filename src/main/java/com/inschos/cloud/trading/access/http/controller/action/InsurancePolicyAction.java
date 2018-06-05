@@ -429,17 +429,19 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         FileUpload.UploadByBase64Request fileUploadRequest = new FileUpload.UploadByBase64Request();
-        fileUploadRequest.base64 = Base64.getEncoder().encodeToString(workbookByteArray);
+        // fileUploadRequest.base64 = Base64.getEncoder().encodeToString(workbookByteArray);
         fileUploadRequest.fileKey = MD5Kit.MD5Digest(actionBean.managerUuid + System.currentTimeMillis() + (Math.random() * 10000000L));
         fileUploadRequest.fileName = fileUploadRequest.fileKey + ".xls";
-        FileUploadResponse response1 = FileUpload.getInstance().uploadByBase64(fileUploadRequest);
+        boolean upload = fileClient.upload(fileUploadRequest.fileKey, fileUploadRequest.fileName, workbookByteArray);
 
-        if (response1 == null) {
-            return json(BaseResponse.CODE_FAILURE, "获取下载地址失败", response);
-        }
+//        FileUploadResponse response1 = FileUpload.getInstance().uploadByBase64(fileUploadRequest);
+
+//        if (!upload) {
+//            return json(BaseResponse.CODE_FAILURE, "获取下载地址失败", response);
+//        }
 
 
-        if (response1.code == BaseResponse.CODE_SUCCESS) {
+        if (upload) {
             response.data = fileClient.getFileUrl(fileUploadRequest.fileKey);
             if (StringKit.isEmpty(response.data)) {
                 return json(BaseResponse.CODE_FAILURE, "获取下载地址失败", response);

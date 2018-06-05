@@ -8,4 +8,6 @@ package com.inschos.cloud.trading.access.rpc.service;
 public interface FileService {
 
     String getFileUrl(String fileKey);
+
+    boolean upload(String fileKey, String fileName, byte[] bytes);
 }

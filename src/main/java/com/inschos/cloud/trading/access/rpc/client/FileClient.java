@@ -40,4 +40,15 @@ public class FileClient {
         }
     }
 
+    public boolean upload(String fileKey, String fileName, byte[] bytes) {
+        try {
+            FileService service = getService();
+            return service != null && service.upload(fileKey, fileName, bytes);
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return false;
+        }
+    }
+
 }

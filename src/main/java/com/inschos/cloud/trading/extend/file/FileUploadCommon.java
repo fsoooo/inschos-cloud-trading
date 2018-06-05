@@ -1,5 +1,7 @@
 package com.inschos.cloud.trading.extend.file;
 
+import org.springframework.beans.factory.annotation.Value;
+
 /**
  * 创建日期：2018/4/23 on 15:30
  * 描述：
