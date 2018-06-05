@@ -2876,9 +2876,14 @@ public class CarInsuranceAction extends BaseAction {
                     }
                 }
 
-                result.add(insuranceInfo);
+                if (StringKit.equals(insurancePolicyInfo.coverageCode, "FORCEPREMIUM")) {
+                    result.add(0, insuranceInfo);
+                } else {
+                    result.add(insuranceInfo);
+                }
             }
         }
+
         return result;
     }
 

@@ -303,7 +303,6 @@ public class CarInsurance {
         public String minAmount;
         public String insuredPremiumText;
 
-
     }
 
     public static class GetInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoRequest extends BaseRequest {
