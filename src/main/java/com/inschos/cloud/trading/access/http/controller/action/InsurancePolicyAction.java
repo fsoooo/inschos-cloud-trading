@@ -219,7 +219,6 @@ public class InsurancePolicyAction extends BaseAction {
                 }
 
                 CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-                long time = System.currentTimeMillis();
                 for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
 
                     custWarrantyCostModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
@@ -365,14 +364,14 @@ public class InsurancePolicyAction extends BaseAction {
             agentMap.put(insurancePolicyModel.agent_id, agentInfoByPersonIdManagerUuid);
         }
 
-        if (!StringKit.isNumeric(request.startTime)) {
-            insurancePolicyModel.start_time = "0";
+        if (!StringKit.isInteger(request.startTime)) {
+            insurancePolicyModel.start_time = "";
         } else {
             insurancePolicyModel.start_time = request.startTime;
         }
 
-        if (!StringKit.isNumeric(request.endTime)) {
-            insurancePolicyModel.end_time = "0";
+        if (!StringKit.isInteger(request.endTime)) {
+            insurancePolicyModel.end_time = "";
         } else {
             insurancePolicyModel.end_time = request.endTime;
         }
@@ -386,7 +385,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByActualPayTime = insurancePolicyDao.findInsurancePolicyListByActualPayTime(insurancePolicyModel);
         long total = insurancePolicyDao.findInsurancePolicyCountByActualPayTime(insurancePolicyModel);
 
-        dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, insurancePolicyModel, agentMap);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, insurancePolicyModel, agentMap);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -579,10 +578,11 @@ public class InsurancePolicyAction extends BaseAction {
             return result;
         }
 
+        HashMap<String, ProductBean> map = new HashMap<>();
+
         for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
 
             CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-            long time = System.currentTimeMillis();
             custWarrantyCostModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
 
             List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
@@ -594,15 +594,29 @@ public class InsurancePolicyAction extends BaseAction {
 
             String custWarrantyBrokerageTotalByManagerUuid = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByWarrantyUuid(custWarrantyBrokerageModel);
 
+
             InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch, custWarrantyCostListResult.premium, custWarrantyCostListResult.payMoney, custWarrantyCostListResult.taxMoney, custWarrantyCostListResult.warrantyStatusForPay, custWarrantyCostListResult.warrantyStatusForPayText);
 
             getInsurancePolicyForManagerSystem.brokerage = custWarrantyBrokerageTotalByManagerUuid;
             getInsurancePolicyForManagerSystem.brokerageText = "¥" + custWarrantyBrokerageTotalByManagerUuid;
 
             if (StringKit.isInteger(getInsurancePolicyForManagerSystem.productId)) {
-                ProductBean product = productClient.getProduct(Long.valueOf(getInsurancePolicyForManagerSystem.productId));
-                if (product != null) {
-                    getInsurancePolicyForManagerSystem.productName = product.displayName;
+
+                ProductBean productBean = map.get(getInsurancePolicyForManagerSystem.productId);
+
+                if (productBean == null) {
+                    productBean = productClient.getProduct(Long.valueOf(getInsurancePolicyForManagerSystem.productId));
+                }
+
+                if (productBean != null) {
+                    getInsurancePolicyForManagerSystem.productName = productBean.name;
+                    getInsurancePolicyForManagerSystem.insuranceProductName = productBean.displayName;
+                    getInsurancePolicyForManagerSystem.insuranceCompanyName = productBean.insuranceCoName;
+
+                    String[] split = productBean.code.split("_");
+                    if (split.length > 1) {
+                        getInsurancePolicyForManagerSystem.insuranceCompanyLogo = fileClient.getFileUrl("property_key_" + split[0]);
+                    }
                 }
             }
 
@@ -829,8 +843,8 @@ public class InsurancePolicyAction extends BaseAction {
         // 当月的所有付款的
         String monthAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCostModel);
 
-        custWarrantyCostModel.start_time = "0";
-        custWarrantyCostModel.end_time = "0";
+        custWarrantyCostModel.start_time = "";
+        custWarrantyCostModel.end_time = "";
 
         String totalAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCostModel);
 
@@ -858,14 +872,14 @@ public class InsurancePolicyAction extends BaseAction {
 
         CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
 
-        if (StringKit.isEmpty(request.startTime)) {
-            custWarrantyBrokerageModel.start_time = "0";
+        if (!StringKit.isInteger(request.startTime)) {
+            custWarrantyBrokerageModel.start_time = "";
         } else {
             custWarrantyBrokerageModel.start_time = request.startTime;
         }
 
-        if (StringKit.isEmpty(request.endTime)) {
-            custWarrantyBrokerageModel.end_time = "0";
+        if (!StringKit.isInteger(request.endTime)) {
+            custWarrantyBrokerageModel.end_time = "";
         } else {
             custWarrantyBrokerageModel.end_time = request.endTime;
         }
@@ -899,8 +913,8 @@ public class InsurancePolicyAction extends BaseAction {
         // 当月的所有付款的
         String monthAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerageModel);
 
-        insurancePolicyModel1.start_time = "0";
-        insurancePolicyModel1.end_time = "0";
+        insurancePolicyModel1.start_time = "";
+        insurancePolicyModel1.end_time = "";
 
         String totalAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerageModel);
 

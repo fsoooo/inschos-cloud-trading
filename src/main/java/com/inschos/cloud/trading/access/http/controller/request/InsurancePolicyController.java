@@ -36,28 +36,28 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_list_for_online_store")
+    @RequestMapping("get_insurance_policy_list_for_online_store")
     @ResponseBody
     public String getInsurancePolicyListForOnlineStore(ActionBean actionBean) {
         return insurancePolicyAction.getInsurancePolicyListForOnlineStore(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_detail_for_online_store")
+    @RequestMapping("get_insurance_policy_detail_for_online_store")
     @ResponseBody
     public String getInsurancePolicyDetailForOnlineStore(ActionBean actionBean) {
         return insurancePolicyAction.getInsurancePolicyDetailForOnlineStore(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_list_for_manager_system")
+    @RequestMapping("get_insurance_policy_list_for_manager_system")
     @ResponseBody
     public String getInsurancePolicyListForManagerSystem(ActionBean actionBean) {
         return insurancePolicyAction.getInsurancePolicyListForManagerSystem(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_detail_for_manager_system")
+    @RequestMapping("get_insurance_policy_detail_for_manager_system")
     @ResponseBody
     public String getInsurancePolicyDetailForManagerSystem(ActionBean actionBean) {
         return insurancePolicyAction.getInsurancePolicyDetailForManagerSystem(actionBean);
@@ -78,7 +78,7 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_statistic_detail_for_manager_system")
+    @RequestMapping("get_insurance_policy_statistic_detail_for_manager_system")
     @ResponseBody
     public String getInsurancePolicyStatisticForManagerSystem(ActionBean actionBean) {
         return insurancePolicyAction.getInsurancePolicyStatisticForManagerSystem(actionBean);
