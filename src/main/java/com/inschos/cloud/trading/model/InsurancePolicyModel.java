@@ -123,6 +123,10 @@ public class InsurancePolicyModel {
      */
     public String express_county_code;
     /**
+     * 保单发送电子邮箱
+     */
+    public String express_email;
+    /**
      * 快递方式，0-自取，1-快递
      */
     public String delivery_type;

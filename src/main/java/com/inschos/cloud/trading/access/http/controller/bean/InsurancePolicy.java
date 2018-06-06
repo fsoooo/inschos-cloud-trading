@@ -137,6 +137,12 @@ public class InsurancePolicy {
         // 积分
         public String integral;
 
+        public String expressEmail;
+        public String expressAddress;
+        public String expressProvinceCode;
+        public String expressCityCode;
+        public String expressCountyCode;
+
         // 快递单号
         public String expressNo;
 
@@ -248,6 +254,13 @@ public class InsurancePolicy {
             if (StringKit.isInteger(model.updated_at)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
             }
+
+
+            this.expressEmail = model.express_email;
+            this.expressAddress = model.express_address;
+            this.expressProvinceCode = model.express_province_code;
+            this.expressCityCode = model.express_city_code;
+            this.expressCountyCode = model.express_county_code;
         }
 
     }

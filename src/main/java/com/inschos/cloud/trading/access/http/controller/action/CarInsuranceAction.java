@@ -1465,6 +1465,15 @@ public class CarInsuranceAction extends BaseAction {
                 ciProposal.ins_company_id = String.valueOf(ciProduct.insuranceCoId);
                 ciProposal.is_settlement = "1";
 
+                applyUnderwritingRequest.addresseeName = request.applyUnderwriting.addresseeName;
+                applyUnderwritingRequest.addresseeMobile = request.applyUnderwriting.addresseeMobile;
+
+                ciProposal.express_email = applyUnderwritingRequest.policyEmail;
+                ciProposal.express_address = applyUnderwritingRequest.addresseeDetails;
+                ciProposal.express_province_code =applyUnderwritingRequest.addresseeProvince;
+                ciProposal.express_city_code =applyUnderwritingRequest.addresseeCity;
+                ciProposal.express_county_code =applyUnderwritingRequest.addresseeCounty;
+
                 insurancePolicyAndParticipantForCarInsurance.ciProposal = ciProposal;
 
                 // 存支付信息
@@ -1598,6 +1607,12 @@ public class CarInsuranceAction extends BaseAction {
                 biProposal.ins_company_id = String.valueOf(biProduct.insuranceCoId);
 
                 biProposal.is_settlement = "1";
+
+                biProposal.express_email = applyUnderwritingRequest.policyEmail;
+                biProposal.express_address = applyUnderwritingRequest.addresseeDetails;
+                biProposal.express_province_code =applyUnderwritingRequest.addresseeProvince;
+                biProposal.express_city_code =applyUnderwritingRequest.addresseeCity;
+                biProposal.express_county_code =applyUnderwritingRequest.addresseeCounty;
 
                 insurancePolicyAndParticipantForCarInsurance.biProposal = biProposal;
 
