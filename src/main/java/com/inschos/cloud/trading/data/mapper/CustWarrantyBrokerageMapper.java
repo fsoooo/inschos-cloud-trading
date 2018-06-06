@@ -14,6 +14,8 @@ public interface CustWarrantyBrokerageMapper {
 
     int addCustWarrantyBrokerage (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
 
+    List<CustWarrantyBrokerageModel> findCustWarrantyBrokerageByWarrantyUuid (String warrantyUuid);
+
     Double findCustWarrantyBrokerageTotal (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
 
     Double findIncomeByManagerUuidAndAccountUuid (CustWarrantyBrokerageModel custWarrantyBrokerageModel);

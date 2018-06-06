@@ -1378,21 +1378,36 @@ public class CarInsuranceAction extends BaseAction {
                 return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
             }
 
-            BigDecimal ciInsuredPremium = new BigDecimal(request.applyUnderwriting.ciInsuredPremium);
-            BigDecimal integral = new BigDecimal(request.applyUnderwriting.integral);
-            BigDecimal cIntegralRate = new BigDecimal(request.applyUnderwriting.cIntegral);
+//            BigDecimal ciInsuredPremium = new BigDecimal(request.applyUnderwriting.ciInsuredPremium);
+//            BigDecimal integral = new BigDecimal(request.applyUnderwriting.integral);
+//
+//            BigDecimal cIntegralRate = new BigDecimal(request.applyUnderwriting.cIntegral).divide(ciInsuredPremium, BigDecimal.ROUND_HALF_DOWN);
+//
+//            BigDecimal ciIntegral = ciInsuredPremium.multiply(cIntegralRate).divide(new BigDecimal("100"), BigDecimal.ROUND_HALF_DOWN);
+//            BigDecimal biIntegral = new BigDecimal("0.00");
+//            if (ciIntegral.compareTo(integral) < 0) {
+//                biIntegral = integral.subtract(ciIntegral);
+//            } else {
+//                ciIntegral = integral;
+//            }
+//
+//            BigDecimal biInsuredPremium = new BigDecimal(request.applyUnderwriting.biInsuredPremium);
+//            BigDecimal bIntegralRate = new BigDecimal(request.applyUnderwriting.bIntegral);
+//
+//            if (biInsuredPremium.compareTo(BigDecimal.ZERO) > 0) {
+//                bIntegralRate = biIntegral.divide(biInsuredPremium, BigDecimal.ROUND_HALF_DOWN);
+//            }
 
-            BigDecimal ciIntegral = ciInsuredPremium.multiply(cIntegralRate).divide(new BigDecimal("100"), BigDecimal.ROUND_HALF_DOWN);
-            BigDecimal biIntegral = new BigDecimal("0.00");
-            if (ciIntegral.compareTo(integral) < 0) {
-                biIntegral = integral.subtract(ciIntegral);
-            } else {
-                ciIntegral = integral;
+            BigDecimal ciInsuredPremium = new BigDecimal(request.applyUnderwriting.ciInsuredPremium);
+            BigDecimal ciIntegral = new BigDecimal(request.applyUnderwriting.cIntegral);
+            BigDecimal cIntegralRate = new BigDecimal("0.00");
+            if (ciInsuredPremium.compareTo(BigDecimal.ZERO) > 0) {
+                cIntegralRate = ciIntegral.divide(ciInsuredPremium, BigDecimal.ROUND_HALF_DOWN);
             }
 
             BigDecimal biInsuredPremium = new BigDecimal(request.applyUnderwriting.biInsuredPremium);
-            BigDecimal bIntegralRate = new BigDecimal(request.applyUnderwriting.bIntegral);
-
+            BigDecimal biIntegral = new BigDecimal(request.applyUnderwriting.bIntegral);
+            BigDecimal bIntegralRate = new BigDecimal("0.00");
             if (biInsuredPremium.compareTo(BigDecimal.ZERO) > 0) {
                 bIntegralRate = biIntegral.divide(biInsuredPremium, BigDecimal.ROUND_HALF_DOWN);
             }
@@ -2362,10 +2377,10 @@ public class CarInsuranceAction extends BaseAction {
         updateInsurancePolicyExpressInfoForCarInsurance.expressNo = request.data.expressNo;
         updateInsurancePolicyExpressInfoForCarInsurance.expressCompanyName = request.data.expressCompanyName;
         updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.deliveryType;
-        updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.addresseeDetails;
-        updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.addresseeProvince;
-        updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.addresseeCity;
-        updateInsurancePolicyExpressInfoForCarInsurance.deliveryType = request.data.addresseeCounty;
+        updateInsurancePolicyExpressInfoForCarInsurance.addresseeDetails = request.data.addresseeDetails;
+        updateInsurancePolicyExpressInfoForCarInsurance.addresseeProvince = request.data.addresseeProvince;
+        updateInsurancePolicyExpressInfoForCarInsurance.addresseeCity = request.data.addresseeCity;
+        updateInsurancePolicyExpressInfoForCarInsurance.addresseeCounty = request.data.addresseeCounty;
 
         int update = insurancePolicyDao.updateInsurancePolicyExpressInfoForCarInsurance(updateInsurancePolicyExpressInfoForCarInsurance);
 

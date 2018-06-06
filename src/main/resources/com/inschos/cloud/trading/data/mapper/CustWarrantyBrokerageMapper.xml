@@ -15,6 +15,13 @@
         (#{id},#{warranty_uuid},#{manager_uuid},#{cost_id},#{channel_id},#{agent_id},#{warranty_money},#{ins_money},#{manager_money},#{channel_money},#{agent_money},#{warranty_rate},#{ins_rate},#{manager_rate},#{channel_rate},#{agent_rate},#{created_at},#{updated_at})
     </insert>
 
+    <select id="findCustWarrantyBrokerageByWarrantyUuid" parameterType="String"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty_brokerage where warranty_uuid=#{_parameter}
+    </select>
+
     <select id="findCustWarrantyBrokerageTotal"
             resultType="Double"
             parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">

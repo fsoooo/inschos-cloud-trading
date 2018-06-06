@@ -174,6 +174,8 @@ public class InsurancePolicy {
         public String insuranceClaimsCount = "0";
         public String groupName;
 
+        public List<CustWarrantyBrokerage> brokerageList;
+
         public GetInsurancePolicy() {
 
         }
@@ -1132,6 +1134,179 @@ public class InsurancePolicy {
 
     public static class GetInsurancePolicyListByActualPayTimeResponse extends BaseResponse {
         public List<GetInsurancePolicyForManagerSystem> data;
+    }
+
+    public static class CustWarrantyBrokerage {
+        /**
+         * 主键
+         */
+        public String id;
+
+        /**
+         * 内部保单唯一标识
+         */
+        public String warrantyUuid;
+
+        /**
+         * 归属账号uuid
+         */
+        public String managerUuid;
+
+        /**
+         * 缴费ID
+         */
+        public String costId;
+
+        /**
+         * 渠道ID
+         */
+        public String channelId;
+
+        /**
+         * 代理人ID
+         */
+        public String agentId;
+
+        /**
+         * 保单佣金
+         */
+        public String warrantyMoney;
+        public String warrantyMoneyText;
+
+        /**
+         * 天眼佣金
+         */
+        public String insMoney;
+        public String insMoneyText;
+
+        /**
+         * 业管佣金
+         */
+        public String managerMoney;
+        public String managerMoneyText;
+
+        /**
+         * 渠道佣金
+         */
+        public String channelMoney;
+        public String channelMoneyText;
+
+        /**
+         * 代理人佣金
+         */
+        public String agentMoney;
+        public String agentMoneyText;
+
+        /**
+         * 保单佣金比例
+         */
+        public String warrantyRate;
+        public String warrantyRateText;
+
+        /**
+         * 天眼佣金比例
+         */
+        public String insRate;
+        public String insRateText;
+
+        /**
+         * 业管佣金比例
+         */
+        public String managerRate;
+        public String managerRateText;
+
+        /**
+         * 渠道佣金比例
+         */
+        public String channelRate;
+        public String channelRateText;
+
+        /**
+         * 代理人佣金比例
+         */
+        public String agentRate;
+        public String agentRateText;
+
+        /**
+         * 创建时间
+         */
+        public String createdAt;
+        public String createdAtText;
+
+        /**
+         * 结束时间
+         */
+        public String updatedAt;
+        public String updatedAtText;
+
+        public CustWarrantyBrokerage() {
+
+        }
+
+        public CustWarrantyBrokerage(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+
+            if (custWarrantyBrokerageModel == null) {
+                return;
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+            this.id = custWarrantyBrokerageModel.id;
+            this.warrantyUuid = custWarrantyBrokerageModel.warranty_uuid;
+            this.managerUuid = custWarrantyBrokerageModel.manager_uuid;
+            this.costId = custWarrantyBrokerageModel.cost_id;
+            this.channelId = custWarrantyBrokerageModel.id;
+            this.agentId = custWarrantyBrokerageModel.id;
+            this.warrantyMoney = custWarrantyBrokerageModel.warranty_money;
+            this.warrantyMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.warranty_money));
+            this.insMoney = custWarrantyBrokerageModel.ins_money;
+            this.insMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.ins_money));
+            this.managerMoney = custWarrantyBrokerageModel.manager_money;
+            this.managerMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.manager_money));
+            this.channelMoney = custWarrantyBrokerageModel.channel_money;
+            this.channelMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.channel_money));
+            this.agentMoney = custWarrantyBrokerageModel.agent_money;
+            this.agentMoneyText ="¥" +  decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.agent_money));
+            this.warrantyRate = custWarrantyBrokerageModel.warranty_rate;
+            if (StringKit.isNumeric(custWarrantyBrokerageModel.warranty_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.warranty_rate);
+                BigDecimal multiply = bigDecimal.multiply(new BigDecimal(100));
+                this.warrantyRateText = decimalFormat.format(multiply.doubleValue()) + "%";
+            }
+            this.insRate = custWarrantyBrokerageModel.ins_rate;
+            if (StringKit.isNumeric(custWarrantyBrokerageModel.ins_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.ins_rate);
+                BigDecimal multiply = bigDecimal.multiply(new BigDecimal(100));
+                this.insRateText = decimalFormat.format(multiply.doubleValue()) + "%";
+            }
+            this.managerRate = custWarrantyBrokerageModel.manager_rate;
+            if (StringKit.isNumeric(custWarrantyBrokerageModel.manager_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.manager_rate);
+                BigDecimal multiply = bigDecimal.multiply(new BigDecimal(100));
+                this.managerRateText = decimalFormat.format(multiply.doubleValue()) + "%";
+            }
+            this.channelRate = custWarrantyBrokerageModel.channel_rate;
+            if (StringKit.isNumeric(custWarrantyBrokerageModel.channel_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.channel_rate);
+                BigDecimal multiply = bigDecimal.multiply(new BigDecimal(100));
+                this.channelRateText = decimalFormat.format(multiply.doubleValue()) + "%";
+            }
+            this.agentRate = custWarrantyBrokerageModel.agent_rate;
+            if (StringKit.isNumeric(custWarrantyBrokerageModel.agent_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.agent_rate);
+                BigDecimal multiply = bigDecimal.multiply(new BigDecimal(100));
+                this.agentRateText = decimalFormat.format(multiply.doubleValue()) + "%";
+            }
+
+            this.createdAt = custWarrantyBrokerageModel.created_at;
+            if (StringKit.isInteger(custWarrantyBrokerageModel.created_at)) {
+                this.createdAtText = sdf.format(new Date(Long.valueOf(custWarrantyBrokerageModel.created_at)));
+            }
+            this.updatedAt = custWarrantyBrokerageModel.updated_at;
+            if (StringKit.isInteger(custWarrantyBrokerageModel.updated_at)) {
+                this.updatedAtText = sdf.format(new Date(Long.valueOf(custWarrantyBrokerageModel.updated_at)));
+            }
+        }
     }
 
 }

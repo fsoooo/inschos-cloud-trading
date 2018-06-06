@@ -754,6 +754,21 @@ public class InsurancePolicyAction extends BaseAction {
             response.data.insuredList = new ArrayList<>();
             response.data.beneficiaryList = new ArrayList<>();
 
+            response.data.brokerageList = new ArrayList<>();
+            List<CustWarrantyBrokerageModel> custWarrantyBrokerageByWarrantyUuid = custWarrantyBrokerageDao.findCustWarrantyBrokerageByWarrantyUuid(warrantyUuid);
+            if (custWarrantyBrokerageByWarrantyUuid != null && !custWarrantyBrokerageByWarrantyUuid.isEmpty()) {
+                for (CustWarrantyBrokerageModel custWarrantyBrokerageModel : custWarrantyBrokerageByWarrantyUuid) {
+                    if (!StringKit.equals(insurancePolicyDetailByWarrantyCode.warranty_status, InsurancePolicyModel.POLICY_STATUS_INVALID) && !StringKit.equals(insurancePolicyDetailByWarrantyCode.warranty_status, InsurancePolicyModel.POLICY_STATUS_PENDING)) {
+                        custWarrantyBrokerageModel.warranty_money = "0.00";
+                        custWarrantyBrokerageModel.ins_money = "0.00";
+                        custWarrantyBrokerageModel.manager_money = "0.00";
+                        custWarrantyBrokerageModel.channel_money = "0.00";
+                        custWarrantyBrokerageModel.agent_money = "0.00";
+                    }
+                    response.data.brokerageList.add(new InsurancePolicy.CustWarrantyBrokerage(custWarrantyBrokerageModel));
+                }
+            }
+
             ProductBean product = null;
             if (StringKit.isInteger(insurancePolicyDetailByWarrantyCode.product_id)) {
                 product = productClient.getProduct(Long.valueOf(insurancePolicyDetailByWarrantyCode.product_id));

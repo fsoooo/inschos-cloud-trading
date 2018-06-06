@@ -132,7 +132,7 @@ public class CustWarrantyBrokerageModel {
     }
 
     public void setBrokerageRate(BigDecimal warranty_rate, BigDecimal ins_rate, BigDecimal manager_rate, BigDecimal channel_rate, BigDecimal agent_rate) {
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0.0000");
         this.warranty_rate = decimalFormat.format(warranty_rate);
         this.ins_rate = decimalFormat.format(ins_rate);
         this.manager_rate = decimalFormat.format(manager_rate);

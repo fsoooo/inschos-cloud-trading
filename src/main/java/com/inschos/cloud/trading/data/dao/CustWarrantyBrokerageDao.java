@@ -30,6 +30,10 @@ public class CustWarrantyBrokerageDao {
         return custWarrantyBrokerageMapper.addCustWarrantyBrokerage(custWarrantyBrokerageModel);
     }
 
+    public List<CustWarrantyBrokerageModel> findCustWarrantyBrokerageByWarrantyUuid (String warrantyUuid){
+        return custWarrantyBrokerageMapper.findCustWarrantyBrokerageByWarrantyUuid(warrantyUuid);
+    }
+
     public String findCustWarrantyBrokerageTotalByWarrantyUuid(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
         BigDecimal amount = new BigDecimal("0.00");
         if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.warranty_uuid)) {
