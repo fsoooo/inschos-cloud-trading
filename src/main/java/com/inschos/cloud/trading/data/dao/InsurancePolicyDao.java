@@ -533,8 +533,22 @@ public class InsurancePolicyDao extends BaseDao {
         return custWarrantyCostMapper.findInsurancePolicyCountForInsuring(insurancePolicyModel);
     }
 
-    public int findEffectiveInsurancePolicyCountByAgentAndTime(InsurancePolicyModel search){
-        return search!=null?insurancePolicyMapper.findEffectiveInsurancePolicyCountByAgentAndTime(search):0;
+    public int findEffectiveInsurancePolicyCountByAgentAndTime(InsurancePolicyModel search) {
+        return search != null ? insurancePolicyMapper.findEffectiveInsurancePolicyCountByAgentAndTime(search) : 0;
+    }
+
+    public List<InsurancePolicyModel> findInsurancePolicyListByActualPayTime(InsurancePolicyModel insurancePolicyModel) {
+        if (insurancePolicyModel == null || (StringKit.isEmpty(insurancePolicyModel.manager_uuid) && StringKit.isEmpty(insurancePolicyModel.agent_id))) {
+            return new ArrayList<>();
+        }
+        return insurancePolicyMapper.findInsurancePolicyListByActualPayTime(insurancePolicyModel);
+    }
+
+    public long findInsurancePolicyCountByActualPayTime(InsurancePolicyModel insurancePolicyModel) {
+        if (insurancePolicyModel == null || (StringKit.isEmpty(insurancePolicyModel.manager_uuid) && StringKit.isEmpty(insurancePolicyModel.agent_id))) {
+            return 0;
+        }
+        return insurancePolicyMapper.findInsurancePolicyCountByActualPayTime(insurancePolicyModel);
     }
 
 }

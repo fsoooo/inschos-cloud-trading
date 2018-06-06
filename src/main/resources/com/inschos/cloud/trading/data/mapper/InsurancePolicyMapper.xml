@@ -1060,4 +1060,74 @@
         </if>
     </select>
 
+
+    <select id="findInsurancePolicyListByActualPayTime"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        `cust_warranty`.`id` id,`cust_warranty`.`warranty_uuid` warranty_uuid,`cust_warranty`.`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,
+        `cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,`cust_warranty`.`ins_company_id`,
+        `cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,
+        `cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,`cust_warranty`.`express_address`,`cust_warranty`.`express_province_code`,`cust_warranty`.`express_city_code`,
+        `cust_warranty`.`express_county_code`,`cust_warranty`.`delivery_type`,`cust_warranty`.`created_at`,`cust_warranty`.`updated_at`,
+        from cust_warranty LEFT JOIN cust_warranty_cost ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid` and `cust_warranty_cost`.`phase`=1
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    `cust_warranty`.`id`&lt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    `cust_warranty`.`id`&lt;=(select `cust_warranty`.`id` from cust_warranty LEFT JOIN cust_warranty_cost ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid` and `cust_warranty_cost`.`phase`=1
+                    where `cust_warranty`.`state`=1 AND `cust_warranty`.`warranty_status`=1 AND (`cust_warranty_cost`.`pay_status`= 201 OR `cust_warranty_cost`.`pay_status` = 203 OR `cust_warranty_cost`.`pay_status` = 204)
+                    <if test="manager_uuid!=null and manager_uuid!=''">
+                        and `cust_warranty`.`manager_uuid`=#{manager_uuid}
+                    </if>
+                    <if test="agent_id!=null and agent_id!=''">
+                        and `cust_warranty`.`agent_id`=#{agent_id}
+                    </if>
+                    <if test="start_time!=null and start_time!=''">
+                        and `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time}
+                    </if>
+                    <if test="end_time!=null and end_time!=''">
+                        and `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time}
+                    </if>
+                    ORDER BY `cust_warranty`.`id` DESC limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            and `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND `cust_warranty`.`warranty_status`=1 AND (`cust_warranty_cost`.`pay_status`= 201 OR `cust_warranty_cost`.`pay_status` = 203 OR `cust_warranty_cost`.`pay_status` = 204)
+            <if test="manager_uuid!=null and manager_uuid!=''">
+                and `cust_warranty`.`manager_uuid`=#{manager_uuid}
+            </if>
+            <if test="agent_id!=null and agent_id!=''">
+                and `cust_warranty`.`agent_id`=#{agent_id}
+            </if>
+            <if test="start_time!=null and start_time!=''">
+                and `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time}
+            </if>
+            <if test="end_time!=null and end_time!=''">
+                and `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time}
+            </if>
+            ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
+        </where>
+    </select>
+
+    <select id="findInsurancePolicyCountByActualPayTime"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="long">
+        select
+        COUNT(`cust_warranty`.`id`)
+        from cust_warranty LEFT JOIN cust_warranty_cost ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid` and `cust_warranty_cost`.`phase`=1
+        WHERE `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND `cust_warranty`.`warranty_status`=1 AND (`cust_warranty_cost`.`pay_status`= 201 OR `cust_warranty_cost`.`pay_status` = 203 OR `cust_warranty_cost`.`pay_status` = 204)
+        <if test="start_time!=null and start_time!=''">
+            and `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time}
+        </if>
+        <if test="end_time!=null and end_time!=''">
+            and `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time}
+        </if>
+    </select>
+
 </mapper>

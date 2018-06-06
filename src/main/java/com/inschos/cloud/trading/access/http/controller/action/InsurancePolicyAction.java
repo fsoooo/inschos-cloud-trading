@@ -323,17 +323,79 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
         long total = searchInsurancePolicyCount(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, request, insurancePolicyModel, agentMap);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
             lastId = response.data.get(response.data.size() - 1).id;
         }
 
-        response.page = setPageBean(lastId, request.pageNum, request.pageSize, total, response.data.size());
+        response.page = setPageBean(lastId, request.pageNum, request.pageSize, total, response.data == null ? 0 : response.data.size());
 
 
         return json(BaseResponse.CODE_SUCCESS, "获取列表成功", response);
+    }
+
+    public String getInsurancePolicyListByActualPayTime(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyListByActualPayTimeRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListByActualPayTimeRequest.class);
+        InsurancePolicy.GetInsurancePolicyListByActualPayTimeResponse response = new InsurancePolicy.GetInsurancePolicyListByActualPayTimeResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        if (!StringKit.isInteger(actionBean.userId)) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        Map<String, AgentBean> agentMap = null;
+        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        if (StringKit.equals(request.type, "1")) {
+            insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+        } else if (StringKit.equals(request.type, "2")) {
+            insurancePolicyModel.searchType = "2";
+            AgentBean agentInfoByPersonIdManagerUuid = agentClient.getAgentInfoByPersonIdManagerUuid(actionBean.managerUuid, Long.valueOf(actionBean.userId));
+            insurancePolicyModel.agent_id = String.valueOf(agentInfoByPersonIdManagerUuid.id);
+            agentMap = new HashMap<>();
+            agentMap.put(insurancePolicyModel.agent_id, agentInfoByPersonIdManagerUuid);
+        }
+
+        if (!StringKit.isNumeric(request.startTime)) {
+            insurancePolicyModel.start_time = "0";
+        } else {
+            insurancePolicyModel.start_time = request.startTime;
+        }
+
+        if (!StringKit.isNumeric(request.endTime)) {
+            insurancePolicyModel.end_time = "0";
+        } else {
+            insurancePolicyModel.end_time = request.endTime;
+        }
+
+        if (StringKit.isEmpty(request.pageSize)) {
+            request.pageSize = "10";
+        }
+
+        insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+
+        List<InsurancePolicyModel> insurancePolicyListByActualPayTime = insurancePolicyDao.findInsurancePolicyListByActualPayTime(insurancePolicyModel);
+        long total = insurancePolicyDao.findInsurancePolicyCountByActualPayTime(insurancePolicyModel);
+
+        dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, insurancePolicyModel, agentMap);
+
+        String lastId = "0";
+        if (response.data != null && !response.data.isEmpty()) {
+            lastId = response.data.get(response.data.size() - 1).id;
+        }
+
+        response.page = setPageBean(lastId, request.pageNum, request.pageSize, total, response.data == null ? 0 : response.data.size());
+
+        return json(BaseResponse.CODE_SUCCESS, "获取保单列表成功", response);
     }
 
     public String downInsurancePolicyListForManagerSystem(ActionBean actionBean) {
@@ -401,7 +463,7 @@ public class InsurancePolicyAction extends BaseAction {
             insurancePolicyModel.page = setPage(lastId, pageNum, pageSize);
 
             List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
-            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, request, insurancePolicyModel, agentMap);
+            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap);
             list.clear();
 
             if (getInsurancePolicyForManagerSystems != null && !getInsurancePolicyForManagerSystems.isEmpty()) {
@@ -493,7 +555,13 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyModel.searchType = request.searchType;
 
+        if (!StringKit.isInteger(request.startTime)) {
+            return "下单时间有误";
+        }
         insurancePolicyModel.start_time = request.startTime;
+        if (!StringKit.isInteger(request.endTime)) {
+            return "下单时间有误";
+        }
         insurancePolicyModel.end_time = request.endTime;
 
         if (StringKit.isEmpty(request.pageSize)) {
@@ -505,7 +573,7 @@ public class InsurancePolicyAction extends BaseAction {
         return null;
     }
 
-    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch, InsurancePolicy.GetInsurancePolicyListForManagerSystemRequest request, InsurancePolicyModel insurancePolicyModel, Map<String, AgentBean> agentMap) {
+    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch, InsurancePolicyModel insurancePolicyModel, Map<String, AgentBean> agentMap) {
         List<InsurancePolicy.GetInsurancePolicyForManagerSystem> result = new ArrayList<>();
         if (insurancePolicyListByWarrantyStatusOrSearch == null) {
             return result;
@@ -539,7 +607,7 @@ public class InsurancePolicyAction extends BaseAction {
             }
 
             AgentBean agentBean = null;
-            if (StringKit.equals(request.searchType, "2")) {
+            if (StringKit.equals(insurancePolicyModel.searchType, "2")) {
                 agentBean = agentMap.get(getInsurancePolicyForManagerSystem.agentId);
             } else if (StringKit.isInteger(getInsurancePolicyForManagerSystem.agentId)) {
                 agentBean = agentClient.getAgentById(Long.valueOf(getInsurancePolicyForManagerSystem.agentId));

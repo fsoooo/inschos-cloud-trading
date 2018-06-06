@@ -104,4 +104,11 @@ public class InsurancePolicyController {
     public String downInsurancePolicyListForManagerSystem(ActionBean actionBean) {
         return insurancePolicyAction.downInsurancePolicyListForManagerSystem(actionBean);
     }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("get_insurance_policy_list_by_actual_pay_time")
+    @ResponseBody
+    public String getInsurancePolicyListByActualPayTime(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyListByActualPayTime(actionBean);
+    }
 }

@@ -1121,4 +1121,19 @@ public class InsurancePolicy {
 
     }
 
+    public static class GetInsurancePolicyListByActualPayTimeRequest extends BaseRequest {
+        // 起保开始时间
+        @CheckParams
+        public String startTime;
+        // 起保结束时间
+        @CheckParams
+        public String endTime;
+        @CheckParams
+        public String type;
+    }
+
+    public static class GetInsurancePolicyListByActualPayTimeResponse extends BaseResponse {
+        public List<GetInsurancePolicyForManagerSystem> data;
+    }
+
 }

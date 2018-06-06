@@ -74,8 +74,6 @@ public interface InsurancePolicyMapper {
 
     List<InsurancePolicyModel> findEffectiveInsurancePolicyListByChannelId(String channelId);
 
-
-
     List<InsurancePolicyModel> findEffectiveInsurancePolicyByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel);
 
     long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel);
@@ -87,4 +85,8 @@ public interface InsurancePolicyMapper {
     Double getTotalPremiumByAccountUuidAndTime(InsurancePolicyModel insurancePolicyModel);
 
     int findEffectiveInsurancePolicyCountByAgentAndTime(InsurancePolicyModel search);
+
+    List<InsurancePolicyModel> findInsurancePolicyListByActualPayTime(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountByActualPayTime(InsurancePolicyModel insurancePolicyModel);
 }
