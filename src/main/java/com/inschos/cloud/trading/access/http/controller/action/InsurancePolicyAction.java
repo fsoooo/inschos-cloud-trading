@@ -554,11 +554,11 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyModel.searchType = request.searchType;
 
-        if (!StringKit.isInteger(request.startTime)) {
+        if (!StringKit.isEmpty(request.startTime) && !StringKit.isInteger(request.startTime)) {
             return "下单时间有误";
         }
         insurancePolicyModel.start_time = request.startTime;
-        if (!StringKit.isInteger(request.endTime)) {
+        if (!StringKit.isEmpty(request.endTime) && !StringKit.isInteger(request.endTime)) {
             return "下单时间有误";
         }
         insurancePolicyModel.end_time = request.endTime;
