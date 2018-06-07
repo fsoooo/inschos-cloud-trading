@@ -603,13 +603,17 @@ public class InsurancePolicyAction extends BaseAction {
             List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
             long costEnd = System.currentTimeMillis();
 
+            long costDealStart = System.currentTimeMillis();
             CustWarrantyCostListResult custWarrantyCostListResult = dealCustWarrantyCostList(custWarrantyCostByWarrantyUuid);
+            long costDealEnd = System.currentTimeMillis();
+
 
             CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
             custWarrantyBrokerageModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
 
             InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch, custWarrantyCostListResult.premium, custWarrantyCostListResult.payMoney, custWarrantyCostListResult.taxMoney, custWarrantyCostListResult.warrantyStatusForPay, custWarrantyCostListResult.warrantyStatusForPayText);
             getInsurancePolicyForManagerSystem.costDuring = costEnd - costStart;
+            getInsurancePolicyForManagerSystem.costDealDuring = costDealEnd - costDealStart;
 
             if (needBrokerage) {
                 String custWarrantyBrokerageTotalByManagerUuid = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByWarrantyUuid(custWarrantyBrokerageModel);

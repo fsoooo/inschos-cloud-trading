@@ -701,6 +701,7 @@ public class InsurancePolicy {
         public String carCode;
 
         public long costDuring;
+        public long costDealDuring;
         public long productDuring;
         public long personDuring;
         public long carDuring;
@@ -806,10 +807,11 @@ public class InsurancePolicy {
         CAR_FIELD_MAP.put("H", "createdAtText");
         CAR_FIELD_MAP.put("I", "warrantyStatusText");
         CAR_FIELD_MAP.put("J", "costDuring");
-        CAR_FIELD_MAP.put("K", "productDuring");
-        CAR_FIELD_MAP.put("L", "personDuring");
-        CAR_FIELD_MAP.put("M", "carDuring");
-        CAR_FIELD_MAP.put("N", "roundDuring");
+        CAR_FIELD_MAP.put("K", "costDealDuring");
+        CAR_FIELD_MAP.put("L", "productDuring");
+        CAR_FIELD_MAP.put("M", "personDuring");
+        CAR_FIELD_MAP.put("N", "carDuring");
+        CAR_FIELD_MAP.put("O", "roundDuring");
     }
 
     public static final Map<String, String> PERSON_FIELD_MAP;
