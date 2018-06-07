@@ -322,7 +322,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
         long total = searchInsurancePolicyCount(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, true,true);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, true, true, true);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -385,7 +385,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByActualPayTime = insurancePolicyDao.findInsurancePolicyListByActualPayTime(insurancePolicyModel);
         long total = insurancePolicyDao.findInsurancePolicyCountByActualPayTime(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, insurancePolicyModel, agentMap, true,true);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, insurancePolicyModel, agentMap, true, true, true);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -465,7 +465,7 @@ public class InsurancePolicyAction extends BaseAction {
             insurancePolicyModel.page = setPage(lastId, pageNum, pageSize);
 
             List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
-            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, false, false);
+            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, false, false,false);
             list.clear();
 
             if (getInsurancePolicyForManagerSystems != null && !getInsurancePolicyForManagerSystems.isEmpty()) {
@@ -577,7 +577,9 @@ public class InsurancePolicyAction extends BaseAction {
         return null;
     }
 
-    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch, InsurancePolicyModel insurancePolicyModel, Map<String, AgentBean> agentMap, boolean needLogo, boolean needBrokerage) {
+    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch,
+                                                                                                   InsurancePolicyModel insurancePolicyModel, Map<String, AgentBean> agentMap,
+                                                                                                   boolean needLogo, boolean needBrokerage, boolean needAgent) {
         List<InsurancePolicy.GetInsurancePolicyForManagerSystem> result = new ArrayList<>();
         if (insurancePolicyListByWarrantyStatusOrSearch == null) {
             return result;
@@ -647,15 +649,17 @@ public class InsurancePolicyAction extends BaseAction {
 
             }
 
-            AgentBean agentBean = null;
-            if (StringKit.equals(insurancePolicyModel.searchType, "2")) {
-                agentBean = agentMap.get(getInsurancePolicyForManagerSystem.agentId);
-            } else if (StringKit.isInteger(getInsurancePolicyForManagerSystem.agentId)) {
-                agentBean = agentClient.getAgentById(Long.valueOf(getInsurancePolicyForManagerSystem.agentId));
-            }
+            if (needAgent) {
+                AgentBean agentBean = null;
+                if (StringKit.equals(insurancePolicyModel.searchType, "2")) {
+                    agentBean = agentMap.get(getInsurancePolicyForManagerSystem.agentId);
+                } else if (StringKit.isInteger(getInsurancePolicyForManagerSystem.agentId)) {
+                    agentBean = agentClient.getAgentById(Long.valueOf(getInsurancePolicyForManagerSystem.agentId));
+                }
 
-            if (agentBean != null) {
-                getInsurancePolicyForManagerSystem.agentName = agentBean.name;
+                if (agentBean != null) {
+                    getInsurancePolicyForManagerSystem.agentName = agentBean.name;
+                }
             }
 
             if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
