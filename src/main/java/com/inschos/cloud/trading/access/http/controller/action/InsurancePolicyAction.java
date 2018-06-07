@@ -464,11 +464,20 @@ public class InsurancePolicyAction extends BaseAction {
         do {
             insurancePolicyModel.page = setPage(lastId, pageNum, pageSize);
 
-            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
-            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, false, false,false);
+            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListForDownload(insurancePolicyModel);
+            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = new ArrayList<>();
+
+            if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
+                for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
+                    InsurancePolicy.GetInsurancePolicyForManagerSystem model = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch);
+                    getInsurancePolicyForManagerSystems.add(model);
+                }
+            }
+
+            // List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, false, false,false);
             list.clear();
 
-            if (getInsurancePolicyForManagerSystems != null && !getInsurancePolicyForManagerSystems.isEmpty()) {
+            if (!getInsurancePolicyForManagerSystems.isEmpty()) {
                 for (InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem : getInsurancePolicyForManagerSystems) {
                     list.add(new ExcelModel<>(getInsurancePolicyForManagerSystem));
                 }
@@ -479,7 +488,7 @@ public class InsurancePolicyAction extends BaseAction {
                 lastId = getInsurancePolicyForManagerSystems.get(getInsurancePolicyForManagerSystems.size() - 1).id;
             }
 
-            flag = getInsurancePolicyForManagerSystems != null && !getInsurancePolicyForManagerSystems.isEmpty() && getInsurancePolicyForManagerSystems.size() >= Integer.valueOf(pageSize);
+            flag = !getInsurancePolicyForManagerSystems.isEmpty() && getInsurancePolicyForManagerSystems.size() >= Integer.valueOf(pageSize);
 
         } while (flag);
 

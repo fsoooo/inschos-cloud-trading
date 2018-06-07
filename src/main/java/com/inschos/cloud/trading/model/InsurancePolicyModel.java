@@ -149,6 +149,7 @@ public class InsurancePolicyModel {
     public Page page;
 
     public String status_string;
+    public String search_warranty_string;
 
     public String product_id_string;
     public String agent_id_string;
@@ -545,5 +546,8 @@ public class InsurancePolicyModel {
     static {
         TEAM_FIELD_MAP = new HashMap<>();
     }
+
+    public String premium;
+    public String pay_status;
 
 }

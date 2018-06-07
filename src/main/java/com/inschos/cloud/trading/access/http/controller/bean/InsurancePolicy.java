@@ -711,6 +711,74 @@ public class InsurancePolicy {
 
         }
 
+        public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model) {
+            if (model == null) {
+                return;
+            }
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy.MM.dd");
+            SimpleDateFormat group = new SimpleDateFormat("yyyy-MM");
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+            this.id = model.id;
+            this.warrantyUuid = model.warranty_uuid;
+            this.prePolicyNo = model.pre_policy_no;
+            this.warrantyCode = model.warranty_code;
+            this.accountUuid = model.manager_uuid;
+            this.buyerAuuid = model.account_uuid;
+            this.agentId = model.agent_id;
+            this.channelId = model.channel_id;
+            this.planId = model.plan_id;
+            this.productId = model.product_id;
+
+            if (StringKit.isNumeric(premium)) {
+                this.premium = decimalFormat.format(new BigDecimal(model.premium));
+                this.premiumText = "¥" + this.premium;
+            } else {
+                this.premium = "0.00";
+                this.premiumText = "¥" + this.premium;
+            }
+            this.startTime = model.start_time;
+            String start = "";
+            if (StringKit.isInteger(model.start_time)) {
+                this.startTimeText = sdf.format(new Date(Long.valueOf(model.start_time)));
+                start = sdf2.format(new Date(Long.valueOf(model.start_time)));
+            }
+            this.endTime = model.end_time;
+            String end = "";
+            if (StringKit.isInteger(model.end_time)) {
+                this.endTimeText = sdf.format(new Date(Long.valueOf(model.end_time)));
+                end = sdf2.format(new Date(Long.valueOf(model.end_time)));
+            }
+            this.term = start + "-" + end;
+            this.insCompanyId = model.ins_company_id;
+            this.count = model.count;
+            this.byStagesWay = model.by_stages_way;
+            this.isSettlement = model.is_settlement;
+            this.isSettlementText = model.isSettlementText(isSettlement);
+            this.warrantyUrl = model.warranty_url;
+            this.warrantyFrom = model.warranty_from;
+            this.warrantyFromText = model.warrantyFromText(warrantyFrom);
+            this.type = model.type;
+            this.integral = model.integral;
+            this.warrantyStatus = model.warranty_status;
+            this.payStatus = model.pay_status;
+            if (StringKit.equals(this.warrantyStatus, InsurancePolicyModel.POLICY_STATUS_PENDING)) {
+                CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+                this.warrantyStatusText = custWarrantyCostModel.payStatusText(model.pay_status);
+            } else {
+                this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
+            }
+            this.createdAt = model.created_at;
+            if (StringKit.isInteger(model.created_at)) {
+                Date date = new Date(Long.valueOf(model.created_at));
+                this.createdAtText = sdf.format(date);
+            }
+            this.policyHolderName = model.policy_holder_name;
+            this.policyHolderMobile = model.policy_holder_mobile;
+        }
+
         public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
             super(model, premium, pay_money, tax_money, warrantyStatusForPay, warrantyStatusForPayText);
         }
@@ -1295,7 +1363,7 @@ public class InsurancePolicy {
             this.channelMoney = custWarrantyBrokerageModel.channel_money;
             this.channelMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.channel_money));
             this.agentMoney = custWarrantyBrokerageModel.agent_money;
-            this.agentMoneyText ="¥" +  decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.agent_money));
+            this.agentMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.agent_money));
             this.warrantyRate = custWarrantyBrokerageModel.warranty_rate;
             if (StringKit.isNumeric(custWarrantyBrokerageModel.warranty_rate)) {
                 BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.warranty_rate);
