@@ -429,7 +429,7 @@ public class InsurancePolicyAction extends BaseAction {
         boolean flag = true;
         String lastId = "0";
         String pageNum = null;
-        String pageSize = "100";
+        String pageSize = "1000";
 
         String name = "";
         // 1-个人保单，2-团险保单，3-车险保单
