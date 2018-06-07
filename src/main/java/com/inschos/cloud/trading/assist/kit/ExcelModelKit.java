@@ -22,13 +22,6 @@ import java.util.*;
  */
 public class ExcelModelKit {
 
-    public static final Map<String, CellStyle> CELL_STYLE_MAP;
-
-    static {
-        // 每次getWorkbookByteArray的时候，就会清空一次
-        CELL_STYLE_MAP = new HashMap<>();
-    }
-
     /**
      * Model的所有字段都必须是String
      *
@@ -87,12 +80,24 @@ public class ExcelModelKit {
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet(sheetName);
 
-        writeExcel(sheet, data, map, 0);
+        writeExcel(sheet, data, map, 0, getCellStyleMap());
 
         return getWorkbookByteArray(workbook);
     }
 
-    public static <T> int writeExcel(Sheet sheet, List<ExcelModel<T>> data, Map<String, String> map, int startRow) {
+
+    /**
+     * 逐段写入
+     *
+     * @param sheet          逐段写入
+     * @param data           写入数据
+     * @param map            数据与excel对应表
+     * @param startRow       开始行数
+     * @param CELL_STYLE_MAP 单元格样式map
+     * @param <T>            数据
+     * @return 下次写入的开始行数
+     */
+    public static <T> int writeExcel(Sheet sheet, List<ExcelModel<T>> data, Map<String, String> map, int startRow, Map<String, CellStyle> CELL_STYLE_MAP) {
 
         if (data == null || data.isEmpty()) {
             return 0;
@@ -113,7 +118,7 @@ public class ExcelModelKit {
         }
 
         int count = 0;
-        int length = declaredFields.length;
+        // int length = declaredFields.length;
         Map<String, Field> fieldMap = new HashMap<>();
 
         for (int i = startRow; i < size + startRow; i++) {
@@ -241,7 +246,6 @@ public class ExcelModelKit {
         try {
             workbook.write(os);
             result = os.toByteArray();
-            CELL_STYLE_MAP.clear();
         } catch (IOException e) {
             e.printStackTrace();
             result = null;
@@ -280,6 +284,10 @@ public class ExcelModelKit {
 
         declaredFields = fields.toArray(new Field[0]);
         return declaredFields;
+    }
+
+    public static Map<String, CellStyle> getCellStyleMap() {
+        return new HashMap<>();
     }
 
 }

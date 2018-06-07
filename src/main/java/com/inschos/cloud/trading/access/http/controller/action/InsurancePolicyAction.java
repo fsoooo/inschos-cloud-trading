@@ -322,7 +322,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
         long total = searchInsurancePolicyCount(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, true);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -385,7 +385,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByActualPayTime = insurancePolicyDao.findInsurancePolicyListByActualPayTime(insurancePolicyModel);
         long total = insurancePolicyDao.findInsurancePolicyCountByActualPayTime(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, insurancePolicyModel, agentMap);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, insurancePolicyModel, agentMap, true);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -455,14 +455,15 @@ public class InsurancePolicyAction extends BaseAction {
         list.add(title);
         int startRow = 0;
 
-        int i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow);
+        Map<String, CellStyle> cellStyleMap = ExcelModelKit.getCellStyleMap();
+        int i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
         startRow += i;
 
         do {
             insurancePolicyModel.page = setPage(lastId, pageNum, pageSize);
 
             List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
-            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap);
+            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, false);
             list.clear();
 
             if (getInsurancePolicyForManagerSystems != null && !getInsurancePolicyForManagerSystems.isEmpty()) {
@@ -470,7 +471,7 @@ public class InsurancePolicyAction extends BaseAction {
                     list.add(new ExcelModel<>(getInsurancePolicyForManagerSystem));
                 }
 
-                i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow);
+                i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
                 startRow += i;
 
                 lastId = getInsurancePolicyForManagerSystems.get(getInsurancePolicyForManagerSystems.size() - 1).id;
@@ -545,6 +546,7 @@ public class InsurancePolicyAction extends BaseAction {
         if (!StringKit.isEmpty(request.searchType) && (!StringKit.isNumeric(request.searchType) || Integer.valueOf(request.searchType) < 1 || Integer.valueOf(request.searchType) > 4)) {
             return "搜索类型错误";
         } else if (StringKit.isEmpty(request.searchType)) {
+            request.searchType = "";
             request.searchKey = "";
         }
 
@@ -572,13 +574,16 @@ public class InsurancePolicyAction extends BaseAction {
         return null;
     }
 
-    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch, InsurancePolicyModel insurancePolicyModel, Map<String, AgentBean> agentMap) {
+    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch, InsurancePolicyModel insurancePolicyModel, Map<String, AgentBean> agentMap, boolean needLogo) {
         List<InsurancePolicy.GetInsurancePolicyForManagerSystem> result = new ArrayList<>();
         if (insurancePolicyListByWarrantyStatusOrSearch == null) {
             return result;
         }
 
         HashMap<String, ProductBean> map = new HashMap<>();
+        HashMap<String, Boolean> product = new HashMap<>();
+        HashMap<String, String> fileUrl = new HashMap<>();
+        HashMap<String, Boolean> file = new HashMap<>();
 
         for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
 
@@ -602,11 +607,16 @@ public class InsurancePolicyAction extends BaseAction {
 
             if (StringKit.isInteger(getInsurancePolicyForManagerSystem.productId)) {
 
-                ProductBean productBean = map.get(getInsurancePolicyForManagerSystem.productId);
-
-                if (productBean == null) {
+                Boolean aBoolean = product.get(getInsurancePolicyForManagerSystem.productId);
+                ProductBean productBean = null;
+                if (aBoolean == null) {
                     productBean = productClient.getProduct(Long.valueOf(getInsurancePolicyForManagerSystem.productId));
                     map.put(getInsurancePolicyForManagerSystem.productId, productBean);
+                    product.put(getInsurancePolicyForManagerSystem.productId, productBean != null);
+                } else {
+                    if (aBoolean) {
+                        productBean = map.get(getInsurancePolicyForManagerSystem.productId);
+                    }
                 }
 
                 if (productBean != null) {
@@ -615,10 +625,23 @@ public class InsurancePolicyAction extends BaseAction {
                     getInsurancePolicyForManagerSystem.insuranceCompanyName = productBean.insuranceCoName;
 
                     String[] split = productBean.code.split("_");
-                    if (split.length > 1) {
-                        getInsurancePolicyForManagerSystem.insuranceCompanyLogo = fileClient.getFileUrl("property_key_" + split[0]);
+
+                    String url = null;
+                    if (split.length > 1 && needLogo) {
+                        Boolean aBoolean1 = file.get(split[0]);
+                        if (aBoolean1 == null) {
+                            String fileUrl1 = fileClient.getFileUrl("property_key_" + split[0]);
+                            fileUrl.put(split[0], fileUrl1);
+                            file.put(split[0], !StringKit.isEmpty(fileUrl1));
+                        } else {
+                            if (aBoolean1) {
+                                url = fileUrl.get(split[0]);
+                            }
+                        }
+                        getInsurancePolicyForManagerSystem.insuranceCompanyLogo = url;
                     }
                 }
+
             }
 
             AgentBean agentBean = null;
