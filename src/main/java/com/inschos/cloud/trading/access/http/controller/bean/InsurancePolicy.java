@@ -715,7 +715,7 @@ public class InsurancePolicy {
             insurancePolicy.policyHolderMobile = "投保人电话";
             insurancePolicy.carCode = "车牌号";
             insurancePolicy.premiumText = "保费（元）";
-            insurancePolicy.startTimeText = "投保时间";
+            insurancePolicy.startTimeText = "下单时间";
             insurancePolicy.warrantyStatusText = "保单状态";
 
             return insurancePolicy;
@@ -794,7 +794,7 @@ public class InsurancePolicy {
         CAR_FIELD_MAP.put("E", "policyHolderMobile");
         CAR_FIELD_MAP.put("F", "carCode");
         CAR_FIELD_MAP.put("G", "premiumText");
-        CAR_FIELD_MAP.put("H", "startTimeText");
+        CAR_FIELD_MAP.put("H", "createdAtText");
         CAR_FIELD_MAP.put("I", "warrantyStatusText");
     }
 
