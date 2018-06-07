@@ -1220,11 +1220,11 @@
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
         `cust_warranty`.`id` id,`cust_warranty`.`warranty_uuid`
-        warranty_uuid,`pre_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`start_time`,`end_time`,
-        `ins_company_id`,`count`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`warranty_status`,`integral`,`express_no`,`express_company_name`,
-        `express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,
+        warranty_uuid,`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,
+        `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,`cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,
+        `cust_warranty`.`express_address`,`cust_warranty`.`express_province_code`,`cust_warranty`.`express_city_code`,`cust_warranty`.`express_county_code`,`cust_warranty`.`delivery_type`,
         `cust_warranty`.`created_at` created_at,`cust_warranty`.`updated_at` updated_at,
-        `cust_warranty_car`.`car_code`,`cust_warranty_car`.`frame_no`,
+        `cust_warranty_car`.`car_code` car_code,`cust_warranty_car`.`frame_no` frame_no,
         `cust_warranty_person`.`name` policy_holder_name,`cust_warranty_person`.`phone` policy_holder_mobile,
         `cust_warranty_cost`.`premium` premium,`cust_warranty_cost`.`pay_status` pay_status
         from cust_warranty

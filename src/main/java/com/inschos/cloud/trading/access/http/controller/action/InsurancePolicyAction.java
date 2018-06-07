@@ -461,6 +461,9 @@ public class InsurancePolicyAction extends BaseAction {
         int i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
         startRow += i;
 
+        HashMap<String, ProductBean> map = new HashMap<>();
+        HashMap<String, Boolean> product = new HashMap<>();
+
         do {
             insurancePolicyModel.page = setPage(lastId, pageNum, pageSize);
 
@@ -470,6 +473,25 @@ public class InsurancePolicyAction extends BaseAction {
             if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
                 for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
                     InsurancePolicy.GetInsurancePolicyForManagerSystem model = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch);
+
+                    Boolean aBoolean = product.get(model.productId);
+                    ProductBean productBean = null;
+                    if (aBoolean == null) {
+                        productBean = productClient.getProduct(Long.valueOf(model.productId));
+                        map.put(model.productId, productBean);
+                        product.put(model.productId, productBean != null);
+                    } else {
+                        if (aBoolean) {
+                            productBean = map.get(model.productId);
+                        }
+                    }
+
+                    if (productBean != null) {
+                        model.productName = productBean.name;
+                        model.insuranceProductName = productBean.displayName;
+                        model.insuranceCompanyName = productBean.insuranceCoName;
+                    }
+
                     getInsurancePolicyForManagerSystems.add(model);
                 }
             }

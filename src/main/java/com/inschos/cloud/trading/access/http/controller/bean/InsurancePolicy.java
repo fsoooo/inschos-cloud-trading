@@ -732,7 +732,7 @@ public class InsurancePolicy {
             this.planId = model.plan_id;
             this.productId = model.product_id;
 
-            if (StringKit.isNumeric(premium)) {
+            if (StringKit.isNumeric(model.premium)) {
                 this.premium = decimalFormat.format(new BigDecimal(model.premium));
                 this.premiumText = "¥" + this.premium;
             } else {
@@ -777,6 +777,8 @@ public class InsurancePolicy {
             }
             this.policyHolderName = model.policy_holder_name;
             this.policyHolderMobile = model.policy_holder_mobile;
+            this.carCode = model.car_code;
+
         }
 
         public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
