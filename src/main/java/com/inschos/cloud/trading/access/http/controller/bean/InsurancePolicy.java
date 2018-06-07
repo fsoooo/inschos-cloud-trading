@@ -687,6 +687,8 @@ public class InsurancePolicy {
 
     public static class DownloadInsurancePolicyListForManagerSystemResponse extends BaseResponse {
         public String data;
+        public String startTime;
+        public String endTime;
     }
 
     public static class GetInsurancePolicyForManagerSystem extends GetInsurancePolicy {

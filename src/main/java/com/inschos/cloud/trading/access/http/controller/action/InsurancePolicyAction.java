@@ -322,7 +322,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
         long total = searchInsurancePolicyCount(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, true);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, true,true);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -385,7 +385,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByActualPayTime = insurancePolicyDao.findInsurancePolicyListByActualPayTime(insurancePolicyModel);
         long total = insurancePolicyDao.findInsurancePolicyCountByActualPayTime(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, insurancePolicyModel, agentMap, true);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, insurancePolicyModel, agentMap, true,true);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -445,6 +445,8 @@ public class InsurancePolicyAction extends BaseAction {
                 break;
         }
 
+        response.startTime = String.valueOf(System.currentTimeMillis());
+
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet(name + "-保单列表");
 
@@ -463,7 +465,7 @@ public class InsurancePolicyAction extends BaseAction {
             insurancePolicyModel.page = setPage(lastId, pageNum, pageSize);
 
             List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
-            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, false);
+            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, false, false);
             list.clear();
 
             if (getInsurancePolicyForManagerSystems != null && !getInsurancePolicyForManagerSystems.isEmpty()) {
@@ -481,6 +483,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         } while (flag);
 
+        response.endTime = String.valueOf(System.currentTimeMillis());
 
         ExcelModelKit.autoSizeColumn(sheet, InsurancePolicy.CAR_FIELD_MAP.size());
 
@@ -574,7 +577,7 @@ public class InsurancePolicyAction extends BaseAction {
         return null;
     }
 
-    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch, InsurancePolicyModel insurancePolicyModel, Map<String, AgentBean> agentMap, boolean needLogo) {
+    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch, InsurancePolicyModel insurancePolicyModel, Map<String, AgentBean> agentMap, boolean needLogo, boolean needBrokerage) {
         List<InsurancePolicy.GetInsurancePolicyForManagerSystem> result = new ArrayList<>();
         if (insurancePolicyListByWarrantyStatusOrSearch == null) {
             return result;
@@ -597,13 +600,13 @@ public class InsurancePolicyAction extends BaseAction {
             CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
             custWarrantyBrokerageModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
 
-            String custWarrantyBrokerageTotalByManagerUuid = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByWarrantyUuid(custWarrantyBrokerageModel);
-
-
             InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch, custWarrantyCostListResult.premium, custWarrantyCostListResult.payMoney, custWarrantyCostListResult.taxMoney, custWarrantyCostListResult.warrantyStatusForPay, custWarrantyCostListResult.warrantyStatusForPayText);
 
-            getInsurancePolicyForManagerSystem.brokerage = custWarrantyBrokerageTotalByManagerUuid;
-            getInsurancePolicyForManagerSystem.brokerageText = "¥" + custWarrantyBrokerageTotalByManagerUuid;
+            if (needBrokerage) {
+                String custWarrantyBrokerageTotalByManagerUuid = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByWarrantyUuid(custWarrantyBrokerageModel);
+                getInsurancePolicyForManagerSystem.brokerage = custWarrantyBrokerageTotalByManagerUuid;
+                getInsurancePolicyForManagerSystem.brokerageText = "¥" + custWarrantyBrokerageTotalByManagerUuid;
+            }
 
             if (StringKit.isInteger(getInsurancePolicyForManagerSystem.productId)) {
 
