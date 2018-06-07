@@ -90,5 +90,7 @@ public interface InsurancePolicyMapper {
 
     long findInsurancePolicyCountByActualPayTime(InsurancePolicyModel insurancePolicyModel);
 
-    List<InsurancePolicyModel> findInsurancePolicyListForDownload(InsurancePolicyModel insurancePolicyModel);
+    List<InsurancePolicyModel> findInsurancePolicyListForManagerSystem(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountForManagerSystem(InsurancePolicyModel insurancePolicyModel);
 }

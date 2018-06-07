@@ -12,7 +12,6 @@ import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.file.FileUpload;
-import com.inschos.cloud.trading.extend.file.FileUploadResponse;
 import com.inschos.cloud.trading.model.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -314,15 +313,10 @@ public class InsurancePolicyAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, s, response);
         }
 
-        Map<String, AgentBean> agentMap = new HashMap<>();
-        if (StringKit.equals(request.searchType, "2")) {
-            agentMap.putAll(getAgentMap(actionBean.managerUuid, request.searchKey, insurancePolicyModel));
-        }
+        List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListForManagerSystem(insurancePolicyModel);
+        long total = insurancePolicyDao.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
 
-        List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = searchInsurancePolicyList(insurancePolicyModel);
-        long total = searchInsurancePolicyCount(insurancePolicyModel);
-
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, true, true, true);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, false);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -385,7 +379,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByActualPayTime = insurancePolicyDao.findInsurancePolicyListByActualPayTime(insurancePolicyModel);
         long total = insurancePolicyDao.findInsurancePolicyCountByActualPayTime(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, insurancePolicyModel, agentMap, true, true, true);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, true);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -421,16 +415,9 @@ public class InsurancePolicyAction extends BaseAction {
 
         // insurancePolicyModel.page = setPage(request.lastId, request.pageNum, "100");
 
-        Map<String, AgentBean> agentMap = new HashMap<>();
-        if (StringKit.equals(request.searchType, "2")) {
-            agentMap.putAll(getAgentMap(actionBean.managerUuid, request.searchKey, insurancePolicyModel));
-        }
-
-        boolean flag = true;
         String lastId = "0";
         String pageNum = null;
         String pageSize = "1000";
-
         String name = "";
         // 1-个人保单，2-团险保单，3-车险保单
         switch (request.warrantyType) {
@@ -460,46 +447,16 @@ public class InsurancePolicyAction extends BaseAction {
         Map<String, CellStyle> cellStyleMap = ExcelModelKit.getCellStyleMap();
         int i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
         startRow += i;
-
-        HashMap<String, ProductBean> map = new HashMap<>();
-        HashMap<String, Boolean> product = new HashMap<>();
+        boolean flag;
 
         do {
             insurancePolicyModel.page = setPage(lastId, pageNum, pageSize);
 
-            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListForDownload(insurancePolicyModel);
-            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = new ArrayList<>();
-
-            if (insurancePolicyListByWarrantyStatusOrSearch != null && !insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
-                for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
-                    InsurancePolicy.GetInsurancePolicyForManagerSystem model = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch);
-
-                    Boolean aBoolean = product.get(model.productId);
-                    ProductBean productBean = null;
-                    if (aBoolean == null) {
-                        productBean = productClient.getProduct(Long.valueOf(model.productId));
-                        map.put(model.productId, productBean);
-                        product.put(model.productId, productBean != null);
-                    } else {
-                        if (aBoolean) {
-                            productBean = map.get(model.productId);
-                        }
-                    }
-
-                    if (productBean != null) {
-                        model.productName = productBean.name;
-                        model.insuranceProductName = productBean.displayName;
-                        model.insuranceCompanyName = productBean.insuranceCoName;
-                    }
-
-                    getInsurancePolicyForManagerSystems.add(model);
-                }
-            }
-
-            // List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, insurancePolicyModel, agentMap, false, false,false);
+            List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListForManagerSystem(insurancePolicyModel);
+            List<InsurancePolicy.GetInsurancePolicyForManagerSystem> getInsurancePolicyForManagerSystems = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, false);
             list.clear();
 
-            if (!getInsurancePolicyForManagerSystems.isEmpty()) {
+            if (getInsurancePolicyForManagerSystems!= null && !getInsurancePolicyForManagerSystems.isEmpty()) {
                 for (InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem : getInsurancePolicyForManagerSystems) {
                     list.add(new ExcelModel<>(getInsurancePolicyForManagerSystem));
                 }
@@ -510,7 +467,7 @@ public class InsurancePolicyAction extends BaseAction {
                 lastId = getInsurancePolicyForManagerSystems.get(getInsurancePolicyForManagerSystems.size() - 1).id;
             }
 
-            flag = !getInsurancePolicyForManagerSystems.isEmpty() && getInsurancePolicyForManagerSystems.size() >= Integer.valueOf(pageSize);
+            flag = getInsurancePolicyForManagerSystems!= null && !getInsurancePolicyForManagerSystems.isEmpty() && getInsurancePolicyForManagerSystems.size() >= Integer.valueOf(pageSize);
 
         } while (flag);
 
@@ -560,16 +517,10 @@ public class InsurancePolicyAction extends BaseAction {
         if (!StringKit.isEmpty(request.warrantyStatus)) {
             switch (request.warrantyStatus) {
                 case "1":
-                    insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_PENDING;
-                    break;
                 case "2":
-                    insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_WAITING;
-                    break;
                 case "3":
-                    insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_EFFECTIVE;
-                    break;
                 case "4":
-                    insurancePolicyModel.status_string = InsurancePolicyModel.POLICY_STATUS_INVALID + "," + InsurancePolicyModel.POLICY_STATUS_EXPIRED;
+                    insurancePolicyModel.search_warranty_string = request.warrantyStatus;
                     break;
                 default:
                     return "保单状态错误";
@@ -605,14 +556,16 @@ public class InsurancePolicyAction extends BaseAction {
             request.pageSize = "10";
         }
 
+        if (StringKit.equals(request.searchType, "2")) {
+            getAgentMap(insurancePolicyModel.manager_uuid, request.searchKey, insurancePolicyModel);
+        }
+
         insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
         return null;
     }
 
-    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch,
-                                                                                                   InsurancePolicyModel insurancePolicyModel, Map<String, AgentBean> agentMap,
-                                                                                                   boolean needLogo, boolean needBrokerage, boolean needAgent) {
+    private List<InsurancePolicy.GetInsurancePolicyForManagerSystem> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch, boolean needLogo) {
         List<InsurancePolicy.GetInsurancePolicyForManagerSystem> result = new ArrayList<>();
         if (insurancePolicyListByWarrantyStatusOrSearch == null) {
             return result;
@@ -623,153 +576,52 @@ public class InsurancePolicyAction extends BaseAction {
         HashMap<String, String> fileUrl = new HashMap<>();
         HashMap<String, Boolean> file = new HashMap<>();
 
-        for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
+        if (!insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
+            for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
+                InsurancePolicy.GetInsurancePolicyForManagerSystem model = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch);
 
-            long roundStart = System.currentTimeMillis();
-
-            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-            custWarrantyCostModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
-
-            long costStart = System.currentTimeMillis();
-            List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
-            long costEnd = System.currentTimeMillis();
-
-            long costDealStart = System.currentTimeMillis();
-            CustWarrantyCostListResult custWarrantyCostListResult = dealCustWarrantyCostList(custWarrantyCostByWarrantyUuid);
-            long costDealEnd = System.currentTimeMillis();
-
-
-            CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
-            custWarrantyBrokerageModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
-
-            InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch, custWarrantyCostListResult.premium, custWarrantyCostListResult.payMoney, custWarrantyCostListResult.taxMoney, custWarrantyCostListResult.warrantyStatusForPay, custWarrantyCostListResult.warrantyStatusForPayText);
-            getInsurancePolicyForManagerSystem.costDuring = costEnd - costStart;
-            getInsurancePolicyForManagerSystem.costDealDuring = costDealEnd - costDealStart;
-
-            if (needBrokerage) {
-                String custWarrantyBrokerageTotalByManagerUuid = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByWarrantyUuid(custWarrantyBrokerageModel);
-                getInsurancePolicyForManagerSystem.brokerage = custWarrantyBrokerageTotalByManagerUuid;
-                getInsurancePolicyForManagerSystem.brokerageText = "¥" + custWarrantyBrokerageTotalByManagerUuid;
-            }
-
-            if (StringKit.isInteger(getInsurancePolicyForManagerSystem.productId)) {
-
-                Boolean aBoolean = product.get(getInsurancePolicyForManagerSystem.productId);
-                ProductBean productBean = null;
-                if (aBoolean == null) {
-                    long productStart = System.currentTimeMillis();
-                    productBean = productClient.getProduct(Long.valueOf(getInsurancePolicyForManagerSystem.productId));
-                    long productEnd = System.currentTimeMillis();
-                    getInsurancePolicyForManagerSystem.productDuring = productEnd - productStart;
-                    map.put(getInsurancePolicyForManagerSystem.productId, productBean);
-                    product.put(getInsurancePolicyForManagerSystem.productId, productBean != null);
-                } else {
-                    if (aBoolean) {
-                        productBean = map.get(getInsurancePolicyForManagerSystem.productId);
-                    }
-                }
-
-                if (productBean != null) {
-                    getInsurancePolicyForManagerSystem.productName = productBean.name;
-                    getInsurancePolicyForManagerSystem.insuranceProductName = productBean.displayName;
-                    getInsurancePolicyForManagerSystem.insuranceCompanyName = productBean.insuranceCoName;
-
-                    String[] split = productBean.code.split("_");
-
-                    String url = null;
-                    if (split.length > 1 && needLogo) {
-                        Boolean aBoolean1 = file.get(split[0]);
-                        if (aBoolean1 == null) {
-                            String fileUrl1 = fileClient.getFileUrl("property_key_" + split[0]);
-                            fileUrl.put(split[0], fileUrl1);
-                            file.put(split[0], !StringKit.isEmpty(fileUrl1));
-                        } else {
-                            if (aBoolean1) {
-                                url = fileUrl.get(split[0]);
-                            }
+                if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
+                    Boolean aBoolean = product.get(model.productId);
+                    ProductBean productBean = null;
+                    if (aBoolean == null) {
+                        productBean = productClient.getProduct(Long.valueOf(model.productId));
+                        map.put(model.productId, productBean);
+                        product.put(model.productId, productBean != null);
+                    } else {
+                        if (aBoolean) {
+                            productBean = map.get(model.productId);
                         }
-                        getInsurancePolicyForManagerSystem.insuranceCompanyLogo = url;
                     }
-                }
 
-            }
+                    if (productBean != null) {
+                        model.productName = productBean.name;
+                        model.insuranceProductName = productBean.displayName;
+                        model.insuranceCompanyName = productBean.insuranceCoName;
 
-            if (needAgent) {
-                AgentBean agentBean = null;
-                if (StringKit.equals(insurancePolicyModel.searchType, "2")) {
-                    agentBean = agentMap.get(getInsurancePolicyForManagerSystem.agentId);
-                } else if (StringKit.isInteger(getInsurancePolicyForManagerSystem.agentId)) {
-                    agentBean = agentClient.getAgentById(Long.valueOf(getInsurancePolicyForManagerSystem.agentId));
-                }
+                        String[] split = productBean.code.split("_");
 
-                if (agentBean != null) {
-                    getInsurancePolicyForManagerSystem.agentName = agentBean.name;
-                }
-            }
-
-            if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
-
-                if (!StringKit.isEmpty(insurancePolicyModel.search)) {
-                    switch (insurancePolicyModel.searchType) {
-                        case "1":
-                        case "2":
-                        case "4":
-                            InsuranceParticipantModel insuranceParticipantPolicyHolderNameByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
-                            if (insuranceParticipantPolicyHolderNameByWarrantyUuid != null) {
-                                getInsurancePolicyForManagerSystem.policyHolderName = insuranceParticipantPolicyHolderNameByWarrantyUuid.name;
-                                getInsurancePolicyForManagerSystem.policyHolderMobile = insuranceParticipantPolicyHolderNameByWarrantyUuid.phone;
+                        String url = null;
+                        if (split.length > 1 && needLogo) {
+                            Boolean aBoolean1 = file.get(split[0]);
+                            if (aBoolean1 == null) {
+                                String fileUrl1 = fileClient.getFileUrl("property_key_" + split[0]);
+                                fileUrl.put(split[0], fileUrl1);
+                                file.put(split[0], !StringKit.isEmpty(fileUrl1));
+                            } else {
+                                if (aBoolean1) {
+                                    url = fileUrl.get(split[0]);
+                                }
                             }
-                            break;
-                        case "3":
-                            getInsurancePolicyForManagerSystem.policyHolderName = policyListByWarrantyStatusOrSearch.policy_holder_name;
-                            getInsurancePolicyForManagerSystem.policyHolderMobile = policyListByWarrantyStatusOrSearch.policy_holder_mobile;
-                            break;
+                            model.insuranceCompanyLogo = url;
+                        }
                     }
+                } else if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_PERSON)) {
 
-                    switch (insurancePolicyModel.searchType) {
-                        case "1":
-                        case "2":
-                        case "3":
-                            CarInfoModel carInfoCarCodeAndFrameNoByWarrantyUuid = carInfoDao.findCarInfoCarCodeAndFrameNoByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
-                            if (carInfoCarCodeAndFrameNoByWarrantyUuid != null) {
-                                getInsurancePolicyForManagerSystem.frameNo = carInfoCarCodeAndFrameNoByWarrantyUuid.frame_no;
-                                getInsurancePolicyForManagerSystem.carCode = carInfoCarCodeAndFrameNoByWarrantyUuid.car_code;
-                            }
-                            break;
-                        case "4":
-                            getInsurancePolicyForManagerSystem.frameNo = policyListByWarrantyStatusOrSearch.frame_no;
-                            getInsurancePolicyForManagerSystem.carCode = policyListByWarrantyStatusOrSearch.car_code;
-                            break;
-                    }
+                } else if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_TEAM)) {
 
-                } else {
-                    long personStart = System.currentTimeMillis();
-                    InsuranceParticipantModel insuranceParticipantPolicyHolderNameByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
-                    long personEnd = System.currentTimeMillis();
-                    getInsurancePolicyForManagerSystem.personDuring = personEnd - personStart;
-                    if (insuranceParticipantPolicyHolderNameByWarrantyUuid != null) {
-                        getInsurancePolicyForManagerSystem.policyHolderName = insuranceParticipantPolicyHolderNameByWarrantyUuid.name;
-                        getInsurancePolicyForManagerSystem.policyHolderMobile = insuranceParticipantPolicyHolderNameByWarrantyUuid.phone;
-                    }
-                    long carStart = System.currentTimeMillis();
-                    CarInfoModel carInfoCarCodeAndFrameNoByWarrantyUuid = carInfoDao.findCarInfoCarCodeAndFrameNoByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
-                    long carEnd = System.currentTimeMillis();
-                    getInsurancePolicyForManagerSystem.carDuring = carEnd - carStart;
-                    if (carInfoCarCodeAndFrameNoByWarrantyUuid != null) {
-                        getInsurancePolicyForManagerSystem.frameNo = carInfoCarCodeAndFrameNoByWarrantyUuid.frame_no;
-                        getInsurancePolicyForManagerSystem.carCode = carInfoCarCodeAndFrameNoByWarrantyUuid.car_code;
-                    }
                 }
-
-            } else if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_PERSON)) {
-
-            } else if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_TEAM)) {
-
+                result.add(model);
             }
-
-            long roundEnd = System.currentTimeMillis();
-            getInsurancePolicyForManagerSystem.roundDuring = roundEnd - roundStart;
-            result.add(getInsurancePolicyForManagerSystem);
         }
 
         return result;
@@ -791,17 +643,6 @@ public class InsurancePolicyAction extends BaseAction {
         }
         insurancePolicyModel.agent_id_string = sb.toString();
         return agentMap;
-    }
-
-    private List<InsurancePolicyModel> searchInsurancePolicyList(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyDao.findInsurancePolicyListBySearchType(insurancePolicyModel);
-    }
-
-    private long searchInsurancePolicyCount(InsurancePolicyModel insurancePolicyModel) {
-        if (StringKit.isEmpty(insurancePolicyModel.warranty_status)) {
-            return insurancePolicyDao.findInsurancePolicyCountBySearchType(insurancePolicyModel);
-        }
-        return insurancePolicyDao.findInsurancePolicyCountBySearchType(insurancePolicyModel);
     }
 
     public String getInsurancePolicyDetailForManagerSystem(ActionBean actionBean) {

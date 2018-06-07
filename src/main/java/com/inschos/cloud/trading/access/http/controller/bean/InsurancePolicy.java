@@ -700,12 +700,12 @@ public class InsurancePolicy {
         public String frameNo;
         public String carCode;
 
-        public long costDuring;
-        public long costDealDuring;
-        public long productDuring;
-        public long personDuring;
-        public long carDuring;
-        public long roundDuring;
+//        public long costDuring;
+//        public long costDealDuring;
+//        public long productDuring;
+//        public long personDuring;
+//        public long carDuring;
+//        public long roundDuring;
 
         public GetInsurancePolicyForManagerSystem() {
 
@@ -718,7 +718,6 @@ public class InsurancePolicy {
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy.MM.dd");
-            SimpleDateFormat group = new SimpleDateFormat("yyyy-MM");
             DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
             this.id = model.id;
@@ -876,12 +875,6 @@ public class InsurancePolicy {
         CAR_FIELD_MAP.put("G", "premiumText");
         CAR_FIELD_MAP.put("H", "createdAtText");
         CAR_FIELD_MAP.put("I", "warrantyStatusText");
-        CAR_FIELD_MAP.put("J", "costDuring");
-        CAR_FIELD_MAP.put("K", "costDealDuring");
-        CAR_FIELD_MAP.put("L", "productDuring");
-        CAR_FIELD_MAP.put("M", "personDuring");
-        CAR_FIELD_MAP.put("N", "carDuring");
-        CAR_FIELD_MAP.put("O", "roundDuring");
     }
 
     public static final Map<String, String> PERSON_FIELD_MAP;

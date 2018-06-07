@@ -551,8 +551,12 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findInsurancePolicyCountByActualPayTime(insurancePolicyModel);
     }
 
-    public List<InsurancePolicyModel> findInsurancePolicyListForDownload(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyListForDownload(insurancePolicyModel);
+    public List<InsurancePolicyModel> findInsurancePolicyListForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyListForManagerSystem(insurancePolicyModel);
+    }
+
+    public long findInsurancePolicyCountForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
     }
 
 }
