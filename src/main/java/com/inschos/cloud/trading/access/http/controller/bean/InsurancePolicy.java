@@ -704,6 +704,7 @@ public class InsurancePolicy {
         public long productDuring;
         public long personDuring;
         public long carDuring;
+        public long roundDuring;
 
         public GetInsurancePolicyForManagerSystem() {
 
@@ -808,6 +809,7 @@ public class InsurancePolicy {
         CAR_FIELD_MAP.put("K", "productDuring");
         CAR_FIELD_MAP.put("L", "personDuring");
         CAR_FIELD_MAP.put("M", "carDuring");
+        CAR_FIELD_MAP.put("N", "roundDuring");
     }
 
     public static final Map<String, String> PERSON_FIELD_MAP;

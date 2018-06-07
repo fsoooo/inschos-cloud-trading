@@ -594,6 +594,8 @@ public class InsurancePolicyAction extends BaseAction {
 
         for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
 
+            long roundStart = System.currentTimeMillis();
+
             CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
             custWarrantyCostModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
 
@@ -623,7 +625,7 @@ public class InsurancePolicyAction extends BaseAction {
                     long productStart = System.currentTimeMillis();
                     productBean = productClient.getProduct(Long.valueOf(getInsurancePolicyForManagerSystem.productId));
                     long productEnd = System.currentTimeMillis();
-                    getInsurancePolicyForManagerSystem.costDuring = productEnd - productStart;
+                    getInsurancePolicyForManagerSystem.productDuring = productEnd - productStart;
                     map.put(getInsurancePolicyForManagerSystem.productId, productBean);
                     product.put(getInsurancePolicyForManagerSystem.productId, productBean != null);
                 } else {
@@ -729,6 +731,9 @@ public class InsurancePolicyAction extends BaseAction {
             } else if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_TEAM)) {
 
             }
+
+            long roundEnd = System.currentTimeMillis();
+            getInsurancePolicyForManagerSystem.roundDuring = roundEnd - roundStart;
             result.add(getInsurancePolicyForManagerSystem);
         }
 
