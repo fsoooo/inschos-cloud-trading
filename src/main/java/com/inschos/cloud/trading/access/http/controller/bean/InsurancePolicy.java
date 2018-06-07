@@ -700,6 +700,11 @@ public class InsurancePolicy {
         public String frameNo;
         public String carCode;
 
+        public long costDuring;
+        public long productDuring;
+        public long personDuring;
+        public long carDuring;
+
         public GetInsurancePolicyForManagerSystem() {
 
         }
@@ -799,6 +804,10 @@ public class InsurancePolicy {
         CAR_FIELD_MAP.put("G", "premiumText");
         CAR_FIELD_MAP.put("H", "createdAtText");
         CAR_FIELD_MAP.put("I", "warrantyStatusText");
+        CAR_FIELD_MAP.put("J", "costDuring");
+        CAR_FIELD_MAP.put("K", "productDuring");
+        CAR_FIELD_MAP.put("L", "personDuring");
+        CAR_FIELD_MAP.put("M", "carDuring");
     }
 
     public static final Map<String, String> PERSON_FIELD_MAP;

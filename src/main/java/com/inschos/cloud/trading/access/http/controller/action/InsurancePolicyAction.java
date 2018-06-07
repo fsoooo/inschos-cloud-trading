@@ -597,7 +597,9 @@ public class InsurancePolicyAction extends BaseAction {
             CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
             custWarrantyCostModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
 
+            long costStart = System.currentTimeMillis();
             List<CustWarrantyCostModel> custWarrantyCostByWarrantyUuid = custWarrantyCostDao.findCustWarrantyCost(custWarrantyCostModel);
+            long costEnd = System.currentTimeMillis();
 
             CustWarrantyCostListResult custWarrantyCostListResult = dealCustWarrantyCostList(custWarrantyCostByWarrantyUuid);
 
@@ -605,6 +607,7 @@ public class InsurancePolicyAction extends BaseAction {
             custWarrantyBrokerageModel.warranty_uuid = policyListByWarrantyStatusOrSearch.warranty_uuid;
 
             InsurancePolicy.GetInsurancePolicyForManagerSystem getInsurancePolicyForManagerSystem = new InsurancePolicy.GetInsurancePolicyForManagerSystem(policyListByWarrantyStatusOrSearch, custWarrantyCostListResult.premium, custWarrantyCostListResult.payMoney, custWarrantyCostListResult.taxMoney, custWarrantyCostListResult.warrantyStatusForPay, custWarrantyCostListResult.warrantyStatusForPayText);
+            getInsurancePolicyForManagerSystem.costDuring = costEnd - costStart;
 
             if (needBrokerage) {
                 String custWarrantyBrokerageTotalByManagerUuid = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByWarrantyUuid(custWarrantyBrokerageModel);
@@ -617,7 +620,10 @@ public class InsurancePolicyAction extends BaseAction {
                 Boolean aBoolean = product.get(getInsurancePolicyForManagerSystem.productId);
                 ProductBean productBean = null;
                 if (aBoolean == null) {
+                    long productStart = System.currentTimeMillis();
                     productBean = productClient.getProduct(Long.valueOf(getInsurancePolicyForManagerSystem.productId));
+                    long productEnd = System.currentTimeMillis();
+                    getInsurancePolicyForManagerSystem.costDuring = productEnd - productStart;
                     map.put(getInsurancePolicyForManagerSystem.productId, productBean);
                     product.put(getInsurancePolicyForManagerSystem.productId, productBean != null);
                 } else {
@@ -700,13 +706,18 @@ public class InsurancePolicyAction extends BaseAction {
                     }
 
                 } else {
+                    long personStart = System.currentTimeMillis();
                     InsuranceParticipantModel insuranceParticipantPolicyHolderNameByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
+                    long personEnd = System.currentTimeMillis();
+                    getInsurancePolicyForManagerSystem.personDuring = personEnd - personStart;
                     if (insuranceParticipantPolicyHolderNameByWarrantyUuid != null) {
                         getInsurancePolicyForManagerSystem.policyHolderName = insuranceParticipantPolicyHolderNameByWarrantyUuid.name;
                         getInsurancePolicyForManagerSystem.policyHolderMobile = insuranceParticipantPolicyHolderNameByWarrantyUuid.phone;
                     }
-
+                    long carStart = System.currentTimeMillis();
                     CarInfoModel carInfoCarCodeAndFrameNoByWarrantyUuid = carInfoDao.findCarInfoCarCodeAndFrameNoByWarrantyUuid(policyListByWarrantyStatusOrSearch.warranty_uuid);
+                    long carEnd = System.currentTimeMillis();
+                    getInsurancePolicyForManagerSystem.carDuring = carEnd - carStart;
                     if (carInfoCarCodeAndFrameNoByWarrantyUuid != null) {
                         getInsurancePolicyForManagerSystem.frameNo = carInfoCarCodeAndFrameNoByWarrantyUuid.frame_no;
                         getInsurancePolicyForManagerSystem.carCode = carInfoCarCodeAndFrameNoByWarrantyUuid.car_code;
