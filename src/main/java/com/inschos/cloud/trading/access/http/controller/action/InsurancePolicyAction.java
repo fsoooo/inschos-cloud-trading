@@ -445,7 +445,7 @@ public class InsurancePolicyAction extends BaseAction {
                 break;
         }
 
-        response.startTime = String.valueOf(System.currentTimeMillis());
+        response.startTime = System.currentTimeMillis();
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet(name + "-保单列表");
@@ -483,7 +483,9 @@ public class InsurancePolicyAction extends BaseAction {
 
         } while (flag);
 
-        response.endTime = String.valueOf(System.currentTimeMillis());
+        response.endTime = System.currentTimeMillis();
+
+        response.during = response.endTime - response.startTime;
 
         ExcelModelKit.autoSizeColumn(sheet, InsurancePolicy.CAR_FIELD_MAP.size());
 
