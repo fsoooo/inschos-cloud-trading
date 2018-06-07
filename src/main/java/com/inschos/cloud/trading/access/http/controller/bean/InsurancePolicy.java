@@ -715,7 +715,7 @@ public class InsurancePolicy {
             insurancePolicy.policyHolderMobile = "投保人电话";
             insurancePolicy.carCode = "车牌号";
             insurancePolicy.premiumText = "保费（元）";
-            insurancePolicy.startTimeText = "下单时间";
+            insurancePolicy.createdAtText = "下单时间";
             insurancePolicy.warrantyStatusText = "保单状态";
 
             return insurancePolicy;

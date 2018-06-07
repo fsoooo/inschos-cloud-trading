@@ -606,6 +606,7 @@ public class InsurancePolicyAction extends BaseAction {
 
                 if (productBean == null) {
                     productBean = productClient.getProduct(Long.valueOf(getInsurancePolicyForManagerSystem.productId));
+                    map.put(getInsurancePolicyForManagerSystem.productId, productBean);
                 }
 
                 if (productBean != null) {
