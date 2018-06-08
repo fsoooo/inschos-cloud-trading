@@ -277,7 +277,7 @@ public class InsurancePolicyAction extends BaseAction {
     /**
      * FINISH: 2018/6/8
      * 保单详情（业管）
-     * {@link #getInsurancePolicyDetail} 获取保单详情
+     * {@link #getInsurancePolicyDetail(String warrantyUuid, InsurancePolicy.GetInsurancePolicyDetailResponse response)} 获取保单详情
      *
      * @param actionBean 请求bean
      * @return 保单详情json
@@ -902,11 +902,12 @@ public class InsurancePolicyAction extends BaseAction {
 
     /**
      * FINISH: 2018/6/8
+     * 根据关键字获取代理人id
      *
-     * @param managerUuid
-     * @param searchKey
-     * @param insurancePolicyModel
-     * @return
+     * @param managerUuid          业管唯一标识
+     * @param searchKey            搜索关键字
+     * @param insurancePolicyModel 数据库查询model
+     * @return 代理人id-bean map
      */
     private Map<String, AgentBean> getAgentMap(String managerUuid, String searchKey, InsurancePolicyModel insurancePolicyModel) {
         List<AgentBean> list = agentClient.getAllBySearchName(managerUuid, searchKey);
@@ -1014,6 +1015,14 @@ public class InsurancePolicyAction extends BaseAction {
         return str;
     }
 
+    /**
+     * FINISH: 2018/6/8
+     * 处理保单统计信息
+     *
+     * @param map     统计item
+     * @param premium 保费
+     * @return 保单统计item list
+     */
     private List<InsurancePolicy.InsurancePolicyStatisticItem> dealPercentageByList(LinkedHashMap<String, InsurancePolicy.InsurancePolicyStatisticItem> map, BigDecimal premium) {
         List<InsurancePolicy.InsurancePolicyStatisticItem> result = new ArrayList<>();
         Set<String> strings = map.keySet();
@@ -1105,14 +1114,29 @@ public class InsurancePolicyAction extends BaseAction {
         return result;
     }
 
+    /**
+     * FINISH: 2018/6/8
+     * 保单付款结果
+     */
     static class CustWarrantyCostListResult {
+        // 保费
         BigDecimal premium = new BigDecimal("0.00");
+        // 付款金额
         BigDecimal payMoney = new BigDecimal("0.00");
+        // 税费
         BigDecimal taxMoney = new BigDecimal("0.00");
         String warrantyStatusForPay = "";
         String warrantyStatusForPayText = "";
     }
 
+    /**
+     * FINISH: 2018/6/8
+     * 处理保单付款结果
+     * {@link CustWarrantyCostListResult}
+     *
+     * @param list 保单付款记录
+     * @return 保单付款结果bean
+     */
     private CustWarrantyCostListResult dealCustWarrantyCostList(List<CustWarrantyCostModel> list) {
         CustWarrantyCostListResult custWarrantyCostListResult = new CustWarrantyCostListResult();
 

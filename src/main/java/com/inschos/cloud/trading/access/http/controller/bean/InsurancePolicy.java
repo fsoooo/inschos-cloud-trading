@@ -30,11 +30,49 @@ public class InsurancePolicy {
         // 起保结束时间
         public String endTime;
         // 保单类型
-        // @CheckParams
         public String warrantyType;
     }
 
     public static class GetInsurancePolicyListResponse extends BaseResponse {
+        public List<GetInsurancePolicyItemBean> data;
+    }
+
+    public static class GetInsurancePolicyDetailRequest extends BaseRequest {
+        // 保单唯一id
+        @CheckParams(hintName = "保单唯一标识")
+        public String warrantyUuid;
+    }
+
+    public static class GetInsurancePolicyDetailResponse extends BaseResponse {
+        public GetInsurancePolicyDetail data;
+    }
+
+    public static class DownloadInsurancePolicyListForManagerSystemResponse extends BaseResponse {
+        public String data;
+        public long startTime;
+        public long endTime;
+        public long during;
+    }
+
+    public static class OfflineInsurancePolicyInputRequest extends BaseRequest {
+        @CheckParams(hintName = "文件")
+        public String fileKey;
+    }
+
+    public static class OfflineInsurancePolicyInputResponse extends BaseResponse {
+        public OfflineInsurancePolicyDetail data;
+    }
+
+    public static class GetInsurancePolicyListByActualPayTimeRequest extends BaseRequest {
+        // 起保开始时间
+        public String startTime;
+        // 起保结束时间
+        public String endTime;
+        @CheckParams(hintName = "查询类型")
+        public String type;
+    }
+
+    public static class GetInsurancePolicyListByActualPayTimeResponse extends BaseResponse {
         public List<GetInsurancePolicyItemBean> data;
     }
 
@@ -269,16 +307,6 @@ public class InsurancePolicy {
             this.expressCountyCode = model.express_county_code;
         }
 
-    }
-
-    public static class GetInsurancePolicyDetailRequest extends BaseRequest {
-        // 保单唯一id
-        @CheckParams(hintName = "保单唯一标识")
-        public String warrantyUuid;
-    }
-
-    public static class GetInsurancePolicyDetailResponse extends BaseResponse {
-        public GetInsurancePolicyDetail data;
     }
 
     public static class GetInsurancePolicyDetail extends GetInsurancePolicy {
@@ -648,13 +676,6 @@ public class InsurancePolicy {
                 this.endTimeText = sdf.format(new Date(Long.valueOf(model.end_time)));
             }
         }
-    }
-
-    public static class DownloadInsurancePolicyListForManagerSystemResponse extends BaseResponse {
-        public String data;
-        public long startTime;
-        public long endTime;
-        public long during;
     }
 
     public static class GetInsurancePolicyItemBean extends GetInsurancePolicy {
@@ -1058,15 +1079,6 @@ public class InsurancePolicy {
 
     }
 
-    public static class OfflineInsurancePolicyInputRequest extends BaseRequest {
-        @CheckParams(hintName = "文件")
-        public String fileKey;
-    }
-
-    public static class OfflineInsurancePolicyInputResponse extends BaseResponse {
-        public OfflineInsurancePolicyDetail data;
-    }
-
     public static class OfflineInsurancePolicyDetail {
         public String excelFileKey;
         public String excelFileUrl;
@@ -1088,19 +1100,6 @@ public class InsurancePolicy {
             this.reason = offlineInsurancePolicyModel.reason;
         }
 
-    }
-
-    public static class GetInsurancePolicyListByActualPayTimeRequest extends BaseRequest {
-        // 起保开始时间
-        public String startTime;
-        // 起保结束时间
-        public String endTime;
-        @CheckParams
-        public String type;
-    }
-
-    public static class GetInsurancePolicyListByActualPayTimeResponse extends BaseResponse {
-        public List<GetInsurancePolicyItemBean> data;
     }
 
     public static class CustWarrantyBrokerage {
