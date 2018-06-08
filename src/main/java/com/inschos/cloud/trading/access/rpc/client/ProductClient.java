@@ -61,4 +61,15 @@ public class ProductClient {
         }
     }
 
+    public List<ProductBean> getProductList(List<String> ids) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getProductList(ids) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
 }

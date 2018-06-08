@@ -829,8 +829,7 @@ public class InsurancePolicyAction extends BaseAction {
             return result;
         }
 
-        HashMap<String, ProductBean> map = new HashMap<>();
-        HashMap<String, Boolean> product = new HashMap<>();
+        Set<String> productId = new HashSet<>();
         HashMap<String, String> fileUrl = new HashMap<>();
         HashMap<String, Boolean> file = new HashMap<>();
 
@@ -838,40 +837,7 @@ public class InsurancePolicyAction extends BaseAction {
             for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyModelList) {
                 InsurancePolicy.GetInsurancePolicyItemBean model = new InsurancePolicy.GetInsurancePolicyItemBean(policyListByWarrantyStatusOrSearch);
 
-                Boolean aBoolean = product.get(model.productId);
-                ProductBean productBean = null;
-                if (aBoolean == null) {
-                    productBean = productClient.getProduct(Long.valueOf(model.productId));
-                    map.put(model.productId, productBean);
-                    product.put(model.productId, productBean != null);
-                } else {
-                    if (aBoolean) {
-                        productBean = map.get(model.productId);
-                    }
-                }
-
-                if (productBean != null) {
-                    model.productName = productBean.name;
-                    model.insuranceProductName = productBean.displayName;
-                    model.insuranceCompanyName = productBean.insuranceCoName;
-
-                    String[] split = productBean.code.split("_");
-
-                    String url = null;
-                    if (split.length > 1 && needLogo) {
-                        Boolean aBoolean1 = file.get(split[0]);
-                        if (aBoolean1 == null) {
-                            String fileUrl1 = fileClient.getFileUrl("property_key_" + split[0]);
-                            fileUrl.put(split[0], fileUrl1);
-                            file.put(split[0], !StringKit.isEmpty(fileUrl1));
-                        } else {
-                            if (aBoolean1) {
-                                url = fileUrl.get(split[0]);
-                            }
-                        }
-                        model.insuranceCompanyLogo = url;
-                    }
-                }
+                productId.add(model.productId);
 
                 if (needInsured) {
                     List<InsuranceParticipantModel> insuranceParticipantInsuredByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantInsuredByWarrantyUuid(model.warrantyUuid);
@@ -894,6 +860,51 @@ public class InsurancePolicyAction extends BaseAction {
 //
 //                }
                 result.add(model);
+            }
+
+            List<String> ids = new ArrayList<>(productId);
+
+            if (ids.isEmpty()) {
+                return result;
+            }
+
+            List<ProductBean> productList = productClient.getProductList(ids);
+
+            if (productList == null || productList.isEmpty()) {
+                return result;
+            }
+
+            Map<String, ProductBean> productMap = new HashMap<>();
+
+            for (ProductBean productBean : productList) {
+                productMap.put(String.valueOf(productBean.id), productBean);
+            }
+
+            for (InsurancePolicy.GetInsurancePolicyItemBean getInsurancePolicyItemBean : result) {
+
+                ProductBean productBean = productMap.get(getInsurancePolicyItemBean.productId);
+                if (productBean != null) {
+                    getInsurancePolicyItemBean.productName = productBean.name;
+                    getInsurancePolicyItemBean.insuranceProductName = productBean.displayName;
+                    getInsurancePolicyItemBean.insuranceCompanyName = productBean.insuranceCoName;
+
+                    String[] split = productBean.code.split("_");
+
+                    String url = null;
+                    if (split.length > 1 && needLogo) {
+                        Boolean aBoolean1 = file.get(split[0]);
+                        if (aBoolean1 == null) {
+                            String fileUrl1 = fileClient.getFileUrl("property_key_" + split[0]);
+                            fileUrl.put(split[0], fileUrl1);
+                            file.put(split[0], !StringKit.isEmpty(fileUrl1));
+                        } else {
+                            if (aBoolean1) {
+                                url = fileUrl.get(split[0]);
+                            }
+                        }
+                        getInsurancePolicyItemBean.insuranceCompanyLogo = url;
+                    }
+                }
             }
         }
 
@@ -1168,6 +1179,18 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         return custWarrantyCostListResult;
+    }
+
+    public String setTest () {
+        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        insurancePolicyModel.uuids = new HashSet<>();
+
+        insurancePolicyModel.uuids.add("6392929929121636352");
+        insurancePolicyModel.uuids.add("6394495038272970752");
+
+        List<InsurancePolicyModel> insurancePolicyModels = insurancePolicyDao.setTest(insurancePolicyModel);
+
+        return JsonKit.bean2Json(insurancePolicyModels);
     }
 
 }

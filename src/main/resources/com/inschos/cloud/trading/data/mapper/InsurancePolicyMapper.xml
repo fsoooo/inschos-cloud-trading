@@ -605,4 +605,25 @@
         </if>
     </select>
 
+    <select id="setTest"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty
+        <where>
+            <choose>
+                <when test="uuids!=null and !uuids.isEmpty()">
+                    `warranty_uuid` in
+                    <foreach collection="uuids" open="(" separator="," close=")" item="item">
+                        #{item}
+                    </foreach>
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
 </mapper>

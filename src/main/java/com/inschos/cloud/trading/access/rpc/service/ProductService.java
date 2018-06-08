@@ -16,4 +16,6 @@ public interface ProductService {
     ProductBean getProduct(long productId);
 
     ProductBrokerageInfoBean getBrokerage(ProductBrokerageBean search);
+
+    List<ProductBean> getProductList(List<String> ids);
 }

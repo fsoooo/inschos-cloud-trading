@@ -2,10 +2,7 @@ package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.StringKit;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 创建日期：2018/3/22 on 16:43
@@ -550,5 +547,7 @@ public class InsurancePolicyModel {
 
     public String premium;
     public String pay_status;
+
+    public Set<String> uuids;
 
 }

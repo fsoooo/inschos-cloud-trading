@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 创建日期：2018/3/22 on 16:52
@@ -450,4 +451,7 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
     }
 
+    public List<InsurancePolicyModel> setTest(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.setTest(insurancePolicyModel);
+    }
 }
