@@ -5,9 +5,6 @@ import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 import com.inschos.cloud.trading.model.*;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -21,15 +18,24 @@ import java.util.*;
  */
 public class InsurancePolicy {
 
-    public static class GetInsurancePolicyListForOnlineStoreRequest extends BaseRequest {
+    public static class GetInsurancePolicyListRequest extends BaseRequest {
         // 保单状态
         public String warrantyStatus;
         // 搜索关键字
         public String searchKey;
+        // 关键字字段类型
+        public String searchType;
+        // 起保开始时间
+        public String startTime;
+        // 起保结束时间
+        public String endTime;
+        // 保单类型
+        // @CheckParams
+        public String warrantyType;
     }
 
-    public static class GetInsurancePolicyListForOnlineStoreResponse extends BaseResponse {
-        public List<GetInsurancePolicy> data;
+    public static class GetInsurancePolicyListResponse extends BaseResponse {
+        public List<GetInsurancePolicyItemBean> data;
     }
 
     public static class GetInsurancePolicy {
@@ -644,47 +650,6 @@ public class InsurancePolicy {
         }
     }
 
-    public static class GetInsurancePolicyStatusListRequest extends BaseRequest {
-
-    }
-
-    public static class GetInsurancePolicyStatusListResponse extends BaseResponse {
-        public List<GetInsurancePolicyStatus> data;
-    }
-
-    public static class GetInsurancePolicySourceListRequest extends BaseRequest {
-
-    }
-
-    public static class GetInsurancePolicySourceListResponse extends BaseResponse {
-        public List<GetInsurancePolicyStatus> data;
-    }
-
-    public static class GetInsurancePolicyStatus {
-        public String value;
-        public String valueText;
-    }
-
-    public static class GetInsurancePolicyListForManagerSystemRequest extends BaseRequest {
-        // 保单状态
-        public String warrantyStatus;
-        // 搜索关键字
-        public String searchKey;
-        // 关键字字段类型
-        public String searchType;
-        // 起保开始时间
-        public String startTime;
-        // 起保结束时间
-        public String endTime;
-        // 保单类型
-        @CheckParams
-        public String warrantyType;
-    }
-
-    public static class GetInsurancePolicyListForManagerSystemResponse extends BaseResponse {
-        public List<GetInsurancePolicyForManagerSystem> data;
-    }
-
     public static class DownloadInsurancePolicyListForManagerSystemResponse extends BaseResponse {
         public String data;
         public long startTime;
@@ -692,7 +657,7 @@ public class InsurancePolicy {
         public long during;
     }
 
-    public static class GetInsurancePolicyForManagerSystem extends GetInsurancePolicy {
+    public static class GetInsurancePolicyItemBean extends GetInsurancePolicy {
         public String contactsName;
         public String contactsMobile;
         public String policyHolderName;
@@ -707,11 +672,11 @@ public class InsurancePolicy {
 //        public long carDuring;
 //        public long roundDuring;
 
-        public GetInsurancePolicyForManagerSystem() {
+        public GetInsurancePolicyItemBean() {
 
         }
 
-        public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model) {
+        public GetInsurancePolicyItemBean(InsurancePolicyModel model) {
             if (model == null) {
                 return;
             }
@@ -774,18 +739,50 @@ public class InsurancePolicy {
                 Date date = new Date(Long.valueOf(model.created_at));
                 this.createdAtText = sdf.format(date);
             }
+
+//            this.insuredText = "";
+//            this.policyHolderName = "";
+//            this.policyHolderMobile = "";
+//            boolean hasPolicyHolder = false;
+//            boolean hasInsured = false;
+//            if (model.insured_list != null && !model.insured_list.isEmpty()) {
+//                for (InsuranceParticipantModel insuranceParticipantModel : model.insured_list) {
+//                    if (StringKit.equals(insuranceParticipantModel.type, InsuranceParticipantModel.TYPE_POLICYHOLDER)) {
+//                        this.policyHolderName = insuranceParticipantModel.name;
+//                        this.policyHolderMobile = insuranceParticipantModel.phone;
+//                        hasPolicyHolder = true;
+//                    } else if (StringKit.equals(insuranceParticipantModel.type, InsuranceParticipantModel.TYPE_INSURED) && !hasInsured) {
+//                        this.insuredText = insuranceParticipantModel.name;
+//                        hasInsured = true;
+//                    }
+//
+//                    if (hasInsured && hasPolicyHolder) {
+//                        break;
+//                    }
+//                }
+//
+//                int size = model.insured_list.size();
+//                if (hasInsured && hasPolicyHolder) {
+//                    if (size - 1 > 1) {
+//                        this.insuredText = this.insuredText + "等" + (size - 1) + "人";
+//                    }
+//                } else if (hasInsured) {
+//                    this.insuredText = this.insuredText + "等" + size + "人";
+//                }
+//            }
+
             this.policyHolderName = model.policy_holder_name;
-            this.policyHolderMobile = model.policy_holder_mobile;
+            this.policyHolderMobile = model.policy_holder_phone;
             this.carCode = model.car_code;
 
         }
 
-        public GetInsurancePolicyForManagerSystem(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+        public GetInsurancePolicyItemBean(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
             super(model, premium, pay_money, tax_money, warrantyStatusForPay, warrantyStatusForPayText);
         }
 
-        public static GetInsurancePolicyForManagerSystem getCarInsurancePolicyTitle() {
-            GetInsurancePolicyForManagerSystem insurancePolicy = new GetInsurancePolicyForManagerSystem();
+        public static GetInsurancePolicyItemBean getCarInsurancePolicyTitle() {
+            GetInsurancePolicyItemBean insurancePolicy = new GetInsurancePolicyItemBean();
 
             insurancePolicy.prePolicyNo = "投保单号";
             insurancePolicy.warrantyCode = "保单号";
@@ -802,7 +799,7 @@ public class InsurancePolicy {
 
         @Override
         public String toString() {
-            return "GetInsurancePolicyForManagerSystem{" +
+            return "GetInsurancePolicyItemBean{" +
                     "id='" + id + '\'' +
                     ", warrantyUuid='" + warrantyUuid + '\'' +
                     ", prePolicyNo='" + prePolicyNo + '\'' +
@@ -1225,7 +1222,7 @@ public class InsurancePolicy {
     }
 
     public static class GetInsurancePolicyListByActualPayTimeResponse extends BaseResponse {
-        public List<GetInsurancePolicyForManagerSystem> data;
+        public List<GetInsurancePolicyItemBean> data;
     }
 
     public static class CustWarrantyBrokerage {

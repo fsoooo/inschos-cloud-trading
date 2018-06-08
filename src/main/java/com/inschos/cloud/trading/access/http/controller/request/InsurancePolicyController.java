@@ -22,31 +22,10 @@ public class InsurancePolicyController {
     private InsurancePolicyAction insurancePolicyAction;
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_status_list")
-    @ResponseBody
-    public String getInsurancePolicyStatusList(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyStatusList(actionBean);
-    }
-
-    @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_source_list")
-    @ResponseBody
-    public String getInsurancePolicySourceList(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicySourceList(actionBean);
-    }
-
-    @GetActionBeanAnnotation
     @RequestMapping("get_insurance_policy_list_for_online_store")
     @ResponseBody
     public String getInsurancePolicyListForOnlineStore(ActionBean actionBean) {
         return insurancePolicyAction.getInsurancePolicyListForOnlineStore(actionBean);
-    }
-
-    @GetActionBeanAnnotation
-    @RequestMapping("get_insurance_policy_detail_for_online_store")
-    @ResponseBody
-    public String getInsurancePolicyDetailForOnlineStore(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyDetailForOnlineStore(actionBean);
     }
 
     @GetActionBeanAnnotation
@@ -57,24 +36,24 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
+    @RequestMapping("download_insurance_policy_list_for_manager_system")
+    @ResponseBody
+    public String downInsurancePolicyListForManagerSystem(ActionBean actionBean) {
+        return insurancePolicyAction.downInsurancePolicyListForManagerSystem(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("get_insurance_policy_detail_for_online_store")
+    @ResponseBody
+    public String getInsurancePolicyDetailForOnlineStore(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyDetailForOnlineStore(actionBean);
+    }
+
+    @GetActionBeanAnnotation
     @RequestMapping("get_insurance_policy_detail_for_manager_system")
     @ResponseBody
     public String getInsurancePolicyDetailForManagerSystem(ActionBean actionBean) {
         return insurancePolicyAction.getInsurancePolicyDetailForManagerSystem(actionBean);
-    }
-
-    @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_premium_statistic_for_manager_system")
-    @ResponseBody
-    public String getInsurancePolicyPremiumStatisticForManagerSystem(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyPremiumStatisticForManagerSystem(actionBean);
-    }
-
-    @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_brokerage_statistic_for_manager_system")
-    @ResponseBody
-    public String getInsurancePolicyBrokerageStatisticForManagerSystem(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyBrokerageStatisticForManagerSystem(actionBean);
     }
 
     @GetActionBeanAnnotation
@@ -92,6 +71,13 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
+    @RequestMapping("get_insurance_policy_list_by_actual_pay_time")
+    @ResponseBody
+    public String getInsurancePolicyListByActualPayTime(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyListByActualPayTime(actionBean);
+    }
+
+    @GetActionBeanAnnotation
     @RequestMapping("offline_insurance_policy_input")
     @ResponseBody
     public String offlineInsurancePolicyInput(ActionBean actionBean) {
@@ -99,16 +85,17 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("download_insurance_policy_list_for_manager_system")
+    @RequestMapping("car_insurance/get_insurance_policy_premium_statistic_for_manager_system")
     @ResponseBody
-    public String downInsurancePolicyListForManagerSystem(ActionBean actionBean) {
-        return insurancePolicyAction.downInsurancePolicyListForManagerSystem(actionBean);
+    public String getInsurancePolicyPremiumStatisticForManagerSystem(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyPremiumStatisticForManagerSystem(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("get_insurance_policy_list_by_actual_pay_time")
+    @RequestMapping("car_insurance/get_insurance_policy_brokerage_statistic_for_manager_system")
     @ResponseBody
-    public String getInsurancePolicyListByActualPayTime(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyListByActualPayTime(actionBean);
+    public String getInsurancePolicyBrokerageStatisticForManagerSystem(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyBrokerageStatisticForManagerSystem(actionBean);
     }
+
 }

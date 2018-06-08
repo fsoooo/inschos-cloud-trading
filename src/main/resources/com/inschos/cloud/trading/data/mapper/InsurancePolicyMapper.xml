@@ -1225,7 +1225,7 @@
         `cust_warranty`.`express_address`,`cust_warranty`.`express_province_code`,`cust_warranty`.`express_city_code`,`cust_warranty`.`express_county_code`,`cust_warranty`.`delivery_type`,
         `cust_warranty`.`created_at` created_at,`cust_warranty`.`updated_at` updated_at,
         `cust_warranty_car`.`car_code` car_code,`cust_warranty_car`.`frame_no` frame_no,
-        `cust_warranty_person`.`name` policy_holder_name,`cust_warranty_person`.`phone` policy_holder_mobile,
+        `cust_warranty_person`.`name` policy_holder_name,`cust_warranty_person`.`phone` policy_holder_phone,
         `cust_warranty_cost`.`premium` premium,`cust_warranty_cost`.`pay_status` pay_status
         from cust_warranty
         LEFT JOIN `cust_warranty_car` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_car`.`warranty_uuid`
@@ -1268,10 +1268,10 @@
                     <if test="searchType!=null and searchType!=''">
                         <choose>
                             <when test='searchType=="2"'>
-                                and `agent_id` in (${agent_id_string})
+                                AND `agent_id` in (${agent_id_string})
                             </when>
                             <when test='searchType=="3"'>
-                                and `cust_warranty_person`.`name` like concat("%",#{search},"%")
+                                AND `cust_warranty_person`.`name` like concat("%",#{search},"%")
                             </when>
                             <when test='searchType=="4"'>
                                 and `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
@@ -1320,13 +1320,13 @@
             <if test="searchType!=null and searchType!=''">
                 <choose>
                     <when test='searchType=="2"'>
-                        and `agent_id` in (${agent_id_string})
+                        AND `agent_id` in (${agent_id_string})
                     </when>
                     <when test='searchType=="3"'>
-                        and `cust_warranty_person`.`name` like concat("%",#{search},"%")
+                        AND `cust_warranty_person`.`name` like concat("%",#{search},"%")
                     </when>
                     <when test='searchType=="4"'>
-                        and `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
+                        AND `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
                     </when>
                     <otherwise>
                         and `warranty_code` like concat("%",#{search},"%")
@@ -1380,16 +1380,16 @@
         <if test="searchType!=null and searchType!=''">
             <choose>
                 <when test='searchType=="2"'>
-                    and `agent_id` in (${agent_id_string})
+                    AND `agent_id` in (${agent_id_string})
                 </when>
                 <when test='searchType=="3"'>
-                    and `cust_warranty_person`.`name` like concat("%",#{search},"%")
+                    AND `cust_warranty_person`.`name` like concat("%",#{search},"%")
                 </when>
                 <when test='searchType=="4"'>
-                    and `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
+                    AND `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
                 </when>
                 <otherwise>
-                    and `warranty_code` like concat("%",#{search},"%")
+                    AND `warranty_code` like concat("%",#{search},"%")
                 </otherwise>
             </choose>
         </if>
@@ -1401,6 +1401,195 @@
         </if>
         <if test="end_time!=null and end_time!=''">
             and `cust_warranty`.`created_at`&lt;#{end_time}
+        </if>
+    </select>
+
+    <select id="findInsurancePolicyListForOnlineStore"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        `cust_warranty`.`id` id,`cust_warranty`.`warranty_uuid`
+        warranty_uuid,`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,
+        `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,`cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,
+        `cust_warranty`.`express_address`,`cust_warranty`.`express_province_code`,`cust_warranty`.`express_city_code`,`cust_warranty`.`express_county_code`,`cust_warranty`.`delivery_type`,
+        `cust_warranty`.`created_at` created_at,`cust_warranty`.`updated_at` updated_at,
+        `cust_warranty_car`.`car_code` car_code,`cust_warranty_car`.`frame_no` frame_no,
+        `cust_warranty_person`.`name` policy_holder_name,`cust_warranty_person`.`phone` policy_holder_phone,
+        `cust_warranty_cost`.`premium` premium,`cust_warranty_cost`.`pay_status` pay_status
+        from cust_warranty
+        LEFT JOIN `cust_warranty_car` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_car`.`warranty_uuid`
+        LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND
+        `cust_warranty_person`.`type`=1
+        LEFT JOIN `cust_warranty_cost` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid` AND
+        `cust_warranty_cost`.`phase`=1
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    `cust_warranty`.`id`&lt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    `cust_warranty`.`id`&lt;=(select `cust_warranty`.`id` from cust_warranty
+                    LEFT JOIN `cust_warranty_car` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_car`.`warranty_uuid`
+                    LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND
+                    `cust_warranty_person`.`type`=1
+                    LEFT JOIN `cust_warranty_cost` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid` AND
+                    `cust_warranty_cost`.`phase`=1
+                    where `cust_warranty`.`account_uuid`=#{account_uuid} AND `cust_warranty`.`state`=1
+                    <choose>
+                        <when test='search_warranty_string=="1"'>
+                            AND
+                            `cust_warranty`.`warranty_status`=1 AND (`cust_warranty_cost`.`pay_status`= 201 OR
+                            `cust_warranty_cost`.`pay_status` = 203 OR `cust_warranty_cost`.`pay_status` = 204)
+                        </when>
+                        <when test='search_warranty_string=="2"'>
+                            AND `cust_warranty`.`warranty_status`=2
+                        </when>
+                        <when test='search_warranty_string=="3"'>
+                            AND `cust_warranty`.`warranty_status`=3
+                        </when>
+                        <when test='search_warranty_string=="4"'>
+                            AND (`cust_warranty`.`warranty_status`=5 OR `cust_warranty`.`warranty_status`=6)
+                        </when>
+                        <otherwise>
+                            AND 1=1
+                        </otherwise>
+                    </choose>
+                    <if test="searchType!=null and searchType!=''">
+                        <choose>
+                            <when test='searchType=="2"'>
+                                AND `agent_id` in (${agent_id_string})
+                            </when>
+                            <when test='searchType=="3"'>
+                                AND `cust_warranty_person`.`type`=1 AND `cust_warranty_person`.`name` like concat("%",#{search},"%")
+                            </when>
+                            <when test='searchType=="4"'>
+                                AND `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
+                            </when>
+                            <otherwise>
+                                AND `warranty_code` like concat("%",#{search},"%")
+                            </otherwise>
+                        </choose>
+                    </if>
+                    <if test="type!=null and type!=''">
+                        and `cust_warranty`.`type`=#{type}
+                    </if>
+                    <if test="start_time!=null and start_time!=''">
+                        and `cust_warranty`.`created_at`&gt;=#{start_time}
+                    </if>
+                    <if test="end_time!=null and end_time!=''">
+                        and `cust_warranty`.`created_at`&lt;#{end_time}
+                    </if>
+                    ORDER BY `cust_warranty`.`id` DESC limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            and `cust_warranty`.`account_uuid`=#{account_uuid} AND `cust_warranty`.`state`=1
+            <choose>
+                <when test='search_warranty_string=="1"'>
+                    AND
+                    `cust_warranty`.`warranty_status`=1 AND (`cust_warranty_cost`.`pay_status`= 201 OR
+                    `cust_warranty_cost`.`pay_status` = 203 OR `cust_warranty_cost`.`pay_status` = 204)
+                </when>
+                <when test='search_warranty_string=="2"'>
+                    AND `cust_warranty`.`warranty_status`=2
+                </when>
+                <when test='search_warranty_string=="3"'>
+                    AND `cust_warranty`.`warranty_status`=3
+                </when>
+                <when test='search_warranty_string=="4"'>
+                    AND (`cust_warranty`.`warranty_status`=5 OR `cust_warranty`.`warranty_status`=6)
+                </when>
+                <otherwise>
+                    AND 1=1
+                </otherwise>
+            </choose>
+            <if test="searchType!=null and searchType!=''">
+                <choose>
+                    <when test='searchType=="2"'>
+                        AND `agent_id` in (${agent_id_string})
+                    </when>
+                    <when test='searchType=="3"'>
+                        AND `cust_warranty_person`.`type`=1 AND `cust_warranty_person`.`name` like concat("%",#{search},"%")
+                    </when>
+                    <when test='searchType=="4"'>
+                        AND `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
+                    </when>
+                    <otherwise>
+                        AND `warranty_code` like concat("%",#{search},"%")
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="type!=null and type!=''">
+                and `cust_warranty`.`type`=#{type}
+            </if>
+            <if test="start_time!=null and start_time!=''">
+                and `cust_warranty`.`created_at`&gt;=#{start_time}
+            </if>
+            <if test="end_time!=null and end_time!=''">
+                and `cust_warranty`.`created_at`&lt;#{end_time}
+            </if>
+            ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
+        </where>
+    </select>
+
+    <select id="findInsurancePolicyCountForOnlineStore"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="long">
+        select
+        COUNT(`cust_warranty`.`id`)
+        from cust_warranty
+        LEFT JOIN `cust_warranty_car` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_car`.`warranty_uuid`
+        LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND
+        `cust_warranty_person`.`type`=1
+        LEFT JOIN `cust_warranty_cost` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid` AND
+        `cust_warranty_cost`.`phase`=1
+        where `cust_warranty`.`account_uuid`=#{account_uuid} AND `cust_warranty`.`state`=1
+        <choose>
+            <when test='search_warranty_string=="1"'>
+                AND
+                `cust_warranty`.`warranty_status`=1 AND (`cust_warranty_cost`.`pay_status`= 201 OR
+                `cust_warranty_cost`.`pay_status` = 203 OR `cust_warranty_cost`.`pay_status` = 204)
+            </when>
+            <when test='search_warranty_string=="2"'>
+                AND `cust_warranty`.`warranty_status`=2
+            </when>
+            <when test='search_warranty_string=="3"'>
+                AND `cust_warranty`.`warranty_status`=3
+            </when>
+            <when test='search_warranty_string=="4"'>
+                AND (`cust_warranty`.`warranty_status`=5 OR `cust_warranty`.`warranty_status`=6)
+            </when>
+            <otherwise>
+                AND 1=1
+            </otherwise>
+        </choose>
+        <if test="searchType!=null and searchType!=''">
+            <choose>
+                <when test='searchType=="2"'>
+                    AND `agent_id` in (${agent_id_string})
+                </when>
+                <when test='searchType=="3"'>
+                    AND `cust_warranty_person`.`name` like concat("%",#{search},"%")
+                </when>
+                <when test='searchType=="4"'>
+                    AND `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
+                </when>
+                <otherwise>
+                    AND `warranty_code` like concat("%",#{search},"%")
+                </otherwise>
+            </choose>
+        </if>
+        <if test="type!=null and type!=''">
+            AND `cust_warranty`.`type`=#{type}
+        </if>
+        <if test="start_time!=null and start_time!=''">
+            AND `cust_warranty`.`created_at`&gt;=#{start_time}
+        </if>
+        <if test="end_time!=null and end_time!=''">
+            AND `cust_warranty`.`created_at`&lt;#{end_time}
         </if>
     </select>
 

@@ -154,6 +154,7 @@ public class InsurancePolicyModel {
     public String product_id_string;
     public String agent_id_string;
     public long currentTime = System.currentTimeMillis();
+    public List<InsuranceParticipantModel> insured_list;
 
     // 核保成功
     public static final String APPLY_UNDERWRITING_SUCCESS = "0";
@@ -351,7 +352,7 @@ public class InsurancePolicyModel {
     /**
      * 投保人电话
      */
-    public String policy_holder_mobile;
+    public String policy_holder_phone;
 
     /**
      * 流水号
