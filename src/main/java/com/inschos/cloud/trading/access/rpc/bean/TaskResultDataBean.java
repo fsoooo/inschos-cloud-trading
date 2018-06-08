@@ -12,5 +12,16 @@ public class TaskResultDataBean {
     public String userId;
     public String userType;
     public String time;
+    public String sign;
 
+    @Override
+    public String toString() {
+        return "TaskResultDataBean{" +
+                "dataType='" + dataType + '\'' +
+                ", dataAmount='" + dataAmount + '\'' +
+                ", userId='" + userId + '\'' +
+                ", userType='" + userType + '\'' +
+                ", time='" + time + '\'' +
+                '}';
+    }
 }

@@ -2301,6 +2301,7 @@ public class CarInsuranceAction extends BaseAction {
                                     taskResultDataBean1.userType = "1";
                                     taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
                                     taskResultDataBean1.time = time;
+                                    taskResultDataBean1.sign = SignatureTools.sign(taskResultDataBean1.toString(),SignatureTools.SIGN_TASK_RSA_PUBLIC_KEY);
                                     taskResultClient.updateTaskResult(taskResultDataBean1);
 
                                     TaskResultDataBean taskResultDataBean2 = new TaskResultDataBean();
@@ -2309,6 +2310,7 @@ public class CarInsuranceAction extends BaseAction {
                                     taskResultDataBean2.userType = "1";
                                     taskResultDataBean2.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
                                     taskResultDataBean2.time = time;
+                                    taskResultDataBean2.sign = SignatureTools.sign(taskResultDataBean2.toString(),SignatureTools.SIGN_TASK_RSA_PUBLIC_KEY);
                                     taskResultClient.updateTaskResult(taskResultDataBean2);
 
                                     TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
@@ -2317,6 +2319,7 @@ public class CarInsuranceAction extends BaseAction {
                                     taskResultDataBean3.userType = "1";
                                     taskResultDataBean3.userId = insurancePolicyDetailByWarrantyUuid.channel_id;
                                     taskResultDataBean3.time = time;
+                                    taskResultDataBean3.sign = SignatureTools.sign(taskResultDataBean3.toString(),SignatureTools.SIGN_TASK_RSA_PUBLIC_KEY);
                                     taskResultClient.updateTaskResult(taskResultDataBean3);
                                 }
 
@@ -2327,6 +2330,7 @@ public class CarInsuranceAction extends BaseAction {
                                     taskResultDataBean1.userType = "2";
                                     taskResultDataBean1.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
                                     taskResultDataBean1.time = time;
+                                    taskResultDataBean1.sign = SignatureTools.sign(taskResultDataBean1.toString(),SignatureTools.SIGN_TASK_RSA_PUBLIC_KEY);
                                     taskResultClient.updateTaskResult(taskResultDataBean1);
 
                                     TaskResultDataBean taskResultDataBean2 = new TaskResultDataBean();
@@ -2335,6 +2339,7 @@ public class CarInsuranceAction extends BaseAction {
                                     taskResultDataBean2.userType = "2";
                                     taskResultDataBean2.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
                                     taskResultDataBean2.time = time;
+                                    taskResultDataBean2.sign = SignatureTools.sign(taskResultDataBean2.toString(),SignatureTools.SIGN_TASK_RSA_PUBLIC_KEY);
                                     taskResultClient.updateTaskResult(taskResultDataBean2);
 
                                     TaskResultDataBean taskResultDataBean3 = new TaskResultDataBean();
@@ -2343,6 +2348,7 @@ public class CarInsuranceAction extends BaseAction {
                                     taskResultDataBean3.userType = "2";
                                     taskResultDataBean3.userId = insurancePolicyDetailByWarrantyUuid.agent_id;
                                     taskResultDataBean3.time = time;
+                                    taskResultDataBean3.sign = SignatureTools.sign(taskResultDataBean3.toString(),SignatureTools.SIGN_TASK_RSA_PUBLIC_KEY);
                                     taskResultClient.updateTaskResult(taskResultDataBean3);
                                 }
                             }
