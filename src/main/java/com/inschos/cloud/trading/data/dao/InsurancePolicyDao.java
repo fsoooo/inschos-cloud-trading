@@ -189,24 +189,8 @@ public class InsurancePolicyDao extends BaseDao {
         return update;
     }
 
-    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearch(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearch(insurancePolicyModel);
-    }
-
-    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusStringOrSearch(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusStringOrSearch(insurancePolicyModel);
-    }
-
     public int addInsurancePolicy(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.addInsurancePolicy(insurancePolicyModel);
-    }
-
-    public long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyCountByWarrantyStatus(insurancePolicyModel);
-    }
-
-    public long findInsurancePolicyCountByWarrantyStatusString(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyCountByWarrantyStatusString(insurancePolicyModel);
     }
 
     public List<CarInfoModel> getCarInfoList(String bizId, String thpBizID) {
@@ -371,14 +355,6 @@ public class InsurancePolicyDao extends BaseDao {
         return update;
     }
 
-    private BigDecimal getBigDecimal(String premium) {
-        if (StringKit.isNumeric(premium)) {
-            return new BigDecimal(premium);
-        } else {
-            return null;
-        }
-    }
-
     public int updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid(insurancePolicyModel);
     }
@@ -423,90 +399,9 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid(insurancePolicyModel);
     }
 
-//    public List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(InsurancePolicyModel insurancePolicyModel) {
-//        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(insurancePolicyModel);
-//    }
-
-    public List<InsurancePolicyModel> findInsurancePolicyListBySearchType(InsurancePolicyModel insurancePolicyModel) {
-        if (StringKit.equals(insurancePolicyModel.warranty_status, "1")) {
-            switch (insurancePolicyModel.searchType) {
-                case "":
-                case "1":
-                    return insurancePolicyMapper.findInsurancePolicyListBySearchType1Status1(insurancePolicyModel);
-                case "2":
-                    return insurancePolicyMapper.findInsurancePolicyListBySearchType2Status1(insurancePolicyModel);
-                case "3":
-                    return insurancePolicyMapper.findInsurancePolicyListBySearchType3Status1(insurancePolicyModel);
-                case "4":
-                    return insurancePolicyMapper.findInsurancePolicyListBySearchType4Status1(insurancePolicyModel);
-            }
-        } else {
-            switch (insurancePolicyModel.searchType) {
-                case "":
-                case "1":
-                    return insurancePolicyMapper.findInsurancePolicyListBySearchType1(insurancePolicyModel);
-                case "2":
-                    return insurancePolicyMapper.findInsurancePolicyListBySearchType2(insurancePolicyModel);
-                case "3":
-                    return insurancePolicyMapper.findInsurancePolicyListBySearchType3(insurancePolicyModel);
-                case "4":
-                    return insurancePolicyMapper.findInsurancePolicyListBySearchType4(insurancePolicyModel);
-            }
-        }
-        return new ArrayList<>();
-    }
-
-    public long findInsurancePolicyCountBySearchType(InsurancePolicyModel insurancePolicyModel) {
-        if (StringKit.equals(insurancePolicyModel.warranty_status, "1")) {
-            switch (insurancePolicyModel.searchType) {
-                case "":
-                case "1":
-                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType1Status1(insurancePolicyModel);
-                case "2":
-                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType2Status1(insurancePolicyModel);
-                case "3":
-                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType3Status1(insurancePolicyModel);
-                case "4":
-                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType4Status1(insurancePolicyModel);
-            }
-        } else {
-            switch (insurancePolicyModel.searchType) {
-                case "":
-                case "1":
-                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType1(insurancePolicyModel);
-                case "2":
-                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType2(insurancePolicyModel);
-                case "3":
-                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType3(insurancePolicyModel);
-                case "4":
-                    return insurancePolicyMapper.findInsurancePolicyCountBySearchType4(insurancePolicyModel);
-            }
-        }
-        return 0;
-    }
-
-    public long findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(insurancePolicyModel);
-    }
 
     public InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(String warrantyUuid) {
         return insurancePolicyMapper.findInsurancePolicyDetailByWarrantyUuid(warrantyUuid);
-    }
-
-    public List<InsurancePolicyModel> findInsurancePolicyListBySearchOrTimeOrChannelId(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyListBySearchOrTimeOrChannelId(insurancePolicyModel);
-    }
-
-    public long findInsurancePolicyListBySearchOrTimeOrChannelIdCount(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyListBySearchOrTimeOrChannelIdCount(insurancePolicyModel);
-    }
-
-    public List<InsurancePolicyModel> findEffectiveInsurancePolicyListByChannelId(String channelId) {
-        return insurancePolicyMapper.findEffectiveInsurancePolicyListByChannelId(channelId);
-    }
-
-    public List<InsurancePolicyModel> findEffectiveInsurancePolicyByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findEffectiveInsurancePolicyByChannelIdAndTime(insurancePolicyModel);
     }
 
     public long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel) {
@@ -517,20 +412,8 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findInsurancePolicyListCount(insurancePolicyModel);
     }
 
-    public long findInsurancePolicyListCountByTimeAndManagerUuid(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.findInsurancePolicyListCount(insurancePolicyModel);
-    }
-
     public List<PolicyListCountModel> findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
-    }
-
-    public List<InsurancePolicyModel> findInsurancePolicyListForInsuring(InsurancePolicyModel insurancePolicyModel) {
-        return custWarrantyCostMapper.findInsurancePolicyListForInsuring(insurancePolicyModel);
-    }
-
-    public long findInsurancePolicyCountForInsuring(InsurancePolicyModel insurancePolicyModel) {
-        return custWarrantyCostMapper.findInsurancePolicyCountForInsuring(insurancePolicyModel);
     }
 
     public int findEffectiveInsurancePolicyCountByAgentAndTime(InsurancePolicyModel search) {

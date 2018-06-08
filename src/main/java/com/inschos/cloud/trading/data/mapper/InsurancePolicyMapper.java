@@ -22,59 +22,7 @@ public interface InsurancePolicyMapper {
 
     int updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid(InsurancePolicyModel insurancePolicyModel);
 
-    List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearch(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusStringOrSearch(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountByWarrantyStatus(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountByWarrantyStatusString(InsurancePolicyModel insurancePolicyModel);
-
     InsurancePolicyModel findInsurancePolicyDetailByWarrantyUuid(String warrantyUuid);
-
-    List<InsurancePolicyModel> findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelId(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findInsurancePolicyListBySearchType1(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountBySearchType1(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findInsurancePolicyListBySearchType2(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountBySearchType2(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findInsurancePolicyListBySearchType3(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountBySearchType3(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findInsurancePolicyListBySearchType4(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountBySearchType4(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findInsurancePolicyListBySearchType1Status1(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountBySearchType1Status1(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findInsurancePolicyListBySearchType2Status1(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountBySearchType2Status1(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findInsurancePolicyListBySearchType3Status1(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountBySearchType3Status1(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findInsurancePolicyListBySearchType4Status1(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountBySearchType4Status1(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyListByWarrantyStatusOrSearchOrTimeOrWarrantyTypeOrWarrantyFromOrChannelIdCount(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findInsurancePolicyListBySearchOrTimeOrChannelId(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyListBySearchOrTimeOrChannelIdCount(InsurancePolicyModel insurancePolicyModel);
-
-    List<InsurancePolicyModel> findEffectiveInsurancePolicyListByChannelId(String channelId);
-
-    List<InsurancePolicyModel> findEffectiveInsurancePolicyByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel);
 
     long findEffectiveInsurancePolicyCountByChannelIdAndTime(InsurancePolicyModel insurancePolicyModel);
 
@@ -82,13 +30,7 @@ public interface InsurancePolicyMapper {
 
     List<PolicyListCountModel> findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(InsurancePolicyModel insurancePolicyModel);
 
-    Double getTotalPremiumByAccountUuidAndTime(InsurancePolicyModel insurancePolicyModel);
-
     int findEffectiveInsurancePolicyCountByAgentAndTime(InsurancePolicyModel search);
-
-    List<InsurancePolicyModel> findInsurancePolicyListByActualPayTime(InsurancePolicyModel insurancePolicyModel);
-
-    long findInsurancePolicyCountByActualPayTime(InsurancePolicyModel insurancePolicyModel);
 
     List<InsurancePolicyModel> findInsurancePolicyListForOnlineStore(InsurancePolicyModel insurancePolicyModel);
 
@@ -97,4 +39,8 @@ public interface InsurancePolicyMapper {
     List<InsurancePolicyModel> findInsurancePolicyListForManagerSystem(InsurancePolicyModel insurancePolicyModel);
 
     long findInsurancePolicyCountForManagerSystem(InsurancePolicyModel insurancePolicyModel);
+
+    List<InsurancePolicyModel> findInsurancePolicyListByActualPayTime(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyCountByActualPayTime(InsurancePolicyModel insurancePolicyModel);
 }

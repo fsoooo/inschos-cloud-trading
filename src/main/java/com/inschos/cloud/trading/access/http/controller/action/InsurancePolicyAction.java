@@ -282,33 +282,9 @@ public class InsurancePolicyAction extends BaseAction {
      * @param actionBean 请求bean
      * @return 保单详情json
      */
-    public String getInsurancePolicyDetailForOnlineStore(ActionBean actionBean) {
-        InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestRequest.class);
-        InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse response = new InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse();
-
-        if (request == null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
-        }
-
-        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
-        if (entries != null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
-        }
-
-        return getInsurancePolicyDetail(request.warrantyUuid, response);
-    }
-
-    /**
-     * FINISH: 2018/6/8
-     * 保单详情（商朝）
-     * {@link #getInsurancePolicyDetail} 获取保单详情
-     *
-     * @param actionBean 请求bean
-     * @return 保单详情json
-     */
-    public String getInsurancePolicyDetailForManagerSystem(ActionBean actionBean) {
-        InsurancePolicy.GetInsurancePolicyDetailForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyDetailForManagerSystemRequest.class);
-        InsurancePolicy.GetInsurancePolicyDetailForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyDetailForManagerSystemResponse();
+    public String getInsurancePolicyDetail(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyDetailRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyDetailRequest.class);
+        InsurancePolicy.GetInsurancePolicyDetailResponse response = new InsurancePolicy.GetInsurancePolicyDetailResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -481,7 +457,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         }
 
-        response.data.insurancePolicyList = dealPercentageByList(map, premium, brokerage);
+        response.data.insurancePolicyList = dealPercentageByList(map, premium);
 
         return json(BaseResponse.CODE_SUCCESS, "获取统计信息成功", response);
     }
@@ -727,6 +703,9 @@ public class InsurancePolicyAction extends BaseAction {
         } else if (StringKit.equals(request.type, "2")) {
             insurancePolicyModel.searchType = "2";
             AgentBean agentInfoByPersonIdManagerUuid = agentClient.getAgentInfoByPersonIdManagerUuid(actionBean.managerUuid, Long.valueOf(actionBean.userId));
+            if (agentInfoByPersonIdManagerUuid == null) {
+                return json(BaseResponse.CODE_PARAM_ERROR, "获取保单列表失败", response);
+            }
             insurancePolicyModel.agent_id = String.valueOf(agentInfoByPersonIdManagerUuid.id);
         }
 
@@ -751,7 +730,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByActualPayTime = insurancePolicyDao.findInsurancePolicyListByActualPayTime(insurancePolicyModel);
         long total = insurancePolicyDao.findInsurancePolicyCountByActualPayTime(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, true, false);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, true, true);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -763,6 +742,21 @@ public class InsurancePolicyAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取保单列表成功", response);
     }
 
+    // ====================================================================================================================================================================================
+
+
+    /**
+     * FINISH: 2018/6/8
+     * 检查获取保单列表参数
+     * <p>
+     * {@link #getInsurancePolicyListForOnlineStore}
+     * {@link #getInsurancePolicyListForManagerSystem}
+     * {@link #downInsurancePolicyListForManagerSystem}
+     *
+     * @param request              获取保单列表请求
+     * @param insurancePolicyModel 获取保单列表数据库查询model
+     * @return 是否有参数异常（如果有，此为异常）
+     */
     private String checkGetInsurancePolicyListParams(InsurancePolicy.GetInsurancePolicyListRequest request, InsurancePolicyModel insurancePolicyModel) {
 //        if (StringKit.isEmpty(request.warrantyType) || !StringKit.isNumeric(request.warrantyType) || Integer.valueOf(request.warrantyType) < 1 || Integer.valueOf(request.warrantyType) > 4) {
 //            return "保单类型错误";
@@ -820,9 +814,18 @@ public class InsurancePolicyAction extends BaseAction {
         return null;
     }
 
-    private List<InsurancePolicy.GetInsurancePolicyItemBean> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch, boolean needLogo, boolean needInsured) {
+    /**
+     * FINISH: 2018/6/8
+     * 将列表处理为前台数据
+     *
+     * @param insurancePolicyModelList 保单列表
+     * @param needLogo                 是否需要保险公司Logo
+     * @param needInsured              是否需要被保险人显示字段
+     * @return 前台数据列表
+     */
+    private List<InsurancePolicy.GetInsurancePolicyItemBean> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyModelList, boolean needLogo, boolean needInsured) {
         List<InsurancePolicy.GetInsurancePolicyItemBean> result = new ArrayList<>();
-        if (insurancePolicyListByWarrantyStatusOrSearch == null) {
+        if (insurancePolicyModelList == null) {
             return result;
         }
 
@@ -831,8 +834,8 @@ public class InsurancePolicyAction extends BaseAction {
         HashMap<String, String> fileUrl = new HashMap<>();
         HashMap<String, Boolean> file = new HashMap<>();
 
-        if (!insurancePolicyListByWarrantyStatusOrSearch.isEmpty()) {
-            for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyListByWarrantyStatusOrSearch) {
+        if (!insurancePolicyModelList.isEmpty()) {
+            for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyModelList) {
                 InsurancePolicy.GetInsurancePolicyItemBean model = new InsurancePolicy.GetInsurancePolicyItemBean(policyListByWarrantyStatusOrSearch);
 
                 Boolean aBoolean = product.get(model.productId);
@@ -897,6 +900,14 @@ public class InsurancePolicyAction extends BaseAction {
         return result;
     }
 
+    /**
+     * FINISH: 2018/6/8
+     *
+     * @param managerUuid
+     * @param searchKey
+     * @param insurancePolicyModel
+     * @return
+     */
     private Map<String, AgentBean> getAgentMap(String managerUuid, String searchKey, InsurancePolicyModel insurancePolicyModel) {
         List<AgentBean> list = agentClient.getAllBySearchName(managerUuid, searchKey);
         Map<String, AgentBean> agentMap = new HashMap<>();
@@ -915,7 +926,15 @@ public class InsurancePolicyAction extends BaseAction {
         return agentMap;
     }
 
-    private String getInsurancePolicyDetail(String warrantyUuid, InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse response) {
+    /**
+     * FINISH: 2018/6/8
+     * 根据warrantyUuid获取保单详情
+     *
+     * @param warrantyUuid warrantyUuid
+     * @param response     响应response
+     * @return 保单详情json
+     */
+    private String getInsurancePolicyDetail(String warrantyUuid, InsurancePolicy.GetInsurancePolicyDetailResponse response) {
         InsurancePolicyModel insurancePolicyDetailByWarrantyCode = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(warrantyUuid);
         String str;
         if (insurancePolicyDetailByWarrantyCode != null) {
@@ -955,6 +974,7 @@ public class InsurancePolicyAction extends BaseAction {
 
             if (insuranceParticipantByWarrantyCode != null && !insuranceParticipantByWarrantyCode.isEmpty()) {
                 if (product != null) {
+                    response.data.productName = product.name;
                     response.data.insuranceProductName = product.displayName;
                     response.data.insuranceCompanyName = product.insuranceCoName;
 
@@ -994,7 +1014,7 @@ public class InsurancePolicyAction extends BaseAction {
         return str;
     }
 
-    private List<InsurancePolicy.InsurancePolicyStatisticItem> dealPercentageByList(LinkedHashMap<String, InsurancePolicy.InsurancePolicyStatisticItem> map, BigDecimal premium, BigDecimal brokerage) {
+    private List<InsurancePolicy.InsurancePolicyStatisticItem> dealPercentageByList(LinkedHashMap<String, InsurancePolicy.InsurancePolicyStatisticItem> map, BigDecimal premium) {
         List<InsurancePolicy.InsurancePolicyStatisticItem> result = new ArrayList<>();
         Set<String> strings = map.keySet();
         if (!strings.isEmpty()) {

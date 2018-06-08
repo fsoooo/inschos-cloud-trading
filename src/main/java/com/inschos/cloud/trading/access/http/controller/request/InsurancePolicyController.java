@@ -46,14 +46,14 @@ public class InsurancePolicyController {
     @RequestMapping("get_insurance_policy_detail_for_online_store")
     @ResponseBody
     public String getInsurancePolicyDetailForOnlineStore(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyDetailForOnlineStore(actionBean);
+        return insurancePolicyAction.getInsurancePolicyDetail(actionBean);
     }
 
     @GetActionBeanAnnotation
     @RequestMapping("get_insurance_policy_detail_for_manager_system")
     @ResponseBody
     public String getInsurancePolicyDetailForManagerSystem(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyDetailForManagerSystem(actionBean);
+        return insurancePolicyAction.getInsurancePolicyDetail(actionBean);
     }
 
     @GetActionBeanAnnotation

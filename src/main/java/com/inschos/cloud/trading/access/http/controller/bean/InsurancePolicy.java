@@ -271,13 +271,13 @@ public class InsurancePolicy {
 
     }
 
-    public static class GetInsurancePolicyDetailForOnlineStoreRequestRequest extends BaseRequest {
+    public static class GetInsurancePolicyDetailRequest extends BaseRequest {
         // 保单唯一id
-        @CheckParams(hintName = "保单id")
+        @CheckParams(hintName = "保单唯一标识")
         public String warrantyUuid;
     }
 
-    public static class GetInsurancePolicyDetailForOnlineStoreRequestResponse extends BaseResponse {
+    public static class GetInsurancePolicyDetailResponse extends BaseResponse {
         public GetInsurancePolicyDetail data;
     }
 
@@ -739,42 +739,9 @@ public class InsurancePolicy {
                 Date date = new Date(Long.valueOf(model.created_at));
                 this.createdAtText = sdf.format(date);
             }
-
-//            this.insuredText = "";
-//            this.policyHolderName = "";
-//            this.policyHolderMobile = "";
-//            boolean hasPolicyHolder = false;
-//            boolean hasInsured = false;
-//            if (model.insured_list != null && !model.insured_list.isEmpty()) {
-//                for (InsuranceParticipantModel insuranceParticipantModel : model.insured_list) {
-//                    if (StringKit.equals(insuranceParticipantModel.type, InsuranceParticipantModel.TYPE_POLICYHOLDER)) {
-//                        this.policyHolderName = insuranceParticipantModel.name;
-//                        this.policyHolderMobile = insuranceParticipantModel.phone;
-//                        hasPolicyHolder = true;
-//                    } else if (StringKit.equals(insuranceParticipantModel.type, InsuranceParticipantModel.TYPE_INSURED) && !hasInsured) {
-//                        this.insuredText = insuranceParticipantModel.name;
-//                        hasInsured = true;
-//                    }
-//
-//                    if (hasInsured && hasPolicyHolder) {
-//                        break;
-//                    }
-//                }
-//
-//                int size = model.insured_list.size();
-//                if (hasInsured && hasPolicyHolder) {
-//                    if (size - 1 > 1) {
-//                        this.insuredText = this.insuredText + "等" + (size - 1) + "人";
-//                    }
-//                } else if (hasInsured) {
-//                    this.insuredText = this.insuredText + "等" + size + "人";
-//                }
-//            }
-
             this.policyHolderName = model.policy_holder_name;
             this.policyHolderMobile = model.policy_holder_phone;
             this.carCode = model.car_code;
-
         }
 
         public GetInsurancePolicyItemBean(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
@@ -795,67 +762,6 @@ public class InsurancePolicy {
             insurancePolicy.warrantyStatusText = "保单状态";
 
             return insurancePolicy;
-        }
-
-        @Override
-        public String toString() {
-            return "GetInsurancePolicyItemBean{" +
-                    "id='" + id + '\'' +
-                    ", warrantyUuid='" + warrantyUuid + '\'' +
-                    ", prePolicyNo='" + prePolicyNo + '\'' +
-                    ", warrantyCode='" + warrantyCode + '\'' +
-                    ", accountUuid='" + accountUuid + '\'' +
-                    ", buyerAuuid='" + buyerAuuid + '\'' +
-                    ", agentId='" + agentId + '\'' +
-                    ", agentName='" + agentName + '\'' +
-                    ", channelId='" + channelId + '\'' +
-                    ", planId='" + planId + '\'' +
-                    ", productId='" + productId + '\'' +
-                    ", productName='" + productName + '\'' +
-                    ", premium='" + premium + '\'' +
-                    ", premiumText='" + premiumText + '\'' +
-                    ", payMoney='" + payMoney + '\'' +
-                    ", payMoneyText='" + payMoneyText + '\'' +
-                    ", startTime='" + startTime + '\'' +
-                    ", startTimeText='" + startTimeText + '\'' +
-                    ", endTime='" + endTime + '\'' +
-                    ", endTimeText='" + endTimeText + '\'' +
-                    ", term='" + term + '\'' +
-                    ", insCompanyId='" + insCompanyId + '\'' +
-                    ", count='" + count + '\'' +
-                    ", byStagesWay='" + byStagesWay + '\'' +
-                    ", isSettlement='" + isSettlement + '\'' +
-                    ", isSettlementText='" + isSettlementText + '\'' +
-                    ", brokerage='" + brokerage + '\'' +
-                    ", brokerageText='" + brokerageText + '\'' +
-                    ", warrantyUrl='" + warrantyUrl + '\'' +
-                    ", warrantyFrom='" + warrantyFrom + '\'' +
-                    ", warrantyFromText='" + warrantyFromText + '\'' +
-                    ", type='" + type + '\'' +
-                    ", warrantyStatus='" + warrantyStatus + '\'' +
-                    ", payStatus='" + payStatus + '\'' +
-                    ", warrantyStatusText='" + warrantyStatusText + '\'' +
-                    ", integral='" + integral + '\'' +
-                    ", expressNo='" + expressNo + '\'' +
-                    ", expressCompanyName='" + expressCompanyName + '\'' +
-                    ", deliveryType='" + deliveryType + '\'' +
-                    ", deliveryTypeText='" + deliveryTypeText + '\'' +
-                    ", updatedAt='" + updatedAt + '\'' +
-                    ", updatedAtText='" + updatedAtText + '\'' +
-                    ", insuredText='" + insuredText + '\'' +
-                    ", insuranceProductName='" + insuranceProductName + '\'' +
-                    ", insuranceCompanyName='" + insuranceCompanyName + '\'' +
-                    ", insuranceCompanyLogo='" + insuranceCompanyLogo + '\'' +
-                    ", bjCodeFlag='" + bjCodeFlag + '\'' +
-                    ", bizId='" + bizId + '\'' +
-                    ", insuranceClaimsCount='" + insuranceClaimsCount + '\'' +
-                    ", contactsName='" + contactsName + '\'' +
-                    ", contactsMobile='" + contactsMobile + '\'' +
-                    ", policyHolderName='" + policyHolderName + '\'' +
-                    ", policyHolderMobile='" + policyHolderMobile + '\'' +
-                    ", frameNo='" + frameNo + '\'' +
-                    ", carCode='" + carCode + '\'' +
-                    '}';
         }
     }
 
@@ -886,37 +792,9 @@ public class InsurancePolicy {
         TEAM_FIELD_MAP = new HashMap<>();
     }
 
-    public static class GetInsurancePolicyDetailForManagerSystemRequest extends BaseRequest {
-        @CheckParams
-        public String warrantyUuid;
-    }
-
-    public static class GetInsurancePolicyDetailForManagerSystemResponse extends GetInsurancePolicyDetailForOnlineStoreRequestResponse {
-
-    }
-
-    public static class GetInsurancePolicyStatisticForManagerSystemRequest extends BaseRequest {
-        // 起保开始时间
-        public String startTime;
-        // 起保结束时间
-        public String endTime;
-        // 保单渠道
-        public String channelId;
-    }
-
-    public static class GetInsurancePolicyStatisticForManagerSystemResponse extends BaseResponse {
-        public InsurancePolicyStatistic data;
-    }
-
-    public static class InsurancePolicyStatistic {
-        public String dayAmount;
-        public String monthAmount;
-        public String totalAmount;
-    }
-
     public static class GetInsurancePolicyStatisticDetailForManagerSystemRequest extends BaseRequest {
         // 时间范围类型，1-今日，2-本月，3-本年
-        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        @CheckParams(stringType = CheckParams.StringType.NUMBER, hintName = "时间范围")
         public String timeRangeType;
 
     }
