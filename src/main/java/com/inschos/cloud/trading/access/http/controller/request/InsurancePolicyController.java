@@ -64,7 +64,7 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_brokerage_statistic_list_for_manager_system")
+    @RequestMapping("get_insurance_policy_statement_list_for_manager_system")
     @ResponseBody
     public String getInsurancePolicyStatementListForManagerSystem(ActionBean actionBean) {
         return insurancePolicyAction.getInsurancePolicyStatementListForManagerSystem(actionBean);
