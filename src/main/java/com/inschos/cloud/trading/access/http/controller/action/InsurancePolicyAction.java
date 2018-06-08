@@ -60,6 +60,15 @@ public class InsurancePolicyAction extends BaseAction {
     @Autowired
     private FileClient fileClient;
 
+    /**
+     * FINISH: 2018/6/8
+     * 获取保单列表（商朝）
+     * {@link #checkGetInsurancePolicyListParams} 检查获取列表参数
+     * {@link #dealInsurancePolicyResultList} 将列表处理为前段数据
+     *
+     * @param actionBean 请求bean
+     * @return 保单列表json
+     */
     public String getInsurancePolicyListForOnlineStore(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListRequest.class);
         InsurancePolicy.GetInsurancePolicyListResponse response = new InsurancePolicy.GetInsurancePolicyListResponse();
@@ -103,6 +112,15 @@ public class InsurancePolicyAction extends BaseAction {
 
     }
 
+    /**
+     * FINISH: 2018/6/8
+     * 获取保单列表（业管）
+     * {@link #checkGetInsurancePolicyListParams} 检查获取列表参数
+     * {@link #dealInsurancePolicyResultList} 将列表处理为前段数据
+     *
+     * @param actionBean 请求bean
+     * @return 保单列表json
+     */
     public String getInsurancePolicyListForManagerSystem(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListRequest.class);
         InsurancePolicy.GetInsurancePolicyListResponse response = new InsurancePolicy.GetInsurancePolicyListResponse();
@@ -140,6 +158,15 @@ public class InsurancePolicyAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取保单列表成功", response);
     }
 
+    /**
+     * FINISH: 2018/6/8
+     * 导出保单列表（业管）
+     * {@link #checkGetInsurancePolicyListParams} 检查获取列表参数
+     * {@link #dealInsurancePolicyResultList} 将列表处理为前段数据
+     *
+     * @param actionBean 请求bean
+     * @return 保单列表Excel文件地址json
+     */
     public String downInsurancePolicyListForManagerSystem(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListRequest.class);
         InsurancePolicy.DownloadInsurancePolicyListForManagerSystemResponse response = new InsurancePolicy.DownloadInsurancePolicyListForManagerSystemResponse();
@@ -247,6 +274,14 @@ public class InsurancePolicyAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取下载地址成功", response);
     }
 
+    /**
+     * FINISH: 2018/6/8
+     * 保单详情（业管）
+     * {@link #getInsurancePolicyDetail} 获取保单详情
+     *
+     * @param actionBean 请求bean
+     * @return 保单详情json
+     */
     public String getInsurancePolicyDetailForOnlineStore(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestRequest.class);
         InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse response = new InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse();
@@ -263,6 +298,14 @@ public class InsurancePolicyAction extends BaseAction {
         return getInsurancePolicyDetail(request.warrantyUuid, response);
     }
 
+    /**
+     * FINISH: 2018/6/8
+     * 保单详情（商朝）
+     * {@link #getInsurancePolicyDetail} 获取保单详情
+     *
+     * @param actionBean 请求bean
+     * @return 保单详情json
+     */
     public String getInsurancePolicyDetailForManagerSystem(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyDetailForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyDetailForManagerSystemRequest.class);
         InsurancePolicy.GetInsurancePolicyDetailForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyDetailForManagerSystemResponse();
@@ -279,6 +322,14 @@ public class InsurancePolicyAction extends BaseAction {
         return getInsurancePolicyDetail(request.warrantyUuid, response);
     }
 
+    /**
+     * FINISH: 2018/6/8
+     * 保单统计
+     * {@link #dealPercentageByList} 处理统计数据
+     *
+     * @param actionBean 请求bean
+     * @return 保单统计json
+     */
     public String getInsurancePolicyStatisticForManagerSystem(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyStatisticDetailForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatisticDetailForManagerSystemRequest.class);
         InsurancePolicy.GetInsurancePolicyStatisticDetailForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyStatisticDetailForManagerSystemResponse();
@@ -302,15 +353,17 @@ public class InsurancePolicyAction extends BaseAction {
         String startTime;
         String endTime;
 
-        // 时间范围类型，1-今日，2-本月，3-本年
+        // 时间范围类型，1-今日，2-本月，3-本年，4-历年
         switch (request.timeRangeType) {
             case "1":
+                //noinspection MagicConstant
                 calendar.set(year, month, day, 0, 0, 0);
                 startTime = String.valueOf(calendar.getTimeInMillis());
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
                 endTime = String.valueOf(calendar.getTimeInMillis());
                 break;
             case "2":
+                //noinspection MagicConstant
                 calendar.set(year, month, 1, 0, 0, 0);
                 startTime = String.valueOf(calendar.getTimeInMillis());
                 calendar.add(Calendar.MONTH, 1);
@@ -433,7 +486,152 @@ public class InsurancePolicyAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取统计信息成功", response);
     }
 
-    public String getInsurancePolicyBrokerageStatisticListForManagerSystem(ActionBean actionBean) {
+    /**
+     * FINISH: 2018/6/8
+     * 线下单导入
+     * {@link #dealPercentageByList} 处理统计数据
+     *
+     * @param actionBean 请求bean
+     * @return 保单统计json
+     */
+    public String offlineInsurancePolicyInput(ActionBean actionBean) {
+        InsurancePolicy.OfflineInsurancePolicyInputRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.OfflineInsurancePolicyInputRequest.class);
+        InsurancePolicy.OfflineInsurancePolicyInputResponse response = new InsurancePolicy.OfflineInsurancePolicyInputResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        String fileUrl = fileClient.getFileUrl(request.fileKey);
+
+        if (StringKit.isEmpty(fileUrl)) {
+            return json(BaseResponse.CODE_FAILURE, "无法获取报表文件", response);
+        }
+
+        InputStream inputStream = HttpClientKit.downloadFile(fileUrl);
+
+        if (inputStream == null) {
+            return json(BaseResponse.CODE_FAILURE, "获取报表文件失败", response);
+        }
+
+        response.data = new InsurancePolicy.OfflineInsurancePolicyDetail();
+        response.data.list = new ArrayList<>();
+
+        boolean flag;
+        Workbook wb;
+
+        List<OfflineInsurancePolicyModel> errorList = new ArrayList<>();
+        try {
+            wb = WorkbookFactory.create(inputStream);
+            String time = String.valueOf(System.currentTimeMillis());
+
+            for (Sheet sheet : wb) {
+                for (Row row : sheet) {
+                    OfflineInsurancePolicyModel offlineInsurancePolicyModel = ExcelModelKit.createModel(OfflineInsurancePolicyModel.class, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, row);
+
+                    if (offlineInsurancePolicyModel == null) {
+                        continue;
+                    }
+
+                    if (offlineInsurancePolicyModel.isEmptyLine()) {
+                        continue;
+                    }
+
+                    if (offlineInsurancePolicyModel.isTitle()) {
+                        continue;
+                    }
+
+                    if (!offlineInsurancePolicyModel.isEnable()) {
+                        offlineInsurancePolicyModel.reason = "缺少必填字段";
+                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
+                        errorList.add(offlineInsurancePolicyModel);
+                        continue;
+                    }
+
+                    OfflineInsurancePolicyModel offlineInsurance = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyCode(offlineInsurancePolicyModel.warranty_code);
+
+                    if (offlineInsurance != null) {
+                        offlineInsurancePolicyModel.reason = "保单号重复";
+                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
+                        errorList.add(offlineInsurancePolicyModel);
+                    } else {
+
+                        offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
+                        offlineInsurancePolicyModel.warranty_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
+                        offlineInsurancePolicyModel.created_at = time;
+                        offlineInsurancePolicyModel.updated_at = time;
+                        offlineInsurancePolicyModel.state = "1";
+
+                        long l = offlineInsurancePolicyDao.addOfflineInsurancePolicy(offlineInsurancePolicyModel);
+                        if (l <= 0) {
+                            offlineInsurancePolicyModel.reason = "添加数据失败";
+                            response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
+                            errorList.add(offlineInsurancePolicyModel);
+                        }
+                    }
+                }
+            }
+
+            flag = response.data.list == null || response.data.list.isEmpty();
+
+        } catch (IOException | InvalidFormatException e) {
+            e.printStackTrace();
+            flag = false;
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!flag && response.data.list != null && !response.data.list.isEmpty()) {
+            OfflineInsurancePolicyModel titleModel = OfflineInsurancePolicyModel.getTitleModel();
+            errorList.add(0, titleModel);
+
+            List<ExcelModel<OfflineInsurancePolicyModel>> dataList = new ArrayList<>();
+            for (OfflineInsurancePolicyModel offlineInsurancePolicyModel : errorList) {
+                dataList.add(new ExcelModel<>(offlineInsurancePolicyModel));
+            }
+
+            byte[] data = ExcelModelKit.createExcelByteArray(dataList, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, "导入失败保单数据");
+
+            if (data == null) {
+                return json(BaseResponse.CODE_FAILURE, "导入失败", response);
+            }
+
+            FileUpload.UploadByBase64Request fileUploadRequest = new FileUpload.UploadByBase64Request();
+            fileUploadRequest.fileKey = MD5Kit.MD5Digest(actionBean.managerUuid + System.currentTimeMillis() + (Math.random() * 10000000L));
+            fileUploadRequest.fileName = fileUploadRequest.fileKey + ".xls";
+
+            boolean upload = fileClient.upload(fileUploadRequest.fileKey, fileUploadRequest.fileName, data);
+
+            if (upload) {
+                response.data.excelFileKey = fileUploadRequest.fileKey;
+                response.data.excelFileUrl = fileClient.getFileUrl(fileUploadRequest.fileKey);
+                return json(BaseResponse.CODE_FAILURE, "部分导入失败", response);
+            } else {
+                return json(BaseResponse.CODE_FAILURE, "导入失败", response);
+            }
+
+        }
+
+        return json((flag ? BaseResponse.CODE_SUCCESS : BaseResponse.CODE_FAILURE), (flag ? "导入成功" : "部分导入失败"), response);
+    }
+
+    /**
+     * FINISH: 2018/6/8
+     * 保单报表
+     *
+     * @param actionBean 请求bean
+     * @return 保单报表json
+     */
+    public String getInsurancePolicyStatementListForManagerSystem(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyBrokerageStatisticListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyBrokerageStatisticListRequest.class);
         InsurancePolicy.GetInsurancePolicyBrokerageStatisticListResponse response = new InsurancePolicy.GetInsurancePolicyBrokerageStatisticListResponse();
 
@@ -498,6 +696,14 @@ public class InsurancePolicyAction extends BaseAction {
 
     }
 
+    /**
+     * FINISH: 2018/6/8
+     * 根据（业管／代理人）和 付款时间 获取保单列表
+     * {@link #dealInsurancePolicyResultList} 将列表处理为前段数据
+     *
+     * @param actionBean 请求bean
+     * @return 保单列表json
+     */
     public String getInsurancePolicyListByActualPayTime(ActionBean actionBean) {
         InsurancePolicy.GetInsurancePolicyListByActualPayTimeRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListByActualPayTimeRequest.class);
         InsurancePolicy.GetInsurancePolicyListByActualPayTimeResponse response = new InsurancePolicy.GetInsurancePolicyListByActualPayTimeResponse();
@@ -515,7 +721,6 @@ public class InsurancePolicyAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
         }
 
-        Map<String, AgentBean> agentMap = null;
         InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
         if (StringKit.equals(request.type, "1")) {
             insurancePolicyModel.manager_uuid = actionBean.managerUuid;
@@ -523,8 +728,6 @@ public class InsurancePolicyAction extends BaseAction {
             insurancePolicyModel.searchType = "2";
             AgentBean agentInfoByPersonIdManagerUuid = agentClient.getAgentInfoByPersonIdManagerUuid(actionBean.managerUuid, Long.valueOf(actionBean.userId));
             insurancePolicyModel.agent_id = String.valueOf(agentInfoByPersonIdManagerUuid.id);
-            agentMap = new HashMap<>();
-            agentMap.put(insurancePolicyModel.agent_id, agentInfoByPersonIdManagerUuid);
         }
 
         if (!StringKit.isInteger(request.startTime)) {
@@ -560,7 +763,7 @@ public class InsurancePolicyAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取保单列表成功", response);
     }
 
-    public String checkGetInsurancePolicyListParams(InsurancePolicy.GetInsurancePolicyListRequest request, InsurancePolicyModel insurancePolicyModel) {
+    private String checkGetInsurancePolicyListParams(InsurancePolicy.GetInsurancePolicyListRequest request, InsurancePolicyModel insurancePolicyModel) {
 //        if (StringKit.isEmpty(request.warrantyType) || !StringKit.isNumeric(request.warrantyType) || Integer.valueOf(request.warrantyType) < 1 || Integer.valueOf(request.warrantyType) > 4) {
 //            return "保单类型错误";
 //        }
@@ -712,7 +915,7 @@ public class InsurancePolicyAction extends BaseAction {
         return agentMap;
     }
 
-    public String getInsurancePolicyDetail(String warrantyUuid, InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse response) {
+    private String getInsurancePolicyDetail(String warrantyUuid, InsurancePolicy.GetInsurancePolicyDetailForOnlineStoreRequestResponse response) {
         InsurancePolicyModel insurancePolicyDetailByWarrantyCode = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(warrantyUuid);
         String str;
         if (insurancePolicyDetailByWarrantyCode != null) {
@@ -791,133 +994,6 @@ public class InsurancePolicyAction extends BaseAction {
         return str;
     }
 
-    public String getInsurancePolicyPremiumStatisticForManagerSystem(ActionBean actionBean) {
-        InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest.class);
-        InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse();
-
-        if (request == null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
-        }
-
-        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
-        if (entries != null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
-        }
-
-        response.data = new InsurancePolicy.InsurancePolicyStatistic();
-
-        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-
-        Calendar instance = Calendar.getInstance();
-
-        int year = instance.get(Calendar.YEAR);
-        int month = instance.get(Calendar.MONTH);
-        int day = instance.get(Calendar.DAY_OF_MONTH);
-
-        custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
-
-        //noinspection MagicConstant
-        instance.set(year, month, day, 0, 0, 0);
-        custWarrantyCostModel.start_time = String.valueOf(instance.getTimeInMillis());
-
-        custWarrantyCostModel.end_time = String.valueOf(getDayEndTime(year, day, month));
-
-        // 当天的所有付款的
-        String dayAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCostModel);
-
-        //noinspection MagicConstant
-        instance.set(year, month, 1, 0, 0, 0);
-        custWarrantyCostModel.start_time = String.valueOf(instance.getTimeInMillis());
-
-        custWarrantyCostModel.end_time = String.valueOf(getMonthEndTime(year, month));
-
-        // 当月的所有付款的
-        String monthAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCostModel);
-
-        custWarrantyCostModel.start_time = "";
-        custWarrantyCostModel.end_time = "";
-
-        String totalAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCostModel);
-
-        response.data.dayAmount = "本日保费\n" + dayAmount;
-        response.data.monthAmount = "本月保费\n" + monthAmount;
-        response.data.totalAmount = "累计保费\n" + totalAmount;
-
-        return json(BaseResponse.CODE_SUCCESS, "获取保单统计成功", response);
-    }
-
-    public String getInsurancePolicyBrokerageStatisticForManagerSystem(ActionBean actionBean) {
-        InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemRequest.class);
-        InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse response = new InsurancePolicy.GetInsurancePolicyStatisticForManagerSystemResponse();
-
-        if (request == null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
-        }
-
-        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
-        if (entries != null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
-        }
-
-        response.data = new InsurancePolicy.InsurancePolicyStatistic();
-
-        CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
-
-        if (!StringKit.isInteger(request.startTime)) {
-            custWarrantyBrokerageModel.start_time = "";
-        } else {
-            custWarrantyBrokerageModel.start_time = request.startTime;
-        }
-
-        if (!StringKit.isInteger(request.endTime)) {
-            custWarrantyBrokerageModel.end_time = "";
-        } else {
-            custWarrantyBrokerageModel.end_time = request.endTime;
-        }
-
-        custWarrantyBrokerageModel.channel_id = request.channelId;
-
-        custWarrantyBrokerageModel.manager_uuid = actionBean.managerUuid;
-
-        Calendar instance = Calendar.getInstance();
-
-        int year = instance.get(Calendar.YEAR);
-        int month = instance.get(Calendar.MONTH);
-        int day = instance.get(Calendar.DAY_OF_MONTH);
-
-        InsurancePolicyModel insurancePolicyModel1 = new InsurancePolicyModel();
-        custWarrantyBrokerageModel.manager_uuid = actionBean.managerUuid;
-
-        //noinspection MagicConstant
-        instance.set(year, month, day, 0, 0, 0);
-        insurancePolicyModel1.start_time = String.valueOf(instance.getTimeInMillis());
-        insurancePolicyModel1.end_time = String.valueOf(getDayEndTime(year, month, day));
-
-        // 当天的所有付款的
-        String dayAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerageModel);
-
-        //noinspection MagicConstant
-        instance.set(year, month, 1, 0, 0, 0);
-        insurancePolicyModel1.start_time = String.valueOf(instance.getTimeInMillis());
-        insurancePolicyModel1.end_time = String.valueOf(getMonthEndTime(year, month));
-
-        // 当月的所有付款的
-        String monthAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerageModel);
-
-        insurancePolicyModel1.start_time = "";
-        insurancePolicyModel1.end_time = "";
-
-        String totalAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerageModel);
-
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-
-        response.data.dayAmount = "本日佣金\n" + dayAmount;
-        response.data.monthAmount = "本月佣金\n" + monthAmount;
-        response.data.totalAmount = "累计佣金\n" + totalAmount;
-
-        return json(BaseResponse.CODE_SUCCESS, "获取佣金统计成功", response);
-    }
-
     private List<InsurancePolicy.InsurancePolicyStatisticItem> dealPercentageByList(LinkedHashMap<String, InsurancePolicy.InsurancePolicyStatisticItem> map, BigDecimal premium, BigDecimal brokerage) {
         List<InsurancePolicy.InsurancePolicyStatisticItem> result = new ArrayList<>();
         Set<String> strings = map.keySet();
@@ -974,7 +1050,6 @@ public class InsurancePolicyAction extends BaseAction {
                         item.premiumPercentage = String.valueOf((divide.doubleValue()));
                         divide = divide.multiply(new BigDecimal("100"));
                         item.premiumPercentageText = decimalFormat.format(divide.doubleValue()) + "%";
-                        ;
                     } else {
                         item.premiumPercentage = "0.0";
                         item.premiumPercentageText = "0.00%";
@@ -1008,178 +1083,6 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         return result;
-    }
-
-    public String offlineInsurancePolicyInput(ActionBean actionBean) {
-        InsurancePolicy.OfflineInsurancePolicyInputRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.OfflineInsurancePolicyInputRequest.class);
-        InsurancePolicy.OfflineInsurancePolicyInputResponse response = new InsurancePolicy.OfflineInsurancePolicyInputResponse();
-
-        if (request == null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
-        }
-
-        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
-        if (entries != null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
-        }
-
-        String fileUrl = fileClient.getFileUrl(request.fileKey);
-
-        if (StringKit.isEmpty(fileUrl)) {
-            return json(BaseResponse.CODE_FAILURE, "无法获取报表文件", response);
-        }
-
-        InputStream inputStream = HttpClientKit.downloadFile(fileUrl);
-
-        if (inputStream == null) {
-            return json(BaseResponse.CODE_FAILURE, "获取报表文件失败", response);
-        }
-
-
-        response.data = new InsurancePolicy.OfflineInsurancePolicyDetail();
-        response.data.list = new ArrayList<>();
-
-        boolean flag = false;
-
-        Workbook wb = null;
-        List<OfflineInsurancePolicyModel> errorList = new ArrayList<>();
-        try {
-            wb = WorkbookFactory.create(inputStream);
-            String time = String.valueOf(System.currentTimeMillis());
-
-            for (Sheet sheet : wb) {
-                for (Row row : sheet) {
-                    OfflineInsurancePolicyModel offlineInsurancePolicyModel = ExcelModelKit.createModel(OfflineInsurancePolicyModel.class, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, row);
-
-                    if (offlineInsurancePolicyModel == null) {
-                        continue;
-                    }
-
-                    if (offlineInsurancePolicyModel.isEmptyLine()) {
-                        continue;
-                    }
-
-                    if (offlineInsurancePolicyModel.isTitle()) {
-                        continue;
-                    }
-
-                    if (!offlineInsurancePolicyModel.isEnable()) {
-                        offlineInsurancePolicyModel.reason = "缺少必填字段";
-                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
-                        errorList.add(offlineInsurancePolicyModel);
-                        continue;
-                    }
-
-                    OfflineInsurancePolicyModel offlineInsurance = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyCode(offlineInsurancePolicyModel.warranty_code);
-
-                    if (offlineInsurance != null) {
-                        offlineInsurancePolicyModel.reason = "保单号重复";
-                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
-                        errorList.add(offlineInsurancePolicyModel);
-                    } else {
-
-                        offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
-                        offlineInsurancePolicyModel.warranty_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
-                        offlineInsurancePolicyModel.created_at = time;
-                        offlineInsurancePolicyModel.updated_at = time;
-                        offlineInsurancePolicyModel.state = "1";
-
-                        long l = offlineInsurancePolicyDao.addOfflineInsurancePolicy(offlineInsurancePolicyModel);
-                        if (l <= 0) {
-                            offlineInsurancePolicyModel.reason = "添加数据失败";
-                            response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
-                            errorList.add(offlineInsurancePolicyModel);
-                        }
-                    }
-                }
-            }
-
-            flag = response.data.list == null || response.data.list.isEmpty();
-
-        } catch (IOException | InvalidFormatException e) {
-            e.printStackTrace();
-            flag = false;
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (!flag && response.data.list != null && !response.data.list.isEmpty()) {
-            OfflineInsurancePolicyModel titleModel = OfflineInsurancePolicyModel.getTitleModel();
-            errorList.add(0, titleModel);
-
-            List<ExcelModel<OfflineInsurancePolicyModel>> dataList = new ArrayList<>();
-            for (OfflineInsurancePolicyModel offlineInsurancePolicyModel : errorList) {
-                dataList.add(new ExcelModel<>(offlineInsurancePolicyModel));
-            }
-
-            byte[] data = ExcelModelKit.createExcelByteArray(dataList, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, "导入失败保单数据");
-
-            if (data == null) {
-                return json(BaseResponse.CODE_FAILURE, "导入失败", response);
-            }
-
-            FileUpload.UploadByBase64Request fileUploadRequest = new FileUpload.UploadByBase64Request();
-            // fileUploadRequest.base64 = Base64.getEncoder().encodeToString(data);
-            fileUploadRequest.fileKey = MD5Kit.MD5Digest(actionBean.managerUuid + System.currentTimeMillis() + (Math.random() * 10000000L));
-            fileUploadRequest.fileName = fileUploadRequest.fileKey + ".xls";
-
-            boolean upload = fileClient.upload(fileUploadRequest.fileKey, fileUploadRequest.fileName, data);
-            // FileUploadResponse response1 = FileUpload.getInstance().uploadByBase64(fileUploadRequest);
-
-            if (upload) {
-                response.data.excelFileKey = fileUploadRequest.fileKey;
-                response.data.excelFileUrl = fileClient.getFileUrl(fileUploadRequest.fileKey);
-                return json(BaseResponse.CODE_FAILURE, "部分导入失败", response);
-            } else {
-                return json(BaseResponse.CODE_FAILURE, "导入失败", response);
-            }
-
-        }
-
-        return json((flag ? BaseResponse.CODE_SUCCESS : BaseResponse.CODE_FAILURE), (flag ? "导入成功" : "部分导入失败"), response);
-    }
-
-    private long getDayEndTime(int year, int month, int day) {
-        Calendar instance = Calendar.getInstance();
-
-        instance.set(Calendar.YEAR, year);
-        instance.set(Calendar.MONTH, month);
-        instance.set(Calendar.DAY_OF_MONTH, day);
-
-        int actualMaximum = instance.getActualMaximum(Calendar.DAY_OF_MONTH);
-        if (day < actualMaximum) {
-            instance.set(year, month, day + 1, 0, 0, 0);
-        } else {
-            if (month + 1 < 12) {
-                //noinspection MagicConstant
-                instance.set(year, month + 1, 1, 0, 0, 0);
-            } else {
-                instance.set(year + 1, 0, 1, 0, 0, 0);
-            }
-        }
-
-        return instance.getTimeInMillis();
-    }
-
-    private long getMonthEndTime(int year, int month) {
-        Calendar instance = Calendar.getInstance();
-
-        instance.set(Calendar.YEAR, year);
-        instance.set(Calendar.MONTH, month);
-        instance.set(Calendar.DAY_OF_MONTH, 1);
-
-        if (month + 1 < 12) {
-            //noinspection MagicConstant
-            instance.set(year, month + 1, 1, 0, 0, 0);
-        } else {
-            instance.set(year + 1, 0, 1, 0, 0, 0);
-        }
-
-        return instance.getTimeInMillis();
     }
 
     static class CustWarrantyCostListResult {

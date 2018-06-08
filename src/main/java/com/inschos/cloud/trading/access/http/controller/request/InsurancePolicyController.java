@@ -66,8 +66,8 @@ public class InsurancePolicyController {
     @GetActionBeanAnnotation
     @RequestMapping("car_insurance/get_insurance_policy_brokerage_statistic_list_for_manager_system")
     @ResponseBody
-    public String getInsurancePolicyBrokerageStatisticListForManagerSystem(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyBrokerageStatisticListForManagerSystem(actionBean);
+    public String getInsurancePolicyStatementListForManagerSystem(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyStatementListForManagerSystem(actionBean);
     }
 
     @GetActionBeanAnnotation
@@ -82,20 +82,6 @@ public class InsurancePolicyController {
     @ResponseBody
     public String offlineInsurancePolicyInput(ActionBean actionBean) {
         return insurancePolicyAction.offlineInsurancePolicyInput(actionBean);
-    }
-
-    @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_premium_statistic_for_manager_system")
-    @ResponseBody
-    public String getInsurancePolicyPremiumStatisticForManagerSystem(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyPremiumStatisticForManagerSystem(actionBean);
-    }
-
-    @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_policy_brokerage_statistic_for_manager_system")
-    @ResponseBody
-    public String getInsurancePolicyBrokerageStatisticForManagerSystem(ActionBean actionBean) {
-        return insurancePolicyAction.getInsurancePolicyBrokerageStatisticForManagerSystem(actionBean);
     }
 
 }
