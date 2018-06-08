@@ -815,7 +815,7 @@ public class InsurancePolicy {
 
     public static class GetInsurancePolicyStatisticDetailForManagerSystemRequest extends BaseRequest {
         // 时间范围类型，1-今日，2-本月，3-本年
-        @CheckParams(stringType = CheckParams.StringType.NUMBER, hintName = "时间范围")
+        @CheckParams(hintName = "时间范围")
         public String timeRangeType;
 
     }
@@ -905,7 +905,7 @@ public class InsurancePolicy {
         }
     }
 
-    public static class GetInsurancePolicyBrokerageStatisticListRequest extends BaseRequest {
+    public static class GetInsurancePolicyStatementListRequest extends BaseRequest {
         // 起保开始时间
         public String startTime;
         // 起保结束时间
@@ -915,7 +915,7 @@ public class InsurancePolicy {
 
     }
 
-    public static class GetInsurancePolicyBrokerageStatisticListResponse extends BaseResponse {
+    public static class GetInsurancePolicyStatementListResponse extends BaseResponse {
         public List<InsurancePolicyBrokerageStatistic> data;
     }
 

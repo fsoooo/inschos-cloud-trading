@@ -608,8 +608,8 @@ public class InsurancePolicyAction extends BaseAction {
      * @return 保单报表json
      */
     public String getInsurancePolicyStatementListForManagerSystem(ActionBean actionBean) {
-        InsurancePolicy.GetInsurancePolicyBrokerageStatisticListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyBrokerageStatisticListRequest.class);
-        InsurancePolicy.GetInsurancePolicyBrokerageStatisticListResponse response = new InsurancePolicy.GetInsurancePolicyBrokerageStatisticListResponse();
+        InsurancePolicy.GetInsurancePolicyStatementListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyStatementListRequest.class);
+        InsurancePolicy.GetInsurancePolicyStatementListResponse response = new InsurancePolicy.GetInsurancePolicyStatementListResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -639,7 +639,7 @@ public class InsurancePolicyAction extends BaseAction {
         custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
 
         if (StringKit.isEmpty(request.pageSize)) {
-            request.pageSize = "20";
+            request.pageSize = "10";
         }
         custWarrantyCostModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
