@@ -790,7 +790,7 @@ public class InsurancePolicyAction extends BaseAction {
      * @return 是否有参数异常（如果有，此为异常）
      */
     private String checkGetInsurancePolicyListParams(InsurancePolicy.GetInsurancePolicyListRequest request, InsurancePolicyModel insurancePolicyModel) {
-        if (!StringKit.isEmpty(request.warrantyType) || !StringKit.isNumeric(request.warrantyType)) {
+        if (!StringKit.isEmpty(request.warrantyType) && !StringKit.isNumeric(request.warrantyType)) {
             return "保单类型错误";
         }
 
