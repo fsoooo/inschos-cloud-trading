@@ -299,7 +299,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         long total = insurancePolicyDao.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
 
-        response.data.count = String.valueOf(total);
+        response.data.count = "一共 " + String.valueOf(total) + " 条数据";
         long l = (total / 10) * 5;
         response.data.time = l + "秒";
 

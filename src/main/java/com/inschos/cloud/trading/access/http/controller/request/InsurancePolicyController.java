@@ -98,6 +98,4 @@ public class InsurancePolicyController {
         return insurancePolicyAction.setTest();
     }
 
-
-
 }
