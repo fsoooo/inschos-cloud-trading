@@ -43,6 +43,13 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
+    @RequestMapping("get_download_insurance_policy_count_for_manager_system")
+    @ResponseBody
+    public String getDownInsurancePolicyCountForManagerSystem(ActionBean actionBean) {
+        return insurancePolicyAction.getDownInsurancePolicyCountForManagerSystem(actionBean);
+    }
+
+    @GetActionBeanAnnotation
     @RequestMapping("get_insurance_policy_detail_for_online_store")
     @ResponseBody
     public String getInsurancePolicyDetailForOnlineStore(ActionBean actionBean) {

@@ -49,9 +49,10 @@ public class InsurancePolicy {
 
     public static class DownloadInsurancePolicyListForManagerSystemResponse extends BaseResponse {
         public String data;
-        public long startTime;
-        public long endTime;
-        public long during;
+    }
+
+    public static class GetDownInsurancePolicyCountForManagerSystem extends BaseResponse {
+        public DownInsurancePolicy data;
     }
 
     public static class OfflineInsurancePolicyInputRequest extends BaseRequest {
@@ -1273,6 +1274,11 @@ public class InsurancePolicy {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(custWarrantyBrokerageModel.updated_at)));
             }
         }
+    }
+
+    public static class DownInsurancePolicy {
+        public String count;
+        public String time;
     }
 
 }
