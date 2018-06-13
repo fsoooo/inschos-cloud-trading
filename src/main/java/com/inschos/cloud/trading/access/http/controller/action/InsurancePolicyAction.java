@@ -195,20 +195,18 @@ public class InsurancePolicyAction extends BaseAction {
         // 1-个人保单，2-团险保单，3-车险保单
         switch (request.warrantyType) {
             case "1":
-                name = "个人";
+                name = "个人-";
                 break;
             case "2":
-                name = "团险";
+                name = "团险-";
                 break;
             case "3":
-                name = "车险";
+                name = "车险-";
                 break;
         }
 
-        response.startTime = System.currentTimeMillis();
-
         HSSFWorkbook workbook = new HSSFWorkbook();
-        Sheet sheet = workbook.createSheet(name + "-保单列表");
+        Sheet sheet = workbook.createSheet(name + "保单列表");
 
         InsurancePolicy.GetInsurancePolicyItemBean carInsurancePolicyTitle = InsurancePolicy.GetInsurancePolicyItemBean.getCarInsurancePolicyTitle();
         List<ExcelModel<InsurancePolicy.GetInsurancePolicyItemBean>> list = new ArrayList<>();
@@ -244,10 +242,6 @@ public class InsurancePolicyAction extends BaseAction {
 
         } while (flag);
 
-        response.endTime = System.currentTimeMillis();
-
-        response.during = response.endTime - response.startTime;
-
         ExcelModelKit.autoSizeColumn(sheet, InsurancePolicy.CAR_FIELD_MAP.size());
 
         byte[] workbookByteArray = ExcelModelKit.getWorkbookByteArray(workbook);
@@ -272,6 +266,46 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         return json(BaseResponse.CODE_SUCCESS, "获取下载地址成功", response);
+    }
+
+    /**
+     * FINISH: 2018/6/8
+     * 获取下载数据的数据量大小
+     *
+     * @param actionBean 请求bean
+     * @return 下载数据的数据量json
+     */
+    public String getDownInsurancePolicyCountForManagerSystem(ActionBean actionBean) {
+        InsurancePolicy.GetInsurancePolicyListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListRequest.class);
+        InsurancePolicy.GetDownInsurancePolicyCountForManagerSystem response = new InsurancePolicy.GetDownInsurancePolicyCountForManagerSystem();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+
+        String s = checkGetInsurancePolicyListParams(request, insurancePolicyModel);
+
+        if (!StringKit.isEmpty(s)) {
+            return json(BaseResponse.CODE_FAILURE, s, response);
+        }
+
+        long total = insurancePolicyDao.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
+
+        response.data = new InsurancePolicy.DownInsurancePolicy();
+
+        response.data.count = "一共 " + String.valueOf(total) + " 条数据";
+        long l = (total / 10) * 5;
+        response.data.time = l + "秒";
+
+        return json(BaseResponse.CODE_SUCCESS, "获取数据量大小成功", response);
     }
 
     /**
@@ -758,9 +792,14 @@ public class InsurancePolicyAction extends BaseAction {
      * @return 是否有参数异常（如果有，此为异常）
      */
     private String checkGetInsurancePolicyListParams(InsurancePolicy.GetInsurancePolicyListRequest request, InsurancePolicyModel insurancePolicyModel) {
-//        if (StringKit.isEmpty(request.warrantyType) || !StringKit.isNumeric(request.warrantyType) || Integer.valueOf(request.warrantyType) < 1 || Integer.valueOf(request.warrantyType) > 4) {
-//            return "保单类型错误";
-//        }
+        if (!StringKit.isEmpty(request.warrantyType) && !StringKit.isNumeric(request.warrantyType)) {
+            return "保单类型错误";
+        }
+
+        if (request.warrantyType == null) {
+            request.warrantyType = "";
+        }
+
         insurancePolicyModel.type = request.warrantyType;
 
         if (!StringKit.isEmpty(request.warrantyStatus)) {
@@ -1181,7 +1220,7 @@ public class InsurancePolicyAction extends BaseAction {
         return custWarrantyCostListResult;
     }
 
-    public String setTest () {
+    public String setTest() {
         InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
         insurancePolicyModel.uuids = new HashSet<>();
 
