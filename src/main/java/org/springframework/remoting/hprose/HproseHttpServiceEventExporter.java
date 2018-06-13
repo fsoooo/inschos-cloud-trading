@@ -1,4 +1,4 @@
-package com.org.springframework.remoting.hprose;
+package org.springframework.remoting.hprose;
 
 
 import com.inschos.cloud.trading.assist.kit.L;

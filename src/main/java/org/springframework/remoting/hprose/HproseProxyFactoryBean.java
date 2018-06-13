@@ -1,4 +1,4 @@
-package com.org.springframework.remoting.hprose;
+package org.springframework.remoting.hprose;
 
 import hprose.client.HproseClient;
 import hprose.client.HproseHttpClient;

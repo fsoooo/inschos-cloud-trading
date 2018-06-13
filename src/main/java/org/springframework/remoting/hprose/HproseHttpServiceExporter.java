@@ -1,4 +1,4 @@
-package com.org.springframework.remoting.hprose;
+package org.springframework.remoting.hprose;
 
 import hprose.common.FilterHandler;
 import hprose.common.HproseFilter;
