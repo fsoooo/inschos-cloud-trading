@@ -184,6 +184,9 @@ public class InsuranceParticipantModel {
         this.record_end_time = String.valueOf(TimeKit.MAX_MILLIS);
     }
 
+
+
+
     // 先设置证件类型（验证证件号码的有效性）
     public boolean setCardCode(String cardCode) {
         if (!StringKit.isInteger(cardCode)) {
