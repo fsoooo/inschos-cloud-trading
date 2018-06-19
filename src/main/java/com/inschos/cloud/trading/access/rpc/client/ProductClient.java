@@ -72,4 +72,26 @@ public class ProductClient {
         }
     }
 
+    public List<ProductCategory> getCategoryList(String level) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getCategoryList(level) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public List<InsuranceCo> getProductCoList(String managerUuid) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getProductCoList(managerUuid) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
 }

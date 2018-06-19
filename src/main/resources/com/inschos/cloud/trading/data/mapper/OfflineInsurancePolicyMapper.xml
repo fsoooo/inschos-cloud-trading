@@ -3,16 +3,16 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.OfflineInsurancePolicyMapper">
 
     <sql id="Base_Column_List">
-        `id`,`manager_uuid`,`warranty_uuid`,`warranty_code`,`created_at`,`updated_at`,`state`
+        `id`,`manager_uuid`,`warranty_uuid`,`insured_name`,`policy_holder_name`,`insurance_company`,`insurance_type`,`insurance_product`,`warranty_code`,`payment_time`,`order_time`,`real_income_time`,`start_time`,`end_time`,`premium`,`pay_status`,`brokerage`,`channel_name`,`agent_name`,`created_at`,`updated_at`,`state`
     </sql>
 
     <insert id="addOfflineInsurancePolicy" parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
             useGeneratedKeys="true"
             keyProperty="id">
-        insert into offline_cust_warranty
-        (`id`,`manager_uuid`,`warranty_uuid`,`warranty_code`,`created_at`,`updated_at`,`state`)
+        insert ignore into offline_cust_warranty
+        (`id`,`manager_uuid`,`warranty_uuid`,`insured_name`,`policy_holder_name`,`insurance_company`,`insurance_type`,`insurance_product`,`warranty_code`,`payment_time`,`order_time`,`real_income_time`,`start_time`,`end_time`,`premium`,`pay_status`,`brokerage`,`channel_name`,`agent_name`,`created_at`,`updated_at`,`state`)
         values
-        (#{id},#{manager_uuid},#{warranty_uuid},#{warranty_code},#{created_at},#{updated_at},#{state})
+        (#{id},#{manager_uuid},#{warranty_uuid},#{insured_name},#{policy_holder_name},#{insurance_company},#{insurance_type},#{insurance_product},#{warranty_code},#{payment_time},#{order_time},#{real_income_time},#{start_time},#{end_time},#{premium},#{pay_status},#{brokerage},#{channel_name},#{agent_name},#{created_at},#{updated_at},#{state})
     </insert>
 
     <select id="findOfflineInsurancePolicyByWarrantyCode" parameterType="java.lang.String"
@@ -29,6 +29,128 @@
         <include refid="Base_Column_List"/>
         from offline_cust_warranty
         WHERE `warranty_uuid`=#{_parameter} AND `state`=1
+    </select>
+
+    <select id="findOfflineInsurancePolicyListForManagerSystem"
+            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+        select
+        <include refid="Base_Column_List"/>
+        from offline_cust_warranty
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    `id`&lt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    `id`&lt;=(select `id` from offline_cust_warranty
+                    where `manager_uuid`=#{manager_uuid} AND `state`=1
+                    <if test="time_type!=null and time_type!=''">
+                        <choose>
+                            <when test='time_type=="1"'>
+                                <if test="start_time!=null and start_time!=''">
+                                    and `real_income_time`&gt;=#{start_time}
+                                </if>
+                                <if test="end_time!=null and end_time!=''">
+                                    and `real_income_time`&lt;#{end_time}
+                                </if>
+                            </when>
+                            <when test='time_type=="2"'>
+                                <if test="start_time!=null and start_time!=''">
+                                    and `start_time`&gt;=#{start_time}
+                                </if>
+                                <if test="end_time!=null and end_time!=''">
+                                    and `start_time`&lt;#{end_time}
+                                </if>
+                            </when>
+                        </choose>
+                    </if>
+                    <if test="search_company!=null and search_company!=''">
+                        and `insurance_company` like concat("%",#{search_company},"%")
+                    </if>
+                    <if test="search_channel!=null and search_channel!=''">
+                        and`channel_name` like concat("%",#{search_channel},"%")
+                    </if>
+                    <if test="search_product!=null and search_product!=''">
+                        and `insurance_product` like concat("%",#{search_product},"%")
+                    </if>
+                    ORDER BY `id` DESC limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            and `manager_uuid`=#{manager_uuid} AND `state`=1
+            <if test="time_type!=null and time_type!=''">
+                <choose>
+                    <when test='time_type=="1"'>
+                        <if test="start_time!=null and start_time!=''">
+                            and `real_income_time`&gt;=#{start_time}
+                        </if>
+                        <if test="end_time!=null and end_time!=''">
+                            and `real_income_time`&lt;#{end_time}
+                        </if>
+                    </when>
+                    <when test='time_type=="2"'>
+                        <if test="start_time!=null and start_time!=''">
+                            and `start_time`&gt;=#{start_time}
+                        </if>
+                        <if test="end_time!=null and end_time!=''">
+                            and `start_time`&lt;#{end_time}
+                        </if>
+                    </when>
+                </choose>
+            </if>
+            <if test="search_company!=null and search_company!=''">
+                and `insurance_company` like concat("%",#{search_company},"%")
+            </if>
+            <if test="search_channel!=null and search_channel!=''">
+                and `channel_name` like concat("%",#{search_channel},"%")
+            </if>
+            <if test="search_product!=null and search_product!=''">
+                and `insurance_product` like concat("%",#{search_product},"%")
+            </if>
+            ORDER BY `id` DESC limit #{page.offset}
+        </where>
+    </select>
+
+    <select id="findOfflineInsurancePolicyCountForManagerSystem"
+            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
+            resultType="long">
+        select
+        count(id)
+        from offline_cust_warranty
+        where `manager_uuid`=#{manager_uuid} AND `state`=1
+        <if test="time_type!=null and time_type!=''">
+            <choose>
+                <when test='time_type=="1"'>
+                    <if test="start_time!=null and start_time!=''">
+                        and `real_income_time`&gt;=#{start_time}
+                    </if>
+                    <if test="end_time!=null and end_time!=''">
+                        and `real_income_time`&lt;#{end_time}
+                    </if>
+                </when>
+                <when test='time_type=="2"'>
+                    <if test="start_time!=null and start_time!=''">
+                        and `start_time`&gt;=#{start_time}
+                    </if>
+                    <if test="end_time!=null and end_time!=''">
+                        and `start_time`&lt;#{end_time}
+                    </if>
+                </when>
+            </choose>
+        </if>
+        <if test="search_company!=null and search_company!=''">
+            `insurance_company` like concat("%",#{search_company},"%")
+        </if>
+        <if test="search_channel!=null and search_channel!=''">
+            `channel_name` like concat("%",#{search_channel},"%")
+        </if>
+        <if test="search_product!=null and search_product!=''">
+            `insurance_product` like concat("%",#{search_product},"%")
+        </if>
     </select>
 
 </mapper>

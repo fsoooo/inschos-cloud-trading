@@ -112,11 +112,4 @@ public class InsurancePolicyController {
         return insurancePolicyAction.getOfflineInsurancePolicyDetail(actionBean);
     }
 
-    @GetActionBeanAnnotation(isCheckAccess = false)
-    @RequestMapping("setTest")
-    @ResponseBody
-    public String setTest(ActionBean actionBean) {
-        return insurancePolicyAction.setTest();
-    }
-
 }

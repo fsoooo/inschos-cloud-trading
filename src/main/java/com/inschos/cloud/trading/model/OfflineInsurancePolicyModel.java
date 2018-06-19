@@ -22,18 +22,19 @@ public class OfflineInsurancePolicyModel {
         COLUMN_FIELD_MAP.put("B", "policy_holder_name");
         COLUMN_FIELD_MAP.put("C", "insurance_company");
         COLUMN_FIELD_MAP.put("D", "insurance_type");
-        COLUMN_FIELD_MAP.put("E", "warranty_code");
-        COLUMN_FIELD_MAP.put("F", "payment_time");
-        COLUMN_FIELD_MAP.put("G", "order_time");
-        COLUMN_FIELD_MAP.put("H", "real_income_time");
-        COLUMN_FIELD_MAP.put("I", "start_time");
-        COLUMN_FIELD_MAP.put("J", "end_time");
-        COLUMN_FIELD_MAP.put("K", "premium");
-        COLUMN_FIELD_MAP.put("L", "pay_status");
-        COLUMN_FIELD_MAP.put("M", "brokerage");
-        COLUMN_FIELD_MAP.put("N", "channel_name");
-        COLUMN_FIELD_MAP.put("O", "agent_name");
-        COLUMN_FIELD_MAP.put("P", "reason");
+        COLUMN_FIELD_MAP.put("E", "insurance_product");
+        COLUMN_FIELD_MAP.put("F", "warranty_code");
+        COLUMN_FIELD_MAP.put("G", "payment_time");
+        COLUMN_FIELD_MAP.put("H", "order_time");
+        COLUMN_FIELD_MAP.put("I", "real_income_time");
+        COLUMN_FIELD_MAP.put("J", "start_time");
+        COLUMN_FIELD_MAP.put("K", "end_time");
+        COLUMN_FIELD_MAP.put("L", "premium");
+        COLUMN_FIELD_MAP.put("M", "pay_status");
+        COLUMN_FIELD_MAP.put("N", "brokerage");
+        COLUMN_FIELD_MAP.put("O", "channel_name");
+        COLUMN_FIELD_MAP.put("P", "agent_name");
+        COLUMN_FIELD_MAP.put("Q", "reason");
 //        COLUMN_FIELD_MAP.put("Q", "");
 //        COLUMN_FIELD_MAP.put("R", "");
 //        COLUMN_FIELD_MAP.put("S", "");
@@ -80,6 +81,11 @@ public class OfflineInsurancePolicyModel {
      * 险种
      */
     public String insurance_type;
+
+    /**
+     * 险种
+     */
+    public String insurance_product;
 
     /**
      * 保单号
@@ -153,6 +159,12 @@ public class OfflineInsurancePolicyModel {
 
     public String reason;
 
+    public Page page;
+
+    public String search_company;
+    public String search_channel;
+    public String search_product;
+    public String time_type;
 
     public boolean isEnable() {
         return !StringKit.isEmpty(warranty_code);

@@ -45,5 +45,4 @@ public interface InsurancePolicyMapper {
 
     long findInsurancePolicyCountByActualPayTime(InsurancePolicyModel insurancePolicyModel);
 
-    List<InsurancePolicyModel> setTest (InsurancePolicyModel insurancePolicyModel);
 }

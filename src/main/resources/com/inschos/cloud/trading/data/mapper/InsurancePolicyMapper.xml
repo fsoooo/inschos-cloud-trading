@@ -293,14 +293,34 @@
                             </otherwise>
                         </choose>
                     </if>
+                    <if test="insurance_co_id_string!=null and insurance_co_id_string!=''">
+                        and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
+                    </if>
+                    <if test="product_id_string!=null and product_id_string!=''">
+                        and `cust_warranty`.`product_id`=#{type} in (${product_id_string})
+                    </if>
                     <if test="type!=null and type!=''">
                         and `cust_warranty`.`type`=#{type}
                     </if>
-                    <if test="start_time!=null and start_time!=''">
-                        and `cust_warranty`.`created_at`&gt;=#{start_time}
-                    </if>
-                    <if test="end_time!=null and end_time!=''">
-                        and `cust_warranty`.`created_at`&lt;#{end_time}
+                    <if test="time_type!=null and time_type!=''">
+                        <choose>
+                            <when test='time_type=="1"'>
+                                <if test="start_time!=null and start_time!=''">
+                                    and `cust_warranty`.`created_at`&gt;=#{start_time}
+                                </if>
+                                <if test="end_time!=null and end_time!=''">
+                                    and `cust_warranty`.`created_at`&lt;#{end_time}
+                                </if>
+                            </when>
+                            <when test='time_type=="2"'>
+                                <if test="start_time!=null and start_time!=''">
+                                    and `cust_warranty`.`start_time`&gt;=#{start_time}
+                                </if>
+                                <if test="end_time!=null and end_time!=''">
+                                    and `cust_warranty`.`start_time`&lt;#{end_time}
+                                </if>
+                            </when>
+                        </choose>
                     </if>
                     ORDER BY `cust_warranty`.`id` DESC limit #{page.start},1
                     )
@@ -345,14 +365,34 @@
                     </otherwise>
                 </choose>
             </if>
+            <if test="insurance_co_id_string!=null and insurance_co_id_string!=''">
+                and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
+            </if>
+            <if test="product_id_string!=null and product_id_string!=''">
+                and `cust_warranty`.`product_id`=#{type} in (${product_id_string})
+            </if>
             <if test="type!=null and type!=''">
                 and `cust_warranty`.`type`=#{type}
             </if>
-            <if test="start_time!=null and start_time!=''">
-                and `cust_warranty`.`created_at`&gt;=#{start_time}
-            </if>
-            <if test="end_time!=null and end_time!=''">
-                and `cust_warranty`.`created_at`&lt;#{end_time}
+            <if test="time_type!=null and time_type!=''">
+                <choose>
+                    <when test='time_type=="1"'>
+                        <if test="start_time!=null and start_time!=''">
+                            and `cust_warranty`.`created_at`&gt;=#{start_time}
+                        </if>
+                        <if test="end_time!=null and end_time!=''">
+                            and `cust_warranty`.`created_at`&lt;#{end_time}
+                        </if>
+                    </when>
+                    <when test='time_type=="2"'>
+                        <if test="start_time!=null and start_time!=''">
+                            and `cust_warranty`.`start_time`&gt;=#{start_time}
+                        </if>
+                        <if test="end_time!=null and end_time!=''">
+                            and `cust_warranty`.`start_time`&lt;#{end_time}
+                        </if>
+                    </when>
+                </choose>
             </if>
             ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
         </where>
@@ -405,14 +445,34 @@
                 </otherwise>
             </choose>
         </if>
+        <if test="insurance_co_id_string!=null and insurance_co_id_string!=''">
+            and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
+        </if>
+        <if test="product_id_string!=null and product_id_string!=''">
+            and `cust_warranty`.`product_id`=#{type} in (${product_id_string})
+        </if>
         <if test="type!=null and type!=''">
             and `cust_warranty`.`type`=#{type}
         </if>
-        <if test="start_time!=null and start_time!=''">
-            and `cust_warranty`.`created_at`&gt;=#{start_time}
-        </if>
-        <if test="end_time!=null and end_time!=''">
-            and `cust_warranty`.`created_at`&lt;#{end_time}
+        <if test="time_type!=null and time_type!=''">
+            <choose>
+                <when test='time_type=="1"'>
+                    <if test="start_time!=null and start_time!=''">
+                        and `cust_warranty`.`created_at`&gt;=#{start_time}
+                    </if>
+                    <if test="end_time!=null and end_time!=''">
+                        and `cust_warranty`.`created_at`&lt;#{end_time}
+                    </if>
+                </when>
+                <when test='time_type=="2"'>
+                    <if test="start_time!=null and start_time!=''">
+                        and `cust_warranty`.`start_time`&gt;=#{start_time}
+                    </if>
+                    <if test="end_time!=null and end_time!=''">
+                        and `cust_warranty`.`start_time`&lt;#{end_time}
+                    </if>
+                </when>
+            </choose>
         </if>
     </select>
 
@@ -603,27 +663,6 @@
         <if test="end_time!=null and end_time!=''">
             AND `cust_warranty`.`created_at`&lt;#{end_time}
         </if>
-    </select>
-
-    <select id="setTest"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
-        select
-        <include refid="Base_Column_List"/>
-        from cust_warranty
-        <where>
-            <choose>
-                <when test="uuids!=null and !uuids.isEmpty()">
-                    `warranty_uuid` in
-                    <foreach collection="uuids" open="(" separator="," close=")" item="item">
-                        #{item}
-                    </foreach>
-                </when>
-                <otherwise>
-                    1=1
-                </otherwise>
-            </choose>
-        </where>
     </select>
 
 </mapper>

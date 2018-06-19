@@ -450,7 +450,4 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
     }
 
-    public List<InsurancePolicyModel> setTest(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.setTest(insurancePolicyModel);
-    }
 }

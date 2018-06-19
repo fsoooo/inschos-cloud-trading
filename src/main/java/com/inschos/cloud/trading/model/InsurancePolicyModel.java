@@ -148,7 +148,9 @@ public class InsurancePolicyModel {
     public String status_string;
     public String search_warranty_string;
 
+    public String time_type;
     public String product_id_string;
+    public String insurance_co_id_string;
     public String agent_id_string;
     public long currentTime = System.currentTimeMillis();
     public List<InsuranceParticipantModel> insured_list;
