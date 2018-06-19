@@ -85,6 +85,13 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
+    @RequestMapping("get_insurance_policy_bill_list_for_manager_system")
+    @ResponseBody
+    public String getInsurancePolicyBillListForManagerSystem(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyBillListForManagerSystem(actionBean);
+    }
+
+    @GetActionBeanAnnotation
     @RequestMapping("offline_insurance_policy_input")
     @ResponseBody
     public String offlineInsurancePolicyInput(ActionBean actionBean) {

@@ -138,6 +138,7 @@ public class InsurancePolicy {
 
         //渠道ID为0则为用户自主购买
         public String channelId;
+        public String channelName;
 
         //计划书ID为0则为用户自主购买
         public String planId;

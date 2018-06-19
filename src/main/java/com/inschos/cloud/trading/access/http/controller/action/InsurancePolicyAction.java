@@ -1,17 +1,13 @@
 package com.inschos.cloud.trading.access.http.controller.action;
 
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
-import com.inschos.cloud.trading.access.http.controller.bean.BaseRequest;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
-import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
-import com.inschos.cloud.trading.access.rpc.bean.InsuranceCo;
-import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
-import com.inschos.cloud.trading.access.rpc.bean.ProductCategory;
+import com.inschos.cloud.trading.access.rpc.bean.*;
 import com.inschos.cloud.trading.access.rpc.client.AgentClient;
+import com.inschos.cloud.trading.access.rpc.client.ChannelClient;
 import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
-import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.*;
@@ -63,6 +59,9 @@ public class InsurancePolicyAction extends BaseAction {
     private AgentClient agentClient;
 
     @Autowired
+    private ChannelClient channelClient;
+
+    @Autowired
     private FileClient fileClient;
 
     /**
@@ -103,7 +102,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListForOnlineStore = insurancePolicyDao.findInsurancePolicyListForOnlineStore(insurancePolicyModel);
         long total = insurancePolicyDao.findInsurancePolicyCountForOnlineStore(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListForOnlineStore, true, true);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListForOnlineStore, true, true, false, false);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -151,7 +150,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListForManagerSystem(insurancePolicyModel);
         long total = insurancePolicyDao.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, false, false);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, false, false, false, false);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -229,7 +228,7 @@ public class InsurancePolicyAction extends BaseAction {
             insurancePolicyModel.page = setPage(lastId, null, pageSize);
 
             List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListForManagerSystem(insurancePolicyModel);
-            List<InsurancePolicy.GetInsurancePolicyItemBean> getInsurancePolicyItemBeans = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, false, false);
+            List<InsurancePolicy.GetInsurancePolicyItemBean> getInsurancePolicyItemBeans = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, false, false, true, true);
             list.clear();
 
             if (getInsurancePolicyItemBeans != null && !getInsurancePolicyItemBeans.isEmpty()) {
@@ -973,7 +972,7 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsurancePolicyModel> insurancePolicyListByActualPayTime = insurancePolicyDao.findInsurancePolicyListByActualPayTime(insurancePolicyModel);
         long total = insurancePolicyDao.findInsurancePolicyCountByActualPayTime(insurancePolicyModel);
 
-        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, true, true);
+        response.data = dealInsurancePolicyResultList(insurancePolicyListByActualPayTime, true, true, false, false);
 
         String lastId = "0";
         if (response.data != null && !response.data.isEmpty()) {
@@ -983,6 +982,10 @@ public class InsurancePolicyAction extends BaseAction {
         response.page = setPageBean(lastId, request.pageNum, request.pageSize, total, response.data == null ? 0 : response.data.size());
 
         return json(BaseResponse.CODE_SUCCESS, "获取保单列表成功", response);
+    }
+
+    public String getInsurancePolicyBillListForManagerSystem(ActionBean actionBean) {
+        return "";
     }
 
     // ====================================================================================================================================================================================
@@ -1054,6 +1057,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyModel.time_type = request.timeType;
 
+        // TODO: 2018/6/19  
 //        if (!StringKit.isEmpty(request.insuranceCompanyKey)) {
 //            insurancePolicyModel.insurance_co_id_string;
 //        }
@@ -1084,13 +1088,15 @@ public class InsurancePolicyAction extends BaseAction {
      * @param needInsured              是否需要被保险人显示字段
      * @return 前台数据列表
      */
-    private List<InsurancePolicy.GetInsurancePolicyItemBean> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyModelList, boolean needLogo, boolean needInsured) {
+    private List<InsurancePolicy.GetInsurancePolicyItemBean> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyModelList, boolean needLogo, boolean needInsured, boolean needChannel, boolean needAgent) {
         List<InsurancePolicy.GetInsurancePolicyItemBean> result = new ArrayList<>();
         if (insurancePolicyModelList == null) {
             return result;
         }
 
         Set<String> productId = new HashSet<>();
+        Set<String> channelId = new HashSet<>();
+        Set<String> agentId = new HashSet<>();
         HashMap<String, String> fileUrl = new HashMap<>();
         HashMap<String, Boolean> file = new HashMap<>();
 
@@ -1099,6 +1105,8 @@ public class InsurancePolicyAction extends BaseAction {
                 InsurancePolicy.GetInsurancePolicyItemBean model = new InsurancePolicy.GetInsurancePolicyItemBean(policyListByWarrantyStatusOrSearch);
 
                 productId.add(model.productId);
+                channelId.add(model.channelId);
+                agentId.add(model.agentId);
 
                 if (needInsured) {
                     List<InsuranceParticipantModel> insuranceParticipantInsuredByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantInsuredByWarrantyUuid(model.warrantyUuid);
@@ -1124,21 +1132,48 @@ public class InsurancePolicyAction extends BaseAction {
             }
 
             List<String> ids = new ArrayList<>(productId);
-
-            if (ids.isEmpty()) {
-                return result;
-            }
-
-            List<ProductBean> productList = productClient.getProductList(ids);
-
-            if (productList == null || productList.isEmpty()) {
-                return result;
-            }
-
             Map<String, ProductBean> productMap = new HashMap<>();
 
-            for (ProductBean productBean : productList) {
-                productMap.put(String.valueOf(productBean.id), productBean);
+            if (!ids.isEmpty()) {
+                List<ProductBean> productList = productClient.getProductList(ids);
+
+                if (productList != null && !productList.isEmpty()) {
+                    for (ProductBean productBean : productList) {
+                        productMap.put(String.valueOf(productBean.id), productBean);
+                    }
+                }
+            }
+
+
+            Map<String, ChannelBean> channelMap = new HashMap<>();
+            if (needChannel) {
+                List<String> channelIds = new ArrayList<>(channelId);
+
+                if (!channelIds.isEmpty()) {
+                    List<ChannelBean> channelList = channelClient.getChannelListByIds(channelIds);
+
+                    if (channelList != null && !channelList.isEmpty()) {
+                        for (ChannelBean channelBean : channelList) {
+                            channelMap.put(channelBean.id, channelBean);
+                        }
+                    }
+                }
+            }
+
+            // TODO: 2018/6/19  
+            Map<String, AgentBean> agentMap = new HashMap<>();
+            if (needAgent) {
+//                List<String> agentIds = new ArrayList<>(agentId);
+//
+//                if (!ids.isEmpty()) {
+//                    List<AgentBean> agentList = new ArrayList<>();
+//
+//                    if (agentList != null && !agentList.isEmpty()) {
+//                        for (AgentBean agentBean : agentList) {
+//                            agentMap.put(String.valueOf(agentBean.id), agentBean);
+//                        }
+//                    }
+//                }
             }
 
             for (InsurancePolicy.GetInsurancePolicyItemBean getInsurancePolicyItemBean : result) {
@@ -1164,6 +1199,20 @@ public class InsurancePolicyAction extends BaseAction {
                             }
                         }
                         getInsurancePolicyItemBean.insuranceCompanyLogo = url;
+                    }
+                }
+
+                if (needChannel) {
+                    ChannelBean channelBean = channelMap.get(getInsurancePolicyItemBean.channelId);
+                    if (channelBean != null) {
+                        getInsurancePolicyItemBean.channelName = channelBean.name;
+                    }
+                }
+
+                if (needAgent) {
+                    AgentBean agentBean = agentMap.get(getInsurancePolicyItemBean.agentId);
+                    if (agentBean != null) {
+                        getInsurancePolicyItemBean.agentName = agentBean.name;
                     }
                 }
             }
