@@ -92,6 +92,13 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
+    @RequestMapping("get_offline_insurance_policy_input_template")
+    @ResponseBody
+    public String getOfflineInsurancePolicyInputTemplate(ActionBean actionBean) {
+        return insurancePolicyAction.getOfflineInsurancePolicyInputTemplate(actionBean);
+    }
+
+    @GetActionBeanAnnotation
     @RequestMapping("get_offline_insurance_policy_list")
     @ResponseBody
     public String getOfflineInsurancePolicyList(ActionBean actionBean) {

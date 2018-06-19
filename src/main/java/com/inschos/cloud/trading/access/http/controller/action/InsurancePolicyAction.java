@@ -14,6 +14,7 @@ import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -536,6 +537,10 @@ public class InsurancePolicyAction extends BaseAction {
         Workbook wb;
 
         List<OfflineInsurancePolicyModel> errorList = new ArrayList<>();
+
+        int successCount = 0;
+        int failCount = 0;
+
         try {
             wb = WorkbookFactory.create(inputStream);
             String time = String.valueOf(System.currentTimeMillis());
@@ -560,6 +565,7 @@ public class InsurancePolicyAction extends BaseAction {
                         offlineInsurancePolicyModel.reason = "缺少必填字段";
                         response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
                         errorList.add(offlineInsurancePolicyModel);
+                        failCount++;
                         continue;
                     }
 
@@ -569,8 +575,8 @@ public class InsurancePolicyAction extends BaseAction {
                         offlineInsurancePolicyModel.reason = "保单号重复";
                         response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
                         errorList.add(offlineInsurancePolicyModel);
+                        failCount++;
                     } else {
-
                         offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
                         offlineInsurancePolicyModel.warranty_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
                         offlineInsurancePolicyModel.created_at = time;
@@ -582,6 +588,9 @@ public class InsurancePolicyAction extends BaseAction {
                             offlineInsurancePolicyModel.reason = "添加数据失败";
                             response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
                             errorList.add(offlineInsurancePolicyModel);
+                            failCount++;
+                        } else {
+                            successCount++;
                         }
                     }
                 }
@@ -599,6 +608,9 @@ public class InsurancePolicyAction extends BaseAction {
                 e.printStackTrace();
             }
         }
+
+        response.data.successCount = "成功：" + successCount + "条";
+        response.data.failCount = "失败：" + failCount + "条";
 
         if (!flag && response.data.list != null && !response.data.list.isEmpty()) {
             OfflineInsurancePolicyModel titleModel = OfflineInsurancePolicyModel.getTitleModel();
@@ -646,6 +658,91 @@ public class InsurancePolicyAction extends BaseAction {
 
     public String getOfflineInsurancePolicyDetail(ActionBean actionBean) {
         return "";
+    }
+
+    public String getOfflineInsurancePolicyInputTemplate(ActionBean actionBean) {
+        // InsurancePolicy.GetOfflineInsurancePolicyInputTemplateRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetOfflineInsurancePolicyInputTemplateRequest.class);
+        InsurancePolicy.GetOfflineInsurancePolicyInputTemplateResponse response = new InsurancePolicy.GetOfflineInsurancePolicyInputTemplateResponse();
+
+        // actionBean.managerUuid
+
+        String fileUrl = fileClient.getFileUrl("offline_insurance_policy_20180619_OFFLINE20180619");
+
+        InputStream inputStream = HttpClientKit.downloadFile(fileUrl);
+
+        if (inputStream == null) {
+            return json(BaseResponse.CODE_FAILURE, "获取模板文件失败", response);
+        }
+
+        boolean flag = true;
+        Workbook sheets;
+
+        String fileKey = actionBean.managerUuid + System.currentTimeMillis() + (Math.random() * 10000000L);
+        String fileName = MD5Kit.MD5Digest(actionBean.managerUuid + System.currentTimeMillis());
+
+        try {
+            sheets = WorkbookFactory.create(inputStream);
+
+            if (sheets != null) {
+                // TODO: 2018/6/19 获取公司与产品分类
+                int maxRow = 0;
+                // 如果表中sheet1 C列是可选择的，那么sheet2 C就是其可以选择的数据。那么，如果C，D都有可选择的，D是第四列，因此使用4
+                int maxRank = 4;
+                List<String> companyName = new ArrayList<>();
+                if (companyName != null && !companyName.isEmpty()) {
+                    maxRow = companyName.size();
+                }
+
+                List<String> productName = new ArrayList<>();
+                if (productName != null && !productName.isEmpty()) {
+                    int size = productName.size();
+                    if (size > maxRow) {
+                        maxRow = size;
+                    }
+                }
+
+                Map<String, List<String>> map = new HashMap<>();
+                map.put("C", companyName);
+                map.put("D", productName);
+
+                Sheet sheetAt = sheets.getSheetAt(1);
+
+                if (sheetAt != null) {
+                    for (int i = 0; i < maxRow; i++) {
+                        Row row1 = sheetAt.createRow(i);
+                        for (int j = 0; j < maxRank; j++) {
+                            Cell cell = row1.createCell(j);
+                            String string = CellReference.convertNumToColString(cell.getAddress().getColumn());
+                            List<String> strings = map.get(string);
+                            if (strings != null && !strings.isEmpty()) {
+                                if (strings.size() > maxRow) {
+                                    cell.setCellValue(strings.get(maxRow));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                flag = fileClient.upload(fileKey, fileName, ExcelModelKit.getWorkbookByteArray(sheets));
+            }
+
+        } catch (IOException | InvalidFormatException e) {
+            e.printStackTrace();
+            flag = false;
+        }
+
+        if (flag) {
+            String fileUrl1 = fileClient.getFileUrl(fileKey);
+            if (!StringKit.isEmpty(fileUrl1)) {
+                response.fileUrl = fileUrl1;
+            } else {
+                return json(BaseResponse.CODE_FAILURE, "获取模板文件失败", response);
+            }
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "获取模板文件失败", response);
+        }
+
+        return json(BaseResponse.CODE_SUCCESS, "获取模板文件成功", response);
     }
 
     /**

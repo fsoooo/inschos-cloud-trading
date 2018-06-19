@@ -18,22 +18,22 @@ public class OfflineInsurancePolicyModel {
 
     static {
         COLUMN_FIELD_MAP = new HashMap<>();
-        COLUMN_FIELD_MAP.put("A", "warranty_code");
-        COLUMN_FIELD_MAP.put("B", "reason");
-//        COLUMN_FIELD_MAP.put("C", "");
-//        COLUMN_FIELD_MAP.put("D", "");
-//        COLUMN_FIELD_MAP.put("E", "");
-//        COLUMN_FIELD_MAP.put("F", "");
-//        COLUMN_FIELD_MAP.put("G", "");
-//        COLUMN_FIELD_MAP.put("H", "");
-//        COLUMN_FIELD_MAP.put("I", "");
-//        COLUMN_FIELD_MAP.put("J", "");
-//        COLUMN_FIELD_MAP.put("K", "");
-//        COLUMN_FIELD_MAP.put("L", "");
-//        COLUMN_FIELD_MAP.put("M", "");
-//        COLUMN_FIELD_MAP.put("N", "");
-//        COLUMN_FIELD_MAP.put("O", "");
-//        COLUMN_FIELD_MAP.put("P", "");
+        COLUMN_FIELD_MAP.put("A", "insured_name");
+        COLUMN_FIELD_MAP.put("B", "policy_holder_name");
+        COLUMN_FIELD_MAP.put("C", "insurance_company");
+        COLUMN_FIELD_MAP.put("D", "insurance_type");
+        COLUMN_FIELD_MAP.put("E", "warranty_code");
+        COLUMN_FIELD_MAP.put("F", "payment_time");
+        COLUMN_FIELD_MAP.put("G", "order_time");
+        COLUMN_FIELD_MAP.put("H", "real_income_time");
+        COLUMN_FIELD_MAP.put("I", "start_time");
+        COLUMN_FIELD_MAP.put("J", "end_time");
+        COLUMN_FIELD_MAP.put("K", "premium");
+        COLUMN_FIELD_MAP.put("L", "pay_status");
+        COLUMN_FIELD_MAP.put("M", "brokerage");
+        COLUMN_FIELD_MAP.put("N", "channel_name");
+        COLUMN_FIELD_MAP.put("O", "agent_name");
+        COLUMN_FIELD_MAP.put("P", "reason");
 //        COLUMN_FIELD_MAP.put("Q", "");
 //        COLUMN_FIELD_MAP.put("R", "");
 //        COLUMN_FIELD_MAP.put("S", "");
@@ -168,7 +168,21 @@ public class OfflineInsurancePolicyModel {
 
     public static OfflineInsurancePolicyModel getTitleModel() {
         OfflineInsurancePolicyModel title = new OfflineInsurancePolicyModel();
+        title.insured_name = "被保险人";
+        title.policy_holder_name = "投保人";
+        title.insurance_company = "保险公司";
+        title.insurance_type = "险种";
         title.warranty_code = "保单号";
+        title.payment_time = "缴费期";
+        title.order_time = "签单日期";
+        title.real_income_time = "实收日期";
+        title.start_time = "起保时间";
+        title.end_time = "终止时间";
+        title.premium = "保费";
+        title.pay_status = "保费支付状态";
+        title.brokerage = "应收佣金";
+        title.channel_name = "归属机构";
+        title.agent_name = "归属代理";
         title.reason = "导入失败原因";
         return title;
     }

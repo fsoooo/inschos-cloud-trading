@@ -64,6 +64,14 @@ public class InsurancePolicy {
         public OfflineInsurancePolicyDetail data;
     }
 
+    public static class GetOfflineInsurancePolicyInputTemplateRequest extends BaseRequest {
+
+    }
+
+    public static class GetOfflineInsurancePolicyInputTemplateResponse extends BaseResponse {
+        public String fileUrl;
+    }
+
     public static class GetOfflineInsurancePolicyListRequest extends BaseRequest {
         public String companyName;
         public String channelName;
@@ -1097,6 +1105,8 @@ public class InsurancePolicy {
     public static class OfflineInsurancePolicyDetail {
         public String excelFileKey;
         public String excelFileUrl;
+        public String successCount;
+        public String failCount;
         public List<OfflineInsurancePolicy> list;
     }
 
