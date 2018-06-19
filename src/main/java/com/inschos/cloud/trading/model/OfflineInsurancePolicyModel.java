@@ -62,9 +62,79 @@ public class OfflineInsurancePolicyModel {
     public String warranty_uuid;
 
     /**
+     * 被保险人
+     */
+    public String insured_name;
+
+    /**
+     * 投保人
+     */
+    public String policy_holder_name;
+
+    /**
+     * 保险公司
+     */
+    public String insurance_company;
+
+    /**
+     * 险种
+     */
+    public String insurance_type;
+
+    /**
      * 保单号
      */
     public String warranty_code;
+
+    /**
+     * 缴费期
+     */
+    public String payment_time;
+
+    /**
+     * 签单日期
+     */
+    public String order_time;
+
+    /**
+     * 实收日期
+     */
+    public String real_income_time;
+
+    /**
+     * 起保时间
+     */
+    public String start_time;
+
+    /**
+     * 终止时间
+     */
+    public String end_time;
+
+    /**
+     * 保费
+     */
+    public String premium;
+
+    /**
+     * 保费支付状态
+     */
+    public String pay_status;
+
+    /**
+     * 应收佣金
+     */
+    public String brokerage;
+
+    /**
+     * 归属机构
+     */
+    public String channel_name;
+
+    /**
+     * 归属代理
+     */
+    public String agent_name;
 
     /**
      * 创建时间

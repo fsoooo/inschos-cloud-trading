@@ -64,6 +64,20 @@ public class InsurancePolicy {
         public OfflineInsurancePolicyDetail data;
     }
 
+    public static class GetOfflineInsurancePolicyListRequest extends BaseRequest {
+        public String companyName;
+        public String channelName;
+        public String productName;
+        public String timeType;
+        public String startTime;
+        public String endTime;
+    }
+
+    public static class GetOfflineInsurancePolicyListResponse extends BaseResponse {
+
+    }
+
+
     public static class GetInsurancePolicyListByActualPayTimeRequest extends BaseRequest {
         // 起保开始时间
         public String startTime;
@@ -1088,7 +1102,74 @@ public class InsurancePolicy {
 
     public static class OfflineInsurancePolicy {
 
+        // 主键id
+        public String id;
+
+        // 业管id
+        public String managerUuid;
+
+        // 保单唯一标识
+        public String warrantyUuid;
+
+        // 被保险人
+        public String insuredName;
+
+        // 投保人
+        public String policyHolderName;
+
+        // 保险公司
+        public String insuranceCompany;
+
+        // 险种
+        public String insuranceType;
+
+        // 保单号
         public String warrantyCode;
+
+        // 缴费期
+        public String paymentTime;
+        public String paymentTimeText;
+
+        // 签单日期
+        public String orderTime;
+        public String orderTimeText;
+
+        // 实收日期
+        public String realIncomeTime;
+        public String realIncomeTimeText;
+
+        // 起保时间
+        public String startTime;
+        public String startTimeText;
+
+        // 终止时间
+        public String endTime;
+        public String endTimeText;
+
+        // 保费
+        public String premium;
+        public String premiumText;
+
+        // 保费支付状态
+        public String payStatus;
+
+        // 应收佣金
+        public String brokerage;
+        public String brokerageText;
+
+        // 归属机构
+        public String channelName;
+
+        // 归属代理
+        public String agentName;
+
+        // 创建时间
+        public String createdAt;
+        public String createdAtText;
+
+        // 结束时间
+        public String updatedAt;
+        public String updatedAtText;
 
         public String reason;
 
@@ -1097,7 +1178,55 @@ public class InsurancePolicy {
         }
 
         public OfflineInsurancePolicy(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
+            if (offlineInsurancePolicyModel == null) {
+                return;
+            }
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            this.id = offlineInsurancePolicyModel.id;
+            this.managerUuid = offlineInsurancePolicyModel.manager_uuid;
+            this.warrantyUuid = offlineInsurancePolicyModel.warranty_uuid;
+            this.insuredName = offlineInsurancePolicyModel.insured_name;
+            this.policyHolderName = offlineInsurancePolicyModel.policy_holder_name;
+            this.insuranceCompany = offlineInsurancePolicyModel.insurance_company;
+            this.insuranceType = offlineInsurancePolicyModel.insurance_type;
             this.warrantyCode = offlineInsurancePolicyModel.warranty_code;
+            this.paymentTime = offlineInsurancePolicyModel.payment_time;
+            if (StringKit.isInteger(this.paymentTime)) {
+                this.paymentTimeText = sdf.format(new Date(Long.valueOf(this.paymentTime)));
+            }
+            this.orderTime = offlineInsurancePolicyModel.order_time;
+            if (StringKit.isInteger(this.orderTime)) {
+                this.orderTimeText = sdf.format(new Date(Long.valueOf(this.orderTime)));
+            }
+            this.realIncomeTime = offlineInsurancePolicyModel.real_income_time;
+            if (StringKit.isInteger(this.realIncomeTime)) {
+                this.realIncomeTimeText = sdf.format(new Date(Long.valueOf(this.realIncomeTime)));
+            }
+            this.startTime = offlineInsurancePolicyModel.start_time;
+            if (StringKit.isInteger(this.startTime)) {
+                this.startTimeText = sdf.format(new Date(Long.valueOf(this.startTime)));
+            }
+            this.endTime = offlineInsurancePolicyModel.end_time;
+            if (StringKit.isInteger(this.endTime)) {
+                this.endTimeText = sdf.format(new Date(Long.valueOf(this.endTime)));
+            }
+            this.premium = offlineInsurancePolicyModel.premium;
+            this.premiumText = "¥" + this.premium;
+            this.payStatus = offlineInsurancePolicyModel.pay_status;
+            this.brokerage = offlineInsurancePolicyModel.brokerage;
+            this.brokerageText = "¥" + this.brokerage;
+            this.channelName = offlineInsurancePolicyModel.channel_name;
+            this.agentName = offlineInsurancePolicyModel.agent_name;
+            this.createdAt = offlineInsurancePolicyModel.created_at;
+            if (StringKit.isInteger(this.createdAt)) {
+                this.createdAtText = sdf.format(new Date(Long.valueOf(this.createdAt)));
+            }
+            this.updatedAt = offlineInsurancePolicyModel.updated_at;
+            if (StringKit.isInteger(this.updatedAt)) {
+                this.updatedAtText = sdf.format(new Date(Long.valueOf(this.updatedAt)));
+            }
             this.reason = offlineInsurancePolicyModel.reason;
         }
 

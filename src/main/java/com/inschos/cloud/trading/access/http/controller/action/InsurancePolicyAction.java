@@ -635,6 +635,20 @@ public class InsurancePolicyAction extends BaseAction {
     }
 
     /**
+     * 线下单列表
+     *
+     * @param actionBean
+     * @return
+     */
+    public String getOfflineInsurancePolicyList(ActionBean actionBean) {
+        return "";
+    }
+
+    public String getOfflineInsurancePolicyDetail(ActionBean actionBean) {
+        return "";
+    }
+
+    /**
      * FINISH: 2018/6/8
      * 保单报表
      *

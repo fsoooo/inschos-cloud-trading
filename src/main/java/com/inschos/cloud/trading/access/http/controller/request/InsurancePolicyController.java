@@ -91,6 +91,20 @@ public class InsurancePolicyController {
         return insurancePolicyAction.offlineInsurancePolicyInput(actionBean);
     }
 
+    @GetActionBeanAnnotation
+    @RequestMapping("get_offline_insurance_policy_list")
+    @ResponseBody
+    public String getOfflineInsurancePolicyList(ActionBean actionBean) {
+        return insurancePolicyAction.getOfflineInsurancePolicyList(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("get_offline_insurance_policy_detail")
+    @ResponseBody
+    public String getOfflineInsurancePolicyDetail(ActionBean actionBean) {
+        return insurancePolicyAction.getOfflineInsurancePolicyDetail(actionBean);
+    }
+
     @GetActionBeanAnnotation(isCheckAccess = false)
     @RequestMapping("setTest")
     @ResponseBody
