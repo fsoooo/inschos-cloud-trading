@@ -2,10 +2,9 @@ package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.StringKit;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 创建日期：2018/5/29 on 18:11
@@ -158,7 +157,22 @@ public class OfflineInsurancePolicyModel {
     public String state;
 
     public String reason;
-    public String reasonField;
+
+    public List<ErrorReason> reasonList;
+
+    public static class ErrorReason {
+        public String reason;
+        public String reasonField;
+
+        public ErrorReason() {
+
+        }
+
+        public ErrorReason(String reason, String reasonField) {
+            this.reason = reason;
+            this.reasonField = reasonField;
+        }
+    }
 
     public Page page;
 
@@ -168,7 +182,75 @@ public class OfflineInsurancePolicyModel {
     public String time_type;
 
     public boolean isEnable() {
-        return !StringKit.isEmpty(warranty_code);
+        if (reasonList == null) {
+            reasonList = new ArrayList<>();
+        }
+
+        boolean flag = true;
+
+        if (StringKit.isEmpty(warranty_code)) {
+            flag = false;
+            reasonList.add(new ErrorReason("保单号不能为空", "warranty_code"));
+        }
+
+        if (!StringKit.isEmpty(order_time)) {
+            String ot = parseMillisecond(order_time);
+            if (ot == null) {
+                flag = false;
+                reasonList.add(new ErrorReason("签单日期格式错误（年/月/日）", "order_time"));
+            } else {
+                order_time = ot;
+            }
+        }
+
+        if (!StringKit.isEmpty(real_income_time)) {
+            String rit = parseMillisecond(real_income_time);
+            if (rit == null) {
+                flag = false;
+                reasonList.add(new ErrorReason("实收日期格式错误（年/月/日）", "real_income_time"));
+            } else {
+                real_income_time = rit;
+            }
+        }
+
+        if (!StringKit.isEmpty(start_time)) {
+            String st = parseMillisecond(start_time);
+            if (st == null) {
+                flag = false;
+                reasonList.add(new ErrorReason("起保时间格式错误（年/月/日）", "start_time"));
+            } else {
+                start_time = st;
+            }
+        }
+
+        if (!StringKit.isEmpty(end_time)) {
+            String et = parseMillisecond(end_time);
+            if (et == null) {
+                flag = false;
+                reasonList.add(new ErrorReason("终止时间格式错误（年/月/日）", "end_time"));
+            } else {
+                end_time = et;
+            }
+        }
+
+        if (!StringKit.isEmpty(premium) && !StringKit.isNumeric(premium)) {
+            flag = false;
+            reasonList.add(new ErrorReason("保费必须是数字", "premium"));
+        }
+
+        if (!StringKit.isEmpty(brokerage) && !StringKit.isNumeric(brokerage)) {
+            flag = false;
+            reasonList.add(new ErrorReason("应收佣金必须是数字", "brokerage"));
+        }
+
+        return flag;
+    }
+
+    public void addErrorReason(String reason, String reasonField) {
+        if (reasonList == null) {
+            reasonList = new ArrayList<>();
+        }
+        reasonList.add(new ErrorReason(reason, reasonField));
     }
 
     public boolean isEmptyLine() {
@@ -199,6 +281,27 @@ public class OfflineInsurancePolicyModel {
         title.agent_name = "归属代理";
         title.reason = "导入失败原因";
         return title;
+    }
+
+    /**
+     * 格式化时间戳用
+     *
+     * @param time 时间
+     * @return showDate指定sdf的格式
+     */
+    private String parseMillisecond(String time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        if (!StringKit.isEmpty(time)) {
+            try {
+                Date parse = sdf.parse(time);
+                return String.valueOf(parse.getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
 }

@@ -549,7 +549,6 @@ public class InsurancePolicyModel {
 
     public String premium;
     public String pay_status;
-
-    public Set<String> uuids;
+    public String actual_pay_time;
 
 }

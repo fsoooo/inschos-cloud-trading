@@ -5,6 +5,7 @@ import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
 import com.inschos.cloud.trading.model.BrokerageStatisticListModel;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
+import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.PremiumStatisticModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -80,16 +81,24 @@ public class CustWarrantyCostDao extends BaseDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public List<PremiumStatisticModel> findCustWarrantyCostStatistic(CustWarrantyCostModel custWarrantyCostModel){
+    public List<PremiumStatisticModel> findCustWarrantyCostStatistic(CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.findCustWarrantyCostStatistic(custWarrantyCostModel);
     }
 
-    public List<BrokerageStatisticListModel> findInsurancePolicyBrokerageStatisticList(CustWarrantyCostModel custWarrantyCostModel){
+    public List<BrokerageStatisticListModel> findInsurancePolicyBrokerageStatisticList(CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticList(custWarrantyCostModel);
     }
 
-    public long findInsurancePolicyBrokerageStatisticListCount(CustWarrantyCostModel custWarrantyCostModel){
+    public long findInsurancePolicyBrokerageStatisticListCount(CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticListCount(custWarrantyCostModel);
+    }
+
+    public List<InsurancePolicyModel> findInsurancePolicyBillListForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
+        return custWarrantyCostMapper.findInsurancePolicyBillListForManagerSystem(insurancePolicyModel);
+    }
+
+    public long findInsurancePolicyBillCountForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
+        return custWarrantyCostMapper.findInsurancePolicyBillCountForManagerSystem(insurancePolicyModel);
     }
 
 }

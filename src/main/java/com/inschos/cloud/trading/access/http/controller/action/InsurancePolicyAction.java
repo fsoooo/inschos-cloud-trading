@@ -303,11 +303,15 @@ public class InsurancePolicyAction extends BaseAction {
 
         long total = insurancePolicyDao.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
 
+        insurancePolicyModel.page = setPage(null, "1", "5");
+
         response.data = new InsurancePolicy.DownInsurancePolicy();
 
         response.data.count = "一共 " + String.valueOf(total) + " 条数据";
         long l = (total / 10) * 5;
         response.data.time = l + "秒";
+
+        response.data.list = dealInsurancePolicyResultList(insurancePolicyDao.findInsurancePolicyListForManagerSystem(insurancePolicyModel), false, true, true, true);
 
         return json(BaseResponse.CODE_SUCCESS, "获取数据量大小成功", response);
     }
@@ -544,6 +548,8 @@ public class InsurancePolicyAction extends BaseAction {
         int successCount = 0;
         int failCount = 0;
 
+        // TODO: 2018/6/20 校验保险公司与险种
+
         try {
             wb = WorkbookFactory.create(inputStream);
             String time = String.valueOf(System.currentTimeMillis());
@@ -564,21 +570,13 @@ public class InsurancePolicyAction extends BaseAction {
                         continue;
                     }
 
-                    if (!offlineInsurancePolicyModel.isEnable()) {
-                        offlineInsurancePolicyModel.reason = "缺少必填字段";
-                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
-                        errorList.add(offlineInsurancePolicyModel);
-                        failCount++;
-                        continue;
-                    }
+                    boolean success = offlineInsurancePolicyModel.isEnable();
 
                     OfflineInsurancePolicyModel offlineInsurance = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyCode(offlineInsurancePolicyModel.warranty_code);
 
                     if (offlineInsurance != null) {
-                        offlineInsurancePolicyModel.reason = "保单号重复";
-                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
-                        errorList.add(offlineInsurancePolicyModel);
-                        failCount++;
+                        offlineInsurancePolicyModel.addErrorReason("保单号重复", "warranty_code");
+                        success = false;
                     } else {
                         offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
                         offlineInsurancePolicyModel.warranty_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
@@ -587,14 +585,19 @@ public class InsurancePolicyAction extends BaseAction {
                         offlineInsurancePolicyModel.state = "1";
 
                         long l = offlineInsurancePolicyDao.addOfflineInsurancePolicy(offlineInsurancePolicyModel);
+
                         if (l <= 0) {
-                            offlineInsurancePolicyModel.reason = "添加数据失败";
-                            response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
-                            errorList.add(offlineInsurancePolicyModel);
-                            failCount++;
-                        } else {
-                            successCount++;
+                            offlineInsurancePolicyModel.addErrorReason("添加数据失败", "reason");
+                            success = false;
                         }
+                    }
+
+                    if (success) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
+                        errorList.add(offlineInsurancePolicyModel);
                     }
                 }
             }
@@ -646,7 +649,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         }
 
-        return json((flag ? BaseResponse.CODE_SUCCESS : BaseResponse.CODE_FAILURE), (flag ? "导入成功" : "部分导入失败"), response);
+        return json((flag ? BaseResponse.CODE_SUCCESS : BaseResponse.CODE_FAILURE), (flag ? "导入成功" : "导入失败"), response);
     }
 
     /**
@@ -984,8 +987,50 @@ public class InsurancePolicyAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取保单列表成功", response);
     }
 
+    /**
+     * 获取结算单列表
+     * {@link #dealInsurancePolicyResultList} 将列表处理为前段数据
+     *
+     * @param actionBean 请求bean
+     * @return 结算单列表json
+     */
     public String getInsurancePolicyBillListForManagerSystem(ActionBean actionBean) {
-        return "";
+        InsurancePolicy.GetInsurancePolicyListRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.GetInsurancePolicyListRequest.class);
+        InsurancePolicy.GetInsurancePolicyListResponse response = new InsurancePolicy.GetInsurancePolicyListResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+
+        String s = checkGetInsurancePolicyListParams(request, insurancePolicyModel);
+
+        if (!StringKit.isEmpty(s)) {
+            return json(BaseResponse.CODE_FAILURE, s, response);
+        }
+
+        insurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+
+        List<InsurancePolicyModel> insurancePolicyBillListForManagerSystem = custWarrantyCostDao.findInsurancePolicyBillListForManagerSystem(insurancePolicyModel);
+        long total = custWarrantyCostDao.findInsurancePolicyBillCountForManagerSystem(insurancePolicyModel);
+
+        response.data = dealInsurancePolicyResultList(insurancePolicyBillListForManagerSystem, false, false, true, true);
+
+        String lastId = "0";
+        if (response.data != null && !response.data.isEmpty()) {
+            lastId = response.data.get(response.data.size() - 1).id;
+        }
+
+        response.page = setPageBean(lastId, request.pageNum, request.pageSize, total, response.data == null ? 0 : response.data.size());
+
+        return json(BaseResponse.CODE_SUCCESS, "获取结算单列表成功", response);
     }
 
     // ====================================================================================================================================================================================

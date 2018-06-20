@@ -247,6 +247,12 @@ public class InsurancePolicy {
         //更新时间（显示用）
         public String updatedAtText;
 
+        //缴费时间
+        public String actualPayTime;
+
+        //缴费时间（显示用）
+        public String actualPayTimeText;
+
         // 被保险人
         public String insuredText;
 
@@ -336,7 +342,10 @@ public class InsurancePolicy {
             if (StringKit.isInteger(model.updated_at)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
             }
-
+            this.actualPayTime = model.actual_pay_time;
+            if (StringKit.isInteger(model.actual_pay_time)) {
+                this.actualPayTimeText = sdf.format(new Date(Long.valueOf(model.actual_pay_time)));
+            }
 
             this.expressEmail = model.express_email;
             this.expressAddress = model.express_address;
@@ -798,6 +807,10 @@ public class InsurancePolicy {
                 Date date = new Date(Long.valueOf(model.created_at));
                 this.createdAtText = sdf.format(date);
             }
+            this.actualPayTime = model.actual_pay_time;
+            if (StringKit.isInteger(model.actual_pay_time)) {
+                this.actualPayTimeText = sdf.format(new Date(Long.valueOf(model.actual_pay_time)));
+            }
             this.policyHolderName = model.policy_holder_name;
             this.policyHolderMobile = model.policy_holder_phone;
             this.carCode = model.car_code;
@@ -1199,7 +1212,9 @@ public class InsurancePolicy {
         public String updatedAt;
         public String updatedAtText;
 
-        public String reason;
+        // public String reason;
+
+        public List<OfflineInsurancePolicyModel.ErrorReason> reasonList;
 
         public OfflineInsurancePolicy() {
 
@@ -1268,7 +1283,7 @@ public class InsurancePolicy {
             if (StringKit.isInteger(this.updatedAt)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(this.updatedAt)));
             }
-            this.reason = offlineInsurancePolicyModel.reason;
+            this.reasonList = offlineInsurancePolicyModel.reasonList;
         }
 
     }
@@ -1449,6 +1464,7 @@ public class InsurancePolicy {
     public static class DownInsurancePolicy {
         public String count;
         public String time;
+        public List<InsurancePolicy.GetInsurancePolicyItemBean> list;
     }
 
 }
