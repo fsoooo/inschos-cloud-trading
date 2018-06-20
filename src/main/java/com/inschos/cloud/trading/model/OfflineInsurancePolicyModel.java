@@ -158,6 +158,7 @@ public class OfflineInsurancePolicyModel {
     public String state;
 
     public String reason;
+    public String reasonField;
 
     public Page page;
 
@@ -184,6 +185,7 @@ public class OfflineInsurancePolicyModel {
         title.policy_holder_name = "投保人";
         title.insurance_company = "保险公司";
         title.insurance_type = "险种";
+        title.insurance_product = "保险产品";
         title.warranty_code = "保单号";
         title.payment_time = "缴费期";
         title.order_time = "签单日期";
