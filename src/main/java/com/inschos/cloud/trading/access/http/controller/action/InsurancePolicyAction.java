@@ -481,7 +481,7 @@ public class InsurancePolicyAction extends BaseAction {
             response.data.brokerageText = "¥" + moneyFormat.format(new BigDecimal(response.data.brokerage));
 
             if (premium.compareTo(BigDecimal.ZERO) != 0) {
-                BigDecimal divide = brokerage.divide(premium, BigDecimal.ROUND_HALF_DOWN);
+                BigDecimal divide = brokerage.divide(premium, 6, BigDecimal.ROUND_HALF_DOWN);
                 response.data.brokeragePercentage = String.valueOf(divide.doubleValue());
                 divide = divide.multiply(new BigDecimal("100"));
                 response.data.brokeragePercentageText = decimalFormat.format(divide.doubleValue()) + "%";
@@ -492,7 +492,7 @@ public class InsurancePolicyAction extends BaseAction {
 
             BigDecimal bigDecimal = new BigDecimal(response.data.insurancePolicyCount);
             if (map.size() != 0 && bigDecimal.compareTo(BigDecimal.ZERO) != 0) {
-                BigDecimal divide = premium.divide(bigDecimal, BigDecimal.ROUND_HALF_DOWN);
+                BigDecimal divide = premium.divide(bigDecimal, 6, BigDecimal.ROUND_HALF_DOWN);
                 response.data.averagePremium = decimalFormat.format(divide.doubleValue());
                 response.data.averagePremiumText = "¥" + moneyFormat.format(new BigDecimal(response.data.averagePremium));
             } else {
@@ -1445,7 +1445,7 @@ public class InsurancePolicyAction extends BaseAction {
 
                 if (itemPremium.compareTo(BigDecimal.ZERO) != 0) {
                     if (!StringKit.equals(item.insurancePolicyCount, "0")) {
-                        BigDecimal divide = itemPremium.divide(insurancePolicyCount, BigDecimal.ROUND_HALF_DOWN);
+                        BigDecimal divide = itemPremium.divide(insurancePolicyCount, 6, BigDecimal.ROUND_HALF_DOWN);
                         item.averagePremium = moneyFormat.format(divide.doubleValue());
                         item.averagePremiumText = "¥" + item.averagePremium;
                     } else {
@@ -1454,7 +1454,7 @@ public class InsurancePolicyAction extends BaseAction {
                     }
 
                     if (premium.compareTo(BigDecimal.ZERO) != 0) {
-                        BigDecimal divide = itemPremium.divide(premium, BigDecimal.ROUND_HALF_DOWN);
+                        BigDecimal divide = itemPremium.divide(premium, 6, BigDecimal.ROUND_HALF_DOWN);
                         item.premiumPercentage = String.valueOf((divide.doubleValue()));
                         divide = divide.multiply(new BigDecimal("100"));
                         item.premiumPercentageText = decimalFormat.format(divide.doubleValue()) + "%";
@@ -1472,7 +1472,7 @@ public class InsurancePolicyAction extends BaseAction {
                 }
 
                 if (itemPremium.compareTo(BigDecimal.ZERO) != 0 && itemBrokerage.compareTo(BigDecimal.ZERO) != 0 && insurancePolicyCount.compareTo(BigDecimal.ZERO) != 0) {
-                    BigDecimal divide = itemBrokerage.divide(itemPremium, BigDecimal.ROUND_HALF_DOWN).divide(insurancePolicyCount, BigDecimal.ROUND_HALF_DOWN);
+                    BigDecimal divide = itemBrokerage.divide(itemPremium, 6, BigDecimal.ROUND_HALF_DOWN).divide(insurancePolicyCount, 6, BigDecimal.ROUND_HALF_DOWN);
                     item.averageBrokeragePercentage = String.valueOf((divide.doubleValue()));
                     divide = divide.multiply(new BigDecimal("100"));
                     item.averageBrokeragePercentageText = decimalFormat.format(divide.doubleValue()) + "%";

@@ -2376,18 +2376,18 @@ public class CarInsuranceAction extends BaseAction {
                             BigDecimal agentRate = new BigDecimal("0.00");
 
                             if (brokerage != null) {
-                                managerRate = new BigDecimal(brokerage.platformBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
-                                channelRate = new BigDecimal(brokerage.channelBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
-                                agentRate = new BigDecimal(brokerage.agentBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+                                managerRate = new BigDecimal(brokerage.platformBrokerage).divide(new BigDecimal(100), 6, BigDecimal.ROUND_HALF_DOWN);
+                                channelRate = new BigDecimal(brokerage.channelBrokerage).divide(new BigDecimal(100), 6, BigDecimal.ROUND_HALF_DOWN);
+                                agentRate = new BigDecimal(brokerage.agentBrokerage).divide(new BigDecimal(100), 6, BigDecimal.ROUND_HALF_DOWN);
 
                                 managerBrokerage = managerRate.multiply(premium);
                                 channelBrokerage = channelRate.multiply(premium);
                                 agentBrokerage = agentRate.multiply(premium);
                             }
 
-                            BigDecimal rate = new BigDecimal(0);
+                            BigDecimal rate = new BigDecimal("0.0000");
                             if (premium.compareTo(BigDecimal.ZERO) > 0) {
-                                rate = integral.divide(premium, BigDecimal.ROUND_HALF_DOWN);
+                                rate = integral.divide(premium, 6, BigDecimal.ROUND_HALF_DOWN);
                             }
 
                             CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
