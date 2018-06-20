@@ -2392,6 +2392,7 @@ public class CarInsuranceAction extends BaseAction {
 
                             CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
 
+                            custWarrantyBrokerageModel.warranty_uuid = carInfoModel.warranty_uuid;
                             custWarrantyBrokerageModel.updated_at = String.valueOf(System.currentTimeMillis());
                             custWarrantyBrokerageModel.setBrokerage(integral, integral, managerBrokerage, channelBrokerage, agentBrokerage);
                             custWarrantyBrokerageModel.setBrokerageRate(rate, rate, managerRate, channelRate, agentRate);
