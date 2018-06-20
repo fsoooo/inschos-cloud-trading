@@ -24,5 +24,7 @@ public interface CustWarrantyBrokerageMapper {
 
     List<BrokerageStatisticModel> findStatisticByAgent (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
 
+    Double findCustWarrantyBrokerageCarIntegral (String warranty_uuid);
 
+    int updateCustWarrantyBrokerageForCar (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
 }

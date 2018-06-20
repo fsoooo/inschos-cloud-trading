@@ -551,4 +551,12 @@ public class InsurancePolicyModel {
     public String pay_status;
     public String actual_pay_time;
 
+    // 需要查询佣金为1，不需要为0
+    public String needBrokerage = "0";
+    public String warranty_money;
+    public String ins_money;
+    public String manager_money;
+    public String channel_money;
+    public String agent_money;
+
 }

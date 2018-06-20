@@ -371,5 +371,24 @@ public class TimeKit {
         return time * 1000L - JET_LAG;
     }
 
-
+    /**
+     * 格式化时间戳用
+     *
+     * @param sdf      格式
+     * @param showDate 时间
+     * @return showDate指定sdf的格式
+     */
+    public static String parseMillisecondByShowDate(SimpleDateFormat sdf, String showDate) {
+        if (!StringKit.isEmpty(showDate)) {
+            try {
+                Date parse = sdf.parse(showDate);
+                return String.valueOf(parse.getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
 }

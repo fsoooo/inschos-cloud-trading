@@ -224,6 +224,8 @@ public class InsurancePolicyAction extends BaseAction {
         startRow += i;
         boolean flag;
 
+        insurancePolicyModel.needBrokerage = "1";
+
         do {
             insurancePolicyModel.page = setPage(lastId, null, pageSize);
 
@@ -304,6 +306,7 @@ public class InsurancePolicyAction extends BaseAction {
         long total = insurancePolicyDao.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
 
         insurancePolicyModel.page = setPage(null, "1", "5");
+        insurancePolicyModel.needBrokerage = "1";
 
         response.data = new InsurancePolicy.DownInsurancePolicy();
 
@@ -1160,9 +1163,19 @@ public class InsurancePolicyAction extends BaseAction {
                         String name = insuranceParticipantInsuredByWarrantyUuid.get(0).name;
                         if (size > 1) {
                             model.insuredText = name + "等" + size + "人";
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = 0; i < insuranceParticipantInsuredByWarrantyUuid.size(); i++) {
+                                sb.append(insuranceParticipantInsuredByWarrantyUuid.get(i).name);
+                                if (i != size - 1) {
+                                    sb.append(",");
+                                }
+                            }
+                            model.insuredDetailText = sb.toString();
                         } else {
                             model.insuredText = name;
+                            model.insuredDetailText = name;
                         }
+
                     }
                 }
 
