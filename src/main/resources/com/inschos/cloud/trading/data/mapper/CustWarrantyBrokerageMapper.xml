@@ -28,7 +28,7 @@
         select
         `car_integral`
         from cust_warranty_brokerage
-        WHERE `warranty_uuid`={_parameter}
+        WHERE `warranty_uuid`=#{_parameter}
     </select>
 
     <select id="findCustWarrantyBrokerageTotal"
