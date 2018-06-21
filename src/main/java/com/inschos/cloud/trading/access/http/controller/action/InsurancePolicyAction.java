@@ -590,7 +590,7 @@ public class InsurancePolicyAction extends BaseAction {
                         long l = offlineInsurancePolicyDao.addOfflineInsurancePolicy(offlineInsurancePolicyModel);
 
                         if (l <= 0) {
-                            offlineInsurancePolicyModel.addErrorReason("添加数据失败", "reason");
+                            offlineInsurancePolicyModel.addErrorReason("添加数据失败", "ADD_FAIL");
                             success = false;
                         }
                     }

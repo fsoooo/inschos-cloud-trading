@@ -829,12 +829,11 @@ public class InsurancePolicy {
             insurancePolicy.policyHolderName = "投保人";
             insurancePolicy.productName = "保险产品";
             insurancePolicy.insuranceCompanyName = "保险公司";
-            insurancePolicy.createdAtText = "时间";
             insurancePolicy.createdAtText = "签单日期";
             insurancePolicy.startTimeText = "起保日期";
             insurancePolicy.premiumText = "保费（元）";
             insurancePolicy.payStatusText = "保费支付状态";
-            // insurancePolicy.
+            insurancePolicy.insMoney = "应收佣金";
             insurancePolicy.channelName = "归属机构";
             insurancePolicy.agentName = "归属人员";
 
@@ -846,15 +845,18 @@ public class InsurancePolicy {
 
     static {
         CAR_FIELD_MAP = new HashMap<>();
-        CAR_FIELD_MAP.put("A", "prePolicyNo");
-        CAR_FIELD_MAP.put("B", "warrantyCode");
-        CAR_FIELD_MAP.put("C", "productName");
-        CAR_FIELD_MAP.put("D", "policyHolderName");
-        CAR_FIELD_MAP.put("E", "policyHolderMobile");
-        CAR_FIELD_MAP.put("F", "carCode");
-        CAR_FIELD_MAP.put("G", "premiumText");
-        CAR_FIELD_MAP.put("H", "createdAtText");
-        CAR_FIELD_MAP.put("I", "warrantyStatusText");
+        CAR_FIELD_MAP.put("A", "warrantyCode");
+        CAR_FIELD_MAP.put("B", "insuredDetailText");
+        CAR_FIELD_MAP.put("C", "policyHolderName");
+        CAR_FIELD_MAP.put("D", "productName");
+        CAR_FIELD_MAP.put("E", "insuranceCompanyName");
+        CAR_FIELD_MAP.put("F", "createdAtText");
+        CAR_FIELD_MAP.put("G", "startTimeText");
+        CAR_FIELD_MAP.put("H", "premiumText");
+        CAR_FIELD_MAP.put("I", "payStatusText");
+        CAR_FIELD_MAP.put("J", "insMoney");
+        CAR_FIELD_MAP.put("K", "channelName");
+        CAR_FIELD_MAP.put("L", "agentName");
     }
 
     public static final Map<String, String> PERSON_FIELD_MAP;
@@ -1219,6 +1221,7 @@ public class InsurancePolicy {
 
         // public String reason;
 
+        public String reason;
         public List<OfflineInsurancePolicyModel.ErrorReason> reasonList;
 
         public OfflineInsurancePolicy() {
@@ -1289,6 +1292,18 @@ public class InsurancePolicy {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(this.updatedAt)));
             }
             this.reasonList = offlineInsurancePolicyModel.reasonList;
+            if (this.reasonList != null && !this.reasonList.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                int size = this.reasonList.size();
+                for (int i = 0; i < size; i++) {
+                    OfflineInsurancePolicyModel.ErrorReason errorReason = this.reasonList.get(i);
+                    sb.append(errorReason.reason);
+                    if (i != size - 1) {
+                        sb.append("，");
+                    }
+                }
+                this.reason = sb.toString();
+            }
         }
 
     }
