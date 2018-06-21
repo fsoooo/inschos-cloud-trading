@@ -580,7 +580,7 @@ public class InsurancePolicyAction extends BaseAction {
                     if (offlineInsurance != null) {
                         offlineInsurancePolicyModel.addErrorReason("保单号重复", "warranty_code");
                         success = false;
-                    } else {
+                    } else if (success) {
                         offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
                         offlineInsurancePolicyModel.warranty_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
                         offlineInsurancePolicyModel.created_at = time;
