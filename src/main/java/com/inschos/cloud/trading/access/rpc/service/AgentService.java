@@ -17,4 +17,6 @@ public interface AgentService {
 
     List<AgentBean> getAllBySearchName(String managerUuid, String searchName);
 
+    List<AgentBean> getAgentListByIds(List<Long> agentIds);
+
 }

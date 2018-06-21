@@ -247,10 +247,29 @@ public class OfflineInsurancePolicyModel {
     }
 
     public void addErrorReason(String reason, String reasonField) {
+        if (StringKit.isEmpty(reason) || StringKit.isEmpty(reasonField)) {
+            return;
+        }
+
         if (reasonList == null) {
             reasonList = new ArrayList<>();
         }
-        reasonList.add(new ErrorReason(reason, reasonField));
+
+        boolean flag = false;
+        ErrorReason old = null;
+        for (ErrorReason errorReason : reasonList) {
+            if (StringKit.equals(errorReason.reasonField, reasonField)) {
+                flag = true;
+                old = errorReason;
+                break;
+            }
+        }
+
+        if (flag) {
+            old.reason = old.reason + reason;
+        } else {
+            reasonList.add(new ErrorReason(reason, reasonField));
+        }
     }
 
     public boolean isEmptyLine() {

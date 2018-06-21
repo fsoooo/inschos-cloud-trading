@@ -20,7 +20,11 @@ public interface ProductService {
 
     List<ProductBean> getProductList(List<String> ids);
 
-    public List<ProductCategory> getCategoryList(String level);
+    List<ProductCategory> getCategoryList(String level);
 
-    public List<InsuranceCo> getProductCoList(String managerUuid);
+    List<InsuranceCo> getProductCoList(String managerUuid);
+
+    List<InsuranceCompanyBean> getListInsuranceCompany(InsuranceCompanyBean insuranceCompanyBean);
+
+    List<ProductBean> getListProduct(String name, String managerUuid);
 }

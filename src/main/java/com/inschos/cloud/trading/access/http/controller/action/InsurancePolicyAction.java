@@ -515,6 +515,7 @@ public class InsurancePolicyAction extends BaseAction {
      * @param actionBean 请求bean
      * @return 保单统计json
      */
+    @SuppressWarnings("ConstantConditions")
     public String offlineInsurancePolicyInput(ActionBean actionBean) {
         InsurancePolicy.OfflineInsurancePolicyInputRequest request = JsonKit.json2Bean(actionBean.body, InsurancePolicy.OfflineInsurancePolicyInputRequest.class);
         InsurancePolicy.OfflineInsurancePolicyInputResponse response = new InsurancePolicy.OfflineInsurancePolicyInputResponse();
@@ -551,7 +552,8 @@ public class InsurancePolicyAction extends BaseAction {
         int successCount = 0;
         int failCount = 0;
 
-        // TODO: 2018/6/20 校验保险公司与险种
+        List<InsuranceCo> productCoList = productClient.getProductCoList(actionBean.managerUuid);
+        List<ProductCategory> categoryList = productClient.getCategoryList("1");
 
         try {
             wb = WorkbookFactory.create(inputStream);
@@ -574,6 +576,35 @@ public class InsurancePolicyAction extends BaseAction {
                     }
 
                     boolean success = offlineInsurancePolicyModel.isEnable();
+
+
+                    if (!StringKit.isEmpty(offlineInsurancePolicyModel.insurance_company) && productCoList != null && !productCoList.isEmpty()) {
+                        boolean b = false;
+                        for (InsuranceCo insuranceCo : productCoList) {
+                            if (StringKit.equals(insuranceCo.name, offlineInsurancePolicyModel.insurance_company)) {
+                                b = true;
+                                break;
+                            }
+                        }
+
+                        if (!b) {
+                            offlineInsurancePolicyModel.addErrorReason("insurance_company", "保险公司名称不存在");
+                        }
+                    }
+
+                    if (!StringKit.isEmpty(offlineInsurancePolicyModel.insurance_type) && categoryList != null && !categoryList.isEmpty()) {
+                        boolean b = false;
+                        for (ProductCategory productCategory : categoryList) {
+                            if (StringKit.equals(productCategory.name, offlineInsurancePolicyModel.insurance_type)) {
+                                b = true;
+                                break;
+                            }
+                        }
+
+                        if (!b) {
+                            offlineInsurancePolicyModel.addErrorReason("insurance_type", "保险产品名称不存在");
+                        }
+                    }
 
                     OfflineInsurancePolicyModel offlineInsurance = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyCode(offlineInsurancePolicyModel.warranty_code);
 
@@ -1105,14 +1136,40 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyModel.time_type = request.timeType;
 
-        // TODO: 2018/6/19  
-//        if (!StringKit.isEmpty(request.insuranceCompanyKey)) {
-//            insurancePolicyModel.insurance_co_id_string;
-//        }
-//
-//        if (!StringKit.isEmpty(request.insuranceProductKey)) {
-//            insurancePolicyModel.product_id_string;
-//        }
+        if (!StringKit.isEmpty(request.insuranceCompanyKey)) {
+            InsuranceCompanyBean insuranceCompanyBean = new InsuranceCompanyBean();
+            insuranceCompanyBean.name = request.insuranceCompanyKey;
+            insuranceCompanyBean.managerUuid = insurancePolicyModel.manager_uuid;
+            List<InsuranceCompanyBean> listInsuranceCompany = productClient.getListInsuranceCompany(insuranceCompanyBean);
+            if (listInsuranceCompany != null && !listInsuranceCompany.isEmpty()) {
+                int size = listInsuranceCompany.size();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < size; i++) {
+                    InsuranceCompanyBean insuranceCompanyBean1 = listInsuranceCompany.get(i);
+                    sb.append(insuranceCompanyBean1.id);
+                    if (i != size - 1) {
+                        sb.append(",");
+                    }
+                }
+                insurancePolicyModel.insurance_co_id_string = sb.toString();
+            }
+        }
+
+        if (!StringKit.isEmpty(request.insuranceProductKey)) {
+            List<ProductBean> listProduct = productClient.getListProduct(request.insuranceProductKey, insurancePolicyModel.manager_uuid);
+            if (listProduct != null && !listProduct.isEmpty()) {
+                int size = listProduct.size();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < listProduct.size(); i++) {
+                    ProductBean productBean = listProduct.get(i);
+                    sb.append(productBean.id);
+                    if (i != size - 1) {
+                        sb.append(",");
+                    }
+                }
+                insurancePolicyModel.product_id_string = sb.toString();
+            }
+        }
 
         if (StringKit.isEmpty(request.pageSize)) {
             request.pageSize = "10";
@@ -1218,20 +1275,17 @@ public class InsurancePolicyAction extends BaseAction {
                 }
             }
 
-            // TODO: 2018/6/19  
             Map<String, AgentBean> agentMap = new HashMap<>();
             if (needAgent) {
-//                List<String> agentIds = new ArrayList<>(agentId);
-//
-//                if (!ids.isEmpty()) {
-//                    List<AgentBean> agentList = new ArrayList<>();
-//
-//                    if (agentList != null && !agentList.isEmpty()) {
-//                        for (AgentBean agentBean : agentList) {
-//                            agentMap.put(String.valueOf(agentBean.id), agentBean);
-//                        }
-//                    }
-//                }
+                List<String> agentIds = new ArrayList<>(agentId);
+                if (!ids.isEmpty()) {
+                    List<AgentBean> agentList = agentClient.getAgentListByIds(agentIds);
+                    if (agentList != null && !agentList.isEmpty()) {
+                        for (AgentBean agentBean : agentList) {
+                            agentMap.put(String.valueOf(agentBean.id), agentBean);
+                        }
+                    }
+                }
             }
 
             for (InsurancePolicy.GetInsurancePolicyItemBean getInsurancePolicyItemBean : result) {
