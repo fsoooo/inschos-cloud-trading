@@ -585,20 +585,20 @@ public class CarInsuranceAction extends BaseAction {
                         }
                     });
 
-
                     response.data = list;
-
-                    str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
                 } else {
                     if (response.data == null) {
                         response.data = new ArrayList<>();
                     } else {
                         response.data.clear();
                     }
-
-                    str = json(BaseResponse.CODE_FAILURE, "您选择的地区暂不支持在线投保", response);
                 }
 
+                if (response.data == null || response.data.isEmpty()) {
+                    str = json(BaseResponse.CODE_FAILURE, "您选择的地区暂不支持在线投保", response);
+                } else {
+                    str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
+                }
 
             } else {
                 if (StringKit.equals(CarInsuranceResponse.ERROR_SI100100000063, result.msgCode)) {
