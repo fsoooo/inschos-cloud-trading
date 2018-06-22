@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.assist.kit.TimeKit;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -193,41 +194,46 @@ public class OfflineInsurancePolicyModel {
             reasonList.add(new ErrorReason("保单号不能为空", "warranty_code"));
         }
 
+        List<SimpleDateFormat> sdfs = new ArrayList<>();
+        sdfs.add(new SimpleDateFormat("yyyy/MM/dd"));
+        sdfs.add(new SimpleDateFormat("yyyy-MM-dd"));
+        sdfs.add(new SimpleDateFormat("yyyy年MM月dd日"));
+
         if (!StringKit.isEmpty(order_time)) {
-            String ot = parseMillisecond(order_time);
+            String ot = TimeKit.parseMillisecondByShowDate(sdfs, order_time);
             if (ot == null) {
                 flag = false;
-                reasonList.add(new ErrorReason("签单日期格式错误（年/月/日）", "order_time"));
+                reasonList.add(new ErrorReason("签单日期格式错误（年/月/日 或者 年-月-日）", "order_time"));
             } else {
                 order_time = ot;
             }
         }
 
         if (!StringKit.isEmpty(real_income_time)) {
-            String rit = parseMillisecond(real_income_time);
+            String rit = TimeKit.parseMillisecondByShowDate(sdfs, real_income_time);
             if (rit == null) {
                 flag = false;
-                reasonList.add(new ErrorReason("实收日期格式错误（年/月/日）", "real_income_time"));
+                reasonList.add(new ErrorReason("实收日期格式错误（年/月/日 或者 年-月-日）", "real_income_time"));
             } else {
                 real_income_time = rit;
             }
         }
 
         if (!StringKit.isEmpty(start_time)) {
-            String st = parseMillisecond(start_time);
+            String st = TimeKit.parseMillisecondByShowDate(sdfs, start_time);
             if (st == null) {
                 flag = false;
-                reasonList.add(new ErrorReason("起保时间格式错误（年/月/日）", "start_time"));
+                reasonList.add(new ErrorReason("起保时间格式错误（年/月/日 或者 年-月-日）", "start_time"));
             } else {
                 start_time = st;
             }
         }
 
         if (!StringKit.isEmpty(end_time)) {
-            String et = parseMillisecond(end_time);
+            String et = TimeKit.parseMillisecondByShowDate(sdfs, end_time);
             if (et == null) {
                 flag = false;
-                reasonList.add(new ErrorReason("终止时间格式错误（年/月/日）", "end_time"));
+                reasonList.add(new ErrorReason("终止时间格式错误（年/月/日 或者 年-月-日）", "end_time"));
             } else {
                 end_time = et;
             }
@@ -300,27 +306,6 @@ public class OfflineInsurancePolicyModel {
         title.agent_name = "归属代理";
         title.reason = "导入失败原因";
         return title;
-    }
-
-    /**
-     * 格式化时间戳用
-     *
-     * @param time 时间
-     * @return showDate指定sdf的格式
-     */
-    private String parseMillisecond(String time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-        if (!StringKit.isEmpty(time)) {
-            try {
-                Date parse = sdf.parse(time);
-                return String.valueOf(parse.getTime());
-            } catch (ParseException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else {
-            return null;
-        }
     }
 
 }

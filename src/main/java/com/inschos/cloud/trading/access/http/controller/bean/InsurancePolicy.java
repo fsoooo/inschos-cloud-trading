@@ -1176,7 +1176,7 @@ public class InsurancePolicy {
 
         // 缴费期
         public String paymentTime;
-        public String paymentTimeText;
+//        public String paymentTimeText;
 
         // 签单日期
         public String orderTime;
@@ -1246,9 +1246,9 @@ public class InsurancePolicy {
             this.insuranceProduct = offlineInsurancePolicyModel.insurance_product;
             this.warrantyCode = offlineInsurancePolicyModel.warranty_code;
             this.paymentTime = offlineInsurancePolicyModel.payment_time;
-            if (StringKit.isInteger(this.paymentTime)) {
-                this.paymentTimeText = sdf.format(new Date(Long.valueOf(this.paymentTime)));
-            }
+//            if (StringKit.isInteger(this.paymentTime)) {
+//                this.paymentTimeText = sdf.format(new Date(Long.valueOf(this.paymentTime)));
+//            }
             this.orderTime = offlineInsurancePolicyModel.order_time;
             if (StringKit.isInteger(this.orderTime)) {
                 this.orderTimeText = sdf.format(new Date(Long.valueOf(this.orderTime)));

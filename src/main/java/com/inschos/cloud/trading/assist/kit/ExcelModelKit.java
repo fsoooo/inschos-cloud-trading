@@ -1,18 +1,17 @@
 package com.inschos.cloud.trading.assist.kit;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.swing.text.DateFormatter;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -57,9 +56,24 @@ public class ExcelModelKit {
                 String columnName = CellReference.convertNumToColString(cell.getAddress().getColumn());
                 String fieldName = map.get(columnName);
                 Field field = fieldMap.get(fieldName);
-
                 if (field != null) {
-                    field.set(t, formatter.formatCellValue(cell).trim());
+                    String value = "";
+                    switch (cell.getCellType()) {
+                        case HSSFCell.CELL_TYPE_NUMERIC:
+                            if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                                //注：format格式 yyyy-MM-dd hh:mm:ss 中小时为12小时制，若要24小时制，则把小h变为H即可，yyyy-MM-dd HH:mm:ss
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                                value = sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+                                break;
+                            } else {
+                                value = formatter.formatCellValue(cell);
+                            }
+                            break;
+                        default:
+                            value = formatter.formatCellValue(cell);
+                            break;
+                    }
+                    field.set(t, value);
                 }
             }
 
@@ -80,7 +94,7 @@ public class ExcelModelKit {
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet(sheetName);
 
-        writeExcel(sheet, data, map, 0, getCellStyleMap());
+        writeRank(sheet, data, map, 0, getCellStyleMap());
 
         return getWorkbookByteArray(workbook);
     }
@@ -97,7 +111,7 @@ public class ExcelModelKit {
      * @param <T>            数据
      * @return 下次写入的开始行数
      */
-    public static <T> int writeExcel(Sheet sheet, List<ExcelModel<T>> data, Map<String, String> map, int startRow, Map<String, CellStyle> CELL_STYLE_MAP) {
+    public static <T> int writeRank(Sheet sheet, List<ExcelModel<T>> data, Map<String, String> map, int startRow, Map<String, CellStyle> CELL_STYLE_MAP) {
 
         if (data == null || data.isEmpty()) {
             return 0;
@@ -130,7 +144,7 @@ public class ExcelModelKit {
                 continue;
             }
 
-            L.log.debug("writeExcel ===========> data = " + t.toString());
+            L.log.debug("writeRank ===========> data = " + t.toString());
 
             Field[] fArray = getClassFieldArray(t);
 
@@ -159,21 +173,9 @@ public class ExcelModelKit {
                     try {
                         Object o = field.get(t);
 
-                        if (tExcelModel.hasStyle && !StringKit.isEmpty(tExcelModel.styleName)) {
-                            CellStyle cellStyle = CELL_STYLE_MAP.get(tExcelModel.styleName);
+                        saveStyleMap(workbook, cell, tExcelModel, CELL_STYLE_MAP);
 
-                            if (cellStyle == null) {
-                                cellStyle = workbook.createCellStyle();
-                                Font font = workbook.createFont();
-                                font.setBoldweight(tExcelModel.boldWeight);
-                                cellStyle.setFont(font);
-                                CELL_STYLE_MAP.put(tExcelModel.styleName, cellStyle);
-                            }
-
-                            cell.setCellStyle(cellStyle);
-                        }
-
-                        L.log.debug("writeExcel ===========> row = " + i + " column = " + j + " value = " + o);
+                        L.log.debug("writeRank ===========> row = " + i + " column = " + j + " value = " + o);
                         if (o == null) {
                             cell.setCellValue("");
                         } else {
@@ -187,6 +189,46 @@ public class ExcelModelKit {
         }
 
         return count;
+    }
+
+    public static void writeRow(Sheet sheet, List<ExcelModel<String>> data, int rowIndex, int startRow, Map<String, CellStyle> CELL_STYLE_MAP) {
+        if (sheet == null || data == null || data.isEmpty()) {
+            return;
+        }
+
+        Workbook workbook = sheet.getWorkbook();
+        CellStyle defaultStyle = CELL_STYLE_MAP.get("defaultStyle");
+        if (defaultStyle == null) {
+            defaultStyle = workbook.createCellStyle();
+            CELL_STYLE_MAP.put("defaultStyle", defaultStyle);
+        }
+
+        int maxRow = data.size() + startRow;
+
+        for (int i = startRow; i < maxRow; i++) {
+            Row row1 = sheet.createRow(i);
+            Cell cell = row1.createCell(rowIndex);
+
+            ExcelModel<String> stringExcelModel = data.get(i - startRow);
+            saveStyleMap(workbook, cell, stringExcelModel, CELL_STYLE_MAP);
+            cell.setCellValue(stringExcelModel.t);
+        }
+    }
+
+    private static <T> void saveStyleMap(Workbook workbook, Cell cell, ExcelModel<T> data, Map<String, CellStyle> CELL_STYLE_MAP) {
+        if (data.hasStyle && !StringKit.isEmpty(data.styleName)) {
+            CellStyle cellStyle = CELL_STYLE_MAP.get(data.styleName);
+
+            if (cellStyle == null) {
+                cellStyle = workbook.createCellStyle();
+                Font font = workbook.createFont();
+                font.setBoldweight(data.boldWeight);
+                cellStyle.setFont(font);
+                CELL_STYLE_MAP.put(data.styleName, cellStyle);
+            }
+
+            cell.setCellStyle(cellStyle);
+        }
     }
 
     public static void setColumnWidth(Sheet sheet, List<Integer> columnWidth) {
@@ -225,7 +267,7 @@ public class ExcelModelKit {
 //        return createExcelByteArray(list, map, sheetName);
 //    }
 //
-//    public static <T> int writeExcel(Sheet sheet, List<T> data, Map<String, String> map, int startRow) {
+//    public static <T> int writeRank(Sheet sheet, List<T> data, Map<String, String> map, int startRow) {
 //
 //        if (data == null || data.isEmpty()) {
 //            return 0;
@@ -236,7 +278,7 @@ public class ExcelModelKit {
 //            list.add(new ExcelModel<>(datum));
 //        }
 //
-//        return writeExcel(sheet, list, map, startRow);
+//        return writeRank(sheet, list, map, startRow);
 //    }
 
     public static byte[] getWorkbookByteArray(Workbook workbook) {

@@ -14,7 +14,6 @@ import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,7 +219,7 @@ public class InsurancePolicyAction extends BaseAction {
         int startRow = 0;
 
         Map<String, CellStyle> cellStyleMap = ExcelModelKit.getCellStyleMap();
-        int i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
+        int i = ExcelModelKit.writeRank(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
         startRow += i;
         boolean flag;
 
@@ -238,7 +237,7 @@ public class InsurancePolicyAction extends BaseAction {
                     list.add(new ExcelModel<>(getInsurancePolicyItemBean));
                 }
 
-                i = ExcelModelKit.writeExcel(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
+                i = ExcelModelKit.writeRank(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
                 startRow += i;
 
                 lastId = getInsurancePolicyItemBeans.get(getInsurancePolicyItemBeans.size() - 1).id;
@@ -790,7 +789,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         // actionBean.managerUuid
 
-        String fileUrl = fileClient.getFileUrl("offline_insurance_policy_20180619_OFFLINE20180619");
+        String fileUrl = fileClient.getFileUrl("offline_insurance_policy_20180622_线下单模板20180622");
 
         InputStream inputStream = HttpClientKit.downloadFile(fileUrl);
 
@@ -808,54 +807,30 @@ public class InsurancePolicyAction extends BaseAction {
             sheets = WorkbookFactory.create(inputStream);
 
             if (sheets != null) {
-                int maxRow = 0;
-                // 如果表中sheet1 C列是可选择的，那么sheet2 C就是其可以选择的数据。那么，如果C，D都有可选择的，D是第四列，因此使用4
-                int maxRank = 4;
-
+                // Excel在一个sheet里面设置这个的时候，因为之前不知道设置数据大小，选择全列，会导致选择项出现空值
+                // sheet2 C列
                 List<InsuranceCo> productCoList = productClient.getProductCoList(actionBean.managerUuid);
-                List<String> companyName = new ArrayList<>();
+                List<ExcelModel<String>> companyName = new ArrayList<>();
                 if (productCoList != null && !productCoList.isEmpty()) {
-                    maxRow = productCoList.size();
-
                     for (InsuranceCo insuranceCo : productCoList) {
-                        companyName.add(insuranceCo.name);
+                        companyName.add(new ExcelModel<>(insuranceCo.name));
                     }
                 }
 
+                // sheet3 D列
                 List<ProductCategory> categoryList = productClient.getCategoryList("1");
-                List<String> productName = new ArrayList<>();
+                List<ExcelModel<String>> productName = new ArrayList<>();
                 if (categoryList != null && !categoryList.isEmpty()) {
-                    int size = categoryList.size();
-                    if (size > maxRow) {
-                        maxRow = size;
-                    }
-
                     for (ProductCategory productCategory : categoryList) {
-                        productName.add(productCategory.name);
+                        productName.add(new ExcelModel<>(productCategory.name));
                     }
                 }
 
-                Map<String, List<String>> map = new HashMap<>();
-                map.put("C", companyName);
-                map.put("D", productName);
+                Sheet sheetAt2 = sheets.getSheetAt(1);
+                Sheet sheetAt3 = sheets.getSheetAt(2);
 
-                Sheet sheetAt = sheets.getSheetAt(1);
-
-                if (sheetAt != null) {
-                    for (int i = 0; i < maxRow; i++) {
-                        Row row1 = sheetAt.createRow(i);
-                        for (int j = 0; j < maxRank; j++) {
-                            Cell cell = row1.createCell(j);
-                            String string = CellReference.convertNumToColString(cell.getAddress().getColumn());
-                            List<String> strings = map.get(string);
-                            if (strings != null && !strings.isEmpty()) {
-                                if (strings.size() > maxRow) {
-                                    cell.setCellValue(strings.get(maxRow));
-                                }
-                            }
-                        }
-                    }
-                }
+                ExcelModelKit.writeRow(sheetAt2, companyName, 2, 0, new HashMap<>());
+                ExcelModelKit.writeRow(sheetAt3, productName, 3, 0, new HashMap<>());
 
                 flag = fileClient.upload(fileKey, fileName, ExcelModelKit.getWorkbookByteArray(sheets));
             }

@@ -2,10 +2,7 @@ package com.inschos.cloud.trading.assist.kit;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
+import java.util.*;
 
 public class TimeKit {
 
@@ -14,7 +11,7 @@ public class TimeKit {
     public final static int DAY_LENGTH = 86400;
     public final static long JET_LAG = 28800000L;
     public final static long HOUR_MILLIS = 3600000L;
-    public final static String FORMAT_DEFAULT= "yyyy-MM-dd HH:mm:ss";
+    public final static String FORMAT_DEFAULT = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * 当前时间毫秒时间戳
@@ -38,13 +35,14 @@ public class TimeKit {
      * 年yyyy 月MM 日dd 时HH 分mm 秒ss SSS 周几几EEEE
      */
     public static String format(String format) {
-        return format(format,new Date());
+        return format(format, new Date());
     }
 
     public static String format(Date date) {
-        return format(FORMAT_DEFAULT,date);
+        return format(FORMAT_DEFAULT, date);
     }
-    public static String format(String format,Date date) {
+
+    public static String format(String format, Date date) {
         return new SimpleDateFormat(format, Locale.CHINA).format(date);
     }
 
@@ -61,10 +59,10 @@ public class TimeKit {
     }
 
     public static long parse(String date) {
-        return parse(date,FORMAT_DEFAULT);
+        return parse(date, FORMAT_DEFAULT);
     }
 
-    public static long parse( String date, String format) {
+    public static long parse(String date, String format) {
         try {
             if (StringKit.isEmpty(date)) {
                 return 0;
@@ -77,9 +75,10 @@ public class TimeKit {
     }
 
     public static Date parse2Date(String date) {
-        return parse2Date(date,FORMAT_DEFAULT);
+        return parse2Date(date, FORMAT_DEFAULT);
     }
-    public static Date parse2Date( String date, String format) {
+
+    public static Date parse2Date(String date, String format) {
         try {
             if (StringKit.isEmpty(date)) {
                 return null;
@@ -117,7 +116,7 @@ public class TimeKit {
         date.set(Calendar.SECOND, 0);
         date.set(Calendar.MINUTE, 0);
         date.set(Calendar.MILLISECOND, 0);
-        return date.getTimeInMillis()-1000L;
+        return date.getTimeInMillis() - 1000L;
     }
 
     /**
@@ -147,7 +146,7 @@ public class TimeKit {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTimeInMillis()-1000L;
+        return cal.getTimeInMillis() - 1000L;
     }
 
     /**
@@ -281,11 +280,11 @@ public class TimeKit {
         if (week == 1) {
             week = 8;
         }
-        return week-1;
+        return week - 1;
     }
 
     /**
-     *  获取指定指定日期的00:00.00的毫秒值
+     * 获取指定指定日期的00:00.00的毫秒值
      *
      * @param year  年份
      * @param mouth 月份
@@ -342,10 +341,8 @@ public class TimeKit {
      * 在millis 基础上做时间操作 +1天 等等操作 通过field来确定纬度
      *
      * @param millis
-     * @param field
-     *            the calendar field.
-     * @param amount
-     *            the amount of date or time to be added to the field.
+     * @param field  the calendar field.
+     * @param amount the amount of date or time to be added to the field.
      * @return
      */
     public static long add(long millis, int field, int amount) {
@@ -390,5 +387,26 @@ public class TimeKit {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 格式化时间戳用
+     *
+     * @param sdfs 时间格式集合
+     * @return showDate指定sdf的格式
+     */
+    public static String parseMillisecondByShowDate(List<SimpleDateFormat> sdfs, String showDate) {
+        if (sdfs == null || sdfs.isEmpty() || StringKit.isEmpty(showDate)) {
+            return null;
+        }
+
+        String result = null;
+        for (SimpleDateFormat sdf : sdfs) {
+            result = parseMillisecondByShowDate(sdf, showDate);
+            if (!StringKit.isEmpty(result)) {
+                break;
+            }
+        }
+        return result;
     }
 }
