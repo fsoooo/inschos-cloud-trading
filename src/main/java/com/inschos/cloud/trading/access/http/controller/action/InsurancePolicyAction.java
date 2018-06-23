@@ -25,6 +25,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy.CAR_FIELD_TYPE;
+
 /**
  * 创建日期：2018/3/22 on 11:06
  * 描述：
@@ -222,7 +224,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         Map<String, CellStyle> cellStyleMap = ExcelModelKit.getCellStyleMap();
 //        int i = ExcelModelKit.writeRank(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
-        int i = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap);
+        int i = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap, new HashMap<>());
         startRow += i;
         boolean flag;
 
@@ -241,7 +243,7 @@ public class InsurancePolicyAction extends BaseAction {
                 }
 
 //                i = ExcelModelKit.writeRank(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
-                i = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap);
+                i = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap, InsurancePolicy.CAR_FIELD_TYPE);
                 startRow += i;
 
                 lastId = getInsurancePolicyItemBeans.get(getInsurancePolicyItemBeans.size() - 1).id;
@@ -668,7 +670,7 @@ public class InsurancePolicyAction extends BaseAction {
                 dataList.add(new ExcelModel<>(offlineInsurancePolicyModel));
             }
 
-            byte[] data = ExcelModelKit.createExcelByteArray(dataList, columnFieldMap, "导入失败保单数据");
+            byte[] data = ExcelModelKit.createExcelByteArray(dataList, columnFieldMap, new HashMap<>(), "导入失败保单数据");
 
             if (data == null) {
                 return json(BaseResponse.CODE_INPUT_OFFLINE_FAILURE, "导入失败", response);

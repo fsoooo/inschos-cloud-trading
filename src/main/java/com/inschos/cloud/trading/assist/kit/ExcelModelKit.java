@@ -19,6 +19,9 @@ import java.util.*;
  */
 public class ExcelModelKit {
 
+    public final static String TYPE_STRING = "TYPE_STRING";
+    public final static String TYPE_DOUBLE = "TYPE_DOUBLE";
+
     /**
      * Model的所有字段都必须是String
      *
@@ -83,16 +86,20 @@ public class ExcelModelKit {
         return t;
     }
 
-    public static <T> byte[] createExcelByteArray(List<ExcelModel<T>> data, Map<String, String> map, String sheetName) {
+    public static <T> byte[] createExcelByteArray(List<ExcelModel<T>> data, Map<String, String> map, Map<String, String> typeMap, String sheetName) {
 
         if (data == null || data.isEmpty()) {
             return null;
         }
 
+        if (typeMap == null) {
+            typeMap = new HashMap<>();
+        }
+
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet(sheetName);
 
-        writeRank(sheet, data, map, 0, getCellStyleMap());
+        writeRank(sheet, data, map, 0, getCellStyleMap(), typeMap);
         autoSizeColumn(sheet, map.size());
 
         return getWorkbookByteArray(workbook);
@@ -110,10 +117,14 @@ public class ExcelModelKit {
      * @param <T>            数据
      * @return 下次写入的开始行数
      */
-    public static <T> int writeRank(Sheet sheet, List<ExcelModel<T>> data, Map<String, String> map, int startRow, Map<String, CellStyle> CELL_STYLE_MAP) {
+    public static <T> int writeRank(Sheet sheet, List<ExcelModel<T>> data, Map<String, String> map, int startRow, Map<String, CellStyle> CELL_STYLE_MAP, Map<String, String> typeMap) {
 
         if (data == null || data.isEmpty()) {
             return 0;
+        }
+
+        if (typeMap == null) {
+            typeMap = new HashMap<>();
         }
 
         Workbook workbook = sheet.getWorkbook();
@@ -178,7 +189,28 @@ public class ExcelModelKit {
                         if (o == null) {
                             cell.setCellValue("");
                         } else {
-                            cell.setCellValue(o.toString());
+                            String s = typeMap.get(fieldName);
+
+                            if (StringKit.isEmpty(s)) {
+                                s = "";
+                            }
+
+                            switch (s) {
+                                case TYPE_DOUBLE:
+                                    String string = o.toString();
+                                    if (StringKit.isEmpty(string)) {
+                                        cell.setCellValue(0.0D);
+                                    } else if (StringKit.isNumeric(string)) {
+                                        cell.setCellValue(Double.valueOf(string));
+                                    } else {
+                                        cell.setCellValue(string);
+                                    }
+                                    break;
+                                case TYPE_STRING:
+                                default:
+                                    cell.setCellValue(o.toString());
+                                    break;
+                            }
                         }
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();

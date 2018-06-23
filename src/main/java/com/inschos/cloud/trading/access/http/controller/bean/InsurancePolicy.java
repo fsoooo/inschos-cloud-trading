@@ -11,6 +11,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.inschos.cloud.trading.assist.kit.ExcelModelKit.TYPE_DOUBLE;
+
 /**
  * 创建日期：2018/3/22 on 14:03
  * 描述：
@@ -857,9 +859,9 @@ public class InsurancePolicy {
             insurancePolicy.insuranceCompanyName = "保险公司";
             insurancePolicy.createdAtText = "签单日期";
             insurancePolicy.startTimeText = "起保日期";
-            insurancePolicy.premiumText = "保费（元）";
+            insurancePolicy.premium = "保费（元）";
             insurancePolicy.payStatusText = "保费支付状态";
-            insurancePolicy.insMoneyText = "应收佣金";
+            insurancePolicy.insMoney = "应收佣金";
             insurancePolicy.channelName = "归属机构";
             insurancePolicy.agentName = "归属人员";
 
@@ -878,11 +880,19 @@ public class InsurancePolicy {
         CAR_FIELD_LIST.add("insuranceCompanyName");
         CAR_FIELD_LIST.add("createdAtText");
         CAR_FIELD_LIST.add("startTimeText");
-        CAR_FIELD_LIST.add("premiumText");
+        CAR_FIELD_LIST.add("premium");
         CAR_FIELD_LIST.add("payStatusText");
-        CAR_FIELD_LIST.add("insMoneyText");
+        CAR_FIELD_LIST.add("insMoney");
         CAR_FIELD_LIST.add("channelName");
         CAR_FIELD_LIST.add("agentName");
+    }
+
+    public static final Map<String, String> CAR_FIELD_TYPE;
+
+    static {
+        CAR_FIELD_TYPE = new HashMap<>();
+        CAR_FIELD_TYPE.put("premium", TYPE_DOUBLE);
+        CAR_FIELD_TYPE.put("insMoney", TYPE_DOUBLE);
     }
 
     public static final Map<String, String> PERSON_FIELD_MAP;
