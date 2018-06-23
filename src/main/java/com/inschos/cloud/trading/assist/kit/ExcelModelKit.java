@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.assist.kit;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 
@@ -332,4 +333,53 @@ public class ExcelModelKit {
         return new HashMap<>();
     }
 
+    private final static String[] letterArray = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+
+    public static Map<String, String> getColumnFieldMap(List<String> title) {
+        if (title == null || title.isEmpty()) {
+            return new HashMap<>();
+        }
+
+        List<String> columnName = new ArrayList<>();
+
+        for (int i = 0; i < title.size(); i++) {
+
+            int offset = i;
+            int result = 0;
+            int count = 0;
+            List<Integer> unit = new ArrayList<>();
+
+            do {
+                count++;
+                result = offset / letterArray.length;
+                int j = offset % letterArray.length;
+                if (result > 0) {
+                    unit.add(letterArray.length - 1);
+                } else {
+                    unit.add(j - 1);
+                }
+
+                if (j != 0) {
+                    result++;
+                }
+
+                offset = result;
+
+            } while (result != 1);
+
+            if (!unit.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (Integer integer : unit) {
+                    sb.append(letterArray[integer]);
+                }
+                columnName.add(sb.toString());
+            }
+        }
+
+        Map<String, String> result = new HashMap<>();
+        for (int i = 0; i < columnName.size(); i++) {
+            result.put(columnName.get(i),title.get(i));
+        }
+        return result;
+    }
 }
