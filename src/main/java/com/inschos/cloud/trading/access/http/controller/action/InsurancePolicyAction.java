@@ -1189,7 +1189,11 @@ public class InsurancePolicyAction extends BaseAction {
         HashMap<String, Boolean> file = new HashMap<>();
 
         if (!insurancePolicyModelList.isEmpty()) {
-            for (InsurancePolicyModel policyListByWarrantyStatusOrSearch : insurancePolicyModelList) {
+            InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
+            StringBuilder warrantyUuidString = new StringBuilder();
+            int size1 = insurancePolicyModelList.size();
+            for (int i = 0; i < size1; i++) {
+                InsurancePolicyModel policyListByWarrantyStatusOrSearch = insurancePolicyModelList.get(i);
                 InsurancePolicy.GetInsurancePolicyItemBean model = new InsurancePolicy.GetInsurancePolicyItemBean(policyListByWarrantyStatusOrSearch);
 
                 productId.add(model.productId);
@@ -1197,26 +1201,31 @@ public class InsurancePolicyAction extends BaseAction {
                 agentId.add(model.agentId);
 
                 if (needInsured) {
-                    List<InsuranceParticipantModel> insuranceParticipantInsuredByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantInsuredByWarrantyUuid(model.warrantyUuid);
-                    if (insuranceParticipantInsuredByWarrantyUuid != null && !insuranceParticipantInsuredByWarrantyUuid.isEmpty()) {
-                        int size = insuranceParticipantInsuredByWarrantyUuid.size();
-                        String name = insuranceParticipantInsuredByWarrantyUuid.get(0).name;
-                        if (size > 1) {
-                            model.insuredText = name + "等" + size + "人";
-                            StringBuilder sb = new StringBuilder();
-                            for (int i = 0; i < insuranceParticipantInsuredByWarrantyUuid.size(); i++) {
-                                sb.append(insuranceParticipantInsuredByWarrantyUuid.get(i).name);
-                                if (i != size - 1) {
-                                    sb.append(",");
-                                }
-                            }
-                            model.insuredDetailText = sb.toString();
-                        } else {
-                            model.insuredText = name;
-                            model.insuredDetailText = name;
-                        }
+                    warrantyUuidString.append(model.warrantyUuid);
 
+                    if (i != size1 - 1) {
+                        warrantyUuidString.append(",");
                     }
+//                    List<InsuranceParticipantModel> insuranceParticipantInsuredByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantInsuredByWarrantyUuid(model.warrantyUuid);
+//                    if (insuranceParticipantInsuredByWarrantyUuid != null && !insuranceParticipantInsuredByWarrantyUuid.isEmpty()) {
+//                        int size = insuranceParticipantInsuredByWarrantyUuid.size();
+//                        String name = insuranceParticipantInsuredByWarrantyUuid.get(0).name;
+//                        if (size > 1) {
+//                            model.insuredText = name + "等" + size + "人";
+//                            StringBuilder sb = new StringBuilder();
+//                            for (int i = 0; i < insuranceParticipantInsuredByWarrantyUuid.size(); i++) {
+//                                sb.append(insuranceParticipantInsuredByWarrantyUuid.get(i).name);
+//                                if (i != size - 1) {
+//                                    sb.append(",");
+//                                }
+//                            }
+//                            model.insuredDetailText = sb.toString();
+//                        } else {
+//                            model.insuredText = name;
+//                            model.insuredDetailText = name;
+//                        }
+//
+//                    }
                 }
 
 //                if (StringKit.equals(policyListByWarrantyStatusOrSearch.type, InsurancePolicyModel.POLICY_TYPE_CAR)) {
@@ -1228,6 +1237,20 @@ public class InsurancePolicyAction extends BaseAction {
 //                }
                 result.add(model);
             }
+
+            HashMap<String, InsuranceParticipantModel> insuredName = new HashMap<>();
+
+            if (needInsured && warrantyUuidString.length() > 0) {
+                insuranceParticipantModel.warranty_uuid_string = warrantyUuidString.toString();
+                List<InsuranceParticipantModel> insuranceParticipantInsuredNameByWarrantyUuids = insuranceParticipantDao.findInsuranceParticipantInsuredNameByWarrantyUuids(insuranceParticipantModel);
+
+                if (insuranceParticipantInsuredNameByWarrantyUuids != null && !insuranceParticipantInsuredNameByWarrantyUuids.isEmpty()) {
+                    for (InsuranceParticipantModel insuranceParticipantInsuredNameByWarrantyUuid : insuranceParticipantInsuredNameByWarrantyUuids) {
+                        insuredName.put(insuranceParticipantInsuredNameByWarrantyUuid.warranty_uuid, insuranceParticipantInsuredNameByWarrantyUuid);
+                    }
+                }
+            }
+
 
             List<String> ids = new ArrayList<>(productId);
             Map<String, ProductBean> productMap = new HashMap<>();
@@ -1297,17 +1320,30 @@ public class InsurancePolicyAction extends BaseAction {
                     }
                 }
 
-                if (needChannel) {
+                if (needChannel && !channelMap.isEmpty()) {
                     ChannelBean channelBean = channelMap.get(getInsurancePolicyItemBean.channelId);
                     if (channelBean != null) {
                         getInsurancePolicyItemBean.channelName = channelBean.name;
                     }
                 }
 
-                if (needAgent) {
+                if (needAgent && !agentMap.isEmpty()) {
                     AgentBean agentBean = agentMap.get(getInsurancePolicyItemBean.agentId);
                     if (agentBean != null) {
                         getInsurancePolicyItemBean.agentName = agentBean.name;
+                    }
+                }
+                
+                if (needInsured && !insuredName.isEmpty()) {
+                    InsuranceParticipantModel insuranceParticipantModel1 = insuredName.get(getInsurancePolicyItemBean.warrantyUuid);
+                    if (insuranceParticipantModel1 != null && !StringKit.isEmpty(insuranceParticipantModel1.name)) {
+                        if (insuranceParticipantModel1.count > 1) {
+                            String[] split = insuranceParticipantModel1.name.split(",");
+                            getInsurancePolicyItemBean.insuredText = split[0] + "等" + insuranceParticipantModel1.count + "人";
+                        } else {
+                            getInsurancePolicyItemBean.insuredText = insuranceParticipantModel1.name;
+                        }
+                        getInsurancePolicyItemBean.insuredDetailText = insuranceParticipantModel1.name;
                     }
                 }
             }

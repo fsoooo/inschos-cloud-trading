@@ -329,6 +329,7 @@ public class InsurancePolicy {
             this.warrantyFromText = model.warrantyFromText(warrantyFrom);
             this.type = model.type;
             this.integral = model.integral;
+            this.payStatus = model.pay_status;
             this.warrantyStatus = model.warranty_status;
             CustWarrantyCostModel model1 = new CustWarrantyCostModel();
             this.payStatusText = model1.payStatusText(payStatus);

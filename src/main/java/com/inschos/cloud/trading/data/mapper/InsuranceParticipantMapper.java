@@ -26,4 +26,5 @@ public interface InsuranceParticipantMapper {
 
     long findInsurancePolicyCountBySearchType3(InsurancePolicyModel insurancePolicyModel);
 
+    List<InsuranceParticipantModel> findInsuranceParticipantInsuredNameByWarrantyUuids(InsuranceParticipantModel insuranceParticipantModel);
 }

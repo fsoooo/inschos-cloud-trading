@@ -345,7 +345,7 @@
                         `cust_warranty`.`created_at`,`cust_warranty`.`updated_at`,
                         `cust_warranty_car`.`car_code`,`cust_warranty_car`.`frame_no`,
                         `cust_warranty_person`.`name`,`cust_warranty_person`.`phone`,
-                        `cust_warranty_cost`.`premium`,`cust_warranty_cost`.`pay_status`,
+                        `cust_warranty_cost`.`premium`,`cust_warranty_cost`.`pay_status`,`cust_warranty_cost`.`pay_money`,`cust_warranty_cost`.`tax_money`,
                         `cust_warranty_cost`.`actual_pay_time`
                     </if>
                     ORDER BY `cust_warranty`.`id` DESC limit #{page.start},1
@@ -435,7 +435,7 @@
                 `cust_warranty`.`created_at`,`cust_warranty`.`updated_at`,
                 `cust_warranty_car`.`car_code`,`cust_warranty_car`.`frame_no`,
                 `cust_warranty_person`.`name`,`cust_warranty_person`.`phone`,
-                `cust_warranty_cost`.`premium`,`cust_warranty_cost`.`pay_status`,
+                `cust_warranty_cost`.`premium`,`cust_warranty_cost`.`pay_status`,`cust_warranty_cost`.`pay_money`,`cust_warranty_cost`.`tax_money`,
                 `cust_warranty_cost`.`actual_pay_time`
             </if>
             ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}

@@ -6,6 +6,8 @@ import com.inschos.cloud.trading.assist.kit.HttpClientKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import org.apache.ibatis.jdbc.Null;
+import org.springframework.http.RequestEntity;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -16,21 +18,22 @@ import java.util.Date;
  * 描述：
  * 作者：zhangyunhe
  */
-public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Response extends CarInsuranceResponse> {
+public class CarInsuranceHttpRequest<RequestEntity extends CarInsuranceRequest, Response extends CarInsuranceResponse> {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private CarInsuranceRequestEntity request;
     private Class<Response> cls;
     private String url;
+    public long errorCode = 0L;
 
-    public CarInsuranceHttpRequest(String url, Request request, Class<Response> cls) {
+    public CarInsuranceHttpRequest(String url, RequestEntity requestEntity, Class<Response> cls) {
         this.url = url;
-        this.request = new CarInsuranceRequestEntity<Request>();
+        this.request = new CarInsuranceRequestEntity<RequestEntity>();
         this.cls = cls;
-        if (request != null) {
-            this.request.data = request;
-            this.request.sign = SignatureTools.sign(JsonKit.bean2Json(request), SignatureTools.CAR_RSA_PRIVATE_KEY);
+        if (requestEntity != null) {
+            this.request.data = requestEntity;
+            this.request.sign = SignatureTools.sign(JsonKit.bean2Json(requestEntity), SignatureTools.CAR_RSA_PRIVATE_KEY);
         }
 
         this.request.sendTime = sdf.format(new Date(System.currentTimeMillis()));
@@ -57,6 +60,7 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
                     response.verify = false;
                 } catch (InstantiationException | IllegalAccessException e) {
                     // e.printStackTrace();
+                    errorCode = -1;
                     return null;
                 }
             }
@@ -71,6 +75,7 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
                 return response;
             } catch (InstantiationException | IllegalAccessException ex) {
                 // ex.printStackTrace();
+                errorCode = -2;
                 return null;
             }
         }
@@ -96,4 +101,5 @@ public class CarInsuranceHttpRequest<Request extends CarInsuranceRequest, Respon
         }
         return flag;
     }
+
 }

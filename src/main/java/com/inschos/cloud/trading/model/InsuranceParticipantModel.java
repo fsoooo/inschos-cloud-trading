@@ -132,6 +132,9 @@ public class InsuranceParticipantModel {
      */
     public String record_end_time;
 
+    public String warranty_uuid_string;
+    public int count;
+
     /**
      * 查询用当前时间
      */

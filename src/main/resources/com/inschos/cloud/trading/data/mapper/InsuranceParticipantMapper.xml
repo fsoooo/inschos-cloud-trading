@@ -15,121 +15,44 @@
         (#{id},#{warranty_uuid},#{type},#{relation_name},#{out_order_no},#{name},#{card_type},#{card_code},#{phone},#{occupation},#{birthday},#{sex},#{age},#{email},#{nationality},#{annual_income},#{height},#{weight},#{area},#{address},#{start_time},#{end_time},#{record_start_time},#{record_end_time})
     </insert>
 
-    <select id="findInsuranceParticipantByWarrantyUuid" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
+    <select id="findInsuranceParticipantByWarrantyUuid"
+            parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
             resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_person where warranty_uuid=#{warranty_uuid} AND `record_end_time`=#{max_time}
     </select>
 
-    <select id="findInsuranceParticipantInsuredNameByWarrantyUuid" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
+    <select id="findInsuranceParticipantInsuredNameByWarrantyUuid"
+            parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
             resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         `name`
         from cust_warranty_person where warranty_uuid=#{warranty_uuid} AND `type`=2 AND `record_end_time`=#{max_time}
     </select>
 
-    <select id="findInsuranceParticipantInsuredByWarrantyUuid" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
+    <select id="findInsuranceParticipantInsuredByWarrantyUuid"
+            parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
             resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_person where warranty_uuid=#{warranty_uuid} AND `type`=2 AND `record_end_time`=#{max_time}
     </select>
 
-    <select id="findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
+    <select id="findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid"
+            parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
             resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
         `name`,`phone`
         from cust_warranty_person where warranty_uuid=#{warranty_uuid} AND `type`=1 AND `record_end_time`=#{max_time}
     </select>
 
-
-    <select id="findInsurancePolicyListBySearchType3"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+    <select id="findInsuranceParticipantInsuredNameByWarrantyUuids"
+            parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
+            resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
         select
-        `cust_warranty_person`.`id` id,`cust_warranty_person`.`warranty_uuid` warranty_uuid,
-        `pre_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,
-        `cust_warranty`.`start_time` start_time,`cust_warranty`.`end_time` end_time,
-        `ins_company_id`,`count`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,
-        `cust_warranty`.`type` type,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`delivery_type`,
-        `created_at`,`updated_at`,`cust_warranty_person`.`name` policy_holder_name,`cust_warranty_person`.`phone` policy_holder_mobile
-        from cust_warranty_person LEFT JOIN cust_warranty ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
-        <where>
-            <choose>
-                <when test="page.lastId>0">
-                    id&lt;#{page.lastId}
-                </when>
-                <when test="page.start>0">
-                    id&lt;=(select `cust_warranty_person`.`id` from cust_warranty_person LEFT JOIN cust_warranty ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
-                    where `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1
-                    AND `cust_warranty_person`.`type`=1 AND `cust_warranty_person`.`record_start_time`&lt;=#{currentTime} AND `cust_warranty_person`.`record_end_time`&gt;#{currentTime}
-                    <if test="search!=null and search!=''">
-                        and `cust_warranty_person`.`name` like concat("%",#{search},"%")
-                    </if>
-                    <if test="type!=null and type!=''">
-                        and `cust_warranty`.`type`=#{type}
-                    </if>
-                    <if test="start_time!=null and start_time!=''">
-                        and `cust_warranty`.`start_time`&gt;=#{start_time}
-                    </if>
-                    <if test="end_time!=null and end_time!=''">
-                        and `cust_warranty`.`start_time`&lt;#{end_time}
-                    </if>
-                    <if test="status_string!=null and status_string!=''">
-                        and `cust_warranty`.`warranty_status` in (${status_string})
-                    </if>
-                    ORDER BY `cust_warranty_person`.`id` DESC limit #{page.start},1
-                    )
-                </when>
-                <otherwise>
-                    1=1
-                </otherwise>
-            </choose>
-            and `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1
-            AND `cust_warranty_person`.`type`=1 AND `cust_warranty_person`.`record_start_time`&lt;=#{currentTime} AND `cust_warranty_person`.`record_end_time`&gt;#{currentTime}
-            <if test="search!=null and search!='' and searchType=='3'">
-                and `cust_warranty_person`.`name` like concat("%",#{search},"%")
-            </if>
-            <if test="type!=null and type!=''">
-                and `cust_warranty`.`type`=#{type}
-            </if>
-            <if test="start_time!=null and start_time!=''">
-                and `cust_warranty`.`start_time`&gt;=#{start_time}
-            </if>
-            <if test="end_time!=null and end_time!=''">
-                and `cust_warranty`.`start_time`&lt;#{end_time}
-            </if>
-            <if test="status_string!=null and status_string!=''">
-                and `cust_warranty`.`warranty_status` in (${status_string})
-            </if>
-            ORDER BY `cust_warranty_person`.`id` DESC limit #{page.offset}
-        </where>
-    </select>
-
-    <select id="findInsurancePolicyCountBySearchType3"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="long">
-        select
-        COUNT(`cust_warranty_person`.`id`)
-        from cust_warranty_person LEFT JOIN cust_warranty ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
-        WHERE `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1
-        AND `cust_warranty_person`.`type`=1 AND `cust_warranty_person`.`record_start_time`&lt;=#{currentTime} AND `cust_warranty_person`.`record_end_time`&gt;#{currentTime}
-        <if test="search!=null and search!='' and searchType=='3'">
-            and `cust_warranty_person`.`name` like concat("%",#{search},"%")
-        </if>
-        <if test="type!=null and type!=''">
-            and `cust_warranty`.`type`=#{type}
-        </if>
-        <if test="start_time!=null and start_time!=''">
-            and `cust_warranty`.`start_time`&gt;=#{start_time}
-        </if>
-        <if test="end_time!=null and end_time!=''">
-            and `cust_warranty`.`start_time`&lt;#{end_time}
-        </if>
-        <if test="status_string!=null and status_string!=''">
-            and `cust_warranty`.`warranty_status` in (${status_string})
-        </if>
+        `warranty_uuid`,group_concat(`name`) as `name` ,COUNT(`warranty_uuid`) as `count`
+        from cust_warranty_person where `warranty_uuid` in (${warranty_uuid_string}) AND `type`=2 AND `record_end_time`=#{max_time} GROUP BY `warranty_uuid`
     </select>
 
 </mapper>
