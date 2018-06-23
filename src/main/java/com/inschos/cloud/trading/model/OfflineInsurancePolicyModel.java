@@ -14,37 +14,27 @@ import java.util.*;
  */
 public class OfflineInsurancePolicyModel {
 
-    public final static Map<String, String> COLUMN_FIELD_MAP;
+    public final static List<String> OFFLINE_COLUMN_FIELD_LIST;
 
     static {
-        COLUMN_FIELD_MAP = new HashMap<>();
-        COLUMN_FIELD_MAP.put("A", "insured_name");
-        COLUMN_FIELD_MAP.put("B", "policy_holder_name");
-        COLUMN_FIELD_MAP.put("C", "insurance_company");
-        COLUMN_FIELD_MAP.put("D", "insurance_type");
-        COLUMN_FIELD_MAP.put("E", "insurance_product");
-        COLUMN_FIELD_MAP.put("F", "warranty_code");
-        COLUMN_FIELD_MAP.put("G", "payment_time");
-        COLUMN_FIELD_MAP.put("H", "order_time");
-        COLUMN_FIELD_MAP.put("I", "real_income_time");
-        COLUMN_FIELD_MAP.put("J", "start_time");
-        COLUMN_FIELD_MAP.put("K", "end_time");
-        COLUMN_FIELD_MAP.put("L", "premium");
-        COLUMN_FIELD_MAP.put("M", "pay_status");
-        COLUMN_FIELD_MAP.put("N", "brokerage");
-        COLUMN_FIELD_MAP.put("O", "channel_name");
-        COLUMN_FIELD_MAP.put("P", "agent_name");
-        COLUMN_FIELD_MAP.put("Q", "reason");
-//        COLUMN_FIELD_MAP.put("Q", "");
-//        COLUMN_FIELD_MAP.put("R", "");
-//        COLUMN_FIELD_MAP.put("S", "");
-//        COLUMN_FIELD_MAP.put("T", "");
-//        COLUMN_FIELD_MAP.put("U", "");
-//        COLUMN_FIELD_MAP.put("V", "");
-//        COLUMN_FIELD_MAP.put("W", "");
-//        COLUMN_FIELD_MAP.put("X", "");
-//        COLUMN_FIELD_MAP.put("Y", "");
-//        COLUMN_FIELD_MAP.put("Z", "");
+        OFFLINE_COLUMN_FIELD_LIST = new ArrayList<>();
+        OFFLINE_COLUMN_FIELD_LIST.add("insured_name");
+        OFFLINE_COLUMN_FIELD_LIST.add("policy_holder_name");
+        OFFLINE_COLUMN_FIELD_LIST.add("insurance_company");
+        OFFLINE_COLUMN_FIELD_LIST.add("insurance_type");
+        OFFLINE_COLUMN_FIELD_LIST.add("insurance_product");
+        OFFLINE_COLUMN_FIELD_LIST.add("warranty_code");
+        OFFLINE_COLUMN_FIELD_LIST.add("payment_time");
+        OFFLINE_COLUMN_FIELD_LIST.add("order_time");
+        OFFLINE_COLUMN_FIELD_LIST.add("real_income_time");
+        OFFLINE_COLUMN_FIELD_LIST.add("start_time");
+        OFFLINE_COLUMN_FIELD_LIST.add("end_time");
+        OFFLINE_COLUMN_FIELD_LIST.add("premium");
+        OFFLINE_COLUMN_FIELD_LIST.add("pay_status");
+        OFFLINE_COLUMN_FIELD_LIST.add("brokerage");
+        OFFLINE_COLUMN_FIELD_LIST.add("channel_name");
+        OFFLINE_COLUMN_FIELD_LIST.add("agent_name");
+        OFFLINE_COLUMN_FIELD_LIST.add("reason");
     }
 
     /**

@@ -332,6 +332,12 @@ public class InsurancePolicy {
             this.warrantyStatus = model.warranty_status;
             CustWarrantyCostModel model1 = new CustWarrantyCostModel();
             this.payStatusText = model1.payStatusText(payStatus);
+
+            if (StringKit.equals(this.warrantyStatus, InsurancePolicyModel.POLICY_STATUS_PENDING)) {
+                this.warrantyStatusText = payStatusText;
+            } else {
+                this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
+            }
             this.expressNo = model.express_no;
             this.expressCompanyName = model.express_company_name;
             this.deliveryType = model.delivery_type;
@@ -388,6 +394,25 @@ public class InsurancePolicy {
                 this.agentMoney = "0.00";
             }
             this.agentMoneyText = "¥" + this.agentMoney;
+
+            if (StringKit.isNumeric(model.premium)) {
+                this.premium = decimalFormat.format(new BigDecimal(model.premium).doubleValue());
+            } else {
+                this.premium = "0.00";
+            }
+            this.premiumText = "¥" + this.premium;
+            if (StringKit.isNumeric(model.pay_money)) {
+                this.payMoney = decimalFormat.format(new BigDecimal(model.pay_money).doubleValue());
+            } else {
+                this.payMoney = "0.00";
+            }
+            this.payMoneyText = "¥" + this.payMoney;
+            if (StringKit.isNumeric(model.tax_money)) {
+                this.taxMoney = decimalFormat.format(new BigDecimal(model.tax_money).doubleValue());
+            } else {
+                this.taxMoney = "0.00";
+            }
+            this.taxMoneyText = "¥" + this.taxMoney;
         }
 
         public GetInsurancePolicy(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
@@ -833,7 +858,7 @@ public class InsurancePolicy {
             insurancePolicy.startTimeText = "起保日期";
             insurancePolicy.premiumText = "保费（元）";
             insurancePolicy.payStatusText = "保费支付状态";
-            insurancePolicy.insMoney = "应收佣金";
+            insurancePolicy.insMoneyText = "应收佣金";
             insurancePolicy.channelName = "归属机构";
             insurancePolicy.agentName = "归属人员";
 
@@ -841,22 +866,22 @@ public class InsurancePolicy {
         }
     }
 
-    public static final Map<String, String> CAR_FIELD_MAP;
+    public static final List<String> CAR_FIELD_LIST;
 
     static {
-        CAR_FIELD_MAP = new HashMap<>();
-        CAR_FIELD_MAP.put("A", "warrantyCode");
-        CAR_FIELD_MAP.put("B", "insuredDetailText");
-        CAR_FIELD_MAP.put("C", "policyHolderName");
-        CAR_FIELD_MAP.put("D", "productName");
-        CAR_FIELD_MAP.put("E", "insuranceCompanyName");
-        CAR_FIELD_MAP.put("F", "createdAtText");
-        CAR_FIELD_MAP.put("G", "startTimeText");
-        CAR_FIELD_MAP.put("H", "premiumText");
-        CAR_FIELD_MAP.put("I", "payStatusText");
-        CAR_FIELD_MAP.put("J", "insMoney");
-        CAR_FIELD_MAP.put("K", "channelName");
-        CAR_FIELD_MAP.put("L", "agentName");
+        CAR_FIELD_LIST = new ArrayList<>();
+        CAR_FIELD_LIST.add("warrantyCode");
+        CAR_FIELD_LIST.add("insuredDetailText");
+        CAR_FIELD_LIST.add("policyHolderName");
+        CAR_FIELD_LIST.add("productName");
+        CAR_FIELD_LIST.add("insuranceCompanyName");
+        CAR_FIELD_LIST.add("createdAtText");
+        CAR_FIELD_LIST.add("startTimeText");
+        CAR_FIELD_LIST.add("premiumText");
+        CAR_FIELD_LIST.add("payStatusText");
+        CAR_FIELD_LIST.add("insMoneyText");
+        CAR_FIELD_LIST.add("channelName");
+        CAR_FIELD_LIST.add("agentName");
     }
 
     public static final Map<String, String> PERSON_FIELD_MAP;

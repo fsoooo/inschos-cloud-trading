@@ -218,8 +218,11 @@ public class InsurancePolicyAction extends BaseAction {
         list.add(title);
         int startRow = 0;
 
+        Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(InsurancePolicy.CAR_FIELD_LIST, 0);
+
         Map<String, CellStyle> cellStyleMap = ExcelModelKit.getCellStyleMap();
-        int i = ExcelModelKit.writeRank(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
+//        int i = ExcelModelKit.writeRank(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
+        int i = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap);
         startRow += i;
         boolean flag;
 
@@ -229,7 +232,7 @@ public class InsurancePolicyAction extends BaseAction {
             insurancePolicyModel.page = setPage(lastId, null, pageSize);
 
             List<InsurancePolicyModel> insurancePolicyListByWarrantyStatusOrSearch = insurancePolicyDao.findInsurancePolicyListForManagerSystem(insurancePolicyModel);
-            List<InsurancePolicy.GetInsurancePolicyItemBean> getInsurancePolicyItemBeans = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, false, false, true, true);
+            List<InsurancePolicy.GetInsurancePolicyItemBean> getInsurancePolicyItemBeans = dealInsurancePolicyResultList(insurancePolicyListByWarrantyStatusOrSearch, false, true, true, true);
             list.clear();
 
             if (getInsurancePolicyItemBeans != null && !getInsurancePolicyItemBeans.isEmpty()) {
@@ -237,7 +240,8 @@ public class InsurancePolicyAction extends BaseAction {
                     list.add(new ExcelModel<>(getInsurancePolicyItemBean));
                 }
 
-                i = ExcelModelKit.writeRank(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
+//                i = ExcelModelKit.writeRank(sheet, list, InsurancePolicy.CAR_FIELD_MAP, startRow, cellStyleMap);
+                i = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap);
                 startRow += i;
 
                 lastId = getInsurancePolicyItemBeans.get(getInsurancePolicyItemBeans.size() - 1).id;
@@ -247,7 +251,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         } while (flag);
 
-        ExcelModelKit.autoSizeColumn(sheet, InsurancePolicy.CAR_FIELD_MAP.size());
+        ExcelModelKit.autoSizeColumn(sheet, columnFieldMap.size());
 
         byte[] workbookByteArray = ExcelModelKit.getWorkbookByteArray(workbook);
 
@@ -554,13 +558,15 @@ public class InsurancePolicyAction extends BaseAction {
         List<InsuranceCo> productCoList = productClient.getProductCoList(actionBean.managerUuid);
         List<ProductCategory> categoryList = productClient.getCategoryList("1");
 
+        Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(OfflineInsurancePolicyModel.OFFLINE_COLUMN_FIELD_LIST, 0);
+
         try {
             wb = WorkbookFactory.create(inputStream);
             String time = String.valueOf(System.currentTimeMillis());
 
             for (Sheet sheet : wb) {
                 for (Row row : sheet) {
-                    OfflineInsurancePolicyModel offlineInsurancePolicyModel = ExcelModelKit.createModel(OfflineInsurancePolicyModel.class, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, row);
+                    OfflineInsurancePolicyModel offlineInsurancePolicyModel = ExcelModelKit.createModel(OfflineInsurancePolicyModel.class, columnFieldMap, row);
 
                     if (offlineInsurancePolicyModel == null) {
                         continue;
@@ -629,7 +635,9 @@ public class InsurancePolicyAction extends BaseAction {
                         successCount++;
                     } else {
                         failCount++;
-                        response.data.list.add(new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel));
+                        InsurancePolicy.OfflineInsurancePolicy offlineInsurancePolicy = new InsurancePolicy.OfflineInsurancePolicy(offlineInsurancePolicyModel);
+                        response.data.list.add(offlineInsurancePolicy);
+                        offlineInsurancePolicyModel.reason = offlineInsurancePolicy.reason;
                         errorList.add(offlineInsurancePolicyModel);
                     }
                 }
@@ -660,7 +668,7 @@ public class InsurancePolicyAction extends BaseAction {
                 dataList.add(new ExcelModel<>(offlineInsurancePolicyModel));
             }
 
-            byte[] data = ExcelModelKit.createExcelByteArray(dataList, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, "导入失败保单数据");
+            byte[] data = ExcelModelKit.createExcelByteArray(dataList, columnFieldMap, "导入失败保单数据");
 
             if (data == null) {
                 return json(BaseResponse.CODE_INPUT_OFFLINE_FAILURE, "导入失败", response);

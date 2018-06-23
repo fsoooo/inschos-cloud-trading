@@ -548,6 +548,8 @@ public class InsurancePolicyModel {
     }
 
     public String premium;
+    public String tax_money;
+    public String pay_money;
     public String pay_status;
     public String actual_pay_time;
 

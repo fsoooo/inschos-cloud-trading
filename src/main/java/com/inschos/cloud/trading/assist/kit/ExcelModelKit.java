@@ -96,6 +96,7 @@ public class ExcelModelKit {
         Sheet sheet = workbook.createSheet(sheetName);
 
         writeRank(sheet, data, map, 0, getCellStyleMap());
+        autoSizeColumn(sheet, map.size());
 
         return getWorkbookByteArray(workbook);
     }
@@ -333,27 +334,38 @@ public class ExcelModelKit {
         return new HashMap<>();
     }
 
-    private final static String[] letterArray = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+    private final static String[] letterArray = {"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
-    public static Map<String, String> getColumnFieldMap(List<String> title) {
+    public static Map<String, String> getColumnFieldMap(List<String> title, String startIndexName) {
+        return getColumnFieldMap(title, getColumnIndexByName(startIndexName));
+    }
+
+    public static Map<String, String> getColumnFieldMap(List<String> title, int startIndex) {
         if (title == null || title.isEmpty()) {
             return new HashMap<>();
         }
 
+        List<String> columnList = createColumnList(title.size() + startIndex);
 
+        if (startIndex > 0) {
+            for (int i = 0; i < startIndex; i++) {
+                columnList.remove(0);
+            }
+        }
 
         Map<String, String> result = new HashMap<>();
-//        for (int i = 0; i < columnName.size(); i++) {
-//            result.put(columnName.get(i), title.get(i));
-//        }
+
+        for (int i = 0; i < columnList.size(); i++) {
+            result.put(columnList.get(i), title.get(i));
+        }
+
         return result;
     }
 
-    private final static List<String> createColumnList(int size) {
+    private static List<String> createColumnList(int size) {
         List<String> list = new ArrayList<>();
 
-        int a = 10;
-        for (int j = 0; j < a; j++) {
+        for (int j = 0; j < size; j++) {
             int offset = j;
             int result;
 
@@ -365,7 +377,7 @@ public class ExcelModelKit {
                 if (i != 0) {
                     unit.add(0, i);
                 } else {
-                    a++;
+                    size++;
                     break;
                 }
 
@@ -388,5 +400,38 @@ public class ExcelModelKit {
         }
 
         return list;
+    }
+
+    private static int getColumnIndexByName(String name) {
+        if (StringKit.isEmpty(name)) {
+            return 0;
+        }
+
+        int length = name.length();
+
+        List<String> strings = Arrays.asList(letterArray);
+        int index = 0;
+        int unit = length;
+
+        for (int i = 0; i < length; i++) {
+            unit--;
+            char c = name.charAt(i);
+            if (c >= 'A' && c <= 'Z') {
+                int i1 = strings.indexOf(String.valueOf(c));
+
+                if (i1 == -1 || i1 == 0) {
+                    index = 0;
+                    break;
+                }
+
+                index = index + (i1 * ((int) Math.pow(letterArray.length - 1, unit)));
+
+            } else {
+                index = 0;
+                break;
+            }
+        }
+
+        return index;
     }
 }
