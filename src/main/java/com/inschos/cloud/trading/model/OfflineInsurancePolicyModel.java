@@ -181,7 +181,7 @@ public class OfflineInsurancePolicyModel {
 
         if (StringKit.isEmpty(warranty_code)) {
             flag = false;
-            reasonList.add(new ErrorReason("保单号不能为空", "warranty_code"));
+            reasonList.add(new ErrorReason("保单号不能为空", "warrantyCode"));
         }
 
         List<SimpleDateFormat> sdfs = new ArrayList<>();
@@ -193,7 +193,7 @@ public class OfflineInsurancePolicyModel {
             String ot = TimeKit.parseMillisecondByShowDate(sdfs, order_time);
             if (ot == null) {
                 flag = false;
-                reasonList.add(new ErrorReason("签单日期格式错误（年/月/日 或者 年-月-日）", "order_time"));
+                reasonList.add(new ErrorReason("签单日期格式错误（年/月/日 或者 年-月-日）", "orderTime"));
             } else {
                 order_time = ot;
             }
@@ -203,7 +203,7 @@ public class OfflineInsurancePolicyModel {
             String rit = TimeKit.parseMillisecondByShowDate(sdfs, real_income_time);
             if (rit == null) {
                 flag = false;
-                reasonList.add(new ErrorReason("实收日期格式错误（年/月/日 或者 年-月-日）", "real_income_time"));
+                reasonList.add(new ErrorReason("实收日期格式错误（年/月/日 或者 年-月-日）", "realIncomeTime"));
             } else {
                 real_income_time = rit;
             }
@@ -213,7 +213,7 @@ public class OfflineInsurancePolicyModel {
             String st = TimeKit.parseMillisecondByShowDate(sdfs, start_time);
             if (st == null) {
                 flag = false;
-                reasonList.add(new ErrorReason("起保时间格式错误（年/月/日 或者 年-月-日）", "start_time"));
+                reasonList.add(new ErrorReason("起保时间格式错误（年/月/日 或者 年-月-日）", "startTime"));
             } else {
                 start_time = st;
             }
@@ -223,7 +223,7 @@ public class OfflineInsurancePolicyModel {
             String et = TimeKit.parseMillisecondByShowDate(sdfs, end_time);
             if (et == null) {
                 flag = false;
-                reasonList.add(new ErrorReason("终止时间格式错误（年/月/日 或者 年-月-日）", "end_time"));
+                reasonList.add(new ErrorReason("终止时间格式错误（年/月/日 或者 年-月-日）", "endTime"));
             } else {
                 end_time = et;
             }

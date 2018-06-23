@@ -593,7 +593,7 @@ public class InsurancePolicyAction extends BaseAction {
                         }
 
                         if (!b) {
-                            offlineInsurancePolicyModel.addErrorReason("insurance_company", "保险公司名称不存在");
+                            offlineInsurancePolicyModel.addErrorReason("insuranceCompany", "保险公司名称不存在");
                         }
                     }
 
@@ -607,14 +607,14 @@ public class InsurancePolicyAction extends BaseAction {
                         }
 
                         if (!b) {
-                            offlineInsurancePolicyModel.addErrorReason("insurance_type", "保险产品名称不存在");
+                            offlineInsurancePolicyModel.addErrorReason("insuranceType", "保险产品名称不存在");
                         }
                     }
 
                     OfflineInsurancePolicyModel offlineInsurance = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyCode(offlineInsurancePolicyModel.warranty_code);
 
                     if (offlineInsurance != null) {
-                        offlineInsurancePolicyModel.addErrorReason("保单号重复", "warranty_code");
+                        offlineInsurancePolicyModel.addErrorReason("保单号重复", "warrantyCode");
                         success = false;
                     } else if (success) {
                         offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
