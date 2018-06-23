@@ -3,15 +3,12 @@ package com.inschos.cloud.trading.assist.kit;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 
-import javax.swing.text.DateFormatter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -35,7 +32,7 @@ public class ExcelModelKit {
             return null;
         }
 
-        T t = null;
+        T t;
         try {
 
             t = cls.newInstance();
@@ -103,9 +100,9 @@ public class ExcelModelKit {
 
 
     /**
-     * 逐段写入
+     * 逐段写入行
      *
-     * @param sheet          逐段写入
+     * @param sheet          逐段写入行
      * @param data           写入数据
      * @param map            数据与excel对应表
      * @param startRow       开始行数
@@ -193,6 +190,15 @@ public class ExcelModelKit {
         return count;
     }
 
+    /**
+     * 写入列
+     *
+     * @param sheet          写入列
+     * @param data           写入数据
+     * @param rowIndex       第几列
+     * @param startRow       开始行
+     * @param CELL_STYLE_MAP 单元格样式map
+     */
     public static void writeRow(Sheet sheet, List<ExcelModel<String>> data, int rowIndex, int startRow, Map<String, CellStyle> CELL_STYLE_MAP) {
         if (sheet == null || data == null || data.isEmpty()) {
             return;
@@ -233,6 +239,12 @@ public class ExcelModelKit {
         }
     }
 
+    /**
+     * 设置行宽
+     *
+     * @param sheet       工作薄
+     * @param columnWidth 行宽大小
+     */
     public static void setColumnWidth(Sheet sheet, List<Integer> columnWidth) {
         if (sheet == null || columnWidth == null || columnWidth.isEmpty()) {
             return;
@@ -243,6 +255,12 @@ public class ExcelModelKit {
         }
     }
 
+    /**
+     * 设置自适应行宽，在生成完成后调用一次。
+     *
+     * @param sheet     工作薄
+     * @param columnNum 一共多少列
+     */
     public static void autoSizeColumn(Sheet sheet, int columnNum) {
         if (sheet == null || columnNum == 0) {
             return;
@@ -254,35 +272,12 @@ public class ExcelModelKit {
         }
     }
 
-
-//    public static <T> byte[] createExcelByteArray(List<T> data, Map<String, String> map, String sheetName) {
-//
-//        if (data == null || data.isEmpty()) {
-//            return null;
-//        }
-//
-//        List<ExcelModel<T>> list = new ArrayList<>();
-//        for (T datum : data) {
-//            list.add(new ExcelModel<>(datum));
-//        }
-//
-//        return createExcelByteArray(list, map, sheetName);
-//    }
-//
-//    public static <T> int writeRank(Sheet sheet, List<T> data, Map<String, String> map, int startRow) {
-//
-//        if (data == null || data.isEmpty()) {
-//            return 0;
-//        }
-//
-//        List<ExcelModel<T>> list = new ArrayList<>();
-//        for (T datum : data) {
-//            list.add(new ExcelModel<>(datum));
-//        }
-//
-//        return writeRank(sheet, list, map, startRow);
-//    }
-
+    /**
+     * 获取Excel二进制文件
+     *
+     * @param workbook Excel
+     * @return Excel二进制文件
+     */
     public static byte[] getWorkbookByteArray(Workbook workbook) {
         byte[] result;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -330,16 +325,35 @@ public class ExcelModelKit {
         return declaredFields;
     }
 
+    /**
+     * 获取单元格样式map
+     *
+     * @return 单元格样式map
+     */
     public static Map<String, CellStyle> getCellStyleMap() {
         return new HashMap<>();
     }
 
     private final static String[] letterArray = {"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
+    /**
+     * 获取数据与Excel对应表
+     *
+     * @param title          数据
+     * @param startIndexName 开始列标
+     * @return 数据与Excel对应表
+     */
     public static Map<String, String> getColumnFieldMap(List<String> title, String startIndexName) {
         return getColumnFieldMap(title, getColumnIndexByName(startIndexName));
     }
 
+    /**
+     * 获取数据与Excel对应表
+     *
+     * @param title      数据
+     * @param startIndex 开始列标索引
+     * @return 数据与Excel对应表
+     */
     public static Map<String, String> getColumnFieldMap(List<String> title, int startIndex) {
         if (title == null || title.isEmpty()) {
             return new HashMap<>();
