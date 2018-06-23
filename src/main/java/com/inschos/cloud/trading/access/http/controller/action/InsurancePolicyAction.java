@@ -1265,7 +1265,6 @@ public class InsurancePolicyAction extends BaseAction {
                 }
             }
 
-
             Map<String, ChannelBean> channelMap = new HashMap<>();
             if (needChannel) {
                 List<String> channelIds = new ArrayList<>(channelId);
@@ -1333,7 +1332,7 @@ public class InsurancePolicyAction extends BaseAction {
                         getInsurancePolicyItemBean.agentName = agentBean.name;
                     }
                 }
-                
+
                 if (needInsured && !insuredName.isEmpty()) {
                     InsuranceParticipantModel insuranceParticipantModel1 = insuredName.get(getInsurancePolicyItemBean.warrantyUuid);
                     if (insuranceParticipantModel1 != null && !StringKit.isEmpty(insuranceParticipantModel1.name)) {
