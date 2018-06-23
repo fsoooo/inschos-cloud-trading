@@ -20,5 +20,6 @@ public class BaseResponse {
 
 
 	public static final int CODE_VERIFY_CODE = 600;
+	public static final int CODE_INPUT_OFFLINE_FAILURE = 200;
 
 }

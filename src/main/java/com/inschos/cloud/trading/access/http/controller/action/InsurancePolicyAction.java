@@ -663,7 +663,7 @@ public class InsurancePolicyAction extends BaseAction {
             byte[] data = ExcelModelKit.createExcelByteArray(dataList, OfflineInsurancePolicyModel.COLUMN_FIELD_MAP, "导入失败保单数据");
 
             if (data == null) {
-                return json(BaseResponse.CODE_FAILURE, "导入失败", response);
+                return json(BaseResponse.CODE_INPUT_OFFLINE_FAILURE, "导入失败", response);
             }
 
             FileUpload.UploadByBase64Request fileUploadRequest = new FileUpload.UploadByBase64Request();
@@ -675,14 +675,14 @@ public class InsurancePolicyAction extends BaseAction {
             if (upload) {
                 response.data.excelFileKey = fileUploadRequest.fileKey;
                 response.data.excelFileUrl = fileClient.getFileUrl(fileUploadRequest.fileKey);
-                return json(BaseResponse.CODE_FAILURE, "部分导入失败", response);
+                return json(BaseResponse.CODE_INPUT_OFFLINE_FAILURE, "部分导入失败", response);
             } else {
-                return json(BaseResponse.CODE_FAILURE, "导入失败", response);
+                return json(BaseResponse.CODE_INPUT_OFFLINE_FAILURE, "导入失败", response);
             }
 
         }
 
-        return json((flag ? BaseResponse.CODE_SUCCESS : BaseResponse.CODE_FAILURE), (flag ? "导入成功" : "导入失败"), response);
+        return json((flag ? BaseResponse.CODE_SUCCESS : BaseResponse.CODE_INPUT_OFFLINE_FAILURE), (flag ? "导入成功" : "导入失败"), response);
     }
 
     /**

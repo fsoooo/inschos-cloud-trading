@@ -340,46 +340,53 @@ public class ExcelModelKit {
             return new HashMap<>();
         }
 
-        List<String> columnName = new ArrayList<>();
 
-        for (int i = 0; i < title.size(); i++) {
 
-            int offset = i;
-            int result = 0;
-            int count = 0;
+        Map<String, String> result = new HashMap<>();
+//        for (int i = 0; i < columnName.size(); i++) {
+//            result.put(columnName.get(i), title.get(i));
+//        }
+        return result;
+    }
+
+    private final static List<String> createColumnList(int size) {
+        List<String> list = new ArrayList<>();
+
+        int a = 10;
+        for (int j = 0; j < a; j++) {
+            int offset = j;
+            int result;
+
             List<Integer> unit = new ArrayList<>();
-
             do {
-                count++;
                 result = offset / letterArray.length;
-                int j = offset % letterArray.length;
-                if (result > 0) {
-                    unit.add(letterArray.length - 1);
-                } else {
-                    unit.add(j - 1);
-                }
+                int i = offset % letterArray.length;
 
-                if (j != 0) {
-                    result++;
+                if (i != 0) {
+                    unit.add(0, i);
+                } else {
+                    a++;
+                    break;
                 }
 
                 offset = result;
 
-            } while (result != 1);
+            } while (offset != 0);
 
             if (!unit.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 for (Integer integer : unit) {
                     sb.append(letterArray[integer]);
                 }
-                columnName.add(sb.toString());
+                list.add(sb.toString());
             }
+
+//            System.out.println("count = " + count);
+//            Integer[] integers = unit.toArray(new Integer[0]);
+//            System.out.println("integers = " + Arrays.toString(integers));
+
         }
 
-        Map<String, String> result = new HashMap<>();
-        for (int i = 0; i < columnName.size(); i++) {
-            result.put(columnName.get(i),title.get(i));
-        }
-        return result;
+        return list;
     }
 }
