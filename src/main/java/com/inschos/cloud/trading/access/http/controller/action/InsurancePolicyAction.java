@@ -25,8 +25,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy.CAR_FIELD_TYPE;
-
 /**
  * 创建日期：2018/3/22 on 11:06
  * 描述：

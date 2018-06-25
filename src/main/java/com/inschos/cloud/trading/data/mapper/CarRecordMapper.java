@@ -15,4 +15,6 @@ public interface CarRecordMapper {
 
     CarRecordModel findOneByResponseNo(String responseNo);
 
+    CarRecordModel findOneByCarCode(String carCode);
+
 }

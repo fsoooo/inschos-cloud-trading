@@ -842,7 +842,7 @@ public class CarInsuranceAction extends BaseAction {
         long time = System.currentTimeMillis();
 
         // 将车辆信息存入我们自己的数据库
-        CarRecordModel oneByResponseNo = carRecordDao.findOneByResponseNo(request.carInfo.responseNo);
+        CarRecordModel oneByResponseNo = carRecordDao.findOneByResponseNo(request.carInfo.licenseNo);
 
         CarRecordModel carRecordModel = new CarRecordModel();
         carRecordModel.car_code = request.carInfo.licenseNo;
@@ -1440,7 +1440,7 @@ public class CarInsuranceAction extends BaseAction {
                 ciProposal.plan_id = "0";
                 ciProposal.product_id = String.valueOf(ciProduct.id);
                 ciProposal.ins_company_id = String.valueOf(ciProduct.insuranceCoId);
-                ciProposal.is_settlement = "1";
+                ciProposal.is_settlement = "0";
 
                 applyUnderwritingRequest.addresseeName = request.applyUnderwriting.addresseeName;
                 applyUnderwritingRequest.addresseeMobile = request.applyUnderwriting.addresseeMobile;
@@ -1587,7 +1587,7 @@ public class CarInsuranceAction extends BaseAction {
                 biProposal.product_id = String.valueOf(biProduct.id);
                 biProposal.ins_company_id = String.valueOf(biProduct.insuranceCoId);
 
-                biProposal.is_settlement = "1";
+                biProposal.is_settlement = "0";
 
                 biProposal.express_email = applyUnderwritingRequest.policyEmail;
                 biProposal.express_address = applyUnderwritingRequest.addresseeDetails;

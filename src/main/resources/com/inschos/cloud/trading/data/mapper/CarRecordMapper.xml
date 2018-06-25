@@ -22,9 +22,14 @@
 
     <select id="findOneByResponseNo" parameterType="String" resultType="com.inschos.cloud.trading.model.CarRecordModel">
         select
-        <include refid="Base_Column_List" />
-        from cust_car where car_code=#{_parameter}
+        <include refid="Base_Column_List"/>
+        from cust_car where response_no=#{_parameter}
     </select>
 
+    <select id="findOneByCarCode" parameterType="String" resultType="com.inschos.cloud.trading.model.CarRecordModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_car where car_code=#{_parameter}
+    </select>
 
 </mapper>
