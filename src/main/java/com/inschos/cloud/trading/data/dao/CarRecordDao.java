@@ -28,8 +28,12 @@ public class CarRecordDao extends BaseDao {
         return carRecordMapper.findOneByCarCode(carCode);
     }
 
-    public int updateCarRecord(CarRecordModel carRecordModel) {
-        return carRecordMapper.updateCarRecord(carRecordModel);
+    public int updateCarRecordByResponseNo(CarRecordModel carRecordModel) {
+        return carRecordMapper.updateCarRecordByResponseNo(carRecordModel);
+    }
+
+    public int updateCarRecordByCarCode(CarRecordModel carRecordModel) {
+        return carRecordMapper.updateCarRecordByCarCode(carRecordModel);
     }
 
 }

@@ -842,7 +842,7 @@ public class CarInsuranceAction extends BaseAction {
         long time = System.currentTimeMillis();
 
         // 将车辆信息存入我们自己的数据库
-        CarRecordModel oneByResponseNo = carRecordDao.findOneByResponseNo(request.carInfo.licenseNo);
+        CarRecordModel oneByResponseNo = carRecordDao.findOneByCarCode(request.carInfo.licenseNo);
 
         CarRecordModel carRecordModel = new CarRecordModel();
         carRecordModel.car_code = request.carInfo.licenseNo;
@@ -871,7 +871,7 @@ public class CarInsuranceAction extends BaseAction {
             carRecordModel.created_at = String.valueOf(time);
             carRecordDao.addCarRecord(carRecordModel);
         } else {
-            carRecordDao.updateCarRecord(carRecordModel);
+            carRecordDao.updateCarRecordByCarCode(carRecordModel);
         }
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
