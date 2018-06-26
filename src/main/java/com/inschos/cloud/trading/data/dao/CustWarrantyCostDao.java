@@ -92,4 +92,17 @@ public class CustWarrantyCostDao extends BaseDao {
         return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticListCount(custWarrantyCostModel);
     }
 
+    /**
+     * warranty_uuid 获取第一期的缴费情况
+     * @param custWarrantyCostModel
+     * @return
+     */
+    public CustWarrantyCostModel findFirstPhase(CustWarrantyCostModel custWarrantyCostModel){
+        return custWarrantyCostMapper.findFirstPhase(custWarrantyCostModel);
+    }
+
+    public int updatePayStatusByWarrantyUuidPhase(CustWarrantyCostModel costModel){
+        return costModel!=null?custWarrantyCostMapper.updatePayStatusByWarrantyUuidPhase(costModel):0;
+    }
+
 }

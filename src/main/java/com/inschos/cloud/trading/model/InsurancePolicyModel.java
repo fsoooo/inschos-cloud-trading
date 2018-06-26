@@ -27,6 +27,15 @@ public class InsurancePolicyModel {
      * 保单号
      */
     public String warranty_code;
+    /** 组合产品  0 不是  1是*/
+    public int comb_product;
+
+    /** 组合保单号*/
+    public String comb_warranty_code;
+
+    /** 业务识别号*/
+    public String business_no;
+
     /**
      * 归属账号uuid
      */
@@ -68,6 +77,10 @@ public class InsurancePolicyModel {
      */
     public String count;
     /**
+     * 保费
+     */
+    public String premium;
+    /**
      * 分期方式
      */
     public String by_stages_way;
@@ -88,7 +101,7 @@ public class InsurancePolicyModel {
      */
     public String type;
     /**
-     * 保单状态 1投保中 2待生效 3保障中 4可续保 5已过保，6已退保
+     * 保单状态 1投保中, 2待生效,3保障中, 4可续保,5已过保，6已退保 7已失效
      */
     public String warranty_status;
     /**
@@ -127,6 +140,17 @@ public class InsurancePolicyModel {
      * 快递方式，0-自取，1-快递
      */
     public String delivery_type;
+
+
+    /** 保单下单时间*/
+    public String order_time;
+
+    /** 投保回执CODE*/
+    public String resp_code;
+
+    /** 投保回执信息*/
+    public String resp_msg;
+
     /**
      * 创建时间
      */
@@ -139,6 +163,8 @@ public class InsurancePolicyModel {
      * 删除标识 0删除 1可用
      */
     public String state;
+
+    //=================search=============
 
     public String search;
     public String searchType;
@@ -202,8 +228,11 @@ public class InsurancePolicyModel {
     public static final String POLICY_STATUS_CONTINUE = "4";
     // 已过保
     public static final String POLICY_STATUS_EXPIRED = "5";
-    // 已失效
+    //已失效
     public static final String POLICY_STATUS_INVALID = "6";
+    // 已退保
+    public static final String POLICY_STATUS_SURRENDER = "7";
+
 
     public boolean setWarrantyStatus(String warrantyStatus) {
         if (!StringKit.isInteger(warrantyStatus) || Integer.valueOf(warrantyStatus) > 6 || Integer.valueOf(warrantyStatus) < 1) {
@@ -304,6 +333,9 @@ public class InsurancePolicyModel {
                 break;
             case POLICY_STATUS_INVALID:
                 str = "已失效";
+                break;
+            case POLICY_STATUS_SURRENDER:
+                str = "已退保";
                 break;
         }
         return str;
@@ -545,7 +577,6 @@ public class InsurancePolicyModel {
         TEAM_FIELD_MAP = new HashMap<>();
     }
 
-    public String premium;
     public String pay_status;
 
     public Set<String> uuids;

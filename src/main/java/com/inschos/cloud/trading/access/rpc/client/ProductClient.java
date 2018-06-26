@@ -3,6 +3,7 @@ package com.inschos.cloud.trading.access.rpc.client;
 import com.inschos.cloud.trading.access.rpc.bean.*;
 import com.inschos.cloud.trading.access.rpc.service.ProductService;
 import com.inschos.cloud.trading.assist.kit.L;
+import com.inschos.dock.bean.InsureBean;
 import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -71,5 +72,40 @@ public class ProductClient {
             return null;
         }
     }
+
+    public PayCategoryBean getOnePayCategory(long pagCategoryId){
+        try {
+            ProductService service = getService();
+            return service != null ? service.getOnePayCategory(pagCategoryId) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public List<PayCategoryBean> getListPayCategory(long productId){
+        try {
+            ProductService service = getService();
+            return service != null ? service.getListPayCategory(productId) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    //保费试算的rpc
+    public ProductBean getPremium(InsureBean search){
+        try {
+            ProductService service = getService();
+            return service != null ? service.getPremium(search) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
 
 }

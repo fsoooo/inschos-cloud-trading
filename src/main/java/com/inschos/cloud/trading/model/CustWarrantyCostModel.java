@@ -60,7 +60,7 @@ public class CustWarrantyCostModel {
      * 结束时间
      */
     public String updated_at;
-
+    //======================search====================
     public String account_uuid;
     public String channel_id;
     public String agent_id;
@@ -74,7 +74,10 @@ public class CustWarrantyCostModel {
     public CustWarrantyCostModel() {
 
     }
-
+    //预投保
+    public static final String APPLY_UNDERWRITING_PRE = "199";
+    //待核保
+    public static final String APPLY_UNDERWRITING_WAIT = "200";
     // 核保中
     public static final String APPLY_UNDERWRITING_PROCESSING = "201";
     // 核保失败
@@ -87,9 +90,13 @@ public class CustWarrantyCostModel {
     public static final String PAY_STATUS_CANCEL = "205";
     // 支付成功
     public static final String PAY_STATUS_SUCCESS = "206";
+    //支付失败
+    public static final String PAY_STATUS_FAILED = "207";
+
+
 
     public boolean setPayStatus(String payStatus) {
-        if (!StringKit.isInteger(payStatus) || Integer.valueOf(payStatus) > 206 || Integer.valueOf(payStatus) < 201) {
+        if (!StringKit.isInteger(payStatus) || Integer.valueOf(payStatus) > 207 || Integer.valueOf(payStatus) < 199) {
             return false;
         }
 
@@ -122,6 +129,12 @@ public class CustWarrantyCostModel {
         }
         // 支付状态 201-核保中 202-核保失败 203-待支付 204-支付中 205-支付取消 206-支付成功
         switch (payStatus) {
+            case APPLY_UNDERWRITING_PRE:
+                str = "预投保";
+                break;
+            case APPLY_UNDERWRITING_WAIT:
+                str = "待核保";
+                break;
             case APPLY_UNDERWRITING_PROCESSING:
                 str = "核保中";
                 break;
@@ -139,6 +152,9 @@ public class CustWarrantyCostModel {
                 break;
             case PAY_STATUS_SUCCESS:
                 str = "支付成功";
+                break;
+            case PAY_STATUS_FAILED:
+                str = "支付失败";
                 break;
         }
         return str;

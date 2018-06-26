@@ -36,6 +36,12 @@
         `pay_status`=#{pay_status},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
+    <update id="updatePayStatusByWarrantyUuidPhase"
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+        update cust_warranty_cost set
+        `pay_status`=#{pay_status},`updated_at`=#{updated_at}
+        where `warranty_uuid`=#{warranty_uuid} and `phase`=#{phase}
+    </update>
 
     <select id="findCustWarrantyCostTotal"
             resultType="Double"
@@ -213,8 +219,15 @@
         WHERE `cust_warranty`.`warranty_status`!=1 AND `cust_warranty`.`warranty_status`!=6 AND `cust_warranty`.`state`= 1  AND `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time} AND
         `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time} AND `cust_warranty`.`manager_uuid`=#{manager_uuid}
         <if test="search!=null and search!=''">
-            and `warranty_code` like concat("%",#{search},"%")
+            and cust_warranty.`warranty_code` like concat("%",#{search},"%")
         </if>
+    </select>
+
+    <select id="findFirstPhase" parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel" resultType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+        select
+          <include refid="Base_Column_List"/>
+        from cust_warranty_cost
+        where warranty_uuid=#{warranty_uuid} and phase = 1
     </select>
 
 
