@@ -1,18 +1,15 @@
 package com.inschos.cloud.trading.assist.kit;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -21,6 +18,9 @@ import java.util.*;
  * 作者：zhangyunhe
  */
 public class ExcelModelKit {
+
+    public final static String TYPE_STRING = "TYPE_STRING";
+    public final static String TYPE_DOUBLE = "TYPE_DOUBLE";
 
     /**
      * Model的所有字段都必须是String
@@ -35,7 +35,7 @@ public class ExcelModelKit {
             return null;
         }
 
-        T t = null;
+        T t;
         try {
 
             t = cls.newInstance();
@@ -57,9 +57,24 @@ public class ExcelModelKit {
                 String columnName = CellReference.convertNumToColString(cell.getAddress().getColumn());
                 String fieldName = map.get(columnName);
                 Field field = fieldMap.get(fieldName);
-
                 if (field != null) {
-                    field.set(t, formatter.formatCellValue(cell).trim());
+                    String value = "";
+                    switch (cell.getCellType()) {
+                        case HSSFCell.CELL_TYPE_NUMERIC:
+                            if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                                //注：format格式 yyyy-MM-dd hh:mm:ss 中小时为12小时制，若要24小时制，则把小h变为H即可，yyyy-MM-dd HH:mm:ss
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                                value = sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
+                                break;
+                            } else {
+                                value = formatter.formatCellValue(cell);
+                            }
+                            break;
+                        default:
+                            value = formatter.formatCellValue(cell);
+                            break;
+                    }
+                    field.set(t, value);
                 }
             }
 
@@ -71,25 +86,30 @@ public class ExcelModelKit {
         return t;
     }
 
-    public static <T> byte[] createExcelByteArray(List<ExcelModel<T>> data, Map<String, String> map, String sheetName) {
+    public static <T> byte[] createExcelByteArray(List<ExcelModel<T>> data, Map<String, String> map, Map<String, String> typeMap, String sheetName) {
 
         if (data == null || data.isEmpty()) {
             return null;
         }
 
+        if (typeMap == null) {
+            typeMap = new HashMap<>();
+        }
+
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet(sheetName);
 
-        writeExcel(sheet, data, map, 0, getCellStyleMap());
+        writeRank(sheet, data, map, 0, getCellStyleMap(), typeMap);
+        autoSizeColumn(sheet, map.size());
 
         return getWorkbookByteArray(workbook);
     }
 
 
     /**
-     * 逐段写入
+     * 逐段写入行
      *
-     * @param sheet          逐段写入
+     * @param sheet          逐段写入行
      * @param data           写入数据
      * @param map            数据与excel对应表
      * @param startRow       开始行数
@@ -97,10 +117,14 @@ public class ExcelModelKit {
      * @param <T>            数据
      * @return 下次写入的开始行数
      */
-    public static <T> int writeExcel(Sheet sheet, List<ExcelModel<T>> data, Map<String, String> map, int startRow, Map<String, CellStyle> CELL_STYLE_MAP) {
+    public static <T> int writeRank(Sheet sheet, List<ExcelModel<T>> data, Map<String, String> map, int startRow, Map<String, CellStyle> CELL_STYLE_MAP, Map<String, String> typeMap) {
 
         if (data == null || data.isEmpty()) {
             return 0;
+        }
+
+        if (typeMap == null) {
+            typeMap = new HashMap<>();
         }
 
         Workbook workbook = sheet.getWorkbook();
@@ -130,7 +154,7 @@ public class ExcelModelKit {
                 continue;
             }
 
-            L.log.debug("writeExcel ===========> data = " + t.toString());
+            L.log.debug("writeRank ===========> data = " + t.toString());
 
             Field[] fArray = getClassFieldArray(t);
 
@@ -159,25 +183,34 @@ public class ExcelModelKit {
                     try {
                         Object o = field.get(t);
 
-                        if (tExcelModel.hasStyle && !StringKit.isEmpty(tExcelModel.styleName)) {
-                            CellStyle cellStyle = CELL_STYLE_MAP.get(tExcelModel.styleName);
+                        saveStyleMap(workbook, cell, tExcelModel, CELL_STYLE_MAP);
 
-                            if (cellStyle == null) {
-                                cellStyle = workbook.createCellStyle();
-                                Font font = workbook.createFont();
-                                font.setBoldweight(tExcelModel.boldWeight);
-                                cellStyle.setFont(font);
-                                CELL_STYLE_MAP.put(tExcelModel.styleName, cellStyle);
-                            }
-
-                            cell.setCellStyle(cellStyle);
-                        }
-
-                        L.log.debug("writeExcel ===========> row = " + i + " column = " + j + " value = " + o);
+                        L.log.debug("writeRank ===========> row = " + i + " column = " + j + " value = " + o);
                         if (o == null) {
                             cell.setCellValue("");
                         } else {
-                            cell.setCellValue(o.toString());
+                            String s = typeMap.get(fieldName);
+
+                            if (StringKit.isEmpty(s)) {
+                                s = "";
+                            }
+
+                            switch (s) {
+                                case TYPE_DOUBLE:
+                                    String string = o.toString();
+                                    if (StringKit.isEmpty(string)) {
+                                        cell.setCellValue(0.0D);
+                                    } else if (StringKit.isNumeric(string)) {
+                                        cell.setCellValue(Double.valueOf(string));
+                                    } else {
+                                        cell.setCellValue(string);
+                                    }
+                                    break;
+                                case TYPE_STRING:
+                                default:
+                                    cell.setCellValue(o.toString());
+                                    break;
+                            }
                         }
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
@@ -189,6 +222,61 @@ public class ExcelModelKit {
         return count;
     }
 
+    /**
+     * 写入列
+     *
+     * @param sheet          写入列
+     * @param data           写入数据
+     * @param rowIndex       第几列
+     * @param startRow       开始行
+     * @param CELL_STYLE_MAP 单元格样式map
+     */
+    public static void writeRow(Sheet sheet, List<ExcelModel<String>> data, int rowIndex, int startRow, Map<String, CellStyle> CELL_STYLE_MAP) {
+        if (sheet == null || data == null || data.isEmpty()) {
+            return;
+        }
+
+        Workbook workbook = sheet.getWorkbook();
+        CellStyle defaultStyle = CELL_STYLE_MAP.get("defaultStyle");
+        if (defaultStyle == null) {
+            defaultStyle = workbook.createCellStyle();
+            CELL_STYLE_MAP.put("defaultStyle", defaultStyle);
+        }
+
+        int maxRow = data.size() + startRow;
+
+        for (int i = startRow; i < maxRow; i++) {
+            Row row1 = sheet.createRow(i);
+            Cell cell = row1.createCell(rowIndex);
+
+            ExcelModel<String> stringExcelModel = data.get(i - startRow);
+            saveStyleMap(workbook, cell, stringExcelModel, CELL_STYLE_MAP);
+            cell.setCellValue(stringExcelModel.t);
+        }
+    }
+
+    private static <T> void saveStyleMap(Workbook workbook, Cell cell, ExcelModel<T> data, Map<String, CellStyle> CELL_STYLE_MAP) {
+        if (data.hasStyle && !StringKit.isEmpty(data.styleName)) {
+            CellStyle cellStyle = CELL_STYLE_MAP.get(data.styleName);
+
+            if (cellStyle == null) {
+                cellStyle = workbook.createCellStyle();
+                Font font = workbook.createFont();
+                font.setBoldweight(data.boldWeight);
+                cellStyle.setFont(font);
+                CELL_STYLE_MAP.put(data.styleName, cellStyle);
+            }
+
+            cell.setCellStyle(cellStyle);
+        }
+    }
+
+    /**
+     * 设置行宽
+     *
+     * @param sheet       工作薄
+     * @param columnWidth 行宽大小
+     */
     public static void setColumnWidth(Sheet sheet, List<Integer> columnWidth) {
         if (sheet == null || columnWidth == null || columnWidth.isEmpty()) {
             return;
@@ -199,6 +287,12 @@ public class ExcelModelKit {
         }
     }
 
+    /**
+     * 设置自适应行宽，在生成完成后调用一次。
+     *
+     * @param sheet     工作薄
+     * @param columnNum 一共多少列
+     */
     public static void autoSizeColumn(Sheet sheet, int columnNum) {
         if (sheet == null || columnNum == 0) {
             return;
@@ -210,35 +304,12 @@ public class ExcelModelKit {
         }
     }
 
-
-//    public static <T> byte[] createExcelByteArray(List<T> data, Map<String, String> map, String sheetName) {
-//
-//        if (data == null || data.isEmpty()) {
-//            return null;
-//        }
-//
-//        List<ExcelModel<T>> list = new ArrayList<>();
-//        for (T datum : data) {
-//            list.add(new ExcelModel<>(datum));
-//        }
-//
-//        return createExcelByteArray(list, map, sheetName);
-//    }
-//
-//    public static <T> int writeExcel(Sheet sheet, List<T> data, Map<String, String> map, int startRow) {
-//
-//        if (data == null || data.isEmpty()) {
-//            return 0;
-//        }
-//
-//        List<ExcelModel<T>> list = new ArrayList<>();
-//        for (T datum : data) {
-//            list.add(new ExcelModel<>(datum));
-//        }
-//
-//        return writeExcel(sheet, list, map, startRow);
-//    }
-
+    /**
+     * 获取Excel二进制文件
+     *
+     * @param workbook Excel
+     * @return Excel二进制文件
+     */
     public static byte[] getWorkbookByteArray(Workbook workbook) {
         byte[] result;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -286,8 +357,127 @@ public class ExcelModelKit {
         return declaredFields;
     }
 
+    /**
+     * 获取单元格样式map
+     *
+     * @return 单元格样式map
+     */
     public static Map<String, CellStyle> getCellStyleMap() {
         return new HashMap<>();
     }
 
+    private final static String[] letterArray = {"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+
+    /**
+     * 获取数据与Excel对应表
+     *
+     * @param title          数据
+     * @param startIndexName 开始列标
+     * @return 数据与Excel对应表
+     */
+    public static Map<String, String> getColumnFieldMap(List<String> title, String startIndexName) {
+        return getColumnFieldMap(title, getColumnIndexByName(startIndexName));
+    }
+
+    /**
+     * 获取数据与Excel对应表
+     *
+     * @param title      数据
+     * @param startIndex 开始列标索引
+     * @return 数据与Excel对应表
+     */
+    public static Map<String, String> getColumnFieldMap(List<String> title, int startIndex) {
+        if (title == null || title.isEmpty()) {
+            return new HashMap<>();
+        }
+
+        List<String> columnList = createColumnList(title.size() + startIndex);
+
+        if (startIndex > 0) {
+            for (int i = 0; i < startIndex; i++) {
+                columnList.remove(0);
+            }
+        }
+
+        Map<String, String> result = new HashMap<>();
+
+        for (int i = 0; i < columnList.size(); i++) {
+            result.put(columnList.get(i), title.get(i));
+        }
+
+        return result;
+    }
+
+    private static List<String> createColumnList(int size) {
+        List<String> list = new ArrayList<>();
+
+        for (int j = 0; j < size; j++) {
+            int offset = j;
+            int result;
+
+            List<Integer> unit = new ArrayList<>();
+            do {
+                result = offset / letterArray.length;
+                int i = offset % letterArray.length;
+
+                if (i != 0) {
+                    unit.add(0, i);
+                } else {
+                    size++;
+                    break;
+                }
+
+                offset = result;
+
+            } while (offset != 0);
+
+            if (!unit.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (Integer integer : unit) {
+                    sb.append(letterArray[integer]);
+                }
+                list.add(sb.toString());
+            }
+
+//            System.out.println("count = " + count);
+//            Integer[] integers = unit.toArray(new Integer[0]);
+//            System.out.println("integers = " + Arrays.toString(integers));
+
+        }
+
+        return list;
+    }
+
+    private static int getColumnIndexByName(String name) {
+        if (StringKit.isEmpty(name)) {
+            return 0;
+        }
+
+        int length = name.length();
+
+        List<String> strings = Arrays.asList(letterArray);
+        int index = 0;
+        int unit = length;
+
+        for (int i = 0; i < length; i++) {
+            unit--;
+            char c = name.charAt(i);
+            if (c >= 'A' && c <= 'Z') {
+                int i1 = strings.indexOf(String.valueOf(c));
+
+                if (i1 == -1 || i1 == 0) {
+                    index = 0;
+                    break;
+                }
+
+                index = index + (i1 * ((int) Math.pow(letterArray.length - 1, unit)));
+
+            } else {
+                index = 0;
+                break;
+            }
+        }
+
+        return index;
+    }
 }

@@ -174,7 +174,9 @@ public class InsurancePolicyModel {
     public String status_string;
     public String search_warranty_string;
 
+    public String time_type;
     public String product_id_string;
+    public String insurance_co_id_string;
     public String agent_id_string;
     public long currentTime = System.currentTimeMillis();
     public List<InsuranceParticipantModel> insured_list;
@@ -577,8 +579,19 @@ public class InsurancePolicyModel {
         TEAM_FIELD_MAP = new HashMap<>();
     }
 
+    public String tax_money;
+    public String pay_money;
+
     public String pay_status;
 
-    public Set<String> uuids;
+    public String actual_pay_time;
+
+    // 需要查询佣金为1，不需要为0
+    public String needBrokerage = "0";
+    public String warranty_money;
+    public String ins_money;
+    public String manager_money;
+    public String channel_money;
+    public String agent_money;
 
 }

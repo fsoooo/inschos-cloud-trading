@@ -7,6 +7,7 @@ package com.inschos.cloud.trading.extend.car;
  */
 public class CarInsuranceRequest {
 
+
     public final String applicationID = "18895935";
 
 }

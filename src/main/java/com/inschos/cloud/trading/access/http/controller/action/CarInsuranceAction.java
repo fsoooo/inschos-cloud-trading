@@ -11,6 +11,7 @@ import com.inschos.cloud.trading.access.rpc.client.TaskResultClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.assist.kit.TimeKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.car.*;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -46,6 +46,9 @@ public class CarInsuranceAction extends BaseAction {
 
     @Autowired
     private CustWarrantyCostDao custWarrantyCostDao;
+
+    @Autowired
+    private CustWarrantyBrokerageDao custWarrantyBrokerageDao;
 
     @Autowired
     private FileClient fileClient;
@@ -410,7 +413,7 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String calculateDateByShowDate = parseMillisecondByShowDate(sdf, result.data.firstRegisterDate);
+                String calculateDateByShowDate = TimeKit.parseMillisecondByShowDate(sdf, result.data.firstRegisterDate);
 
                 if (calculateDateByShowDate == null) {
                     result.data.firstRegisterDate = "";
@@ -581,7 +584,6 @@ public class CarInsuranceAction extends BaseAction {
                         }
                     });
 
-
                     response.data = list;
                 } else {
                     if (response.data == null) {
@@ -591,7 +593,12 @@ public class CarInsuranceAction extends BaseAction {
                     }
                 }
 
-                str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
+                if (response.data == null || response.data.isEmpty()) {
+                    str = json(BaseResponse.CODE_FAILURE, "您选择的地区暂不支持在线投保", response);
+                } else {
+                    str = json(BaseResponse.CODE_SUCCESS, "获取保险公司成功", response);
+                }
+
             } else {
                 if (StringKit.equals(CarInsuranceResponse.ERROR_SI100100000063, result.msgCode)) {
                     response.data = new ArrayList<>();
@@ -734,8 +741,8 @@ public class CarInsuranceAction extends BaseAction {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                response.data.biStartTimeValue = parseMillisecondByShowDate(sdf, result.data.biStartTime);
-                response.data.ciStartTimeValue = parseMillisecondByShowDate(sdf, result.data.ciStartTime);
+                response.data.biStartTimeValue = TimeKit.parseMillisecondByShowDate(sdf, result.data.biStartTime);
+                response.data.ciStartTimeValue = TimeKit.parseMillisecondByShowDate(sdf, result.data.ciStartTime);
                 str = json(BaseResponse.CODE_SUCCESS, "获取日期成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
@@ -834,7 +841,7 @@ public class CarInsuranceAction extends BaseAction {
         long time = System.currentTimeMillis();
 
         // 将车辆信息存入我们自己的数据库
-        CarRecordModel oneByResponseNo = carRecordDao.findOneByResponseNo(request.carInfo.responseNo);
+        CarRecordModel oneByResponseNo = carRecordDao.findOneByCarCode(request.carInfo.licenseNo);
 
         CarRecordModel carRecordModel = new CarRecordModel();
         carRecordModel.car_code = request.carInfo.licenseNo;
@@ -863,7 +870,7 @@ public class CarInsuranceAction extends BaseAction {
             carRecordModel.created_at = String.valueOf(time);
             carRecordDao.addCarRecord(carRecordModel);
         } else {
-            carRecordDao.updateCarRecord(carRecordModel);
+            carRecordDao.updateCarRecordByCarCode(carRecordModel);
         }
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1169,13 +1176,13 @@ public class CarInsuranceAction extends BaseAction {
                 response.data.insurancePolicyPremiumDetails = new ArrayList<>();
                 DecimalFormat decimalFormat = new DecimalFormat("#0.00");
                 for (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail datum : result.data) {
-                    datum.biBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
+                    datum.biBeginDateValue = TimeKit.parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
                     String s1 = nextYearMillisecond(datum.biBeginDateValue);
                     if (StringKit.isInteger(s1) && s1 != null) {
                         datum.biInsuranceTermText = dateSdf.format(new Date(Long.valueOf(datum.biBeginDateValue))) + "-" + dateSdf.format(new Date(Long.valueOf(s1)));
                     }
 
-                    datum.ciBeginDateValue = parseMillisecondByShowDate(dateSdf, datum.ciBeginDate);
+                    datum.ciBeginDateValue = TimeKit.parseMillisecondByShowDate(dateSdf, datum.ciBeginDate);
                     s1 = nextYearMillisecond(datum.ciBeginDateValue);
                     if (StringKit.isInteger(s1) && s1 != null) {
                         datum.ciInsuranceTermText = dateSdf.format(new Date(Long.valueOf(datum.ciBeginDateValue))) + "-" + dateSdf.format(new Date(Long.valueOf(s1)));
@@ -1378,39 +1385,8 @@ public class CarInsuranceAction extends BaseAction {
                 return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
             }
 
-//            BigDecimal ciInsuredPremium = new BigDecimal(request.applyUnderwriting.ciInsuredPremium);
-//            BigDecimal integral = new BigDecimal(request.applyUnderwriting.integral);
-//
-//            BigDecimal cIntegralRate = new BigDecimal(request.applyUnderwriting.cIntegral).divide(ciInsuredPremium, BigDecimal.ROUND_HALF_DOWN);
-//
-//            BigDecimal ciIntegral = ciInsuredPremium.multiply(cIntegralRate).divide(new BigDecimal("100"), BigDecimal.ROUND_HALF_DOWN);
-//            BigDecimal biIntegral = new BigDecimal("0.00");
-//            if (ciIntegral.compareTo(integral) < 0) {
-//                biIntegral = integral.subtract(ciIntegral);
-//            } else {
-//                ciIntegral = integral;
-//            }
-//
-//            BigDecimal biInsuredPremium = new BigDecimal(request.applyUnderwriting.biInsuredPremium);
-//            BigDecimal bIntegralRate = new BigDecimal(request.applyUnderwriting.bIntegral);
-//
-//            if (biInsuredPremium.compareTo(BigDecimal.ZERO) > 0) {
-//                bIntegralRate = biIntegral.divide(biInsuredPremium, BigDecimal.ROUND_HALF_DOWN);
-//            }
-
-            BigDecimal ciInsuredPremium = new BigDecimal(request.applyUnderwriting.ciInsuredPremium);
             BigDecimal ciIntegral = new BigDecimal(request.applyUnderwriting.cIntegral);
-            BigDecimal cIntegralRate = new BigDecimal("0.00");
-            if (ciInsuredPremium.compareTo(BigDecimal.ZERO) > 0) {
-                cIntegralRate = ciIntegral.divide(ciInsuredPremium, BigDecimal.ROUND_HALF_DOWN);
-            }
-
-            BigDecimal biInsuredPremium = new BigDecimal(request.applyUnderwriting.biInsuredPremium);
             BigDecimal biIntegral = new BigDecimal(request.applyUnderwriting.bIntegral);
-            BigDecimal bIntegralRate = new BigDecimal("0.00");
-            if (biInsuredPremium.compareTo(BigDecimal.ZERO) > 0) {
-                bIntegralRate = biIntegral.divide(biInsuredPremium, BigDecimal.ROUND_HALF_DOWN);
-            }
 
             String warrantyStatus = InsurancePolicyModel.POLICY_STATUS_PENDING;
 
@@ -1463,7 +1439,7 @@ public class CarInsuranceAction extends BaseAction {
                 ciProposal.plan_id = "0";
                 ciProposal.product_id = String.valueOf(ciProduct.id);
                 ciProposal.ins_company_id = String.valueOf(ciProduct.insuranceCoId);
-                ciProposal.is_settlement = "1";
+                ciProposal.is_settlement = "0";
 
                 applyUnderwritingRequest.addresseeName = request.applyUnderwriting.addresseeName;
                 applyUnderwritingRequest.addresseeMobile = request.applyUnderwriting.addresseeMobile;
@@ -1525,44 +1501,48 @@ public class CarInsuranceAction extends BaseAction {
                         ciProposal.agent_id,
                         time);
 
+                insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setCarIntegral(ciIntegral);
+                BigDecimal bigDecimal = new BigDecimal(0);
+                insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerage(bigDecimal, bigDecimal, bigDecimal, bigDecimal, bigDecimal);
+                insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerageRate(bigDecimal, bigDecimal, bigDecimal, bigDecimal, bigDecimal);
 
-                if (StringKit.isInteger(ciProposal.product_id)) {
-                    ProductBrokerageBean productBrokerageBean = new ProductBrokerageBean();
-                    productBrokerageBean.productId = Long.valueOf(ciProposal.product_id);
-                    productBrokerageBean.managerUuid = ciProposal.manager_uuid;
-                    productBrokerageBean.payTimes = 1;
-
-                    if (StringKit.isInteger(ciProposal.channel_id)) {
-                        productBrokerageBean.channelId = Long.valueOf(ciProposal.channel_id);
-                    }
-
-                    if (StringKit.isInteger(ciProposal.agent_id)) {
-                        productBrokerageBean.agentId = Long.valueOf(ciProposal.agent_id);
-                    }
-
-                    ProductBrokerageInfoBean brokerage = productClient.getBrokerage(productBrokerageBean);
-
-                    BigDecimal managerBrokerage = new BigDecimal("0.00");
-                    BigDecimal channelBrokerage = new BigDecimal("0.00");
-                    BigDecimal agentBrokerage = new BigDecimal("0.00");
-
-                    BigDecimal managerRate = new BigDecimal("0.00");
-                    BigDecimal channelRate = new BigDecimal("0.00");
-                    BigDecimal agentRate = new BigDecimal("0.00");
-
-                    if (brokerage != null) {
-                        managerRate = new BigDecimal(brokerage.platformBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
-                        channelRate = new BigDecimal(brokerage.channelBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
-                        agentRate = new BigDecimal(brokerage.agentBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
-
-                        managerBrokerage = managerRate.multiply(ciInsuredPremium);
-                        channelBrokerage = channelRate.multiply(ciInsuredPremium);
-                        agentBrokerage = agentRate.multiply(ciInsuredPremium);
-                    }
-
-                    insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerage(ciIntegral, ciIntegral, managerBrokerage, channelBrokerage, agentBrokerage);
-                    insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerageRate(cIntegralRate, cIntegralRate, managerRate, channelRate, agentRate);
-                }
+//                if (StringKit.isInteger(ciProposal.product_id)) {
+//                    ProductBrokerageBean productBrokerageBean = new ProductBrokerageBean();
+//                    productBrokerageBean.productId = Long.valueOf(ciProposal.product_id);
+//                    productBrokerageBean.managerUuid = ciProposal.manager_uuid;
+//                    productBrokerageBean.payTimes = 1;
+//
+//                    if (StringKit.isInteger(ciProposal.channel_id)) {
+//                        productBrokerageBean.channelId = Long.valueOf(ciProposal.channel_id);
+//                    }
+//
+//                    if (StringKit.isInteger(ciProposal.agent_id)) {
+//                        productBrokerageBean.agentId = Long.valueOf(ciProposal.agent_id);
+//                    }
+//
+//                    ProductBrokerageInfoBean brokerage = productClient.getBrokerage(productBrokerageBean);
+//
+//                    BigDecimal managerBrokerage = new BigDecimal("0.00");
+//                    BigDecimal channelBrokerage = new BigDecimal("0.00");
+//                    BigDecimal agentBrokerage = new BigDecimal("0.00");
+//
+//                    BigDecimal managerRate = new BigDecimal("0.00");
+//                    BigDecimal channelRate = new BigDecimal("0.00");
+//                    BigDecimal agentRate = new BigDecimal("0.00");
+//
+//                    if (brokerage != null) {
+//                        managerRate = new BigDecimal(brokerage.platformBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+//                        channelRate = new BigDecimal(brokerage.channelBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+//                        agentRate = new BigDecimal(brokerage.agentBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+//
+//                        managerBrokerage = managerRate.multiply(ciInsuredPremium);
+//                        channelBrokerage = channelRate.multiply(ciInsuredPremium);
+//                        agentBrokerage = agentRate.multiply(ciInsuredPremium);
+//                    }
+//
+//                    insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerage(ciIntegral, ciIntegral, managerBrokerage, channelBrokerage, agentBrokerage);
+//                    insurancePolicyAndParticipantForCarInsurance.ciCustWarrantyBrokerageModel.setBrokerageRate(cIntegralRate, cIntegralRate, managerRate, channelRate, agentRate);
+//                }
             }
 
             if (request.applyUnderwriting.hasCommercialInsurance) {
@@ -1606,7 +1586,7 @@ public class CarInsuranceAction extends BaseAction {
                 biProposal.product_id = String.valueOf(biProduct.id);
                 biProposal.ins_company_id = String.valueOf(biProduct.insuranceCoId);
 
-                biProposal.is_settlement = "1";
+                biProposal.is_settlement = "0";
 
                 biProposal.express_email = applyUnderwritingRequest.policyEmail;
                 biProposal.express_address = applyUnderwritingRequest.addresseeDetails;
@@ -1665,43 +1645,48 @@ public class CarInsuranceAction extends BaseAction {
                         biProposal.agent_id,
                         time);
 
-                if (StringKit.isInteger(biProposal.product_id)) {
-                    ProductBrokerageBean productBrokerageBean = new ProductBrokerageBean();
-                    productBrokerageBean.productId = Long.valueOf(biProposal.product_id);
-                    productBrokerageBean.managerUuid = biProposal.manager_uuid;
-                    productBrokerageBean.payTimes = 1;
+                insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setCarIntegral(biIntegral);
+                BigDecimal bigDecimal = new BigDecimal(0);
+                insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerage(bigDecimal, bigDecimal, bigDecimal, bigDecimal, bigDecimal);
+                insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerageRate(bigDecimal, bigDecimal, bigDecimal, bigDecimal, bigDecimal);
 
-                    if (StringKit.isInteger(biProposal.channel_id)) {
-                        productBrokerageBean.channelId = Long.valueOf(biProposal.channel_id);
-                    }
-
-                    if (StringKit.isInteger(biProposal.agent_id)) {
-                        productBrokerageBean.agentId = Long.valueOf(biProposal.agent_id);
-                    }
-
-                    ProductBrokerageInfoBean brokerage = productClient.getBrokerage(productBrokerageBean);
-
-                    BigDecimal managerBrokerage = new BigDecimal("0.00");
-                    BigDecimal channelBrokerage = new BigDecimal("0.00");
-                    BigDecimal agentBrokerage = new BigDecimal("0.00");
-
-                    BigDecimal managerRate = new BigDecimal("0.00");
-                    BigDecimal channelRate = new BigDecimal("0.00");
-                    BigDecimal agentRate = new BigDecimal("0.00");
-
-                    if (brokerage != null) {
-                        managerRate = new BigDecimal(brokerage.platformBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
-                        channelRate = new BigDecimal(brokerage.channelBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
-                        agentRate = new BigDecimal(brokerage.agentBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
-
-                        managerBrokerage = managerRate.multiply(biInsuredPremium);
-                        channelBrokerage = channelRate.multiply(biInsuredPremium);
-                        agentBrokerage = agentRate.multiply(biInsuredPremium);
-                    }
-
-                    insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerage(biIntegral, biIntegral, managerBrokerage, channelBrokerage, agentBrokerage);
-                    insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerageRate(bIntegralRate, bIntegralRate, managerRate, channelRate, agentRate);
-                }
+//                if (StringKit.isInteger(biProposal.product_id)) {
+//                    ProductBrokerageBean productBrokerageBean = new ProductBrokerageBean();
+//                    productBrokerageBean.productId = Long.valueOf(biProposal.product_id);
+//                    productBrokerageBean.managerUuid = biProposal.manager_uuid;
+//                    productBrokerageBean.payTimes = 1;
+//
+//                    if (StringKit.isInteger(biProposal.channel_id)) {
+//                        productBrokerageBean.channelId = Long.valueOf(biProposal.channel_id);
+//                    }
+//
+//                    if (StringKit.isInteger(biProposal.agent_id)) {
+//                        productBrokerageBean.agentId = Long.valueOf(biProposal.agent_id);
+//                    }
+//
+//                    ProductBrokerageInfoBean brokerage = productClient.getBrokerage(productBrokerageBean);
+//
+//                    BigDecimal managerBrokerage = new BigDecimal("0.00");
+//                    BigDecimal channelBrokerage = new BigDecimal("0.00");
+//                    BigDecimal agentBrokerage = new BigDecimal("0.00");
+//
+//                    BigDecimal managerRate = new BigDecimal("0.00");
+//                    BigDecimal channelRate = new BigDecimal("0.00");
+//                    BigDecimal agentRate = new BigDecimal("0.00");
+//
+//                    if (brokerage != null) {
+//                        managerRate = new BigDecimal(brokerage.platformBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+//                        channelRate = new BigDecimal(brokerage.channelBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+//                        agentRate = new BigDecimal(brokerage.agentBrokerage).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_DOWN);
+//
+//                        managerBrokerage = managerRate.multiply(biInsuredPremium);
+//                        channelBrokerage = channelRate.multiply(biInsuredPremium);
+//                        agentBrokerage = agentRate.multiply(biInsuredPremium);
+//                    }
+//
+//                    insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerage(biIntegral, biIntegral, managerBrokerage, channelBrokerage, agentBrokerage);
+//                    insurancePolicyAndParticipantForCarInsurance.biCustWarrantyBrokerageModel.setBrokerageRate(bIntegralRate, bIntegralRate, managerRate, channelRate, agentRate);
+//                }
             }
 
             int i = insurancePolicyDao.addInsurancePolicyAndParticipantForCarInsurance(insurancePolicyAndParticipantForCarInsurance);
@@ -2271,7 +2256,7 @@ public class CarInsuranceAction extends BaseAction {
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = request.data.ciPolicyNo;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = request.data.biPolicyNo;
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String time = parseMillisecondByShowDate(sdf, request.data.payTime);
+                String time = TimeKit.parseMillisecondByShowDate(sdf, request.data.payTime);
                 if (StringKit.isEmpty(time)) {
                     time = String.valueOf(System.currentTimeMillis());
                 }
@@ -2292,6 +2277,9 @@ public class CarInsuranceAction extends BaseAction {
                         if (custWarrantyCost == null) {
                             continue;
                         }
+
+                        BigDecimal premium = new BigDecimal(0);
+
                         for (CustWarrantyCostModel warrantyCostModel : custWarrantyCost) {
                             if (warrantyCostModel != null) {
                                 if (!StringKit.isEmpty(insurancePolicyDetailByWarrantyUuid.channel_id)) {
@@ -2351,8 +2339,70 @@ public class CarInsuranceAction extends BaseAction {
                                     taskResultDataBean3.sign = SignatureTools.sign(taskResultDataBean3.toString(), SignatureTools.SIGN_TASK_RSA_PUBLIC_KEY);
                                     taskResultClient.updateTaskResult(taskResultDataBean3);
                                 }
+
+                                if (StringKit.isNumeric(warrantyCostModel.premium)) {
+                                    premium = premium.add(new BigDecimal(warrantyCostModel.premium));
+                                }
                             }
                         }
+
+                        Double custWarrantyBrokerageCarIntegral = custWarrantyBrokerageDao.findCustWarrantyBrokerageCarIntegral(insurancePolicyDetailByWarrantyUuid.warranty_uuid);
+
+                        if (custWarrantyBrokerageCarIntegral == null) {
+                            continue;
+                        }
+
+                        BigDecimal integral = new BigDecimal(custWarrantyBrokerageCarIntegral);
+
+                        if (StringKit.isInteger(insurancePolicyDetailByWarrantyUuid.product_id)) {
+                            ProductBrokerageBean productBrokerageBean = new ProductBrokerageBean();
+                            productBrokerageBean.productId = Long.valueOf(insurancePolicyDetailByWarrantyUuid.product_id);
+                            productBrokerageBean.managerUuid = insurancePolicyDetailByWarrantyUuid.manager_uuid;
+                            productBrokerageBean.payTimes = 1;
+
+                            if (StringKit.isInteger(insurancePolicyDetailByWarrantyUuid.channel_id)) {
+                                productBrokerageBean.channelId = Long.valueOf(insurancePolicyDetailByWarrantyUuid.channel_id);
+                            }
+
+                            if (StringKit.isInteger(insurancePolicyDetailByWarrantyUuid.agent_id)) {
+                                productBrokerageBean.agentId = Long.valueOf(insurancePolicyDetailByWarrantyUuid.agent_id);
+                            }
+
+                            ProductBrokerageInfoBean brokerage = productClient.getBrokerage(productBrokerageBean);
+
+                            BigDecimal managerBrokerage = new BigDecimal("0.00");
+                            BigDecimal channelBrokerage = new BigDecimal("0.00");
+                            BigDecimal agentBrokerage = new BigDecimal("0.00");
+
+                            BigDecimal managerRate = new BigDecimal("0.00");
+                            BigDecimal channelRate = new BigDecimal("0.00");
+                            BigDecimal agentRate = new BigDecimal("0.00");
+
+                            if (brokerage != null) {
+                                managerRate = new BigDecimal(brokerage.platformBrokerage).divide(new BigDecimal(100), 6, BigDecimal.ROUND_HALF_DOWN);
+                                channelRate = new BigDecimal(brokerage.channelBrokerage).divide(new BigDecimal(100), 6, BigDecimal.ROUND_HALF_DOWN);
+                                agentRate = new BigDecimal(brokerage.agentBrokerage).divide(new BigDecimal(100), 6, BigDecimal.ROUND_HALF_DOWN);
+
+                                managerBrokerage = managerRate.multiply(premium);
+                                channelBrokerage = channelRate.multiply(premium);
+                                agentBrokerage = agentRate.multiply(premium);
+                            }
+
+                            BigDecimal rate = new BigDecimal("0.0000");
+                            if (premium.compareTo(BigDecimal.ZERO) > 0) {
+                                rate = integral.divide(premium, 6, BigDecimal.ROUND_HALF_DOWN);
+                            }
+
+                            CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
+
+                            custWarrantyBrokerageModel.warranty_uuid = carInfoModel.warranty_uuid;
+                            custWarrantyBrokerageModel.updated_at = String.valueOf(System.currentTimeMillis());
+                            custWarrantyBrokerageModel.setBrokerage(integral, integral, managerBrokerage, channelBrokerage, agentBrokerage);
+                            custWarrantyBrokerageModel.setBrokerageRate(rate, rate, managerRate, channelRate, agentRate);
+
+                            custWarrantyBrokerageDao.updateCustWarrantyBrokerageForCar(custWarrantyBrokerageModel);
+                        }
+
                     }
                 }
 
@@ -2438,7 +2488,7 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String calculateDateByShowDate = parseMillisecondByShowDate(sdf, result.data.firstRegisterDate);
+                String calculateDateByShowDate = TimeKit.parseMillisecondByShowDate(sdf, result.data.firstRegisterDate);
 
                 if (calculateDateByShowDate == null) {
                     result.data.firstRegisterDate = "";
@@ -2799,8 +2849,8 @@ public class CarInsuranceAction extends BaseAction {
         // 校验正常后的实际提交险别列表
         List<ExtendCarInsurancePolicy.InsuranceInfoDetail> coverageList;
 
-        public boolean hasCompulsoryInsurance = false;
-        public boolean hasCommercialInsurance = false;
+        boolean hasCompulsoryInsurance = false;
+        boolean hasCommercialInsurance = false;
 
         // 获取玻璃险的对应type，只有确定玻璃险提交数据正确才有意义
         public String getFType(String text) {
@@ -2968,27 +3018,6 @@ public class CarInsuranceAction extends BaseAction {
     }
 
     /**
-     * 格式化时间戳用
-     *
-     * @param sdf      格式
-     * @param showDate 时间
-     * @return showDate指定sdf的格式
-     */
-    private String parseMillisecondByShowDate(SimpleDateFormat sdf, String showDate) {
-        if (!StringKit.isEmpty(showDate)) {
-            try {
-                Date parse = sdf.parse(showDate);
-                return String.valueOf(parse.getTime());
-            } catch (ParseException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * 获取明年当天的00：00：00的时间戳
      *
      * @param time 时间戳
@@ -3002,7 +3031,7 @@ public class CarInsuranceAction extends BaseAction {
             Integer integer = Integer.valueOf(split[0]);
             integer += 1;
             String date = integer + "-" + split[1] + "-" + split[2];
-            return parseMillisecondByShowDate(sdf, date);
+            return TimeKit.parseMillisecondByShowDate(sdf, date);
         } else {
             return null;
         }

@@ -11,6 +11,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.inschos.cloud.trading.assist.kit.ExcelModelKit.TYPE_DOUBLE;
+
 /**
  * 创建日期：2018/3/22 on 14:03
  * 描述：
@@ -25,12 +27,18 @@ public class InsurancePolicy {
         public String searchKey;
         // 关键字字段类型
         public String searchType;
+        // 时间类型
+        public String timeType;
         // 起保开始时间
         public String startTime;
         // 起保结束时间
         public String endTime;
         // 保单类型
         public String warrantyType;
+        // 保险产品(关键字)
+        public String insuranceProductKey;
+        // 保险公司(关键字)
+        public String insuranceCompanyKey;
     }
 
     public static class GetInsurancePolicyListResponse extends BaseResponse {
@@ -62,6 +70,36 @@ public class InsurancePolicy {
 
     public static class OfflineInsurancePolicyInputResponse extends BaseResponse {
         public OfflineInsurancePolicyDetail data;
+    }
+
+    public static class GetOfflineInsurancePolicyInputTemplateRequest extends BaseRequest {
+
+    }
+
+    public static class GetOfflineInsurancePolicyInputTemplateResponse extends BaseResponse {
+        public String fileUrl;
+    }
+
+    public static class GetOfflineInsurancePolicyListRequest extends BaseRequest {
+        public String companyName;
+        public String channelName;
+        public String productName;
+        public String timeType;
+        public String startTime;
+        public String endTime;
+    }
+
+    public static class GetOfflineInsurancePolicyListResponse extends BaseResponse {
+        public List<OfflineInsurancePolicy> data;
+    }
+
+    public static class GetOfflineInsurancePolicyDetailRequest extends BaseRequest {
+        @CheckParams(hintName = "保单唯一标识")
+        public String warrantyUuid;
+    }
+
+    public static class GetOfflineInsurancePolicyDetailResponse extends BaseResponse {
+        public OfflineInsurancePolicy data;
     }
 
     public static class GetInsurancePolicyListByActualPayTimeRequest extends BaseRequest {
@@ -102,6 +140,7 @@ public class InsurancePolicy {
 
         //渠道ID为0则为用户自主购买
         public String channelId;
+        public String channelName;
 
         //计划书ID为0则为用户自主购买
         public String planId;
@@ -176,8 +215,10 @@ public class InsurancePolicy {
         public String warrantyStatus;
         public String payStatus;
 
+
         //保单状态 1待处理 2待支付3待生效 4保障中5可续保，6已失效，7已退保  8已过保（显示用）
         public String warrantyStatusText;
+        public String payStatusText;
 
         // 积分
         public String integral;
@@ -210,8 +251,15 @@ public class InsurancePolicy {
         //更新时间（显示用）
         public String updatedAtText;
 
+        //缴费时间
+        public String actualPayTime;
+
+        //缴费时间（显示用）
+        public String actualPayTimeText;
+
         // 被保险人
         public String insuredText;
+        public String insuredDetailText;
 
         public String insuranceProductName;
 
@@ -225,16 +273,27 @@ public class InsurancePolicy {
         public String insuranceClaimsCount = "0";
         public String groupName;
 
+        public String warrantyMoney;
+        public String warrantyMoneyText;
+        public String insMoney;
+        public String insMoneyText;
+        public String managerMoney;
+        public String managerMoneyText;
+        public String channelMoney;
+        public String channelMoneyText;
+        public String agentMoney;
+        public String agentMoneyText;
+
         public List<CustWarrantyBrokerage> brokerageList;
 
         public GetInsurancePolicy() {
-
         }
 
-        public GetInsurancePolicy(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+        public GetInsurancePolicy(InsurancePolicyModel model) {
             if (model == null) {
                 return;
             }
+
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy.MM.dd");
             SimpleDateFormat group = new SimpleDateFormat("yyyy-MM");
@@ -248,13 +307,7 @@ public class InsurancePolicy {
             this.channelId = model.channel_id;
             this.planId = model.plan_id;
             this.productId = model.product_id;
-            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-            this.premium = decimalFormat.format(premium.doubleValue());
-            this.premiumText = "¥" + this.premium;
-            this.payMoney = decimalFormat.format(pay_money.doubleValue());
-            this.payMoneyText = "¥" + this.payMoney;
-            this.taxMoney = decimalFormat.format(tax_money.doubleValue());
-            this.taxMoneyText = "¥" + this.taxMoney;
+
             this.startTime = model.start_time;
             String start = "";
             if (StringKit.isInteger(model.start_time)) {
@@ -278,10 +331,13 @@ public class InsurancePolicy {
             this.warrantyFromText = model.warrantyFromText(warrantyFrom);
             this.type = model.type;
             this.integral = model.integral;
+            this.payStatus = model.pay_status;
             this.warrantyStatus = model.warranty_status;
-            this.payStatus = warrantyStatusForPay;
+            CustWarrantyCostModel model1 = new CustWarrantyCostModel();
+            this.payStatusText = model1.payStatusText(payStatus);
+
             if (StringKit.equals(this.warrantyStatus, InsurancePolicyModel.POLICY_STATUS_PENDING)) {
-                this.warrantyStatusText = warrantyStatusForPayText;
+                this.warrantyStatusText = payStatusText;
             } else {
                 this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
             }
@@ -299,13 +355,96 @@ public class InsurancePolicy {
             if (StringKit.isInteger(model.updated_at)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(model.updated_at)));
             }
-
+            this.actualPayTime = model.actual_pay_time;
+            if (StringKit.isInteger(model.actual_pay_time)) {
+                this.actualPayTimeText = sdf.format(new Date(Long.valueOf(model.actual_pay_time)));
+            }
 
             this.expressEmail = model.express_email;
             this.expressAddress = model.express_address;
             this.expressProvinceCode = model.express_province_code;
             this.expressCityCode = model.express_city_code;
             this.expressCountyCode = model.express_county_code;
+
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+            if (StringKit.isNumeric(model.warranty_money)) {
+                this.warrantyMoney = decimalFormat.format(new BigDecimal(model.warranty_money).doubleValue());
+            } else {
+                this.warrantyMoney = "0.00";
+            }
+            this.warrantyMoneyText = "¥" + this.warrantyMoney;
+            if (StringKit.isNumeric(model.ins_money)) {
+                this.insMoney = decimalFormat.format(new BigDecimal(model.ins_money).doubleValue());
+            } else {
+                this.insMoney = "0.00";
+            }
+            this.insMoneyText = "¥" + this.insMoney;
+            if (StringKit.isNumeric(model.manager_money)) {
+                this.managerMoney = decimalFormat.format(new BigDecimal(model.manager_money).doubleValue());
+            } else {
+                this.managerMoney = "0.00";
+            }
+            this.managerMoneyText = "¥" + this.warrantyMoney;
+            if (StringKit.isNumeric(model.channel_money)) {
+                this.channelMoney = decimalFormat.format(new BigDecimal(model.channel_money).doubleValue());
+            } else {
+                this.channelMoney = "0.00";
+            }
+            this.channelMoneyText = "¥" + this.channelMoney;
+            if (StringKit.isNumeric(model.agent_money)) {
+                this.agentMoney = decimalFormat.format(new BigDecimal(model.agent_money).doubleValue());
+            } else {
+                this.agentMoney = "0.00";
+            }
+            this.agentMoneyText = "¥" + this.agentMoney;
+
+            if (StringKit.isNumeric(model.premium)) {
+                this.premium = decimalFormat.format(new BigDecimal(model.premium).doubleValue());
+            } else {
+                this.premium = "0.00";
+            }
+            this.premiumText = "¥" + this.premium;
+            if (StringKit.isNumeric(model.pay_money)) {
+                this.payMoney = decimalFormat.format(new BigDecimal(model.pay_money).doubleValue());
+            } else {
+                this.payMoney = "0.00";
+            }
+            this.payMoneyText = "¥" + this.payMoney;
+            if (StringKit.isNumeric(model.tax_money)) {
+                this.taxMoney = decimalFormat.format(new BigDecimal(model.tax_money).doubleValue());
+            } else {
+                this.taxMoney = "0.00";
+            }
+            this.taxMoneyText = "¥" + this.taxMoney;
+        }
+
+        public GetInsurancePolicy(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+            this(model);
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+            if (premium != null) {
+                this.premium = decimalFormat.format(premium.doubleValue());
+            } else {
+                this.premium = "0.00";
+            }
+            this.premiumText = "¥" + this.premium;
+            if (payMoney != null) {
+                this.payMoney = decimalFormat.format(pay_money.doubleValue());
+            } else {
+                this.payMoney = "0.00";
+            }
+            this.payMoneyText = "¥" + this.payMoney;
+            if (taxMoney != null) {
+                this.taxMoney = decimalFormat.format(tax_money.doubleValue());
+            } else {
+                this.taxMoney = "0.00";
+            }
+            this.taxMoneyText = "¥" + this.taxMoney;
+            this.payStatus = warrantyStatusForPay;
+            if (StringKit.equals(this.warrantyStatus, InsurancePolicyModel.POLICY_STATUS_PENDING)) {
+                this.warrantyStatusText = warrantyStatusForPayText;
+            } else {
+                this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
+            }
         }
 
     }
@@ -699,68 +838,8 @@ public class InsurancePolicy {
         }
 
         public GetInsurancePolicyItemBean(InsurancePolicyModel model) {
-            if (model == null) {
-                return;
-            }
+            super(model);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy.MM.dd");
-            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-
-            this.id = model.id;
-            this.warrantyUuid = model.warranty_uuid;
-            this.prePolicyNo = model.pre_policy_no;
-            this.warrantyCode = model.warranty_code;
-            this.accountUuid = model.manager_uuid;
-            this.buyerAuuid = model.account_uuid;
-            this.agentId = model.agent_id;
-            this.channelId = model.channel_id;
-            this.planId = model.plan_id;
-            this.productId = model.product_id;
-
-            if (StringKit.isNumeric(model.premium)) {
-                this.premium = decimalFormat.format(new BigDecimal(model.premium));
-                this.premiumText = "¥" + this.premium;
-            } else {
-                this.premium = "0.00";
-                this.premiumText = "¥" + this.premium;
-            }
-            this.startTime = model.start_time;
-            String start = "";
-            if (StringKit.isInteger(model.start_time)) {
-                this.startTimeText = sdf.format(new Date(Long.valueOf(model.start_time)));
-                start = sdf2.format(new Date(Long.valueOf(model.start_time)));
-            }
-            this.endTime = model.end_time;
-            String end = "";
-            if (StringKit.isInteger(model.end_time)) {
-                this.endTimeText = sdf.format(new Date(Long.valueOf(model.end_time)));
-                end = sdf2.format(new Date(Long.valueOf(model.end_time)));
-            }
-            this.term = start + "-" + end;
-            this.insCompanyId = model.ins_company_id;
-            this.count = model.count;
-            this.byStagesWay = model.by_stages_way;
-            this.isSettlement = model.is_settlement;
-            this.isSettlementText = model.isSettlementText(isSettlement);
-            this.warrantyUrl = model.warranty_url;
-            this.warrantyFrom = model.warranty_from;
-            this.warrantyFromText = model.warrantyFromText(warrantyFrom);
-            this.type = model.type;
-            this.integral = model.integral;
-            this.warrantyStatus = model.warranty_status;
-            this.payStatus = model.pay_status;
-            if (StringKit.equals(this.warrantyStatus, InsurancePolicyModel.POLICY_STATUS_PENDING)) {
-                CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-                this.warrantyStatusText = custWarrantyCostModel.payStatusText(model.pay_status);
-            } else {
-                this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
-            }
-            this.createdAt = model.created_at;
-            if (StringKit.isInteger(model.created_at)) {
-                Date date = new Date(Long.valueOf(model.created_at));
-                this.createdAtText = sdf.format(date);
-            }
             this.policyHolderName = model.policy_holder_name;
             this.policyHolderMobile = model.policy_holder_phone;
             this.carCode = model.car_code;
@@ -773,33 +852,47 @@ public class InsurancePolicy {
         public static GetInsurancePolicyItemBean getCarInsurancePolicyTitle() {
             GetInsurancePolicyItemBean insurancePolicy = new GetInsurancePolicyItemBean();
 
-            insurancePolicy.prePolicyNo = "投保单号";
             insurancePolicy.warrantyCode = "保单号";
-            insurancePolicy.productName = "保险产品";
+            insurancePolicy.insuredDetailText = "被保人";
             insurancePolicy.policyHolderName = "投保人";
-            insurancePolicy.policyHolderMobile = "投保人电话";
-            insurancePolicy.carCode = "车牌号";
-            insurancePolicy.premiumText = "保费（元）";
-            insurancePolicy.createdAtText = "下单时间";
-            insurancePolicy.warrantyStatusText = "保单状态";
+            insurancePolicy.productName = "保险产品";
+            insurancePolicy.insuranceCompanyName = "保险公司";
+            insurancePolicy.createdAtText = "签单日期";
+            insurancePolicy.startTimeText = "起保日期";
+            insurancePolicy.premium = "保费（元）";
+            insurancePolicy.payStatusText = "保费支付状态";
+            insurancePolicy.insMoney = "应收佣金";
+            insurancePolicy.channelName = "归属机构";
+            insurancePolicy.agentName = "归属人员";
 
             return insurancePolicy;
         }
     }
 
-    public static final Map<String, String> CAR_FIELD_MAP;
+    public static final List<String> CAR_FIELD_LIST;
 
     static {
-        CAR_FIELD_MAP = new HashMap<>();
-        CAR_FIELD_MAP.put("A", "prePolicyNo");
-        CAR_FIELD_MAP.put("B", "warrantyCode");
-        CAR_FIELD_MAP.put("C", "productName");
-        CAR_FIELD_MAP.put("D", "policyHolderName");
-        CAR_FIELD_MAP.put("E", "policyHolderMobile");
-        CAR_FIELD_MAP.put("F", "carCode");
-        CAR_FIELD_MAP.put("G", "premiumText");
-        CAR_FIELD_MAP.put("H", "createdAtText");
-        CAR_FIELD_MAP.put("I", "warrantyStatusText");
+        CAR_FIELD_LIST = new ArrayList<>();
+        CAR_FIELD_LIST.add("warrantyCode");
+        CAR_FIELD_LIST.add("insuredDetailText");
+        CAR_FIELD_LIST.add("policyHolderName");
+        CAR_FIELD_LIST.add("productName");
+        CAR_FIELD_LIST.add("insuranceCompanyName");
+        CAR_FIELD_LIST.add("createdAtText");
+        CAR_FIELD_LIST.add("startTimeText");
+        CAR_FIELD_LIST.add("premium");
+        CAR_FIELD_LIST.add("payStatusText");
+        CAR_FIELD_LIST.add("insMoney");
+        CAR_FIELD_LIST.add("channelName");
+        CAR_FIELD_LIST.add("agentName");
+    }
+
+    public static final Map<String, String> CAR_FIELD_TYPE;
+
+    static {
+        CAR_FIELD_TYPE = new HashMap<>();
+        CAR_FIELD_TYPE.put("premium", TYPE_DOUBLE);
+        CAR_FIELD_TYPE.put("insMoney", TYPE_DOUBLE);
     }
 
     public static final Map<String, String> PERSON_FIELD_MAP;
@@ -1083,22 +1176,170 @@ public class InsurancePolicy {
     public static class OfflineInsurancePolicyDetail {
         public String excelFileKey;
         public String excelFileUrl;
+        public String successCount;
+        public String failCount;
         public List<OfflineInsurancePolicy> list;
     }
 
     public static class OfflineInsurancePolicy {
 
+        // 主键id
+        public String id;
+
+        // 业管id
+        public String managerUuid;
+
+        // 保单唯一标识
+        public String warrantyUuid;
+
+        // 被保险人
+        public String insuredName;
+
+        // 投保人
+        public String policyHolderName;
+
+        // 保险公司
+        public String insuranceCompany;
+
+        // 险种
+        public String insuranceType;
+
+        // 保险产品
+        public String insuranceProduct;
+
+        // 保单号
         public String warrantyCode;
 
+        // 缴费期
+        public String paymentTime;
+//        public String paymentTimeText;
+
+        // 签单日期
+        public String orderTime;
+        public String orderTimeText;
+
+        // 实收日期
+        public String realIncomeTime;
+        public String realIncomeTimeText;
+
+        // 起保时间
+        public String startTime;
+        public String startTimeText;
+
+        // 终止时间
+        public String endTime;
+        public String endTimeText;
+
+        // 保费
+        public String premium;
+        public String premiumText;
+
+        // 保费支付状态
+        public String payStatus;
+
+        // 应收佣金
+        public String brokerage;
+        public String brokerageText;
+
+        // 归属机构
+        public String channelName;
+
+        // 归属代理
+        public String agentName;
+
+        // 创建时间
+        public String createdAt;
+        public String createdAtText;
+
+        // 结束时间
+        public String updatedAt;
+        public String updatedAtText;
+
+        // public String reason;
+
         public String reason;
+        public List<OfflineInsurancePolicyModel.ErrorReason> reasonList;
 
         public OfflineInsurancePolicy() {
 
         }
 
         public OfflineInsurancePolicy(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
+            if (offlineInsurancePolicyModel == null) {
+                return;
+            }
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            DecimalFormat money = new DecimalFormat("###,###,###,###,##0.00");
+
+            this.id = offlineInsurancePolicyModel.id;
+            this.managerUuid = offlineInsurancePolicyModel.manager_uuid;
+            this.warrantyUuid = offlineInsurancePolicyModel.warranty_uuid;
+            this.insuredName = offlineInsurancePolicyModel.insured_name;
+            this.policyHolderName = offlineInsurancePolicyModel.policy_holder_name;
+            this.insuranceCompany = offlineInsurancePolicyModel.insurance_company;
+            this.insuranceType = offlineInsurancePolicyModel.insurance_type;
+            this.insuranceProduct = offlineInsurancePolicyModel.insurance_product;
             this.warrantyCode = offlineInsurancePolicyModel.warranty_code;
-            this.reason = offlineInsurancePolicyModel.reason;
+            this.paymentTime = offlineInsurancePolicyModel.payment_time;
+//            if (StringKit.isInteger(this.paymentTime)) {
+//                this.paymentTimeText = sdf.format(new Date(Long.valueOf(this.paymentTime)));
+//            }
+            this.orderTime = offlineInsurancePolicyModel.order_time;
+            if (StringKit.isInteger(this.orderTime)) {
+                this.orderTimeText = sdf.format(new Date(Long.valueOf(this.orderTime)));
+            }
+            this.realIncomeTime = offlineInsurancePolicyModel.real_income_time;
+            if (StringKit.isInteger(this.realIncomeTime)) {
+                this.realIncomeTimeText = sdf.format(new Date(Long.valueOf(this.realIncomeTime)));
+            }
+            this.startTime = offlineInsurancePolicyModel.start_time;
+            if (StringKit.isInteger(this.startTime)) {
+                this.startTimeText = sdf.format(new Date(Long.valueOf(this.startTime)));
+            }
+            this.endTime = offlineInsurancePolicyModel.end_time;
+            if (StringKit.isInteger(this.endTime)) {
+                this.endTimeText = sdf.format(new Date(Long.valueOf(this.endTime)));
+            }
+            if (StringKit.isNumeric(offlineInsurancePolicyModel.premium)) {
+                BigDecimal bigDecimal = new BigDecimal(offlineInsurancePolicyModel.premium);
+                this.premium = money.format(bigDecimal.doubleValue());
+            } else {
+                this.premium = "0.00";
+            }
+            this.premiumText = "¥" + this.premium;
+            this.payStatus = offlineInsurancePolicyModel.pay_status;
+            if (StringKit.isNumeric(offlineInsurancePolicyModel.brokerage)) {
+                BigDecimal bigDecimal = new BigDecimal(offlineInsurancePolicyModel.brokerage);
+                this.brokerage = money.format(bigDecimal.doubleValue());
+            } else {
+                this.brokerage = "0.00";
+            }
+            this.brokerageText = "¥" + this.brokerage;
+
+            this.channelName = offlineInsurancePolicyModel.channel_name;
+            this.agentName = offlineInsurancePolicyModel.agent_name;
+            this.createdAt = offlineInsurancePolicyModel.created_at;
+            if (StringKit.isInteger(this.createdAt)) {
+                this.createdAtText = sdf.format(new Date(Long.valueOf(this.createdAt)));
+            }
+            this.updatedAt = offlineInsurancePolicyModel.updated_at;
+            if (StringKit.isInteger(this.updatedAt)) {
+                this.updatedAtText = sdf.format(new Date(Long.valueOf(this.updatedAt)));
+            }
+            this.reasonList = offlineInsurancePolicyModel.reasonList;
+            if (this.reasonList != null && !this.reasonList.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                int size = this.reasonList.size();
+                for (int i = 0; i < size; i++) {
+                    OfflineInsurancePolicyModel.ErrorReason errorReason = this.reasonList.get(i);
+                    sb.append(errorReason.reason);
+                    if (i != size - 1) {
+                        sb.append("，");
+                    }
+                }
+                this.reason = sb.toString();
+            }
         }
 
     }
@@ -1279,6 +1520,7 @@ public class InsurancePolicy {
     public static class DownInsurancePolicy {
         public String count;
         public String time;
+        public List<InsurancePolicy.GetInsurancePolicyItemBean> list;
     }
 
 }

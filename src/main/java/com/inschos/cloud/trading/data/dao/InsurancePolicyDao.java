@@ -500,4 +500,6 @@ public class InsurancePolicyDao extends BaseDao {
     public int findCountByAgentCostStatus(InsurancePolicyModel search){
         return search!=null?insurancePolicyMapper.findCountByAgentCostStatus(search):0;
     }
+
+
 }

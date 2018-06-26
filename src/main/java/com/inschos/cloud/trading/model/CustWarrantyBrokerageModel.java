@@ -91,6 +91,11 @@ public class CustWarrantyBrokerageModel {
     public String agent_rate;
 
     /**
+     * 车险核算佣金
+     */
+    public String car_integral;
+
+    /**
      * 创建时间
      */
     public String created_at;
@@ -120,6 +125,11 @@ public class CustWarrantyBrokerageModel {
         this.agent_id = agent_id;
         this.created_at = time;
         this.updated_at = time;
+    }
+
+    public void setCarIntegral (BigDecimal carIntegral) {
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        this.car_integral = decimalFormat.format(carIntegral);
     }
 
     public void setBrokerage(BigDecimal warranty_money, BigDecimal ins_money, BigDecimal manager_money, BigDecimal channel_money, BigDecimal agent_money) {

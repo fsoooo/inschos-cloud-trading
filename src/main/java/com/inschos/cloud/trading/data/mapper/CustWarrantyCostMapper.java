@@ -36,4 +36,17 @@ public interface CustWarrantyCostMapper {
     //获取第一期的缴费情况
     CustWarrantyCostModel findFirstPhase(CustWarrantyCostModel search);
 
+    List<InsurancePolicyModel> findInsurancePolicyBillListForManagerSystem(InsurancePolicyModel insurancePolicyModel);
+
+    long findInsurancePolicyBillCountForManagerSystem(InsurancePolicyModel insurancePolicyModel);
+
+    int updateSettlementAndBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel);
+
+    int updateBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel);
+
+    CustWarrantyBrokerageModel findBrokerageByCostId(CustWarrantyCostModel custWarrantyCostModel);
+
+    List<CustWarrantyCostModel> findCompletePayListByManagerUuid (CustWarrantyCostModel custWarrantyCostModel);
+
+    long findCompletePayCountByManagerUuid (CustWarrantyCostModel custWarrantyCostModel);
 }

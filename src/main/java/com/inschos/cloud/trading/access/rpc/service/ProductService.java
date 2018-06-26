@@ -5,6 +5,7 @@ import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBrokerageBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBrokerageInfoBean;
 import com.inschos.dock.bean.InsureBean;
+import com.inschos.cloud.trading.access.rpc.bean.*;
 
 import java.util.List;
 
@@ -29,4 +30,16 @@ public interface ProductService {
 
     //保费试算的rpc
     public ProductBean getPremium(InsureBean search);
+
+    List<ProductCategory> getCategoryList(String level);
+
+    List<InsuranceCo> getProductCoList(String managerUuid);
+
+    List<InsuranceCompanyBean> getListInsuranceCompany(InsuranceCompanyBean insuranceCompanyBean);
+
+    List<ProductBean> getListProduct(String name, String managerUuid);
+
+    InsuranceCompanyBean getCompany(long id);
+
+    List<InsuranceCompanyBean> getCompanyList(List<String> companyId);
 }

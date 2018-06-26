@@ -397,7 +397,7 @@ public class CheckParamsKit {
                     Object o2 = o11.get(i);
                     Entry<String, String> stringStringEntry = checkObject(o2);
                     if (stringStringEntry != null) {
-                        stringStringEntry.details = "参数" +
+                        stringStringEntry.details = "参数：" +
                                 name +
                                 "第" +
                                 (i + 1) +

@@ -85,17 +85,38 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
+    @RequestMapping("get_insurance_policy_bill_list_for_manager_system")
+    @ResponseBody
+    public String getInsurancePolicyBillListForManagerSystem(ActionBean actionBean) {
+        return insurancePolicyAction.getInsurancePolicyBillListForManagerSystem(actionBean);
+    }
+
+    @GetActionBeanAnnotation
     @RequestMapping("offline_insurance_policy_input")
     @ResponseBody
     public String offlineInsurancePolicyInput(ActionBean actionBean) {
         return insurancePolicyAction.offlineInsurancePolicyInput(actionBean);
     }
 
-    @GetActionBeanAnnotation(isCheckAccess = false)
-    @RequestMapping("setTest")
+    @GetActionBeanAnnotation
+    @RequestMapping("get_offline_insurance_policy_input_template")
     @ResponseBody
-    public String setTest(ActionBean actionBean) {
-        return insurancePolicyAction.setTest();
+    public String getOfflineInsurancePolicyInputTemplate(ActionBean actionBean) {
+        return insurancePolicyAction.getOfflineInsurancePolicyInputTemplate(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("get_offline_insurance_policy_list")
+    @ResponseBody
+    public String getOfflineInsurancePolicyList(ActionBean actionBean) {
+        return insurancePolicyAction.getOfflineInsurancePolicyList(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("get_offline_insurance_policy_detail")
+    @ResponseBody
+    public String getOfflineInsurancePolicyDetail(ActionBean actionBean) {
+        return insurancePolicyAction.getOfflineInsurancePolicyDetail(actionBean);
     }
 
 }

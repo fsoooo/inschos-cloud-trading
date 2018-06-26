@@ -3,16 +3,16 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.CustWarrantyBrokerageMapper">
 
     <sql id="Base_Column_List">
-        `id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`ins_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`ins_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`created_at`,`updated_at`
+        `id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`ins_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`ins_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`car_integral`,`created_at`,`updated_at`
     </sql>
 
     <insert id="addCustWarrantyBrokerage" parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty_brokerage
-        (`id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`ins_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`ins_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`created_at`,`updated_at`)
+        (`id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`ins_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`ins_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`car_integral`,`created_at`,`updated_at`)
         values
-        (#{id},#{warranty_uuid},#{manager_uuid},#{cost_id},#{channel_id},#{agent_id},#{warranty_money},#{ins_money},#{manager_money},#{channel_money},#{agent_money},#{warranty_rate},#{ins_rate},#{manager_rate},#{channel_rate},#{agent_rate},#{created_at},#{updated_at})
+        (#{id},#{warranty_uuid},#{manager_uuid},#{cost_id},#{channel_id},#{agent_id},#{warranty_money},#{ins_money},#{manager_money},#{channel_money},#{agent_money},#{warranty_rate},#{ins_rate},#{manager_rate},#{channel_rate},#{agent_rate},#{car_integral},#{created_at},#{updated_at})
     </insert>
 
     <select id="findCustWarrantyBrokerageByWarrantyUuid" parameterType="String"
@@ -20,6 +20,15 @@
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_brokerage where warranty_uuid=#{_parameter}
+    </select>
+
+    <select id="findCustWarrantyBrokerageCarIntegral"
+            resultType="Double"
+            parameterType="java.lang.String">
+        select
+        `car_integral`
+        from cust_warranty_brokerage
+        WHERE `warranty_uuid`=#{_parameter}
     </select>
 
     <select id="findCustWarrantyBrokerageTotal"
@@ -135,5 +144,13 @@
         cb.`manager_uuid`=#{manager_uuid} and cb.agent_id=#{agent_id}
         group by `time_text`;
     </select>
+
+    <update id="updateCustWarrantyBrokerageForCar"
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
+        update cust_warranty_brokerage set
+        `warranty_money`=#{warranty_money},`ins_money`=#{ins_money},`manager_money`=#{manager_money},`channel_money`=#{channel_money},`agent_money`=#{agent_money},
+        `warranty_rate`=#{warranty_rate},`ins_rate`=#{ins_rate},`manager_rate`=#{manager_rate},`channel_rate`=#{channel_rate},`agent_rate`=#{agent_rate},`updated_at`=#{updated_at}
+        where `warranty_uuid`=#{warranty_uuid}
+    </update>
 
 </mapper>

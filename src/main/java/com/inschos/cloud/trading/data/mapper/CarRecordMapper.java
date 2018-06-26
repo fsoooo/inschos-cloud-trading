@@ -11,8 +11,12 @@ public interface CarRecordMapper {
 
     int addCarRecord(CarRecordModel carRecordModel);
 
-    int updateCarRecord(CarRecordModel carRecordModel);
+    int updateCarRecordByResponseNo(CarRecordModel carRecordModel);
+
+    int updateCarRecordByCarCode(CarRecordModel carRecordModel);
 
     CarRecordModel findOneByResponseNo(String responseNo);
+
+    CarRecordModel findOneByCarCode(String carCode);
 
 }

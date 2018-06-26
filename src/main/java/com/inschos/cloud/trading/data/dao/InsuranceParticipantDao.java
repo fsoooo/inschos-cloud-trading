@@ -18,7 +18,7 @@ public class InsuranceParticipantDao extends BaseDao {
     @Autowired
     private InsuranceParticipantMapper insuranceParticipantMapper;
 
-    public int addInsuranceParticipant (InsuranceParticipantModel insuranceParticipantModel) {
+    public int addInsuranceParticipant(InsuranceParticipantModel insuranceParticipantModel) {
         return insuranceParticipantMapper.addInsuranceParticipant(insuranceParticipantModel);
     }
 
@@ -34,7 +34,7 @@ public class InsuranceParticipantDao extends BaseDao {
         return insuranceParticipantMapper.findInsuranceParticipantInsuredNameByWarrantyUuid(insuranceParticipantModel);
     }
 
-    public InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(String warrantyUuid){
+    public InsuranceParticipantModel findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(String warrantyUuid) {
         InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
         insuranceParticipantModel.warranty_uuid = warrantyUuid;
         return insuranceParticipantMapper.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(insuranceParticipantModel);
@@ -44,6 +44,10 @@ public class InsuranceParticipantDao extends BaseDao {
         InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
         insuranceParticipantModel.warranty_uuid = warrantyUuid;
         return insuranceParticipantMapper.findInsuranceParticipantInsuredByWarrantyUuid(insuranceParticipantModel);
+    }
+
+    public List<InsuranceParticipantModel> findInsuranceParticipantInsuredNameByWarrantyUuids(InsuranceParticipantModel insuranceParticipantModel) {
+        return insuranceParticipantMapper.findInsuranceParticipantInsuredNameByWarrantyUuids(insuranceParticipantModel);
     }
 
 }

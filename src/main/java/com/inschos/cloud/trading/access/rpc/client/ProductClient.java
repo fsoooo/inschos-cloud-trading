@@ -73,7 +73,7 @@ public class ProductClient {
         }
     }
 
-    public PayCategoryBean getOnePayCategory(long pagCategoryId){
+    public PayCategoryBean getOnePayCategory(long pagCategoryId) {
         try {
             ProductService service = getService();
             return service != null ? service.getOnePayCategory(pagCategoryId) : null;
@@ -84,7 +84,18 @@ public class ProductClient {
         }
     }
 
-    public List<PayCategoryBean> getListPayCategory(long productId){
+    public List<ProductCategory> getCategoryList(String level) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getCategoryList(level) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public List<PayCategoryBean> getListPayCategory(long productId) {
         try {
             ProductService service = getService();
             return service != null ? service.getListPayCategory(productId) : null;
@@ -95,8 +106,19 @@ public class ProductClient {
         }
     }
 
+    public List<InsuranceCo> getProductCoList(String managerUuid) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getProductCoList(managerUuid) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
     //保费试算的rpc
-    public ProductBean getPremium(InsureBean search){
+    public ProductBean getPremium(InsureBean search) {
         try {
             ProductService service = getService();
             return service != null ? service.getPremium(search) : null;
@@ -107,5 +129,49 @@ public class ProductClient {
         }
     }
 
+    public List<InsuranceCompanyBean> getListInsuranceCompany(InsuranceCompanyBean insuranceCompanyBean) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getListInsuranceCompany(insuranceCompanyBean) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+
+    public List<ProductBean> getListProduct(String name, String managerUuid) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getListProduct(name, managerUuid) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public InsuranceCompanyBean getCompany(long id) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getCompany(id) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public List<InsuranceCompanyBean> getCompanyList(List<String> companyId) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getCompanyList(companyId) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
 
 }

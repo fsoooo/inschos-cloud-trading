@@ -3,9 +3,7 @@ package com.inschos.cloud.trading.data.dao;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
-import com.inschos.cloud.trading.model.BrokerageStatisticListModel;
-import com.inschos.cloud.trading.model.CustWarrantyCostModel;
-import com.inschos.cloud.trading.model.PremiumStatisticModel;
+import com.inschos.cloud.trading.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -80,15 +78,15 @@ public class CustWarrantyCostDao extends BaseDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public List<PremiumStatisticModel> findCustWarrantyCostStatistic(CustWarrantyCostModel custWarrantyCostModel){
+    public List<PremiumStatisticModel> findCustWarrantyCostStatistic(CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.findCustWarrantyCostStatistic(custWarrantyCostModel);
     }
 
-    public List<BrokerageStatisticListModel> findInsurancePolicyBrokerageStatisticList(CustWarrantyCostModel custWarrantyCostModel){
+    public List<BrokerageStatisticListModel> findInsurancePolicyBrokerageStatisticList(CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticList(custWarrantyCostModel);
     }
 
-    public long findInsurancePolicyBrokerageStatisticListCount(CustWarrantyCostModel custWarrantyCostModel){
+    public long findInsurancePolicyBrokerageStatisticListCount(CustWarrantyCostModel custWarrantyCostModel) {
         return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticListCount(custWarrantyCostModel);
     }
 
@@ -101,8 +99,35 @@ public class CustWarrantyCostDao extends BaseDao {
         return custWarrantyCostMapper.findFirstPhase(custWarrantyCostModel);
     }
 
-    public int updatePayStatusByWarrantyUuidPhase(CustWarrantyCostModel costModel){
-        return costModel!=null?custWarrantyCostMapper.updatePayStatusByWarrantyUuidPhase(costModel):0;
+    public int updatePayStatusByWarrantyUuidPhase(CustWarrantyCostModel costModel) {
+        return costModel != null ? custWarrantyCostMapper.updatePayStatusByWarrantyUuidPhase(costModel) : 0;
+    }
+    public List<InsurancePolicyModel> findInsurancePolicyBillListForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
+        return custWarrantyCostMapper.findInsurancePolicyBillListForManagerSystem(insurancePolicyModel);
+    }
+
+    public long findInsurancePolicyBillCountForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
+        return custWarrantyCostMapper.findInsurancePolicyBillCountForManagerSystem(insurancePolicyModel);
+    }
+
+    public int updateSettlementAndBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.updateSettlementAndBillUuidByCostId(custWarrantyCostModel);
+    }
+
+    public int updateBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.updateBillUuidByCostId(custWarrantyCostModel);
+    }
+
+    public CustWarrantyBrokerageModel findBrokerageByCostId(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.findBrokerageByCostId(custWarrantyCostModel);
+    }
+
+    public List<CustWarrantyCostModel> findCompletePayListByManagerUuid(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.findCompletePayListByManagerUuid(custWarrantyCostModel);
+    }
+
+    public long findCompletePayCountByManagerUuid(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.findCompletePayCountByManagerUuid(custWarrantyCostModel);
     }
 
 }
