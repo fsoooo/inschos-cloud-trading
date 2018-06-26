@@ -488,7 +488,7 @@
         GROUP_CONCAT(`cust_warranty_person`.`name`) as person_name
 
         from `cust_warranty_cost`
-        LEFT JOIN `cust_warranty` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid`
+        LEFT JOIN `cust_warranty` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid` AND `cust_warranty`.`ins_company_id`=#{ins_company_id}
         LEFT JOIN `cust_warranty_brokerage` ON `cust_warranty_cost`.`id`=`cust_warranty_brokerage`.`cost_id`
         LEFT JOIN `cust_warranty_person` ON `cust_warranty_cost`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`record_end_time`=#{max_time}
         <where>
@@ -502,7 +502,7 @@
                     LEFT JOIN `cust_warranty` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid`
                     LEFT JOIN `cust_warranty_brokerage` ON `cust_warranty_cost`.`id`=`cust_warranty_brokerage`.`cost_id`
                     LEFT JOIN `cust_warranty_person` ON `cust_warranty_cost`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`record_end_time`=#{max_time}
-                    where `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state` = 1 AND `cust_warranty_cost`.`pay_status`= 206
+                    where `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state` = 1 AND `cust_warranty_cost`.`pay_status`= 206 AND `cust_warranty_cost`.`is_settlement`=0 AND (`cust_warranty_cost`.`bill_uuid` is NULL OR `cust_warranty_cost`.`bill_uuid`='')
                     <if test="search!=null and search!=''">
                         <choose>
                             <when test='searchType=="1"'>
@@ -535,7 +535,7 @@
                     1=1
                 </otherwise>
             </choose>
-            AND `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state` = 1 AND `cust_warranty_cost`.`pay_status`= 206
+            AND `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state` = 1 AND `cust_warranty_cost`.`pay_status`= 206 AND `cust_warranty_cost`.`is_settlement`=0 AND (`cust_warranty_cost`.`bill_uuid` is NULL OR `cust_warranty_cost`.`bill_uuid`='')
             <if test="search!=null and search!=''">
                 <choose>
                     <when test='searchType=="1"'>
@@ -571,10 +571,10 @@
         select
         COUNT(cust_warranty_cost.id)
         from cust_warranty_cost
-        LEFT JOIN `cust_warranty` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid`
+        LEFT JOIN `cust_warranty` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_cost`.`warranty_uuid` AND `cust_warranty`.`ins_company_id`=#{ins_company_id}
         LEFT JOIN `cust_warranty_brokerage` ON `cust_warranty_cost`.`id`=`cust_warranty_brokerage`.`cost_id`
         LEFT JOIN `cust_warranty_person` ON `cust_warranty_cost`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`record_end_time`=#{max_time}
-        WHERE `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state` = 1 AND `cust_warranty_cost`.`pay_status`= 206
+        WHERE `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state` = 1 AND `cust_warranty_cost`.`pay_status`= 206 AND `cust_warranty_cost`.`is_settlement`=0 AND (`cust_warranty_cost`.`bill_uuid` is NULL OR `cust_warranty_cost`.`bill_uuid`='')
         <if test="search!=null and search!=''">
             <choose>
                 <when test='searchType=="1"'>

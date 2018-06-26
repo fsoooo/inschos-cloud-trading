@@ -10,8 +10,9 @@ import com.inschos.cloud.trading.model.OfflineInsurancePolicyModel;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
+import static com.inschos.cloud.trading.assist.kit.ExcelModelKit.TYPE_DOUBLE;
 
 /**
  * 创建日期：2018/6/25 on 14:17
@@ -41,6 +42,8 @@ public class Bill {
         // 1-保单号，3-被保险人
         public String searchType;
         public String searchKey;
+        @CheckParams(hintName = "保险公司")
+        public String companyId;
     }
 
     public static class GetBillEnableInsurancePolicyListResponse extends BaseResponse {
@@ -61,8 +64,6 @@ public class Bill {
         // 1-保单号，2-保险产品，3-被保险人
         public String searchType;
         public String searchKey;
-        @CheckParams(hintName = "结算时间")
-        public String billTime;
     }
 
     public static class GetBillDetailResponse extends BaseResponse {
@@ -204,17 +205,46 @@ public class Bill {
 
     }
 
-    public static class BillDetailBean extends BillBean {
+    public static final List<String> BILL_DETAIL_LIST;
 
-        public List<BillInsurancePolicy> list;
+    static {
+        BILL_DETAIL_LIST = new ArrayList<>();
 
-        public BillDetailBean() {
+        BILL_DETAIL_LIST.add("warrantyCode");
+        BILL_DETAIL_LIST.add("productName");
+        BILL_DETAIL_LIST.add("insuredName");
+        BILL_DETAIL_LIST.add("premium");
+        BILL_DETAIL_LIST.add("phase");
+        BILL_DETAIL_LIST.add("feeRate");
+        BILL_DETAIL_LIST.add("fee");
+        BILL_DETAIL_LIST.add("billTimeText");
+        BILL_DETAIL_LIST.add("createdAtText");
 
-        }
+    }
 
-        public BillDetailBean(BillModel model) {
-            super(model);
-        }
+    public static final Map<String, String> BILL_DETAIL_FIELD_TYPE;
+
+    static {
+        BILL_DETAIL_FIELD_TYPE = new HashMap<>();
+        BILL_DETAIL_FIELD_TYPE.put("premium", TYPE_DOUBLE);
+        BILL_DETAIL_FIELD_TYPE.put("feeRate", TYPE_DOUBLE);
+        BILL_DETAIL_FIELD_TYPE.put("fee", TYPE_DOUBLE);
+    }
+
+    public static BillInsurancePolicy getDownloadBillDetailTitle() {
+        BillInsurancePolicy billInsurancePolicy = new BillInsurancePolicy();
+
+        billInsurancePolicy.warrantyCode = "保单号";
+        billInsurancePolicy.productName = "保险产品";
+        billInsurancePolicy.insuredName = "被保险人";
+        billInsurancePolicy.premium = "保费（元）";
+        billInsurancePolicy.phase = "缴费期";
+        billInsurancePolicy.feeRate = "佣金比（%）";
+        billInsurancePolicy.fee = "佣金（元）";
+        billInsurancePolicy.billTimeText = "结算时间";
+        billInsurancePolicy.createdAtText = "创建时间";
+
+        return billInsurancePolicy;
     }
 
     public static class BillInsurancePolicy {

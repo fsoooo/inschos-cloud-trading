@@ -256,7 +256,7 @@ public class InsurancePolicyAction extends BaseAction {
         byte[] workbookByteArray = ExcelModelKit.getWorkbookByteArray(workbook);
 
         if (workbookByteArray == null) {
-            return json(BaseResponse.CODE_FAILURE, "获取下载地址失败", response);
+            return json(BaseResponse.CODE_FAILURE, "生成表格失败", response);
         }
 
         FileUpload.UploadByBase64Request fileUploadRequest = new FileUpload.UploadByBase64Request();

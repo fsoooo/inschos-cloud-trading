@@ -3,20 +3,25 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.Bill;
+import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
 import com.inschos.cloud.trading.access.rpc.bean.InsuranceCompanyBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
 import com.inschos.cloud.trading.access.rpc.client.AgentClient;
+import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
+import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.BillDao;
 import com.inschos.cloud.trading.data.dao.BillDetailDao;
 import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
 import com.inschos.cloud.trading.data.dao.OfflineInsurancePolicyDao;
+import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,6 +55,9 @@ public class BillAction extends BaseAction {
 
     @Autowired
     private ProductClient productClient;
+
+    @Autowired
+    private FileClient fileClient;
 
     public String createBill(ActionBean actionBean) {
         Bill.CreateBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.CreateBillRequest.class);
@@ -96,6 +104,9 @@ public class BillAction extends BaseAction {
                 BigDecimal brokerage;
 
                 if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_ON_LINE)) {
+                    if (StringKit.isEmpty(billInsurancePolicy.costId)) {
+                        return json(BaseResponse.CODE_FAILURE, "网销保单'" + billDetailModel.warranty_uuid + "'必须提供costId", response);
+                    }
                     custWarrantyCostModel.id = billInsurancePolicy.costId;
                     CustWarrantyBrokerageModel brokerageByCostId = custWarrantyCostDao.findBrokerageByCostId(custWarrantyCostModel);
 
@@ -105,7 +116,6 @@ public class BillAction extends BaseAction {
                         brokerage = new BigDecimal("0");
                     }
                 } else if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_OFF_LINE)) {
-                    offlineInsurancePolicyModel.warranty_uuid = billInsurancePolicy.warrantyUuid;
                     OfflineInsurancePolicyModel brokerageByWarrantyUuid = offlineInsurancePolicyDao.findBrokerageByWarrantyUuid(offlineInsurancePolicyModel);
 
                     if (brokerageByWarrantyUuid != null && StringKit.isNumeric(brokerageByWarrantyUuid.brokerage)) {
@@ -164,8 +174,20 @@ public class BillAction extends BaseAction {
             }
         }
 
+        if (!StringKit.isInteger(request.companyId)) {
+            return json(BaseResponse.CODE_FAILURE, "保险公司ID错误", response);
+        }
+
         if (StringKit.isEmpty(request.pageSize)) {
             request.pageSize = "10";
+        }
+
+        InsuranceCompanyBean company = productClient.getCompany(Long.valueOf(request.companyId));
+
+        if (company != null) {
+            request.companyId = company.name;
+        } else {
+            request.companyId = "";
         }
 
         long total;
@@ -176,6 +198,7 @@ public class BillAction extends BaseAction {
                 CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
                 custWarrantyCostModel.search = request.searchKey;
                 custWarrantyCostModel.searchType = request.searchType;
+                custWarrantyCostModel.ins_company_id = request.companyId;
                 custWarrantyCostModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 Set<String> productIds = new HashSet<>();
@@ -224,6 +247,7 @@ public class BillAction extends BaseAction {
                 OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
                 offlineInsurancePolicyModel.search = request.searchKey;
                 offlineInsurancePolicyModel.searchType = request.searchType;
+                offlineInsurancePolicyModel.insurance_company = request.companyId;
                 offlineInsurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 List<OfflineInsurancePolicyModel> completePayListByManagerUuid1 = offlineInsurancePolicyDao.findCompletePayListByManagerUuid(offlineInsurancePolicyModel);
@@ -350,17 +374,12 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        if (!StringKit.isInteger(request.billTime)) {
-            return json(BaseResponse.CODE_PARAM_ERROR, "结算时间错误", response);
-        }
-
         if (StringKit.isEmpty(request.pageSize)) {
             request.pageSize = "10";
         }
 
         BillDetailModel billDetailModel = new BillDetailModel();
         billDetailModel.bill_uuid = request.billUuid;
-        billDetailModel.bill_time = request.billTime;
 
         if (StringKit.isEmpty(request.searchType)) {
             request.searchKey = "";
@@ -402,150 +421,7 @@ public class BillAction extends BaseAction {
 
         List<BillDetailModel> billDetailByBillUuid = billDetailDao.findBillDetailByBillUuid(billDetailModel);
         long total = billDetailDao.findBillDetailCountByBillUuid(billDetailModel);
-        response.data = new ArrayList<>();
-
-        Set<String> productIds = new HashSet<>();
-        Set<String> companyIds = new HashSet<>();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-
-        if (billDetailByBillUuid != null && !billDetailByBillUuid.isEmpty()) {
-            for (BillDetailModel detailModel : billDetailByBillUuid) {
-                Bill.BillInsurancePolicy billInsurancePolicy = new Bill.BillInsurancePolicy();
-
-                billInsurancePolicy.id = detailModel.id;
-                billInsurancePolicy.warrantyUuid = detailModel.warranty_uuid;
-                billInsurancePolicy.costId = detailModel.cost_id;
-                billInsurancePolicy.warrantyType = detailModel.type;
-                billInsurancePolicy.warrantyTypeText = detailModel.typeText(detailModel.type);
-
-                billInsurancePolicy.billTime = detailModel.bill_time;
-                if (StringKit.isInteger(detailModel.bill_time)) {
-                    billInsurancePolicy.billTimeText = sdf.format(new Date(Long.valueOf(detailModel.bill_time)));
-                }
-
-                billInsurancePolicy.createdAt = detailModel.created_at;
-                if (StringKit.isInteger(detailModel.created_at)) {
-                    billInsurancePolicy.createdAtText = sdf.format(new Date(Long.valueOf(detailModel.created_at)));
-                }
-
-                if (StringKit.equals(detailModel.type, BillDetailModel.TYPE_ON_LINE)) {
-                    billInsurancePolicy.warrantyCode = detailModel.online_warranty_code;
-                    billInsurancePolicy.productId = detailModel.online_product_id;
-                    billInsurancePolicy.companyId = detailModel.online_ins_company_id;
-                    productIds.add(detailModel.online_product_id);
-                    companyIds.add(detailModel.online_ins_company_id);
-
-                    billInsurancePolicy.insuredName = detailModel.online_person_name;
-
-                    billInsurancePolicy.premium = detailModel.online_premium;
-                    if (StringKit.isNumeric(detailModel.online_premium)) {
-                        billInsurancePolicy.premium = decimalFormat.format(new BigDecimal(detailModel.online_premium).doubleValue());
-                    } else {
-                        billInsurancePolicy.premium = "0.00";
-                    }
-                    billInsurancePolicy.premiumText = String.format("¥%s", billInsurancePolicy.premium);
-
-                    billInsurancePolicy.fee = detailModel.online_brokerage_manager_money;
-                    if (StringKit.isNumeric(detailModel.online_brokerage_manager_money)) {
-                        billInsurancePolicy.fee = decimalFormat.format(new BigDecimal(detailModel.online_brokerage_manager_money).doubleValue());
-                    } else {
-                        billInsurancePolicy.fee = "0.00";
-                    }
-                    billInsurancePolicy.feeText = String.format("¥%s", billInsurancePolicy.fee);
-
-                    billInsurancePolicy.feeRate = detailModel.online_brokerage_manager_rate;
-                    if (StringKit.isNumeric(detailModel.online_brokerage_manager_rate)) {
-                        BigDecimal bigDecimal = new BigDecimal(detailModel.online_brokerage_manager_rate);
-                        billInsurancePolicy.feeRate = decimalFormat.format(bigDecimal.doubleValue());
-                        bigDecimal = bigDecimal.multiply(new BigDecimal(100));
-                        billInsurancePolicy.feeRateText = decimalFormat.format(bigDecimal) + "%";
-                    } else {
-                        billInsurancePolicy.feeRate = "0.00";
-                        billInsurancePolicy.feeRateText = "0.00%";
-                    }
-
-                    billInsurancePolicy.startTime = detailModel.online_start_time;
-                    if (StringKit.isInteger(detailModel.online_start_time)) {
-                        billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.online_start_time)));
-                    }
-                    billInsurancePolicy.phase = detailModel.online_phase;
-
-                } else if (StringKit.equals(detailModel.type, BillDetailModel.TYPE_OFF_LINE)) {
-                    billInsurancePolicy.warrantyCode = detailModel.offline_warranty_code;
-                    billInsurancePolicy.companyName = detailModel.offline_insurance_company;
-                    billInsurancePolicy.productName = detailModel.offline_insurance_product;
-                    billInsurancePolicy.insuredName = detailModel.offline_insured_name;
-
-                    billInsurancePolicy.fee = detailModel.offline_brokerage;
-                    if (StringKit.isNumeric(detailModel.offline_brokerage)) {
-                        billInsurancePolicy.fee = decimalFormat.format(new BigDecimal(detailModel.offline_brokerage).doubleValue());
-                    } else {
-                        billInsurancePolicy.fee = "0.00";
-                    }
-                    billInsurancePolicy.feeText = String.format("¥%s", billInsurancePolicy.feeText);
-
-                    if (StringKit.isNumeric(detailModel.offline_premium)) {
-                        BigDecimal bigDecimal = new BigDecimal(detailModel.offline_premium);
-                        billInsurancePolicy.premium = decimalFormat.format(bigDecimal.doubleValue());
-                        if (bigDecimal.compareTo(BigDecimal.ZERO) > 0) {
-                            BigDecimal divide = new BigDecimal(billInsurancePolicy.fee).divide(bigDecimal, 6, BigDecimal.ROUND_HALF_DOWN);
-                            billInsurancePolicy.feeRate = decimalFormat.format(divide.doubleValue());
-                            BigDecimal multiply = divide.multiply(new BigDecimal("100"));
-                            billInsurancePolicy.feeRateText = decimalFormat.format(multiply.doubleValue()) + "%";
-                        } else {
-                            billInsurancePolicy.feeRate = "0";
-                            billInsurancePolicy.feeRateText = "0.00%";
-                        }
-                    } else {
-                        billInsurancePolicy.premium = "0.00";
-                        billInsurancePolicy.feeRate = "0";
-                        billInsurancePolicy.feeRateText = "0.00%";
-                    }
-                    billInsurancePolicy.premiumText = "¥" + billInsurancePolicy.premium;
-                    billInsurancePolicy.startTime = detailModel.offline_start_time;
-                    if (StringKit.isInteger(detailModel.offline_start_time)) {
-                        billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.offline_start_time)));
-                    }
-                    billInsurancePolicy.phase = detailModel.offline_payment_time;
-
-                } else {
-                    continue;
-                }
-                response.data.add(billInsurancePolicy);
-            }
-
-            List<ProductBean> productList = productClient.getProductList(new ArrayList<>(productIds));
-            Map<String, ProductBean> productMap = new HashMap<>();
-            if (productList != null && !productList.isEmpty()) {
-                for (ProductBean productBean : productList) {
-                    productMap.put(String.valueOf(productBean.id), productBean);
-                }
-            }
-
-            List<InsuranceCompanyBean> companyList = productClient.getCompanyList(new ArrayList<>(companyIds));
-            Map<String, InsuranceCompanyBean> companyMap = new HashMap<>();
-            if (companyList != null && !companyList.isEmpty()) {
-                for (InsuranceCompanyBean insuranceCompanyBean : companyList) {
-                    companyMap.put(String.valueOf(insuranceCompanyBean.id), insuranceCompanyBean);
-                }
-            }
-
-            for (Bill.BillInsurancePolicy datum : response.data) {
-                if (StringKit.equals(datum.warrantyType, BillDetailModel.TYPE_ON_LINE)) {
-                    ProductBean productBean = productMap.get(datum.productId);
-                    if (productBean != null) {
-                        datum.productName = productBean.name;
-                    }
-
-                    InsuranceCompanyBean insuranceCompanyBean = companyMap.get(datum.companyId);
-                    if (insuranceCompanyBean != null) {
-                        datum.companyName = insuranceCompanyBean.name;
-                    }
-                }
-            }
-        }
+        response.data = dealBillDetailModelList(billDetailByBillUuid);
 
         String lastId = "0";
         if (!response.data.isEmpty()) {
@@ -570,7 +446,74 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        return "";
+        BillDetailModel billDetailModel = new BillDetailModel();
+        billDetailModel.bill_uuid = request.billUuid;
+        billDetailModel.page = setPage("0", null, "1000");
+
+        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+
+        if (billByBillUuid == null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
+        }
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        Sheet sheet = workbook.createSheet(billByBillUuid.bill_name + "-结算单明细");
+
+        List<ExcelModel<Bill.BillInsurancePolicy>> list = new ArrayList<>();
+        Bill.BillInsurancePolicy downloadBillDetailTitle = Bill.getDownloadBillDetailTitle();
+        ExcelModel<Bill.BillInsurancePolicy> title = new ExcelModel<>(downloadBillDetailTitle, true, "title");
+        title.boldWeight = Font.BOLDWEIGHT_BOLD;
+        list.add(title);
+        int startRow = 0;
+
+        Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(Bill.BILL_DETAIL_LIST, 0);
+        Map<String, CellStyle> cellStyleMap = ExcelModelKit.getCellStyleMap();
+
+        int i = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap, new HashMap<>());
+        startRow += i;
+
+        boolean flag;
+        do {
+            List<BillDetailModel> billDetailByBillUuid = billDetailDao.findBillDetailByBillUuid(billDetailModel);
+
+            List<Bill.BillInsurancePolicy> billInsurancePolicies = dealBillDetailModelList(billDetailByBillUuid);
+
+            if (!billInsurancePolicies.isEmpty()) {
+                list.clear();
+                for (Bill.BillInsurancePolicy billInsurancePolicy : billInsurancePolicies) {
+                    list.add(new ExcelModel<>(billInsurancePolicy));
+                }
+                startRow = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap, Bill.BILL_DETAIL_FIELD_TYPE);
+                billDetailModel.page = setPage(billInsurancePolicies.get(billInsurancePolicies.size() - 1).id, null, "1000");
+            }
+
+            flag = billDetailByBillUuid != null && billDetailByBillUuid.size() >= 1000;
+        } while (flag);
+
+        ExcelModelKit.autoSizeColumn(sheet, columnFieldMap.size());
+
+        byte[] workbookByteArray = ExcelModelKit.getWorkbookByteArray(workbook);
+
+        if (workbookByteArray == null) {
+            return json(BaseResponse.CODE_FAILURE, "生成表格失败", response);
+        }
+
+        FileUpload.UploadByBase64Request fileUploadRequest = new FileUpload.UploadByBase64Request();
+        // fileUploadRequest.base64 = Base64.getEncoder().encodeToString(workbookByteArray);
+        fileUploadRequest.fileKey = MD5Kit.MD5Digest(billByBillUuid.bill_name + actionBean.managerUuid + System.currentTimeMillis() + (Math.random() * 10000000L));
+        fileUploadRequest.fileName = fileUploadRequest.fileKey + ".xls";
+        boolean upload = fileClient.upload(fileUploadRequest.fileKey, fileUploadRequest.fileName, workbookByteArray);
+
+        if (upload) {
+            response.data = fileClient.getFileUrl(fileUploadRequest.fileKey);
+            if (StringKit.isEmpty(response.data)) {
+                return json(BaseResponse.CODE_FAILURE, "获取下载地址失败", response);
+            }
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "获取下载地址失败", response);
+        }
+
+        return json(BaseResponse.CODE_SUCCESS, "获取下载地址成功", response);
     }
 
     public String clearingBill(ActionBean actionBean) {
@@ -755,5 +698,155 @@ public class BillAction extends BaseAction {
         }
 
         return str;
+    }
+
+    private List<Bill.BillInsurancePolicy> dealBillDetailModelList(List<BillDetailModel> list) {
+        List<Bill.BillInsurancePolicy> result = new ArrayList<>();
+        if (list == null || list.isEmpty()) {
+            return result;
+        }
+
+        Set<String> productIds = new HashSet<>();
+        Set<String> companyIds = new HashSet<>();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+        for (BillDetailModel detailModel : list) {
+            Bill.BillInsurancePolicy billInsurancePolicy = new Bill.BillInsurancePolicy();
+
+            billInsurancePolicy.id = detailModel.id;
+            billInsurancePolicy.warrantyUuid = detailModel.warranty_uuid;
+            billInsurancePolicy.costId = detailModel.cost_id;
+            billInsurancePolicy.warrantyType = detailModel.type;
+            billInsurancePolicy.warrantyTypeText = detailModel.typeText(detailModel.type);
+
+            billInsurancePolicy.billTime = detailModel.bill_time;
+            if (StringKit.isInteger(detailModel.bill_time)) {
+                billInsurancePolicy.billTimeText = sdf.format(new Date(Long.valueOf(detailModel.bill_time)));
+            }
+
+            billInsurancePolicy.createdAt = detailModel.created_at;
+            if (StringKit.isInteger(detailModel.created_at)) {
+                billInsurancePolicy.createdAtText = sdf.format(new Date(Long.valueOf(detailModel.created_at)));
+            }
+
+            if (StringKit.equals(detailModel.type, BillDetailModel.TYPE_ON_LINE)) {
+                billInsurancePolicy.warrantyCode = detailModel.online_warranty_code;
+                billInsurancePolicy.productId = detailModel.online_product_id;
+                billInsurancePolicy.companyId = detailModel.online_ins_company_id;
+                productIds.add(detailModel.online_product_id);
+                companyIds.add(detailModel.online_ins_company_id);
+
+                billInsurancePolicy.insuredName = detailModel.online_person_name;
+
+                billInsurancePolicy.premium = detailModel.online_premium;
+                if (StringKit.isNumeric(detailModel.online_premium)) {
+                    billInsurancePolicy.premium = decimalFormat.format(new BigDecimal(detailModel.online_premium).doubleValue());
+                } else {
+                    billInsurancePolicy.premium = "0.00";
+                }
+                billInsurancePolicy.premiumText = String.format("¥%s", billInsurancePolicy.premium);
+
+                billInsurancePolicy.fee = detailModel.online_brokerage_manager_money;
+                if (StringKit.isNumeric(detailModel.online_brokerage_manager_money)) {
+                    billInsurancePolicy.fee = decimalFormat.format(new BigDecimal(detailModel.online_brokerage_manager_money).doubleValue());
+                } else {
+                    billInsurancePolicy.fee = "0.00";
+                }
+                billInsurancePolicy.feeText = String.format("¥%s", billInsurancePolicy.fee);
+
+                billInsurancePolicy.feeRate = detailModel.online_brokerage_manager_rate;
+                if (StringKit.isNumeric(detailModel.online_brokerage_manager_rate)) {
+                    BigDecimal bigDecimal = new BigDecimal(detailModel.online_brokerage_manager_rate);
+                    billInsurancePolicy.feeRate = decimalFormat.format(bigDecimal.doubleValue());
+                    bigDecimal = bigDecimal.multiply(new BigDecimal(100));
+                    billInsurancePolicy.feeRateText = decimalFormat.format(bigDecimal) + "%";
+                } else {
+                    billInsurancePolicy.feeRate = "0.00";
+                    billInsurancePolicy.feeRateText = "0.00%";
+                }
+
+                billInsurancePolicy.startTime = detailModel.online_start_time;
+                if (StringKit.isInteger(detailModel.online_start_time)) {
+                    billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.online_start_time)));
+                }
+                billInsurancePolicy.phase = detailModel.online_phase;
+
+            } else if (StringKit.equals(detailModel.type, BillDetailModel.TYPE_OFF_LINE)) {
+                billInsurancePolicy.warrantyCode = detailModel.offline_warranty_code;
+                billInsurancePolicy.companyName = detailModel.offline_insurance_company;
+                billInsurancePolicy.productName = detailModel.offline_insurance_product;
+                billInsurancePolicy.insuredName = detailModel.offline_insured_name;
+
+                billInsurancePolicy.fee = detailModel.offline_brokerage;
+                if (StringKit.isNumeric(detailModel.offline_brokerage)) {
+                    billInsurancePolicy.fee = decimalFormat.format(new BigDecimal(detailModel.offline_brokerage).doubleValue());
+                } else {
+                    billInsurancePolicy.fee = "0.00";
+                }
+                billInsurancePolicy.feeText = String.format("¥%s", billInsurancePolicy.feeText);
+
+                if (StringKit.isNumeric(detailModel.offline_premium)) {
+                    BigDecimal bigDecimal = new BigDecimal(detailModel.offline_premium);
+                    billInsurancePolicy.premium = decimalFormat.format(bigDecimal.doubleValue());
+                    if (bigDecimal.compareTo(BigDecimal.ZERO) > 0) {
+                        BigDecimal divide = new BigDecimal(billInsurancePolicy.fee).divide(bigDecimal, 6, BigDecimal.ROUND_HALF_DOWN);
+                        billInsurancePolicy.feeRate = decimalFormat.format(divide.doubleValue());
+                        BigDecimal multiply = divide.multiply(new BigDecimal("100"));
+                        billInsurancePolicy.feeRateText = decimalFormat.format(multiply.doubleValue()) + "%";
+                    } else {
+                        billInsurancePolicy.feeRate = "0";
+                        billInsurancePolicy.feeRateText = "0.00%";
+                    }
+                } else {
+                    billInsurancePolicy.premium = "0.00";
+                    billInsurancePolicy.feeRate = "0";
+                    billInsurancePolicy.feeRateText = "0.00%";
+                }
+                billInsurancePolicy.premiumText = "¥" + billInsurancePolicy.premium;
+                billInsurancePolicy.startTime = detailModel.offline_start_time;
+                if (StringKit.isInteger(detailModel.offline_start_time)) {
+                    billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.offline_start_time)));
+                }
+                billInsurancePolicy.phase = detailModel.offline_payment_time;
+
+            } else {
+                continue;
+            }
+            result.add(billInsurancePolicy);
+        }
+
+        List<ProductBean> productList = productClient.getProductList(new ArrayList<>(productIds));
+        Map<String, ProductBean> productMap = new HashMap<>();
+        if (productList != null && !productList.isEmpty()) {
+            for (ProductBean productBean : productList) {
+                productMap.put(String.valueOf(productBean.id), productBean);
+            }
+        }
+
+        List<InsuranceCompanyBean> companyList = productClient.getCompanyList(new ArrayList<>(companyIds));
+        Map<String, InsuranceCompanyBean> companyMap = new HashMap<>();
+        if (companyList != null && !companyList.isEmpty()) {
+            for (InsuranceCompanyBean insuranceCompanyBean : companyList) {
+                companyMap.put(String.valueOf(insuranceCompanyBean.id), insuranceCompanyBean);
+            }
+        }
+
+        for (Bill.BillInsurancePolicy datum : result) {
+            if (StringKit.equals(datum.warrantyType, BillDetailModel.TYPE_ON_LINE)) {
+                ProductBean productBean = productMap.get(datum.productId);
+                if (productBean != null) {
+                    datum.productName = productBean.name;
+                }
+
+                InsuranceCompanyBean insuranceCompanyBean = companyMap.get(datum.companyId);
+                if (insuranceCompanyBean != null) {
+                    datum.companyName = insuranceCompanyBean.name;
+                }
+            }
+        }
+
+        return result;
     }
 }

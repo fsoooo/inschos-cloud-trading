@@ -1,5 +1,10 @@
 package com.inschos.cloud.trading.model;
 
+import com.inschos.cloud.trading.assist.kit.TimeKit;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 创建日期：2018/6/25 on 16:01
  * 描述：
@@ -46,7 +51,7 @@ public class BillDetailModel {
 
     public String search;
     public String searchType;
-    // public String bill_time;
+    public String max_time = String.valueOf(TimeKit.MAX_MILLIS);
     public String product_id_string;
 
     // 网销
@@ -54,7 +59,7 @@ public class BillDetailModel {
     // 线下单
     public static final String TYPE_OFF_LINE = "2";
 
-    public String typeText (String type) {
+    public String typeText(String type) {
         String str = "";
         if (type == null) {
             return str;

@@ -6,10 +6,7 @@ import com.inschos.cloud.trading.data.mapper.BillDetailMapper;
 import com.inschos.cloud.trading.data.mapper.BillMapper;
 import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.OfflineInsurancePolicyMapper;
-import com.inschos.cloud.trading.model.BillDetailModel;
-import com.inschos.cloud.trading.model.BillModel;
-import com.inschos.cloud.trading.model.CustWarrantyCostModel;
-import com.inschos.cloud.trading.model.OfflineInsurancePolicyModel;
+import com.inschos.cloud.trading.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -92,32 +89,50 @@ public class BillDao extends BaseDao {
     }
 
     public int deleteBill(BillModel billModel) {
-        List<BillDetailModel> billDetailByBillUuid = billDetailMapper.findBillDetailByBillUuid(billModel.bill_uuid);
+        BillDetailModel billDetailModel = new BillDetailModel();
+        billDetailModel.bill_uuid = billModel.bill_uuid;
+        billDetailModel.page = setPage("0", null, "1000");
 
-        billModel.updated_at = String.valueOf(System.currentTimeMillis());
-        billModel.state = "0";
-        int i = billMapper.deleteBill(billModel);
+        int i = 1;
+        boolean flag;
+        do {
+            List<BillDetailModel> billDetailByBillUuid = billDetailMapper.findBillDetailByBillUuid(billDetailModel);
 
-        if (i <= 0) {
-            rollBack();
-            return i;
-        }
+            billModel.updated_at = String.valueOf(System.currentTimeMillis());
+            billModel.state = "0";
+            i = billMapper.deleteBill(billModel);
 
-        if (billDetailByBillUuid == null || billDetailByBillUuid.isEmpty()) {
-            return i;
-        }
+            if (i <= 0) {
+                rollBack();
+                return i;
+            }
 
-        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-        custWarrantyCostModel.bill_uuid = "";
-        custWarrantyCostModel.is_settlement = "0";
-        custWarrantyCostModel.updated_at = billModel.updated_at;
+            if (billDetailByBillUuid == null || billDetailByBillUuid.isEmpty()) {
+                return i;
+            }
 
-        OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
-        offlineInsurancePolicyModel.bill_uuid = "";
-        offlineInsurancePolicyModel.is_settlement = "0";
-        offlineInsurancePolicyModel.updated_at = billModel.updated_at;
+            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+            custWarrantyCostModel.bill_uuid = "";
+            custWarrantyCostModel.is_settlement = "0";
+            custWarrantyCostModel.updated_at = billModel.updated_at;
 
-        return updateCustWarrantySettlementAndBillUuid(billDetailByBillUuid, custWarrantyCostModel, offlineInsurancePolicyModel);
+            OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
+            offlineInsurancePolicyModel.bill_uuid = "";
+            offlineInsurancePolicyModel.is_settlement = "0";
+            offlineInsurancePolicyModel.updated_at = billModel.updated_at;
+
+            i = updateCustWarrantySettlementAndBillUuid(billDetailByBillUuid, custWarrantyCostModel, offlineInsurancePolicyModel);
+
+            if (i <= 0) {
+                rollBack();
+                return i;
+            }
+
+            flag = billDetailByBillUuid.size() >= 1000;
+
+        } while (flag);
+
+        return i;
     }
 
     public int deleteBillDetailByIds(List<BillDetailModel> ids, String billUuid, BigDecimal bigDecimal) {
@@ -175,19 +190,38 @@ public class BillDao extends BaseDao {
             return i;
         }
 
-        List<BillDetailModel> billDetailByBillUuid = billDetailMapper.findBillDetailByBillUuid(billModel.bill_uuid);
+        BillDetailModel billDetailModel = new BillDetailModel();
+        billDetailModel.bill_uuid = billModel.bill_uuid;
+        billDetailModel.page = setPage("0", null, "1000");
 
-        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-        custWarrantyCostModel.bill_uuid = billModel.bill_uuid;
-        custWarrantyCostModel.is_settlement = "1";
-        custWarrantyCostModel.updated_at = billModel.updated_at;
+        boolean flag;
+        do {
+            List<BillDetailModel> billDetailByBillUuid = billDetailMapper.findBillDetailByBillUuid(billDetailModel);
 
-        OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
-        offlineInsurancePolicyModel.bill_uuid = billModel.bill_uuid;
-        offlineInsurancePolicyModel.is_settlement = "1";
-        offlineInsurancePolicyModel.updated_at = billModel.updated_at;
+            if (billDetailByBillUuid != null && !billDetailByBillUuid.isEmpty()) {
+                CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+                custWarrantyCostModel.bill_uuid = billModel.bill_uuid;
+                custWarrantyCostModel.is_settlement = "1";
+                custWarrantyCostModel.updated_at = billModel.updated_at;
 
-        return updateCustWarrantySettlementAndBillUuid(billDetailByBillUuid, custWarrantyCostModel, offlineInsurancePolicyModel);
+                OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
+                offlineInsurancePolicyModel.bill_uuid = billModel.bill_uuid;
+                offlineInsurancePolicyModel.is_settlement = "1";
+                offlineInsurancePolicyModel.updated_at = billModel.updated_at;
+
+                i = updateCustWarrantySettlementAndBillUuid(billDetailByBillUuid, custWarrantyCostModel, offlineInsurancePolicyModel);
+
+                if (i <= 0) {
+                    rollBack();
+                    return i;
+                }
+            }
+
+            flag = billDetailByBillUuid != null && billDetailByBillUuid.size() >= 1000;
+
+        } while (flag);
+
+        return i;
     }
 
     public int cancelClearingBill(BillModel billModel) {
@@ -200,19 +234,37 @@ public class BillDao extends BaseDao {
             return i;
         }
 
-        List<BillDetailModel> billDetailByBillUuid = billDetailMapper.findBillDetailByBillUuid(billModel.bill_uuid);
+        BillDetailModel billDetailModel = new BillDetailModel();
+        billDetailModel.bill_uuid = billModel.bill_uuid;
+        billDetailModel.page = setPage("0", null, "1000");
 
-        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-        custWarrantyCostModel.bill_uuid = billModel.bill_uuid;
-        custWarrantyCostModel.is_settlement = "0";
-        custWarrantyCostModel.updated_at = billModel.updated_at;
+        boolean flag;
+        do {
+            List<BillDetailModel> billDetailByBillUuid = billDetailMapper.findBillDetailByBillUuid(billDetailModel);
 
-        OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
-        offlineInsurancePolicyModel.bill_uuid = billModel.bill_uuid;
-        offlineInsurancePolicyModel.is_settlement = "0";
-        offlineInsurancePolicyModel.updated_at = billModel.updated_at;
+            if (billDetailByBillUuid != null && !billDetailByBillUuid.isEmpty()) {
+                CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+                custWarrantyCostModel.bill_uuid = billModel.bill_uuid;
+                custWarrantyCostModel.is_settlement = "0";
+                custWarrantyCostModel.updated_at = billModel.updated_at;
 
-        return updateCustWarrantySettlementAndBillUuid(billDetailByBillUuid, custWarrantyCostModel, offlineInsurancePolicyModel);
+                OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
+                offlineInsurancePolicyModel.bill_uuid = billModel.bill_uuid;
+                offlineInsurancePolicyModel.is_settlement = "0";
+                offlineInsurancePolicyModel.updated_at = billModel.updated_at;
+
+                i = updateCustWarrantySettlementAndBillUuid(billDetailByBillUuid, custWarrantyCostModel, offlineInsurancePolicyModel);
+
+                if (i <= 0) {
+                    rollBack();
+                    return i;
+                }
+            }
+
+            flag = billDetailByBillUuid != null && billDetailByBillUuid.size() >= 1000;
+        } while (flag);
+
+        return i;
     }
 
     public int updateSettlementByBillUuid(BillModel billModel) {
@@ -259,11 +311,29 @@ public class BillDao extends BaseDao {
         return billMapper.findBillByManagerUuid(billModel);
     }
 
-    public long findBillCountByManagerUuid(BillModel billModel){
+    public long findBillCountByManagerUuid(BillModel billModel) {
         return billMapper.findBillCountByManagerUuid(billModel);
     }
 
     public List<BillModel> findBillByInsuranceCompany(BillModel billModel) {
         return billMapper.findBillByInsuranceCompany(billModel);
+    }
+
+    protected Page setPage(String lastId, String num, String size) {
+        Page page = new Page();
+
+        if (StringKit.isInteger(size)) {
+            if (StringKit.isInteger(lastId)) {
+                page.lastId = Long.valueOf(lastId);
+                page.offset = Integer.valueOf(size);
+            } else if (StringKit.isInteger(num)) {
+                int pageSize = Integer.valueOf(size);
+                int pageStart = (Integer.valueOf(num) - 1) * pageSize;
+
+                page.start = pageStart;
+                page.offset = pageSize;
+            }
+        }
+        return page;
     }
 }
