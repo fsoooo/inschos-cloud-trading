@@ -3,17 +3,31 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.OfflineInsurancePolicyMapper">
 
     <sql id="Base_Column_List">
-        `id`,`manager_uuid`,`warranty_uuid`,`insured_name`,`policy_holder_name`,`insurance_company`,`insurance_type`,`insurance_product`,`warranty_code`,`payment_time`,`order_time`,`real_income_time`,`start_time`,`end_time`,`premium`,`pay_status`,`brokerage`,`channel_name`,`agent_name`,`created_at`,`updated_at`,`state`
+        `id`,`manager_uuid`,`warranty_uuid`,`insured_name`,`policy_holder_name`,`insurance_company`,`insurance_type`,`insurance_product`,`warranty_code`,`payment_time`,`order_time`,`real_income_time`,`start_time`,`end_time`,`premium`,`pay_status`,`brokerage`,`channel_name`,`agent_name`,`is_settlement`,`bill_uuid`,`created_at`,`updated_at`,`state`
     </sql>
 
     <insert id="addOfflineInsurancePolicy" parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into offline_cust_warranty
-        (`id`,`manager_uuid`,`warranty_uuid`,`insured_name`,`policy_holder_name`,`insurance_company`,`insurance_type`,`insurance_product`,`warranty_code`,`payment_time`,`order_time`,`real_income_time`,`start_time`,`end_time`,`premium`,`pay_status`,`brokerage`,`channel_name`,`agent_name`,`created_at`,`updated_at`,`state`)
+        (`id`,`manager_uuid`,`warranty_uuid`,`insured_name`,`policy_holder_name`,`insurance_company`,`insurance_type`,`insurance_product`,`warranty_code`,`payment_time`,`order_time`,`real_income_time`,`start_time`,`end_time`,`premium`,`pay_status`,`brokerage`,`channel_name`,`agent_name`,`is_settlement`,`bill_uuid`,`created_at`,`updated_at`,`state`)
         values
-        (#{id},#{manager_uuid},#{warranty_uuid},#{insured_name},#{policy_holder_name},#{insurance_company},#{insurance_type},#{insurance_product},#{warranty_code},#{payment_time},#{order_time},#{real_income_time},#{start_time},#{end_time},#{premium},#{pay_status},#{brokerage},#{channel_name},#{agent_name},#{created_at},#{updated_at},#{state})
+        (#{id},#{manager_uuid},#{warranty_uuid},#{insured_name},#{policy_holder_name},#{insurance_company},#{insurance_type},#{insurance_product},#{warranty_code},#{payment_time},#{order_time},#{real_income_time},#{start_time},#{end_time},#{premium},#{pay_status},#{brokerage},#{channel_name},#{agent_name},#{is_settlement},#{bill_uuid},#{created_at},#{updated_at},#{state})
     </insert>
+
+    <update id="updateSettlementAndBillUuidByWarrantyUuid"
+            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+        update offline_cust_warranty set
+        `is_settlement`=#{is_settlement},`bill_uuid`=#{bill_uuid},`updated_at`=#{updated_at}
+        where `warranty_uuid`=#{warranty_uuid}
+    </update>
+
+    <update id="updateBillUuidByWarrantyUuid"
+            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+        update offline_cust_warranty set
+        `bill_uuid`=#{bill_uuid},`updated_at`=#{updated_at}
+        where `warranty_uuid`=#{warranty_uuid}
+    </update>
 
     <select id="findOfflineInsurancePolicyByWarrantyCode" parameterType="java.lang.String"
             resultType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
@@ -151,6 +165,74 @@
         <if test="search_product!=null and search_product!=''">
             `insurance_product` like concat("%",#{search_product},"%")
         </if>
+    </select>
+
+
+    <select id="findBrokerageByWarrantyUuid" parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+        select
+        `id`,`brokerage`
+        from offline_cust_warranty
+        where `warranty_uuid`=#{warranty_uuid} AND `state`=1
+    </select>
+
+    <select id="findCompletePayListByManagerUuid" parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+        select
+        <include refid="Base_Column_List"/>
+        from offline_cust_warranty
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    `id`&lt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    `id`&lt;=(select `id` from offline_cust_warranty
+                    where `warranty_uuid`=#{warranty_uuid} AND `state`=1
+                    <if test="search!=null and search!=''">
+                        <choose>
+                            <when test='searchType=="1"'>
+                                and `cust_warranty`.`warranty_code` like concat("%",#{search},"%")
+                            </when>
+                            <when test='searchType=="3"'>
+                                and `cust_warranty_person`.`insured_name` like concat("%",#{search},"%")
+                            </when>
+                            <otherwise>
+                                and 1=1
+                            </otherwise>
+                        </choose>
+                    </if>
+                    ORDER BY `id` DESC limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            AND `warranty_uuid`=#{warranty_uuid} AND `state`=1
+            <if test="search!=null and search!=''">
+                <choose>
+                    <when test='searchType=="1"'>
+                        and `cust_warranty`.`warranty_code` like concat("%",#{search},"%")
+                    </when>
+                    <when test='searchType=="3"'>
+                        and `cust_warranty_person`.`insured_name` like concat("%",#{search},"%")
+                    </when>
+                    <otherwise>
+                        and 1=1
+                    </otherwise>
+                </choose>
+            </if>
+            ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
+        </where>
+    </select>
+
+    <select id="findCompletePayCountByManagerUuid" parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
+            resultType="long">
+        select
+        COUNT(id)
+        from offline_cust_warranty
+        where `warranty_uuid`=#{warranty_uuid} AND `state`=1
     </select>
 
 </mapper>

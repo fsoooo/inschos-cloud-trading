@@ -133,6 +133,16 @@ public class OfflineInsurancePolicyModel {
     public String agent_name;
 
     /**
+     * 结算状态，0-未结算，1-已结算
+     */
+    public String is_settlement;
+
+    /**
+     * 结算单uuid
+     */
+    public String bill_uuid;
+
+    /**
      * 创建时间
      */
     public String created_at;
@@ -150,6 +160,9 @@ public class OfflineInsurancePolicyModel {
     public String reason;
 
     public List<ErrorReason> reasonList;
+
+    public String search;
+    public String searchType;
 
     public static class ErrorReason {
         public String reason;

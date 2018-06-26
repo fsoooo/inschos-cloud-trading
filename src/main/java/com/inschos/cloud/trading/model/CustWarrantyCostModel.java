@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.cloud.trading.assist.kit.TimeKit;
 
 /**
  * 创建日期：2018/4/19 on 10:49
@@ -52,6 +53,17 @@ public class CustWarrantyCostModel {
      * 支付状态  201-核保中 202-核保失败 203-待支付 204-支付中 205-支付取消 206-支付成功
      */
     public String pay_status;
+
+    /**
+     * 结算状态，0-未结算，1-已结算
+     */
+    public String is_settlement;
+
+    /**
+     * 结算单uuid
+     */
+    public String bill_uuid;
+
     /**
      * 创建时间
      */
@@ -61,14 +73,13 @@ public class CustWarrantyCostModel {
      */
     public String updated_at;
 
-    public String account_uuid;
-    public String channel_id;
-    public String agent_id;
     public String manager_uuid;
     public String start_time;
     public String end_time;
     public String time_range_type;
     public String search;
+    public String searchType;
+    public String max_time = String.valueOf(TimeKit.MAX_MILLIS);
     public Page page;
 
     public CustWarrantyCostModel() {
@@ -166,5 +177,234 @@ public class CustWarrantyCostModel {
         }
         return str;
     }
+
+    // =========================================== OnlineModel ===========================================
+    /**
+     * 主键
+     */
+    public String cust_warranty_id;
+
+    /**
+     * 投保单号
+     */
+    public String pre_policy_no;
+
+    /**
+     * 保单号
+     */
+    public String warranty_code;
+
+    /**
+     * 买家uuid
+     */
+    public String account_uuid;
+
+    /**
+     * 代理人ID为null则为用户自主购买
+     */
+    public String agent_id;
+
+    /**
+     * 渠道ID为0则为用户自主购买
+     */
+    public String channel_id;
+
+    /**
+     * 计划书ID为0则为用户自主购买
+     */
+    public String plan_id;
+
+    /**
+     * 产品ID
+     */
+    public String product_id;
+
+    /**
+     * 起保时间
+     */
+    public String warranty_start_time;
+
+    /**
+     * 结束时间
+     */
+    public String warranty_end_time;
+
+    /**
+     * 保险公司ID
+     */
+    public String ins_company_id;
+
+    /**
+     * 购买份数
+     */
+    public String warranty_count;
+
+    /**
+     * 分期方式
+     */
+    public String by_stages_way;
+
+    /**
+     * 电子保单下载地址
+     */
+    public String warranty_url;
+
+    /**
+     * 保单来源 1 自购 2线上成交 3线下成交 4导入
+     */
+    public String warranty_from;
+
+    /**
+     * 保单类型1表示个人保单，2表示团险保单，3表示车险保单
+     */
+    public String warranty_type;
+
+    /**
+     * 保单状态 1投保中 2待生效 3保障中 4可续保 5已过保，6已退保
+     */
+    public String warranty_status;
+
+    /**
+     * 创建时间
+     */
+    public String warranty_created_at;
+
+    /**
+     * 结束时间
+     */
+    public String warranty_updated_at;
+
+    // =========================================== OnlineBrokerageModel ===========================================
+    /**
+     * 主键
+     */
+    public String brokerage_id;
+
+    /**
+     * 保单佣金
+     */
+    public String brokerage_warranty_money;
+
+    /**
+     * 天眼佣金
+     */
+    public String brokerage_ins_money;
+
+    /**
+     * 业管佣金
+     */
+    public String brokerage_manager_money;
+
+    /**
+     * 渠道佣金
+     */
+    public String brokerage_channel_money;
+
+    /**
+     * 代理人佣金
+     */
+    public String brokerage_agent_money;
+
+    /**
+     * 保单佣金比例
+     */
+    public String brokerage_warranty_rate;
+
+    /**
+     * 天眼佣金比例
+     */
+    public String brokerage_ins_rate;
+
+    /**
+     * 业管佣金比例
+     */
+    public String brokerage_manager_rate;
+
+    /**
+     * 渠道佣金比例
+     */
+    public String brokerage_channel_rate;
+
+    /**
+     * 代理人佣金比例
+     */
+    public String brokerage_agent_rate;
+
+    /**
+     * 车险核算佣金
+     */
+    public String brokerage_car_integral;
+
+    /**
+     * 创建时间
+     */
+    public String brokerage_created_at;
+
+    /**
+     * 结束时间
+     */
+    public String brokerage_updated_at;
+
+
+    // =========================================== OnlinePersonModel ===========================================
+    /**
+     * 主键
+     */
+    public String person_id;
+
+    /**
+     * 人员类型: 1投保人 2被保人 3受益人
+     */
+    public String person_type;
+
+    /**
+     * 被保人 投保人的（关系）
+     */
+    public String person_relation_name;
+
+    /**
+     * 被保人单号
+     */
+    public String person_out_order_no;
+
+    /**
+     * 姓名
+     */
+    public String person_name;
+
+    /**
+     * 证件类型（1为身份证，2为护照，3为军官证）
+     */
+    public String person_card_type;
+
+    /**
+     * 证件号
+     */
+    public String person_card_code;
+
+    /**
+     * 手机号
+     */
+    public String person_phone;
+
+    /**
+     * 开始时间
+     */
+    public String person_start_time;
+
+    /**
+     * 结束时间
+     */
+    public String person_end_time;
+
+    /**
+     * 记录开始时间
+     */
+    public String person_record_start_time;
+
+    /**
+     * 记录结束时间
+     */
+    public String person_record_end_time;
 
 }

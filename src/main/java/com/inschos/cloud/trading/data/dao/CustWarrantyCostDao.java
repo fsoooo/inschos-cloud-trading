@@ -1,12 +1,10 @@
 package com.inschos.cloud.trading.data.dao;
 
+import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
-import com.inschos.cloud.trading.model.BrokerageStatisticListModel;
-import com.inschos.cloud.trading.model.CustWarrantyCostModel;
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
-import com.inschos.cloud.trading.model.PremiumStatisticModel;
+import com.inschos.cloud.trading.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -99,6 +97,26 @@ public class CustWarrantyCostDao extends BaseDao {
 
     public long findInsurancePolicyBillCountForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
         return custWarrantyCostMapper.findInsurancePolicyBillCountForManagerSystem(insurancePolicyModel);
+    }
+
+    public int updateSettlementAndBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.updateSettlementAndBillUuidByCostId(custWarrantyCostModel);
+    }
+
+    public int updateBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.updateBillUuidByCostId(custWarrantyCostModel);
+    }
+
+    public CustWarrantyBrokerageModel findBrokerageByCostId(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.findBrokerageByCostId(custWarrantyCostModel);
+    }
+
+    public List<CustWarrantyCostModel> findCompletePayListByManagerUuid(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.findCompletePayListByManagerUuid(custWarrantyCostModel);
+    }
+
+    public long findCompletePayCountByManagerUuid(CustWarrantyCostModel custWarrantyCostModel) {
+        return custWarrantyCostMapper.findCompletePayCountByManagerUuid(custWarrantyCostModel);
     }
 
 }

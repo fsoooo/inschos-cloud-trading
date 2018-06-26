@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.BillDetailMapper">
+
+    <sql id="Base_Column_List">
+      `id`,`cost_id`,`bill_uuid`,`warranty_uuid`,`type`,`created_at`,`updated_at`
+    </sql>
+
+    <insert id="addBillDetail" parameterType="com.inschos.cloud.trading.model.BillDetailModel" useGeneratedKeys="true"
+            keyProperty="id">
+        insert ignore into cust_warranty_bill_detail
+        (`id`,`cost_id`,`bill_uuid`,`warranty_uuid`,`type`,`created_at`,`updated_at`)
+        values
+        (#{id},#{cost_id},#{bill_uuid},#{warranty_uuid},#{type},#{created_at},#{updated_at})
+    </insert>
+
+    <delete id="deleteBillDetailById" parameterType="java.lang.String">
+        delete from cust_warranty_bill_detail
+        where `id`=#{_parameter}
+    </delete>
+
+    <select id="findBillDetailById" parameterType="String"
+            resultType="com.inschos.cloud.trading.model.BillDetailModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty_bill_detail where `id`=#{_parameter}
+    </select>
+
+    <select id="findBillDetailByBillUuid" parameterType="com.inschos.cloud.trading.model.BillDetailModel"
+            resultType="com.inschos.cloud.trading.model.BillDetailModel">
+        select
+        `cust_warranty_bill_detail`.`id` id,`cust_warranty_bill_detail`.`cost_id` cost_id,`cust_warranty_bill_detail`.`bill_uuid` bill_uuid,`cust_warranty_bill_detail`.`warranty_uuid` warranty_uuid,`cust_warranty_bill_detail`.`type` type,`cust_warranty_bill_detail`.`created_at` created_at,`cust_warranty_bill_detail`.`updated_at` updated_at,
+        `cust_warranty_bill`.`id` bill_id,`cust_warranty_bill`.`manager_uuid` manager_uuid,`cust_warranty_bill`.`bill_name` bill_name,`cust_warranty_bill`.`insurance_company_id` insurance_company_id,
+        `cust_warranty_bill`.`principal` principal,`cust_warranty_bill`.`is_settlement` is_settlement,`cust_warranty_bill`.`remark` remark,`cust_warranty_bill`.`bill_money` bill_money,`cust_warranty_bill`.`bill_time` bill_time,
+        `cust_warranty_bill`.`created_at` bill_created_at,`cust_warranty_bill`.`updated_at` bill_updated_at,
+
+        `offline_cust_warranty`.`id` offline_id,`offline_cust_warranty`.`insured_name` offline_insured_name,`offline_cust_warranty`.`policy_holder_name` offline_policy_holder_name,`offline_cust_warranty`.`insurance_company` offline_insurance_company,
+        `offline_cust_warranty`.`insurance_type` offline_insurance_type,`offline_cust_warranty`.`insurance_product` offline_insurance_product,`offline_cust_warranty`.`warranty_code` offline_warranty_code,`offline_cust_warranty`.`payment_time` offline_payment_time,
+        `offline_cust_warranty`.`order_time` offline_order_time,`offline_cust_warranty`.`real_income_time` offline_real_income_time,`offline_cust_warranty`.`start_time` offline_start_time,`offline_cust_warranty`.`end_time` offline_end_time,`offline_cust_warranty`.`premium` offline_premium,
+        `offline_cust_warranty`.`pay_status` offline_pay_status,`offline_cust_warranty`.`brokerage` offline_brokerage,`offline_cust_warranty`.`channel_name` offline_channel_name,`offline_cust_warranty`.`agent_name` offline_agent_name,
+        `offline_cust_warranty`.`created_at` offline_created_at,`offline_cust_warranty`.`updated_at` offline_updated_at,
+
+        `cust_warranty`.`id` online_id,`cust_warranty`.`pre_policy_no` online_pre_policy_no,`cust_warranty`.`warranty_code` online_warranty_code,`cust_warranty`.`account_uuid` online_account_uuid,
+        `cust_warranty`.`agent_id` online_agent_id,`cust_warranty`.`channel_id` online_channel_id,`cust_warranty`.`plan_id` online_plan_id,`cust_warranty`.`product_id` online_product_id,`cust_warranty`.`start_time` online_start_time,`cust_warranty`.`end_time` online_end_time,
+        `cust_warranty`.`ins_company_id` online_ins_company_id,`cust_warranty`.`count` online_count,`cust_warranty`.`by_stages_way` online_by_stages_way,`cust_warranty`.`warranty_url` online_warranty_url,`cust_warranty`.`warranty_from` online_warranty_from,
+        `cust_warranty`.`type` online_type,`cust_warranty`.`warranty_status` online_warranty_status,`cust_warranty`.`created_at` online_created_at,`cust_warranty`.`updated_at` online_updated_at,
+
+        `cust_warranty_cost`.`pay_time` online_pay_time,`cust_warranty_cost`.`phase` online_phase,`cust_warranty_cost`.`tax_money` online_tax_money,`cust_warranty_cost`.`actual_pay_time` online_actual_pay_time,
+        `cust_warranty_cost`.`pay_way` online_pay_way,`cust_warranty_cost`.`pay_money` online_pay_money,`cust_warranty_cost`.`pay_status` online_pay_status,`cust_warranty_cost`.`created_at` online_cost_created_at,`cust_warranty_cost`.`updated_at` online_cost_updated_at,
+
+        `cust_warranty_brokerage`.`id` online_brokerage_id,`cust_warranty_brokerage`.`warranty_money` online_brokerage_warranty_money,`cust_warranty_brokerage`.`ins_money` online_brokerage_ins_money,`cust_warranty_brokerage`.`manager_money` online_brokerage_manager_money,
+        `cust_warranty_brokerage`.`channel_money` online_brokerage_channel_money,`cust_warranty_brokerage`.`agent_money` online_brokerage_agent_money,`cust_warranty_brokerage`.`warranty_rate` online_brokerage_warranty_rate,`cust_warranty_brokerage`.`ins_rate` online_brokerage_ins_rate,
+        `cust_warranty_brokerage`.`manager_rate` online_brokerage_manager_rate,`cust_warranty_brokerage`.`channel_rate` online_brokerage_channel_rate,`cust_warranty_brokerage`.`agent_rate` online_brokerage_agent_rate,`cust_warranty_brokerage`.`car_integral` online_brokerage_car_integral,
+        `cust_warranty_brokerage`.`created_at` online_brokerage_created_at,`cust_warranty_brokerage`.`updated_at` online_brokerage_updated_at,
+
+        GROUP_CONCAT(`cust_warranty_person`.`name`) as online_person_name
+--         `cust_warranty_person`.`id` online_person_id,`cust_warranty_person`.`type` online_person_type,`cust_warranty_person`.`relation_name` online_person_relation_name,`cust_warranty_person`.`out_order_no` online_person_out_order_no,
+--         GROUP_CONCAT(`cust_warranty_person`.`name`) as online_person_name,`cust_warranty_person`.`card_type` online_person_card_type,`cust_warranty_person`.`card_code` online_person_card_code,`cust_warranty_person`.`phone` online_person_phone,`cust_warranty_person`.`occupation` online_person_occupation,
+--         `cust_warranty_person`.`birthday` online_person_birthday,`cust_warranty_person`.`sex` online_person_sex,`cust_warranty_person`.`age` online_person_age,`cust_warranty_person`.`email` online_person_email,`cust_warranty_person`.`nationality` online_person_nationality,
+--         `cust_warranty_person`.`annual_income` online_person_annual_income,`cust_warranty_person`.`height` online_person_height,`cust_warranty_person`.`weight` online_person_weight,`cust_warranty_person`.`area` online_person_area,
+--         `cust_warranty_person`.`address` online_person_address,`cust_warranty_person`.`start_time` online_person_start_time,`cust_warranty_person`.`end_time` online_person_end_time,`cust_warranty_person`.`record_start_time` online_person_record_start_time,`cust_warranty_person`.`record_end_time` online_person_record_end_time
+
+        from cust_warranty_bill_detail
+        LEFT JOIN cust_warranty_bill ON `cust_warranty_bill_detail`.`bill_uuid`=`cust_warranty_bill`.`bill_uuid`
+        LEFT JOIN offline_cust_warranty ON `cust_warranty_bill_detail`.`warranty_uuid`=`offline_cust_warranty`.`warranty_uuid`
+        LEFT JOIN cust_warranty ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty`.`warranty_uuid`
+        LEFT JOIN cust_warranty_cost ON `cust_warranty_bill_detail`.`cost_id`=`cust_warranty_cost`.`id`
+        LEFT JOIN cust_warranty_brokerage ON `cust_warranty_bill_detail`.`cost_id`=`cust_warranty_brokerage`.`cost_id`
+        LEFT JOIN cust_warranty_person ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`start_time` &gt;= #{bill_time} AND `cust_warranty_person`.`end_time` &lt; #{bill_time}
+        <where>
+            <choose>
+                <when test="page.lastId>0">
+                    `cust_warranty_bill_detail`.`id`&lt;#{page.lastId}
+                </when>
+                <when test="page.start>0">
+                    `cust_warranty_bill_detail`.`id`&lt;=(select `cust_warranty_bill_detail`.`id` from cust_warranty_bill_detail
+                    where `cust_warranty_bill_detail`.`bill_uuid`=#{bill_uuid}
+                    <if test="search!=null and search!=''">
+                        <choose>
+                            <when test='searchType=="1"'>
+                                and (`cust_warranty`.`warranty_code` like concat("%",#{search},"%") OR `offline_cust_warranty`.`warranty_code` like concat("%",#{search},"%"))
+                            </when>
+                            <when test='searchType=="2"'>
+                                and (`cust_warranty`.`product_id` in (${product_id_string}) OR `offline_cust_warranty`.`offline_insurance_product` like concat("%",#{search},"%"))
+                            </when>
+                            <when test='searchType=="3"'>
+                                and (`cust_warranty_person`.`name` like concat("%",#{search},"%") OR `offline_cust_warranty`.`insured_name` like concat("%",#{search},"%"))
+                            </when>
+                            <otherwise>
+                                and 1=1
+                            </otherwise>
+                        </choose>
+                    </if>
+                    GROUP BY `cust_warranty_bill_detail`.`id`,`cust_warranty_bill_detail`.`cost_id`,`cust_warranty_bill_detail`.`bill_uuid`,`cust_warranty_bill_detail`.`warranty_uuid`,`cust_warranty_bill_detail`.`type`,`cust_warranty_bill_detail`.`created_at`,`cust_warranty_bill_detail`.`updated_at`,
+                    `cust_warranty_bill`.`id`,`cust_warranty_bill`.`manager_uuid`,`cust_warranty_bill`.`bill_name`,`cust_warranty_bill`.`insurance_company_id`,
+                    `cust_warranty_bill`.`principal`,`cust_warranty_bill`.`is_settlement`,`cust_warranty_bill`.`remark`,`cust_warranty_bill`.`bill_money`,`cust_warranty_bill`.`bill_time`,
+                    `cust_warranty_bill`.`created_at`,`cust_warranty_bill`.`updated_at`,
+
+                    `offline_cust_warranty`.`id`,`offline_cust_warranty`.`insured_name`,`offline_cust_warranty`.`policy_holder_name`,`offline_cust_warranty`.`insurance_company`,
+                    `offline_cust_warranty`.`insurance_type`,`offline_cust_warranty`.`insurance_product`,`offline_cust_warranty`.`warranty_code` offline_warranty_code,`offline_cust_warranty`.`payment_time` ,
+                    `offline_cust_warranty`.`order_time`,`offline_cust_warranty`.`real_income_time` offline_real_income_time,`offline_cust_warranty`.`start_time` offline_start_time,`offline_cust_warranty`.`end_time` ,`offline_cust_warranty`.`premium` ,
+                    `offline_cust_warranty`.`pay_status`,`offline_cust_warranty`.`brokerage`,`offline_cust_warranty`.`channel_name`,`offline_cust_warranty`.`agent_name` ,
+                    `offline_cust_warranty`.`created_at`,`offline_cust_warranty`.`updated_at`,
+
+                    `cust_warranty`.`id` ,`cust_warranty`.`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`account_uuid` ,
+                    `cust_warranty`.`agent_id` ,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time` ,`cust_warranty`.`end_time` ,
+                    `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`warranty_url` ,`cust_warranty`.`warranty_from` ,
+                    `cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`created_at`,`cust_warranty`.`updated_at` ,
+
+                    `cust_warranty_cost`.`pay_time`,`cust_warranty_cost`.`phase`,`cust_warranty_cost`.`tax_money`,`cust_warranty_cost`.`actual_pay_time` ,
+                    `cust_warranty_cost`.`pay_way`,`cust_warranty_cost`.`pay_money`,`cust_warranty_cost`.`pay_status`,`cust_warranty_cost`.`created_at`,`cust_warranty_cost`.`updated_at`,
+
+                    `cust_warranty_brokerage`.`id` online_brokerage_id,`cust_warranty_brokerage`.`warranty_money` ,`cust_warranty_brokerage`.`ins_money`,`cust_warranty_brokerage`.`manager_money`,
+                    `cust_warranty_brokerage`.`channel_money` online_brokerage_channel_money,`cust_warranty_brokerage`.`agent_money` ,`cust_warranty_brokerage`.`warranty_rate`,`cust_warranty_brokerage`.`ins_rate`,
+                    `cust_warranty_brokerage`.`manager_rate` online_brokerage_manager_rate,`cust_warranty_brokerage`.`channel_rate`,`cust_warranty_brokerage`.`agent_rate`,`cust_warranty_brokerage`.`car_integral`,
+                    `cust_warranty_brokerage`.`created_at`,`cust_warranty_brokerage`.`updated_at`
+                    ORDER BY `id` DESC limit #{page.start},1
+                    )
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+            AND `cust_warranty_bill_detail`.`bill_uuid`=#{bill_uuid}
+            <if test="search!=null and search!=''">
+                <choose>
+                    <when test='searchType=="1"'>
+                        and (`cust_warranty`.`warranty_code` like concat("%",#{search},"%") OR `offline_cust_warranty`.`warranty_code` like concat("%",#{search},"%"))
+                    </when>
+                    <when test='searchType=="2"'>
+                        and (`cust_warranty`.`product_id` in (${product_id_string}) OR `offline_cust_warranty`.`offline_insurance_product` like concat("%",#{search},"%"))
+                    </when>
+                    <when test='searchType=="3"'>
+                        and (`cust_warranty_person`.`name` like concat("%",#{search},"%") OR `offline_cust_warranty`.`insured_name` like concat("%",#{search},"%"))
+                    </when>
+                    <otherwise>
+                        and 1=1
+                    </otherwise>
+                </choose>
+            </if>
+            GROUP BY `cust_warranty_bill_detail`.`id`,`cust_warranty_bill_detail`.`cost_id`,`cust_warranty_bill_detail`.`bill_uuid`,`cust_warranty_bill_detail`.`warranty_uuid`,`cust_warranty_bill_detail`.`type`,`cust_warranty_bill_detail`.`created_at`,`cust_warranty_bill_detail`.`updated_at`,
+            `cust_warranty_bill`.`id`,`cust_warranty_bill`.`manager_uuid`,`cust_warranty_bill`.`bill_name`,`cust_warranty_bill`.`insurance_company_id`,
+            `cust_warranty_bill`.`principal`,`cust_warranty_bill`.`is_settlement`,`cust_warranty_bill`.`remark`,`cust_warranty_bill`.`bill_money`,`cust_warranty_bill`.`bill_time`,
+            `cust_warranty_bill`.`created_at`,`cust_warranty_bill`.`updated_at`,
+
+            `offline_cust_warranty`.`id`,`offline_cust_warranty`.`insured_name`,`offline_cust_warranty`.`policy_holder_name`,`offline_cust_warranty`.`insurance_company`,
+            `offline_cust_warranty`.`insurance_type`,`offline_cust_warranty`.`insurance_product`,`offline_cust_warranty`.`warranty_code` offline_warranty_code,`offline_cust_warranty`.`payment_time` ,
+            `offline_cust_warranty`.`order_time`,`offline_cust_warranty`.`real_income_time` offline_real_income_time,`offline_cust_warranty`.`start_time` offline_start_time,`offline_cust_warranty`.`end_time` ,`offline_cust_warranty`.`premium` ,
+            `offline_cust_warranty`.`pay_status`,`offline_cust_warranty`.`brokerage`,`offline_cust_warranty`.`channel_name` ,`offline_cust_warranty`.`agent_name` ,
+            `offline_cust_warranty`.`created_at`,`offline_cust_warranty`.`updated_at`,
+
+            `cust_warranty`.`id` ,`cust_warranty`.`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`account_uuid` ,
+            `cust_warranty`.`agent_id` ,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time` ,`cust_warranty`.`end_time` ,
+            `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`warranty_url` ,`cust_warranty`.`warranty_from` ,
+            `cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`created_at`,`cust_warranty`.`updated_at` ,
+
+            `cust_warranty_cost`.`pay_time`,`cust_warranty_cost`.`phase`,`cust_warranty_cost`.`tax_money`,`cust_warranty_cost`.`actual_pay_time` ,
+            `cust_warranty_cost`.`pay_way`,`cust_warranty_cost`.`pay_money`,`cust_warranty_cost`.`pay_status`,`cust_warranty_cost`.`created_at`,`cust_warranty_cost`.`updated_at`,
+
+            `cust_warranty_brokerage`.`id` online_brokerage_id,`cust_warranty_brokerage`.`warranty_money` ,`cust_warranty_brokerage`.`ins_money`,`cust_warranty_brokerage`.`manager_money`,
+            `cust_warranty_brokerage`.`channel_money` online_brokerage_channel_money,`cust_warranty_brokerage`.`agent_money` ,`cust_warranty_brokerage`.`warranty_rate`,`cust_warranty_brokerage`.`ins_rate`,
+            `cust_warranty_brokerage`.`manager_rate` online_brokerage_manager_rate,`cust_warranty_brokerage`.`channel_rate`,`cust_warranty_brokerage`.`agent_rate`,`cust_warranty_brokerage`.`car_integral`,
+            `cust_warranty_brokerage`.`created_at`,`cust_warranty_brokerage`.`updated_at`
+            ORDER BY `id` DESC limit #{page.offset}
+        </where>
+
+    </select>
+
+    <select id="findBillDetailCountByBillUuid" parameterType="com.inschos.cloud.trading.model.BillDetailModel"
+            resultType="long">
+        select
+        COUNT(`cust_warranty_bill_detail`.`id`)
+        from cust_warranty_bill_detail
+        LEFT JOIN cust_warranty_bill ON `cust_warranty_bill_detail`.`bill_uuid`=`cust_warranty_bill`.`bill_uuid`
+        LEFT JOIN offline_cust_warranty ON `cust_warranty_bill_detail`.`warranty_uuid`=`offline_cust_warranty`.`warranty_uuid`
+        LEFT JOIN cust_warranty ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty`.`warranty_uuid`
+        LEFT JOIN cust_warranty_cost ON `cust_warranty_bill_detail`.`cost_id`=`cust_warranty_cost`.`id`
+        LEFT JOIN cust_warranty_brokerage ON `cust_warranty_bill_detail`.`cost_id`=`cust_warranty_brokerage`.`cost_id`
+        LEFT JOIN cust_warranty_person ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`start_time` &gt;= #{bill_time} AND `cust_warranty_person`.`end_time` &lt; #{bill_time}
+        where `cust_warranty_bill_detail`.`bill_uuid`=#{bill_uuid}
+            <if test="search!=null and search!=''">
+                <choose>
+                    <when test='searchType=="1"'>
+                        and (`cust_warranty`.`warranty_code` like concat("%",#{search},"%") OR `offline_cust_warranty`.`warranty_code` like concat("%",#{search},"%"))
+                    </when>
+                    <when test='searchType=="2"'>
+                        and (`cust_warranty`.`product_id` in (${product_id_string}) OR `offline_cust_warranty`.`offline_insurance_product` like concat("%",#{search},"%"))
+                    </when>
+                    <when test='searchType=="3"'>
+                        and (`cust_warranty_person`.`name` like concat("%",#{search},"%") OR `offline_cust_warranty`.`insured_name` like concat("%",#{search},"%"))
+                    </when>
+                    <otherwise>
+                        and 1=1
+                    </otherwise>
+                </choose>
+            </if>
+            GROUP BY `cust_warranty_bill_detail`.`id`
+    </select>
+
+</mapper>

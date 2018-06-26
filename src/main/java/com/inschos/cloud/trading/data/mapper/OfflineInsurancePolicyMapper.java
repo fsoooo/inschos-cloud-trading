@@ -20,4 +20,15 @@ public interface OfflineInsurancePolicyMapper {
     List<OfflineInsurancePolicyModel> findOfflineInsurancePolicyListForManagerSystem(OfflineInsurancePolicyModel offlineInsurancePolicyModel);
 
     long findOfflineInsurancePolicyCountForManagerSystem(OfflineInsurancePolicyModel offlineInsurancePolicyModel);
+
+    int updateSettlementAndBillUuidByWarrantyUuid(OfflineInsurancePolicyModel offlineInsurancePolicyModel);
+
+    int updateBillUuidByWarrantyUuid(OfflineInsurancePolicyModel offlineInsurancePolicyModel);
+
+    OfflineInsurancePolicyModel findBrokerageByWarrantyUuid(OfflineInsurancePolicyModel offlineInsurancePolicyModel);
+
+    List<OfflineInsurancePolicyModel> findCompletePayListByManagerUuid (OfflineInsurancePolicyModel offlineInsurancePolicyModel);
+
+    long findCompletePayCountByManagerUuid (OfflineInsurancePolicyModel offlineInsurancePolicyModel);
+
 }

@@ -22,6 +22,14 @@ public class OfflineInsurancePolicyDao {
         return offlineInsurancePolicyMapper.addOfflineInsurancePolicy(offlineInsurancePolicyModel);
     }
 
+    public int updateSettlementAndBillUuidByWarrantyUuid(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
+        return offlineInsurancePolicyMapper.updateSettlementAndBillUuidByWarrantyUuid(offlineInsurancePolicyModel);
+    }
+
+    public int updateBillUuidByWarrantyUuid(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
+        return offlineInsurancePolicyMapper.updateBillUuidByWarrantyUuid(offlineInsurancePolicyModel);
+    }
+
     public OfflineInsurancePolicyModel findOfflineInsurancePolicyByWarrantyCode(String warrantyCode) {
         return offlineInsurancePolicyMapper.findOfflineInsurancePolicyByWarrantyCode(warrantyCode);
     }
@@ -30,11 +38,23 @@ public class OfflineInsurancePolicyDao {
         return offlineInsurancePolicyMapper.findOfflineInsurancePolicyByWarrantyUuid(warrantyUuid);
     }
 
-    public List<OfflineInsurancePolicyModel> findOfflineInsurancePolicyListForManagerSystem(OfflineInsurancePolicyModel offlineInsurancePolicyModel){
+    public List<OfflineInsurancePolicyModel> findOfflineInsurancePolicyListForManagerSystem(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
         return offlineInsurancePolicyMapper.findOfflineInsurancePolicyListForManagerSystem(offlineInsurancePolicyModel);
     }
 
-    public long findOfflineInsurancePolicyCountForManagerSystem(OfflineInsurancePolicyModel offlineInsurancePolicyModel){
+    public long findOfflineInsurancePolicyCountForManagerSystem(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
         return offlineInsurancePolicyMapper.findOfflineInsurancePolicyCountForManagerSystem(offlineInsurancePolicyModel);
+    }
+
+    public OfflineInsurancePolicyModel findBrokerageByWarrantyUuid(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
+        return offlineInsurancePolicyMapper.findBrokerageByWarrantyUuid(offlineInsurancePolicyModel);
+    }
+
+    public List<OfflineInsurancePolicyModel> findCompletePayListByManagerUuid (OfflineInsurancePolicyModel offlineInsurancePolicyModel){
+        return offlineInsurancePolicyMapper.findCompletePayListByManagerUuid(offlineInsurancePolicyModel);
+    }
+
+    public long findCompletePayCountByManagerUuid (OfflineInsurancePolicyModel offlineInsurancePolicyModel){
+        return offlineInsurancePolicyMapper.findCompletePayCountByManagerUuid(offlineInsurancePolicyModel);
     }
 }

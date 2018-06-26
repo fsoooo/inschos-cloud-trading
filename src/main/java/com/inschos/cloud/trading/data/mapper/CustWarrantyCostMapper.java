@@ -35,4 +35,14 @@ public interface CustWarrantyCostMapper {
     List<InsurancePolicyModel> findInsurancePolicyBillListForManagerSystem(InsurancePolicyModel insurancePolicyModel);
 
     long findInsurancePolicyBillCountForManagerSystem(InsurancePolicyModel insurancePolicyModel);
+
+    int updateSettlementAndBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel);
+
+    int updateBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel);
+
+    CustWarrantyBrokerageModel findBrokerageByCostId(CustWarrantyCostModel custWarrantyCostModel);
+
+    List<CustWarrantyCostModel> findCompletePayListByManagerUuid (CustWarrantyCostModel custWarrantyCostModel);
+
+    long findCompletePayCountByManagerUuid (CustWarrantyCostModel custWarrantyCostModel);
 }

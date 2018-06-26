@@ -116,4 +116,26 @@ public class ProductClient {
         }
     }
 
+    public InsuranceCompanyBean getCompany(long id) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getCompany(id) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public List<InsuranceCompanyBean> getCompanyList(List<String> companyId) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getCompanyList(companyId) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
 }
