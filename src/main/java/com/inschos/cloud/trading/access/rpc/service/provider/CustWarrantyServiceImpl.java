@@ -1,11 +1,11 @@
 package com.inschos.cloud.trading.access.rpc.service.provider;
 
-import com.inschos.cloud.trading.access.rpc.bean.*;
+import com.inschos.cloud.trading.access.rpc.bean.AccountUuidBean;
+import com.inschos.cloud.trading.access.rpc.bean.ManagerUuidBean;
+import com.inschos.cloud.trading.access.rpc.bean.PolicyholderCountBean;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
 import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
-import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.PolicyListCountModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,36 +101,17 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
         return result;
     }
 
-    @Override
-    public int insure(WarrantyInsureBean insureBean) {
-        if(insureBean!=null && insureBean.policyholder!=null && !StringKit.isEmpty(insureBean.policyholder.cardCode)){
-            InsurancePolicyModel policyModel = new InsurancePolicyModel();
-            String warrantyUuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
-            policyModel.warranty_uuid = warrantyUuid;
-            policyModel.account_uuid = insureBean.accountUuid;
-            policyModel.manager_uuid = insureBean.managerUuid;
-            policyModel.product_id = insureBean.productId;
-            policyModel.agent_id = insureBean.agentId;
-            policyModel.channel_id = insureBean.channelId;
-            policyModel.plan_id = insureBean.planId;
-            policyModel.start_time = insureBean.startTime;
-            policyModel.end_time = insureBean.endTime;
-            policyModel.count = String.valueOf(insureBean.count);
-            policyModel.by_stages_way = insureBean.payCategoryName;
-//            policyModel.pa = insureBean.payCategoryId;
-            policyModel.insured_list = new ArrayList<>();
-            policyModel.insured_list.add(insureBean.policyholder.toParticipant(warrantyUuid, InsuranceParticipantModel.TYPE_POLICYHOLDER));
-            if(insureBean.beneficiary!=null){
-                policyModel.insured_list.add(insureBean.beneficiary.toParticipant(warrantyUuid, InsuranceParticipantModel.TYPE_BENEFICIARY));
-            }
-            if(insureBean.recognizees!=null){
-                for (InsurePersonBean recognizee : insureBean.recognizees) {
-                    policyModel.insured_list.add(recognizee.toParticipant(warrantyUuid, InsuranceParticipantModel.TYPE_INSURED));
-                }
-            }
 
-        }
-        return 0;
+
+    @Override
+    public int getPolicyCountByAgentStatus(InsurancePolicyModel search) {
+        return insurancePolicyDao.findCountByAgentWarrantyStatus(search);
+    }
+
+
+    @Override
+    public int getPolicyCountByCostStatus(InsurancePolicyModel search) {
+        return insurancePolicyDao.findCountByAgentCostStatus(search);
     }
 
 

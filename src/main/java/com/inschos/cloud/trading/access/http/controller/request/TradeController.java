@@ -1,6 +1,6 @@
 package com.inschos.cloud.trading.access.http.controller.request;
 
-import com.inschos.cloud.trading.access.http.controller.action.InsurancePolicyAction;
+import com.inschos.cloud.trading.access.http.controller.action.TradeAction;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.annotation.GetActionBeanAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,19 +14,32 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 作者：zhangyunhe
  */
 @Controller
-@RequestMapping("/trade/")
+@RequestMapping("/")
 public class TradeController {
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    private InsurancePolicyAction mInsurancePolicyAction;
+    private TradeAction tradeAction;
 
     // 投保
     @GetActionBeanAnnotation
     @RequestMapping("/insure")
     @ResponseBody
     public String insure(ActionBean bean) {
-        return "";
+        return tradeAction.insure(bean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/pre_insure")
+    @ResponseBody
+    public String preInsure(ActionBean bean) {
+        return tradeAction.preInsure(bean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/pay")
+    @ResponseBody
+    public String pay(ActionBean bean) {
+        return tradeAction.pay(bean);
     }
 
     // 退保

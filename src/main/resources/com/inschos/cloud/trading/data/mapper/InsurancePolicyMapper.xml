@@ -3,16 +3,16 @@
 <mapper namespace="com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper">
 
     <sql id="Base_Column_List">
-        `id`,`warranty_uuid`,`pre_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`start_time`,`end_time`,`ins_company_id`,`count`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`express_email`,`delivery_type`,`created_at`,`updated_at`,`state`
+        `id`,`warranty_uuid`,`pre_policy_no`,`warranty_code`,`comb_product`,`comb_warranty_code`,`business_no`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`start_time`,`end_time`,`ins_company_id`,`count`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`express_email`,`delivery_type`,`order_time`,`resp_code`,`resp_msg`,`created_at`,`updated_at`,`state`
     </sql>
 
     <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty
-        (`id`,`warranty_uuid`,`pre_policy_no`,`warranty_code`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`start_time`,`end_time`,`ins_company_id`,`count`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`express_email`,`delivery_type`,`created_at`,`updated_at`,`state`)
+        (`id`,`warranty_uuid`,`pre_policy_no`,`warranty_code`,`comb_product`,`comb_warranty_code`,`business_no`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`start_time`,`end_time`,`ins_company_id`,`count`,`by_stages_way`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`express_email`,`delivery_type`,`order_time`,`resp_code`,`resp_msg`,`created_at`,`updated_at`,`state`)
         values
-        (#{id},#{warranty_uuid},#{pre_policy_no},#{warranty_code},#{manager_uuid},#{account_uuid},#{agent_id},#{channel_id},#{plan_id},#{product_id},#{start_time},#{end_time},#{ins_company_id},#{count},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{warranty_status},#{integral},#{express_no},#{express_company_name},#{express_address},#{express_province_code},#{express_city_code},#{express_county_code},#{express_email},#{delivery_type},#{created_at},#{updated_at},#{state})
+        (#{id},#{warranty_uuid},#{pre_policy_no},#{warranty_code},#{comb_product},#{comb_warranty_code},#{business_no},#{manager_uuid},#{account_uuid},#{agent_id},#{channel_id},#{plan_id},#{product_id},#{start_time},#{end_time},#{ins_company_id},#{count},#{by_stages_way},#{is_settlement},#{warranty_url},#{warranty_from},#{type},#{warranty_status},#{integral},#{express_no},#{express_company_name},#{express_address},#{express_province_code},#{express_city_code},#{express_county_code},#{express_email},#{delivery_type},#{order_time},#{resp_code},#{resp_msg},#{created_at},#{updated_at},#{state})
     </insert>
 
     <update id="updateInsurancePolicyProPolicyNoByWarrantyUuid"
@@ -716,6 +716,74 @@
         <if test="end_time!=null and end_time!=''">
             AND `cust_warranty`.`created_at`&lt;#{end_time}
         </if>
+    </select>
+
+
+    <select id="setTest"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty
+        <where>
+            <choose>
+                <when test="uuids!=null and !uuids.isEmpty()">
+                    `warranty_uuid` in
+                    <foreach collection="uuids" open="(" separator="," close=")" item="item">
+                        #{item}
+                    </foreach>
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <select id="findExistsValid" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+          <include refid="Base_Column_List"/>
+        from cust_warranty
+        <where>
+            `warranty_uuid` in (
+                select `warranty_uuid` from cust_warranty_person where card_code=#{card_code} and card_type=#{card_type} and start_time&lt;= #{end_time} and end_time&gt;=#{start_time} and type=1
+            )
+            and `product_id`=#{product_id} and warranty_status!=6 and warranty_status!=7 and state=1
+            limit 1
+        </where>
+    </select>
+
+    <select id="findCountByAgentWarrantyStatus" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" resultType="int">
+        select
+          count(1)
+        from cust_warranty
+        <where>
+            `warranty_uuid`=#{warranty_uuid} and agent_id = #{agent_id} and warranty_status=#{warranty_status}
+            <if test="end_time!=null">
+                and start_time&lt;= #{end_time}
+            </if>
+            <if test="start_time!=null">
+                and end_time&gt;=#{start_time}
+            </if>
+             and state=1
+        </where>
+    </select>
+
+    <select id="findCountByAgentCostStatus"  parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" resultType="int">
+        select
+          count(1)
+        from cust_warranty w
+        left join cust_warranty_cost c  on w.warranty_uuid=c.warranty_uuid and c.phase=1
+        <where>
+            w.`warranty_uuid`=#{warranty_uuid} and w.agent_id = #{agent_id} and w.warranty_status=1 and w.state=1
+            and c.pay_status=#{pay_status}
+            <if test="end_time!=null">
+                and w.start_time&lt;= #{end_time}
+            </if>
+            <if test="start_time!=null">
+                and w.end_time&gt;=#{start_time}
+            </if>
+        </where>
     </select>
 
 </mapper>

@@ -1,6 +1,5 @@
 package com.inschos.cloud.trading.data.dao;
 
-import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
@@ -91,6 +90,18 @@ public class CustWarrantyCostDao extends BaseDao {
         return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticListCount(custWarrantyCostModel);
     }
 
+    /**
+     * warranty_uuid 获取第一期的缴费情况
+     * @param custWarrantyCostModel
+     * @return
+     */
+    public CustWarrantyCostModel findFirstPhase(CustWarrantyCostModel custWarrantyCostModel){
+        return custWarrantyCostMapper.findFirstPhase(custWarrantyCostModel);
+    }
+
+    public int updatePayStatusByWarrantyUuidPhase(CustWarrantyCostModel costModel) {
+        return costModel != null ? custWarrantyCostMapper.updatePayStatusByWarrantyUuidPhase(costModel) : 0;
+    }
     public List<InsurancePolicyModel> findInsurancePolicyBillListForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
         return custWarrantyCostMapper.findInsurancePolicyBillListForManagerSystem(insurancePolicyModel);
     }

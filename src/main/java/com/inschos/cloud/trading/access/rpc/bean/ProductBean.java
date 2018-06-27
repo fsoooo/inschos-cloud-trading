@@ -33,4 +33,6 @@ public class ProductBean {
     public int payCategoryTimes;
     public String payCategoryTimesUnit;
 
+    public String amount;
+
 }

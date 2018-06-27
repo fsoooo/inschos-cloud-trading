@@ -2,10 +2,7 @@ package com.inschos.cloud.trading.data.dao;
 
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.*;
-import com.inschos.cloud.trading.model.CarInfoModel;
-import com.inschos.cloud.trading.model.CustWarrantyCostModel;
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
-import com.inschos.cloud.trading.model.PolicyListCountModel;
+import com.inschos.cloud.trading.model.*;
 import com.inschos.cloud.trading.model.fordao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,19 +20,19 @@ import java.util.List;
 public class InsurancePolicyDao extends BaseDao {
 
     @Autowired
-    public InsurancePolicyMapper insurancePolicyMapper;
+    private InsurancePolicyMapper insurancePolicyMapper;
 
     @Autowired
-    public InsuranceParticipantMapper insuranceParticipantMapper;
+    private InsuranceParticipantMapper insuranceParticipantMapper;
 
     @Autowired
-    public CarInfoMapper carInfoMapper;
+    private CarInfoMapper carInfoMapper;
 
     @Autowired
-    public CustWarrantyCostMapper custWarrantyCostMapper;
+    private CustWarrantyCostMapper custWarrantyCostMapper;
 
     @Autowired
-    public CustWarrantyBrokerageMapper custWarrantyBrokerageMapper;
+    private CustWarrantyBrokerageMapper custWarrantyBrokerageMapper;
 
     public int addInsurancePolicyAndParticipantForCarInsurance(InsurancePolicyAndParticipantForCarInsurance insurancePolicyAndParticipantForCarInsurance) {
         if (insurancePolicyAndParticipantForCarInsurance != null) {
@@ -151,6 +148,48 @@ public class InsurancePolicyDao extends BaseDao {
         } else {
             return 1;
         }
+    }
+
+    /**
+     * 投保 保单
+     * @param policyModel  保单
+     * @param costModels 缴费单
+     * @return
+     */
+    public int insure(InsurancePolicyModel policyModel,List<CustWarrantyCostModel> costModels){
+        int flag = 0;
+
+        flag = insurancePolicyMapper.addInsurancePolicy(policyModel);
+        if(flag>0){
+
+            for (InsuranceParticipantModel participantModel : policyModel.insured_list) {
+                flag = insuranceParticipantMapper.addInsuranceParticipant(participantModel);
+                if(flag==0){
+                    rollBack();
+                    break;
+                }
+            }
+
+            if(flag>0){
+                for (CustWarrantyCostModel costModel : costModels) {
+
+                    flag = custWarrantyCostMapper.addCustWarrantyCost(costModel);
+
+                    if(flag==0){
+                        rollBack();
+                        break;
+                    }
+
+                }
+            }
+
+        }
+
+        return flag;
+    }
+
+    public InsurancePolicyModel findExistsValid(InsurancePolicyModel search){
+        return search!=null?insurancePolicyMapper.findExistsValid(search):null;
     }
 
     public int updateInsurancePolicyProPolicyNoForCarInsurance(UpdateInsurancePolicyProPolicyNoForCarInsurance updateInsurancePolicyProPolicyNoForCarInsurance) {
@@ -449,5 +488,18 @@ public class InsurancePolicyDao extends BaseDao {
     public long findInsurancePolicyCountForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
         return insurancePolicyMapper.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
     }
+
+    public List<InsurancePolicyModel> setTest(InsurancePolicyModel insurancePolicyModel) {
+        return insurancePolicyMapper.setTest(insurancePolicyModel);
+    }
+
+    public int findCountByAgentWarrantyStatus(InsurancePolicyModel search){
+        return search!=null?insurancePolicyMapper.findCountByAgentWarrantyStatus(search):0;
+    }
+
+    public int findCountByAgentCostStatus(InsurancePolicyModel search){
+        return search!=null?insurancePolicyMapper.findCountByAgentCostStatus(search):0;
+    }
+
 
 }

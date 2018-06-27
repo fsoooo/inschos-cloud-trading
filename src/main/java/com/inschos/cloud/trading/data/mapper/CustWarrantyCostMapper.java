@@ -1,6 +1,5 @@
 package com.inschos.cloud.trading.data.mapper;
 
-import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 import com.inschos.cloud.trading.model.*;
 
 import java.util.List;
@@ -20,6 +19,8 @@ public interface CustWarrantyCostMapper {
 
     int updateCustWarrantyCostPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel);
 
+    int updatePayStatusByWarrantyUuidPhase(CustWarrantyCostModel custWarrantyCostModel);
+
     Double findCustWarrantyCostTotal(CustWarrantyCostModel custWarrantyCostModel);
 
     List<InsurancePolicyModel> findInsurancePolicyListForInsuring(InsurancePolicyModel insurancePolicyModel);
@@ -31,6 +32,9 @@ public interface CustWarrantyCostMapper {
     List<BrokerageStatisticListModel> findInsurancePolicyBrokerageStatisticList(CustWarrantyCostModel custWarrantyCostModel);
 
     long findInsurancePolicyBrokerageStatisticListCount(CustWarrantyCostModel custWarrantyCostModel);
+
+    //获取第一期的缴费情况
+    CustWarrantyCostModel findFirstPhase(CustWarrantyCostModel search);
 
     List<InsurancePolicyModel> findInsurancePolicyBillListForManagerSystem(InsurancePolicyModel insurancePolicyModel);
 

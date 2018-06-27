@@ -5,7 +5,7 @@ package com.inschos.cloud.trading.assist.kit;
  */
 public class IdWorker {
 
-    private final long twepoch = 0L;
+    private final long twepoch = 1523264416370L;
     private final long workerIdBits = 5L;
     private final long dataCenterIdBits = 5L;
     private final long maxWorkerId = -1L ^ (-1L << workerIdBits);

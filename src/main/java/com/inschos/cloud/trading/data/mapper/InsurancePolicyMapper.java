@@ -4,7 +4,6 @@ import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.PolicyListCountModel;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 创建日期：2018/3/22 on 16:43
@@ -45,4 +44,11 @@ public interface InsurancePolicyMapper {
 
     long findInsurancePolicyCountByActualPayTime(InsurancePolicyModel insurancePolicyModel);
 
+    List<InsurancePolicyModel> setTest (InsurancePolicyModel insurancePolicyModel);
+
+    InsurancePolicyModel findExistsValid(InsurancePolicyModel search);
+
+    int findCountByAgentWarrantyStatus(InsurancePolicyModel search);
+
+    int findCountByAgentCostStatus(InsurancePolicyModel search);
 }
