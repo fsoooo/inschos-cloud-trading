@@ -2577,6 +2577,9 @@ public class CarInsuranceAction extends BaseAction {
         for (ExtendCarInsurancePolicy.InsuranceInfoDetail datum : data) {
             CarInsurance.InsuranceInfo insuranceInfo = new CarInsurance.InsuranceInfo();
             insuranceInfo.coverageCode = datum.coverageCode;
+            if (StringKit.equals(insuranceInfo.coverageCode, CarInfoModel.COVERAGE_CODE_FORCEPREMIUM)) {
+                insuranceInfo.sort = 0;
+            }
             insuranceInfo.coverageName = datum.coverageName;
 
             if (map.get(datum.coverageCode) != null) {
@@ -2628,6 +2631,13 @@ public class CarInsuranceAction extends BaseAction {
 
             list.add(insuranceInfo);
         }
+
+        list.sort(new Comparator<CarInsurance.InsuranceInfo>() {
+            @Override
+            public int compare(CarInsurance.InsuranceInfo o1, CarInsurance.InsuranceInfo o2) {
+                return o1.sort - o2.sort;
+            }
+        });
 
         return list;
     }
@@ -2761,7 +2771,7 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             // 修理期间费用补偿险Z2，校验天数和每天的保额
-            if (StringKit.equals(insuranceInfoDetail.coverageCode, "Z2") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
+            if (StringKit.equals(insuranceInfoDetail.coverageCode, CarInfoModel.COVERAGE_CODE_Z2) && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
                 if (StringKit.isInteger(insuranceInfo.day)) {
                     Integer integer = Integer.valueOf(insuranceInfo.day);
                     if (integer > Z2_MAX_DAY || integer < Z2_MIN_DAY) {
@@ -2796,7 +2806,7 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             // 玻璃险破碎险F，校验是否国产、进口
-            if (StringKit.equals(insuranceInfoDetail.coverageCode, "F") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
+            if (StringKit.equals(insuranceInfoDetail.coverageCode, CarInfoModel.COVERAGE_CODE_F) && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
                 boolean flag = false;
                 CarInsurance.InsuranceInfo whole = map.get(insuranceInfoDetail.coverageCode);
                 for (String s : whole.sourceOption) {
