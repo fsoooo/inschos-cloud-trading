@@ -1,6 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
-import com.inschos.common.assist.kit.L;
+import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.dock.api.InsureService;
 import com.inschos.dock.bean.*;
 import hprose.client.HproseHttpClient;
@@ -22,7 +22,7 @@ public class InsureServiceClient  {
         return new HproseHttpClient(host + uri).useService(InsureService.class);
     }
 
-    public RpcResponse<RspPreInsureBean> preInsure(InsureBean bean,String productKey) {
+    public RpcResponse<RspPreInsureBean> preInsure(InsureBean bean, String productKey) {
         try {
             InsureService service = getService(productKey);
             return service != null ? service.preInsure(bean) : null;
@@ -33,7 +33,7 @@ public class InsureServiceClient  {
         }
     }
 
-    public RpcResponse<RspInsureBean> insure(InsureBean bean,String productKey) {
+    public RpcResponse<RspInsureBean> insure(InsureBean bean, String productKey) {
         try {
             InsureService service = getService(productKey);
             return service != null ? service.insure(bean) : null;
@@ -44,7 +44,7 @@ public class InsureServiceClient  {
         }
     }
 
-    public RpcResponse<RspPayBean> pay(PayBean bean,String productKey) {
+    public RpcResponse<RspPayBean> pay(PayBean bean, String productKey) {
         try {
             InsureService service = getService(productKey);
             return service != null ? service.pay(bean) : null;

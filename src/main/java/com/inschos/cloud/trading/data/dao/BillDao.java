@@ -122,6 +122,7 @@ public class BillDao extends BaseDao {
 
         BillModel billModel = new BillModel();
         billModel.bill_uuid = bill_uuid;
+        billModel.bill_time = time;
         billModel.updated_at = time;
         billModel.bill_money = brokerage;
         billModel.is_settlement = "1";

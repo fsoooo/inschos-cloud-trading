@@ -8,6 +8,7 @@ import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
 import com.inschos.cloud.trading.access.rpc.bean.InsuranceCompanyBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
 import com.inschos.cloud.trading.access.rpc.client.AgentClient;
+import com.inschos.cloud.trading.access.rpc.client.CompanyClient;
 import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
@@ -57,6 +58,9 @@ public class BillAction extends BaseAction {
     private ProductClient productClient;
 
     @Autowired
+    private CompanyClient companyClient;
+
+    @Autowired
     private FileClient fileClient;
 
     public String createBill(ActionBean actionBean) {
@@ -81,7 +85,6 @@ public class BillAction extends BaseAction {
         billModel.insurance_company_id = request.insuranceCompanyId;
         billModel.principal = request.principalId;
         billModel.remark = request.remark;
-        billModel.is_settlement = "1";
         billModel.created_at = time;
         billModel.updated_at = time;
 
@@ -94,6 +97,8 @@ public class BillAction extends BaseAction {
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        billModel.billDetailModelList = dealBillInsurancePolicyList.result;
+        billModel.is_settlement = (dealBillInsurancePolicyList.result != null && !dealBillInsurancePolicyList.result.isEmpty()) ? "1" : "0";
         billModel.bill_money = decimalFormat.format(dealBillInsurancePolicyList.brokerage.doubleValue());
 
         int i = billDao.addBill(billModel);
@@ -176,7 +181,13 @@ public class BillAction extends BaseAction {
             }
         }
 
-        if (!StringKit.isInteger(request.companyId)) {
+        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+
+        if (billByBillUuid == null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
+        }
+
+        if (!StringKit.isInteger(billByBillUuid.insurance_company_id)) {
             return json(BaseResponse.CODE_FAILURE, "保险公司ID错误", response);
         }
 
@@ -184,12 +195,10 @@ public class BillAction extends BaseAction {
             request.pageSize = "10";
         }
 
-        InsuranceCompanyBean company = productClient.getCompany(Long.valueOf(request.companyId));
+        InsuranceCompanyBean company = companyClient.getCompany(Long.valueOf(billByBillUuid.insurance_company_id));
 
-        if (company != null) {
-            request.companyId = company.name;
-        } else {
-            request.companyId = "";
+        if (company == null) {
+            return json(BaseResponse.CODE_FAILURE, "保险公司'" + billByBillUuid.insurance_company_id + "'未找到", response);
         }
 
         long total;
@@ -200,7 +209,7 @@ public class BillAction extends BaseAction {
                 CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
                 custWarrantyCostModel.search = request.searchKey;
                 custWarrantyCostModel.searchType = request.searchType;
-                custWarrantyCostModel.ins_company_id = request.companyId;
+                custWarrantyCostModel.ins_company_id = billByBillUuid.insurance_company_id;
                 custWarrantyCostModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 Set<String> productIds = new HashSet<>();
@@ -222,7 +231,7 @@ public class BillAction extends BaseAction {
                         }
                     }
 
-                    List<InsuranceCompanyBean> companyList = productClient.getCompanyList(new ArrayList<>(companyIds));
+                    List<InsuranceCompanyBean> companyList = companyClient.getCompanyList(new ArrayList<>(companyIds));
                     Map<String, InsuranceCompanyBean> companyMap = new HashMap<>();
                     if (companyList != null && !companyList.isEmpty()) {
                         for (InsuranceCompanyBean insuranceCompanyBean : companyList) {
@@ -249,7 +258,7 @@ public class BillAction extends BaseAction {
                 OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
                 offlineInsurancePolicyModel.search = request.searchKey;
                 offlineInsurancePolicyModel.searchType = request.searchType;
-                offlineInsurancePolicyModel.insurance_company = request.companyId;
+                offlineInsurancePolicyModel.insurance_company = company.name;
                 offlineInsurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 List<OfflineInsurancePolicyModel> completePayListByManagerUuid1 = offlineInsurancePolicyDao.findCompletePayListByManagerUuid(offlineInsurancePolicyModel);
@@ -340,7 +349,7 @@ public class BillAction extends BaseAction {
 
                 String s1 = companyName.get(model.insurance_company_id);
                 if (s1 == null && StringKit.isInteger(model.insurance_company_id)) {
-                    InsuranceCompanyBean company = productClient.getCompany(Long.valueOf(model.insurance_company_id));
+                    InsuranceCompanyBean company = companyClient.getCompany(Long.valueOf(model.insurance_company_id));
                     if (company != null) {
                         companyName.put(model.insurance_company_id, company.name);
                     } else {
@@ -827,7 +836,7 @@ public class BillAction extends BaseAction {
             }
         }
 
-        List<InsuranceCompanyBean> companyList = productClient.getCompanyList(new ArrayList<>(companyIds));
+        List<InsuranceCompanyBean> companyList = companyClient.getCompanyList(new ArrayList<>(companyIds));
         Map<String, InsuranceCompanyBean> companyMap = new HashMap<>();
         if (companyList != null && !companyList.isEmpty()) {
             for (InsuranceCompanyBean insuranceCompanyBean : companyList) {

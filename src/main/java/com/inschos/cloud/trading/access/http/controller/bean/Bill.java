@@ -47,14 +47,14 @@ public class Bill {
     }
 
     public static class GetBillEnableInsurancePolicyListRequest extends BaseRequest {
+        @CheckParams(hintName = "结算单唯一标识")
+        public String billUuid;
         // 1-网销，2-线下单
         @CheckParams(hintName = "保单类型")
         public String type;
         // 1-保单号，3-被保险人
         public String searchType;
         public String searchKey;
-        @CheckParams(hintName = "保险公司")
-        public String companyId;
     }
 
     public static class GetBillEnableInsurancePolicyListResponse extends BaseResponse {

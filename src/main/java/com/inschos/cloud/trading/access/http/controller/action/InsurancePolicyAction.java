@@ -4,10 +4,7 @@ import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.access.rpc.bean.*;
-import com.inschos.cloud.trading.access.rpc.client.AgentClient;
-import com.inschos.cloud.trading.access.rpc.client.ChannelClient;
-import com.inschos.cloud.trading.access.rpc.client.FileClient;
-import com.inschos.cloud.trading.access.rpc.client.ProductClient;
+import com.inschos.cloud.trading.access.rpc.client.*;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.*;
@@ -53,6 +50,9 @@ public class InsurancePolicyAction extends BaseAction {
 
     @Autowired
     private ProductClient productClient;
+
+    @Autowired
+    private CompanyClient companyClient;
 
     @Autowired
     private AgentClient agentClient;
@@ -1123,7 +1123,7 @@ public class InsurancePolicyAction extends BaseAction {
             InsuranceCompanyBean insuranceCompanyBean = new InsuranceCompanyBean();
             insuranceCompanyBean.name = request.insuranceCompanyKey;
             insuranceCompanyBean.managerUuid = insurancePolicyModel.manager_uuid;
-            List<InsuranceCompanyBean> listInsuranceCompany = productClient.getListInsuranceCompany(insuranceCompanyBean);
+            List<InsuranceCompanyBean> listInsuranceCompany = companyClient.getListInsuranceCompany(insuranceCompanyBean);
             if (listInsuranceCompany != null && !listInsuranceCompany.isEmpty()) {
                 int size = listInsuranceCompany.size();
                 StringBuilder sb = new StringBuilder();
