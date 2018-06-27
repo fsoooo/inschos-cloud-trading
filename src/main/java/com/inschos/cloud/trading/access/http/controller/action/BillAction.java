@@ -81,58 +81,20 @@ public class BillAction extends BaseAction {
         billModel.insurance_company_id = request.insuranceCompanyId;
         billModel.principal = request.principalId;
         billModel.remark = request.remark;
+        billModel.is_settlement = "1";
         billModel.created_at = time;
         billModel.updated_at = time;
 
         billModel.bill_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
-        BigDecimal billMoney = new BigDecimal(0);
 
-        if (request.warrantyList != null && !request.warrantyList.isEmpty()) {
-            billModel.billDetailModelList = new ArrayList<>();
-            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-            OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
+        DealBillInsurancePolicyList dealBillInsurancePolicyList = dealBillInsurancePolicyList(billModel.bill_uuid, request.warrantyList);
 
-            for (Bill.BillInsurancePolicy billInsurancePolicy : request.warrantyList) {
-
-                BillDetailModel billDetailModel = new BillDetailModel();
-                billDetailModel.bill_uuid = billModel.bill_uuid;
-                billDetailModel.cost_id = billInsurancePolicy.costId;
-                billDetailModel.warranty_uuid = billInsurancePolicy.warrantyUuid;
-                billDetailModel.type = billInsurancePolicy.warrantyType;
-                billDetailModel.created_at = time;
-                billDetailModel.updated_at = time;
-                BigDecimal brokerage;
-
-                if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_ON_LINE)) {
-                    if (StringKit.isEmpty(billInsurancePolicy.costId)) {
-                        return json(BaseResponse.CODE_FAILURE, "网销保单'" + billDetailModel.warranty_uuid + "'必须提供costId", response);
-                    }
-                    custWarrantyCostModel.id = billInsurancePolicy.costId;
-                    CustWarrantyBrokerageModel brokerageByCostId = custWarrantyCostDao.findBrokerageByCostId(custWarrantyCostModel);
-
-                    if (brokerageByCostId != null && StringKit.isNumeric(brokerageByCostId.manager_money)) {
-                        brokerage = new BigDecimal(brokerageByCostId.manager_money);
-                    } else {
-                        brokerage = new BigDecimal("0");
-                    }
-                } else if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_OFF_LINE)) {
-                    OfflineInsurancePolicyModel brokerageByWarrantyUuid = offlineInsurancePolicyDao.findBrokerageByWarrantyUuid(offlineInsurancePolicyModel);
-
-                    if (brokerageByWarrantyUuid != null && StringKit.isNumeric(brokerageByWarrantyUuid.brokerage)) {
-                        brokerage = new BigDecimal(brokerageByWarrantyUuid.brokerage);
-                    } else {
-                        brokerage = new BigDecimal("0");
-                    }
-                } else {
-                    return json(BaseResponse.CODE_FAILURE, "保单类型错误", response);
-                }
-
-                billMoney = billMoney.add(brokerage);
-            }
+        if (!dealBillInsurancePolicyList.isSuccess) {
+            return json(BaseResponse.CODE_FAILURE, dealBillInsurancePolicyList.message, response);
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-        billModel.bill_money = decimalFormat.format(billMoney.doubleValue());
+        billModel.bill_money = decimalFormat.format(dealBillInsurancePolicyList.brokerage.doubleValue());
 
         int i = billDao.addBill(billModel);
 
@@ -141,6 +103,46 @@ public class BillAction extends BaseAction {
             str = json(BaseResponse.CODE_SUCCESS, "添加结算单成功", response);
         } else {
             str = json(BaseResponse.CODE_FAILURE, "添加结算单失败", response);
+        }
+
+        return str;
+    }
+
+    public String addBillDetail(ActionBean actionBean) {
+        Bill.AddBillDetailRequest request = JsonKit.json2Bean(actionBean.body, Bill.AddBillDetailRequest.class);
+        Bill.AddBillDetailResponse response = new Bill.AddBillDetailResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+
+        if (billByBillUuid == null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
+        }
+
+        DealBillInsurancePolicyList dealBillInsurancePolicyList = dealBillInsurancePolicyList(request.billUuid, request.warrantyList);
+
+        if (!dealBillInsurancePolicyList.isSuccess) {
+            return json(BaseResponse.CODE_FAILURE, dealBillInsurancePolicyList.message, response);
+        }
+
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        String brokerage = decimalFormat.format(dealBillInsurancePolicyList.brokerage.doubleValue());
+
+        int i = billDao.addBillDetailAndBrokerage(request.billUuid, brokerage, dealBillInsurancePolicyList.result);
+
+        String str;
+        if (i > 0) {
+            str = json(BaseResponse.CODE_SUCCESS, "添加结算单明细成功", response);
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, "添加结算单明细失败", response);
         }
 
         return str;
@@ -849,4 +851,71 @@ public class BillAction extends BaseAction {
 
         return result;
     }
+
+    static class DealBillInsurancePolicyList {
+        boolean isSuccess;
+        List<BillDetailModel> result;
+        BigDecimal brokerage;
+        String message;
+    }
+
+    private DealBillInsurancePolicyList dealBillInsurancePolicyList(String bill_uuid, List<Bill.BillInsurancePolicy> list) {
+
+        DealBillInsurancePolicyList dealBillInsurancePolicyList = new DealBillInsurancePolicyList();
+
+        dealBillInsurancePolicyList.isSuccess = true;
+        dealBillInsurancePolicyList.result = new ArrayList<>();
+        dealBillInsurancePolicyList.brokerage = new BigDecimal(0);
+
+        if (list != null && !list.isEmpty()) {
+            String time = String.valueOf(System.currentTimeMillis());
+            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+            OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
+
+            for (Bill.BillInsurancePolicy billInsurancePolicy : list) {
+
+                BillDetailModel billDetailModel = new BillDetailModel();
+                billDetailModel.bill_uuid = bill_uuid;
+                billDetailModel.cost_id = billInsurancePolicy.costId;
+                billDetailModel.warranty_uuid = billInsurancePolicy.warrantyUuid;
+                billDetailModel.type = billInsurancePolicy.warrantyType;
+                billDetailModel.created_at = time;
+                billDetailModel.updated_at = time;
+                BigDecimal brokerage;
+
+                if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_ON_LINE)) {
+                    if (StringKit.isEmpty(billInsurancePolicy.costId)) {
+                        dealBillInsurancePolicyList.isSuccess = false;
+                        dealBillInsurancePolicyList.message = "网销保单'" + billDetailModel.warranty_uuid + "'必须提供costId";
+                        return dealBillInsurancePolicyList;
+                    }
+                    custWarrantyCostModel.id = billInsurancePolicy.costId;
+                    CustWarrantyBrokerageModel brokerageByCostId = custWarrantyCostDao.findBrokerageByCostId(custWarrantyCostModel);
+
+                    if (brokerageByCostId != null && StringKit.isNumeric(brokerageByCostId.manager_money)) {
+                        brokerage = new BigDecimal(brokerageByCostId.manager_money);
+                    } else {
+                        brokerage = new BigDecimal("0");
+                    }
+                } else if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_OFF_LINE)) {
+                    OfflineInsurancePolicyModel brokerageByWarrantyUuid = offlineInsurancePolicyDao.findBrokerageByWarrantyUuid(offlineInsurancePolicyModel);
+
+                    if (brokerageByWarrantyUuid != null && StringKit.isNumeric(brokerageByWarrantyUuid.brokerage)) {
+                        brokerage = new BigDecimal(brokerageByWarrantyUuid.brokerage);
+                    } else {
+                        brokerage = new BigDecimal("0");
+                    }
+                } else {
+                    dealBillInsurancePolicyList.isSuccess = false;
+                    dealBillInsurancePolicyList.message = "保单类型错误";
+                    return dealBillInsurancePolicyList;
+                }
+
+                dealBillInsurancePolicyList.brokerage = dealBillInsurancePolicyList.brokerage.add(brokerage);
+            }
+        }
+
+        return dealBillInsurancePolicyList;
+    }
+
 }

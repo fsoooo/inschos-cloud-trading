@@ -35,6 +35,17 @@ public class Bill {
 
     }
 
+    public static class AddBillDetailRequest extends BaseRequest {
+        @CheckParams(hintName = "结算单唯一标识")
+        public String billUuid;
+        @CheckParams(hintName = "结算单明细列表")
+        public List<BillInsurancePolicy> warrantyList;
+    }
+
+    public static class AddBillDetailResponse extends BaseResponse {
+
+    }
+
     public static class GetBillEnableInsurancePolicyListRequest extends BaseRequest {
         // 1-网销，2-线下单
         @CheckParams(hintName = "保单类型")
@@ -279,7 +290,11 @@ public class Bill {
         public String startTime;
         public String startTimeText;
 
-        // 结算时间
+        // 起保时间
+        public String endTime;
+        public String endTimeText;
+
+        // 终止时间
         public String billTime;
         public String billTimeText;
 
@@ -330,6 +345,10 @@ public class Bill {
             this.startTime = custWarrantyCostModel.warranty_start_time;
             if (StringKit.isInteger(custWarrantyCostModel.warranty_start_time)) {
                 this.startTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.warranty_start_time)));
+            }
+            this.endTime = custWarrantyCostModel.warranty_end_time;
+            if (StringKit.isInteger(custWarrantyCostModel.warranty_end_time)) {
+                this.endTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.warranty_end_time)));
             }
             this.createdAt = custWarrantyCostModel.created_at;
             if (StringKit.isInteger(custWarrantyCostModel.created_at)) {
@@ -403,6 +422,10 @@ public class Bill {
             this.startTime = offlineInsurancePolicyModel.start_time;
             if (StringKit.isInteger(offlineInsurancePolicyModel.start_time)) {
                 this.startTimeText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.start_time)));
+            }
+            this.endTime = offlineInsurancePolicyModel.end_time;
+            if (StringKit.isInteger(offlineInsurancePolicyModel.end_time)) {
+                this.endTimeText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.end_time)));
             }
             this.createdAt = offlineInsurancePolicyModel.created_at;
             if (StringKit.isInteger(offlineInsurancePolicyModel.created_at)) {

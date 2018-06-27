@@ -30,6 +30,13 @@ public class BillController {
     }
 
     @GetActionBeanAnnotation
+    @RequestMapping("add_bill_detail")
+    @ResponseBody
+    public String addBillDetail(ActionBean actionBean) {
+        return billAction.addBillDetail(actionBean);
+    }
+
+    @GetActionBeanAnnotation
     @RequestMapping("get_bill_enable_insurance_policy_list")
     @ResponseBody
     public String getBillEnableInsurancePolicyList(ActionBean actionBean) {
