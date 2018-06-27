@@ -302,7 +302,7 @@ public class CheckParamsKit {
         boolean necessity = chk.isNecessity();
 
         if (necessity) {
-            if (str == null) {
+            if (StringKit.isEmpty(str)) {
                 return "缺少" + name + "参数";
             } else {
                 return checkString(name, str, chk);

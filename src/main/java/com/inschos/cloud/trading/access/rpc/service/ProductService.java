@@ -35,11 +35,6 @@ public interface ProductService {
 
     List<InsuranceCo> getProductCoList(String managerUuid);
 
-    List<InsuranceCompanyBean> getListInsuranceCompany(InsuranceCompanyBean insuranceCompanyBean);
-
     List<ProductBean> getListProduct(String name, String managerUuid);
 
-    InsuranceCompanyBean getCompany(long id);
-
-    List<InsuranceCompanyBean> getCompanyList(List<String> companyId);
 }

@@ -35,7 +35,6 @@ public class BillDao extends BaseDao {
     private OfflineInsurancePolicyMapper offlineInsurancePolicyMapper;
 
     public int addBill(BillModel billModel) {
-
         int i = billMapper.addBill(billModel);
 
         if (i <= 0) {
@@ -45,10 +44,12 @@ public class BillDao extends BaseDao {
 
         CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
         custWarrantyCostModel.bill_uuid = billModel.bill_uuid;
+        custWarrantyCostModel.is_settlement = "1";
         custWarrantyCostModel.updated_at = billModel.updated_at;
 
         OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
         offlineInsurancePolicyModel.bill_uuid = billModel.bill_uuid;
+        offlineInsurancePolicyModel.is_settlement = "1";
         offlineInsurancePolicyModel.updated_at = billModel.updated_at;
 
         if (billModel.billDetailModelList != null && !billModel.billDetailModelList.isEmpty()) {
@@ -60,21 +61,76 @@ public class BillDao extends BaseDao {
                     return i;
                 }
 
-                if (StringKit.equals(billDetailModel.type, BillDetailModel.TYPE_ON_LINE)) {
-                    custWarrantyCostModel.id = billDetailModel.cost_id;
-                    i = custWarrantyCostMapper.updateBillUuidByCostId(custWarrantyCostModel);
-                } else if (StringKit.equals(billDetailModel.type, BillDetailModel.TYPE_OFF_LINE)) {
-                    offlineInsurancePolicyModel.warranty_uuid = billDetailModel.warranty_uuid;
-                    i = offlineInsurancePolicyMapper.updateBillUuidByWarrantyUuid(offlineInsurancePolicyModel);
-                } else {
-                    i = -1;
-                }
+            }
+
+            i = updateCustWarrantySettlementAndBillUuid(billModel.billDetailModelList, custWarrantyCostModel, offlineInsurancePolicyModel);
+
+            if (i <= 0) {
+                rollBack();
+                return i;
+            }
+        }
+
+        return i;
+    }
+
+    public int addBillDetail(String bill_uuid, List<BillDetailModel> list) {
+        int i = 1;
+
+        if (list != null && !list.isEmpty()) {
+            String time = String.valueOf(System.currentTimeMillis());
+
+            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+            custWarrantyCostModel.bill_uuid = bill_uuid;
+            custWarrantyCostModel.is_settlement = "1";
+            custWarrantyCostModel.updated_at = time;
+
+            OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
+            offlineInsurancePolicyModel.bill_uuid = bill_uuid;
+            offlineInsurancePolicyModel.is_settlement = "1";
+            offlineInsurancePolicyModel.updated_at = time;
+
+            for (BillDetailModel billDetailModel : list) {
+                i = billDetailMapper.addBillDetail(billDetailModel);
 
                 if (i <= 0) {
                     rollBack();
                     return i;
                 }
+
             }
+
+            i = updateCustWarrantySettlementAndBillUuid(list, custWarrantyCostModel, offlineInsurancePolicyModel);
+
+            if (i <= 0) {
+                rollBack();
+                return i;
+            }
+        }
+
+        return i;
+    }
+
+    public int addBillDetailAndBrokerage(String bill_uuid, String brokerage, List<BillDetailModel> list) {
+        String time = String.valueOf(System.currentTimeMillis());
+        int i = addBillDetail(bill_uuid, list);
+
+        if (i <= 0) {
+            rollBack();
+            return i;
+        }
+
+        BillModel billModel = new BillModel();
+        billModel.bill_uuid = bill_uuid;
+        billModel.bill_time = time;
+        billModel.updated_at = time;
+        billModel.bill_money = brokerage;
+        billModel.is_settlement = "1";
+        i = updateBillSettlementAndMoneyAndTimeByBillUuid(billModel);
+
+        if (i <= 0) {
+            rollBack();
+            return i;
         }
 
         return i;

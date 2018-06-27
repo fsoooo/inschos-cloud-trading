@@ -224,12 +224,12 @@ public class CarInsuranceAction extends BaseAction {
 
             CheckParamsKit.Entry<String, String> frameNo = new CheckParamsKit.Entry<>();
             frameNo.digest = "frameNo";
-            frameNo.details = "frameNo与licenseNo至少存在一个";
+            frameNo.details = "车架号与车牌号至少存在一个";
             list.add(frameNo);
 
             CheckParamsKit.Entry<String, String> licenseNo = new CheckParamsKit.Entry<>();
             licenseNo.digest = "licenseNo";
-            licenseNo.details = "frameNo与licenseNo至少存在一个";
+            licenseNo.details = "车架号与车牌号至少存在一个";
             list.add(licenseNo);
 
             return json(BaseResponse.CODE_PARAM_ERROR, list, new BaseResponse());
@@ -1430,7 +1430,7 @@ public class CarInsuranceAction extends BaseAction {
 
                 ciProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
                 ciProposal.warranty_status = warrantyStatus;
-                ciProposal.by_stages_way = "趸缴";
+                ciProposal.by_stages_way = "一次性缴费";
                 ciProposal.integral = String.valueOf(ciIntegral.doubleValue());
                 ciProposal.state = "1";
                 ciProposal.created_at = time;
@@ -1576,7 +1576,7 @@ public class CarInsuranceAction extends BaseAction {
 
                 biProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
                 biProposal.warranty_status = warrantyStatus;
-                biProposal.by_stages_way = "趸缴";
+                biProposal.by_stages_way = "一次性缴费";
                 biProposal.integral = String.valueOf(biIntegral.doubleValue());
                 biProposal.state = "1";
                 biProposal.created_at = time;
