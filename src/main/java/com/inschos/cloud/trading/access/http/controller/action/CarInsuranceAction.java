@@ -2669,9 +2669,9 @@ public class CarInsuranceAction extends BaseAction {
                 return "请输入车架号";
             }
 
-//            if (StringKit.isEmpty(carInfo.engineNo) || StringKit.equals(carInfo.engineNo, "null")) {
-//                return "请输入发动机号";
-//            }
+            if (StringKit.isEmpty(carInfo.engineNo) || StringKit.equals(carInfo.engineNo, "null")) {
+                return "请输入发动机号";
+            }
 
             carInfo.responseNo = "";
         }
