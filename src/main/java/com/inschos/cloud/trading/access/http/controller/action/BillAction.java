@@ -370,6 +370,7 @@ public class BillAction extends BaseAction {
                 if (s1 == null && StringKit.isInteger(model.insurance_company_id)) {
                     InsuranceCompanyBean company = companyClient.getCompany(Long.valueOf(model.insurance_company_id));
                     if (company != null) {
+                        model.insurance_company_name = company.name;
                         companyName.put(model.insurance_company_id, company.name);
                     } else {
                         companyName.put(model.insurance_company_id, "");

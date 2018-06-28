@@ -199,7 +199,11 @@ public class Bill {
                 this.isSettlementText = model.isSettlementText(model.is_settlement);
             }
             this.billMoney = model.bill_money;
-            if (!StringKit.isNumeric(model.bill_money)) {
+            if (StringKit.isNumeric(model.bill_money)) {
+                BigDecimal bigDecimal = new BigDecimal(model.bill_money);
+                DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+                this.billMoney = decimalFormat.format(bigDecimal.doubleValue());
+            } else {
                 this.billMoney = "0.00";
             }
             this.billMoneyText = "¥" + this.billMoney;
