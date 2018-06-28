@@ -97,8 +97,8 @@
                     `cust_warranty_bill`.`created_at`,`cust_warranty_bill`.`updated_at`,
 
                     `offline_cust_warranty`.`id`,`offline_cust_warranty`.`insured_name`,`offline_cust_warranty`.`policy_holder_name`,`offline_cust_warranty`.`insurance_company`,
-                    `offline_cust_warranty`.`insurance_type`,`offline_cust_warranty`.`insurance_product`,`offline_cust_warranty`.`warranty_code` offline_warranty_code,`offline_cust_warranty`.`payment_time` ,
-                    `offline_cust_warranty`.`order_time`,`offline_cust_warranty`.`real_income_time` offline_real_income_time,`offline_cust_warranty`.`start_time` offline_start_time,`offline_cust_warranty`.`end_time` ,`offline_cust_warranty`.`premium` ,
+                    `offline_cust_warranty`.`insurance_type`,`offline_cust_warranty`.`insurance_product`,`offline_cust_warranty`.`warranty_code`,`offline_cust_warranty`.`payment_time` ,
+                    `offline_cust_warranty`.`order_time`,`offline_cust_warranty`.`real_income_time`,`offline_cust_warranty`.`start_time`,`offline_cust_warranty`.`end_time` ,`offline_cust_warranty`.`premium` ,
                     `offline_cust_warranty`.`pay_status`,`offline_cust_warranty`.`brokerage`,`offline_cust_warranty`.`channel_name`,`offline_cust_warranty`.`agent_name` ,
                     `offline_cust_warranty`.`created_at`,`offline_cust_warranty`.`updated_at`,
 
@@ -110,9 +110,9 @@
                     `cust_warranty_cost`.`pay_time`,`cust_warranty_cost`.`phase`,`cust_warranty_cost`.`tax_money`,`cust_warranty_cost`.`actual_pay_time` ,
                     `cust_warranty_cost`.`pay_way`,`cust_warranty_cost`.`pay_money`,`cust_warranty_cost`.`pay_status`,`cust_warranty_cost`.`created_at`,`cust_warranty_cost`.`updated_at`,
 
-                    `cust_warranty_brokerage`.`id` online_brokerage_id,`cust_warranty_brokerage`.`warranty_money` ,`cust_warranty_brokerage`.`ins_money`,`cust_warranty_brokerage`.`manager_money`,
-                    `cust_warranty_brokerage`.`channel_money` online_brokerage_channel_money,`cust_warranty_brokerage`.`agent_money` ,`cust_warranty_brokerage`.`warranty_rate`,`cust_warranty_brokerage`.`ins_rate`,
-                    `cust_warranty_brokerage`.`manager_rate` online_brokerage_manager_rate,`cust_warranty_brokerage`.`channel_rate`,`cust_warranty_brokerage`.`agent_rate`,`cust_warranty_brokerage`.`car_integral`,
+                    `cust_warranty_brokerage`.`id`,`cust_warranty_brokerage`.`warranty_money` ,`cust_warranty_brokerage`.`ins_money`,`cust_warranty_brokerage`.`manager_money`,
+                    `cust_warranty_brokerage`.`channel_money`,`cust_warranty_brokerage`.`agent_money` ,`cust_warranty_brokerage`.`warranty_rate`,`cust_warranty_brokerage`.`ins_rate`,
+                    `cust_warranty_brokerage`.`manager_rate` ,`cust_warranty_brokerage`.`channel_rate`,`cust_warranty_brokerage`.`agent_rate`,`cust_warranty_brokerage`.`car_integral`,
                     `cust_warranty_brokerage`.`created_at`,`cust_warranty_brokerage`.`updated_at`
                     ORDER BY `id` DESC limit #{page.start},1
                     )
@@ -144,8 +144,8 @@
             `cust_warranty_bill`.`created_at`,`cust_warranty_bill`.`updated_at`,
 
             `offline_cust_warranty`.`id`,`offline_cust_warranty`.`insured_name`,`offline_cust_warranty`.`policy_holder_name`,`offline_cust_warranty`.`insurance_company`,
-            `offline_cust_warranty`.`insurance_type`,`offline_cust_warranty`.`insurance_product`,`offline_cust_warranty`.`warranty_code` offline_warranty_code,`offline_cust_warranty`.`payment_time` ,
-            `offline_cust_warranty`.`order_time`,`offline_cust_warranty`.`real_income_time` offline_real_income_time,`offline_cust_warranty`.`start_time` offline_start_time,`offline_cust_warranty`.`end_time` ,`offline_cust_warranty`.`premium` ,
+            `offline_cust_warranty`.`insurance_type`,`offline_cust_warranty`.`insurance_product`,`offline_cust_warranty`.`warranty_code`,`offline_cust_warranty`.`payment_time` ,
+            `offline_cust_warranty`.`order_time`,`offline_cust_warranty`.`real_income_time`,`offline_cust_warranty`.`start_time`,`offline_cust_warranty`.`end_time` ,`offline_cust_warranty`.`premium` ,
             `offline_cust_warranty`.`pay_status`,`offline_cust_warranty`.`brokerage`,`offline_cust_warranty`.`channel_name` ,`offline_cust_warranty`.`agent_name` ,
             `offline_cust_warranty`.`created_at`,`offline_cust_warranty`.`updated_at`,
 
@@ -157,9 +157,9 @@
             `cust_warranty_cost`.`pay_time`,`cust_warranty_cost`.`phase`,`cust_warranty_cost`.`tax_money`,`cust_warranty_cost`.`actual_pay_time` ,
             `cust_warranty_cost`.`pay_way`,`cust_warranty_cost`.`pay_money`,`cust_warranty_cost`.`pay_status`,`cust_warranty_cost`.`created_at`,`cust_warranty_cost`.`updated_at`,
 
-            `cust_warranty_brokerage`.`id` online_brokerage_id,`cust_warranty_brokerage`.`warranty_money` ,`cust_warranty_brokerage`.`ins_money`,`cust_warranty_brokerage`.`manager_money`,
-            `cust_warranty_brokerage`.`channel_money` online_brokerage_channel_money,`cust_warranty_brokerage`.`agent_money` ,`cust_warranty_brokerage`.`warranty_rate`,`cust_warranty_brokerage`.`ins_rate`,
-            `cust_warranty_brokerage`.`manager_rate` online_brokerage_manager_rate,`cust_warranty_brokerage`.`channel_rate`,`cust_warranty_brokerage`.`agent_rate`,`cust_warranty_brokerage`.`car_integral`,
+            `cust_warranty_brokerage`.`id` ,`cust_warranty_brokerage`.`warranty_money` ,`cust_warranty_brokerage`.`ins_money`,`cust_warranty_brokerage`.`manager_money`,
+            `cust_warranty_brokerage`.`channel_money`,`cust_warranty_brokerage`.`agent_money` ,`cust_warranty_brokerage`.`warranty_rate`,`cust_warranty_brokerage`.`ins_rate`,
+            `cust_warranty_brokerage`.`manager_rate`,`cust_warranty_brokerage`.`channel_rate`,`cust_warranty_brokerage`.`agent_rate`,`cust_warranty_brokerage`.`car_integral`,
             `cust_warranty_brokerage`.`created_at`,`cust_warranty_brokerage`.`updated_at`
             ORDER BY `id` DESC limit #{page.offset}
         </where>

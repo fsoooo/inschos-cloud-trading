@@ -85,6 +85,7 @@ public class Bill {
     }
 
     public static class DownloadBillDetailRequest extends BaseRequest {
+        @CheckParams(hintName = "结算单uuid")
         public String billUuid;
     }
 
