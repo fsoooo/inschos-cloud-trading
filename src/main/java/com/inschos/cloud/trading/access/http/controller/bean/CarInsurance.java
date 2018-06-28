@@ -150,7 +150,7 @@ public class CarInsurance {
     public static class GetCarModelRequest extends BaseRequest {
         @CheckParams(hintName = "车辆信息")
         public ExtendCarInsurancePolicy.CarInfo carInfo;
-        @CheckParams(hintName = "签名")
+        // @CheckParams(hintName = "签名")
         public String signToken;
         // 0-不是，1-是
         @CheckParams(hintName = "是否为过户")

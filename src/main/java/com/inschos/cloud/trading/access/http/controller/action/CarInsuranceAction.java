@@ -2652,14 +2652,17 @@ public class CarInsuranceAction extends BaseAction {
      * @return 错误信息
      */
     private String dealCarInfoResponseNo(String signToken, boolean notLicenseNo, ExtendCarInsurancePolicy.CarInfo carInfo) {
-        String[] split = signToken.split("\\*");
-
         boolean verify = false;
-        if (split.length == 2) {
-            boolean frameNo = SignatureTools.verify(carInfo.frameNo, split[0], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
-            boolean engineNo = SignatureTools.verify(carInfo.engineNo, split[1], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
-            verify = frameNo || engineNo;
+        if (!StringKit.isEmpty(signToken)) {
+            String[] split = signToken.split("\\*");
+
+            if (split.length == 2) {
+                boolean frameNo = SignatureTools.verify(carInfo.frameNo, split[0], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+                boolean engineNo = SignatureTools.verify(carInfo.engineNo, split[1], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+                verify = frameNo || engineNo;
+            }
         }
+
 
         if (!verify) {
             if (StringKit.isEmpty(carInfo.frameNo) || StringKit.equals(carInfo.frameNo, "null")) {
