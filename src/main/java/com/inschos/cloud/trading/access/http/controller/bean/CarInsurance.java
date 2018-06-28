@@ -195,7 +195,7 @@ public class CarInsurance {
         public ExtendCarInsurancePolicy.CarInfoDetail carInfo;
         @CheckParams(hintName = "市级代码")
         public String cityCode;
-        @CheckParams(hintName = "签名")
+        // @CheckParams(hintName = "签名")
         public String signToken;
         @CheckParams(hintName = "是否存在车牌")
         public String notLicenseNo;
@@ -213,7 +213,7 @@ public class CarInsurance {
         public String cityCode;
         @CheckParams(hintName = "险种代码")
         public String insurerCode;
-        @CheckParams(hintName = "签名")
+        // @CheckParams(hintName = "签名")
         public String signToken;
         @CheckParams(hintName = "是否存在车牌")
         public String notLicenseNo;
@@ -310,7 +310,7 @@ public class CarInsurance {
         public String cityCode;
         @CheckParams(hintName = "省级代码")
         public String provinceCode;
-        @CheckParams(hintName = "签名")
+        // @CheckParams(hintName = "签名")
         public String signToken;
         @CheckParams(hintName = "是否存在车牌")
         public String notLicenseNo;
@@ -337,7 +337,7 @@ public class CarInsurance {
         public String cityCode;
         @CheckParams(hintName = "省级代码")
         public String provinceCode;
-        @CheckParams(hintName = "签名")
+        // @CheckParams(hintName = "签名")
         public String signToken;
         @CheckParams(hintName = "是否存在车牌")
         public String notLicenseNo;

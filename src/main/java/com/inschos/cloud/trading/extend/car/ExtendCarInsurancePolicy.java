@@ -99,11 +99,11 @@ public class ExtendCarInsurancePolicy {
 
     public static class CarInfo {
         public String responseNo;
-        @CheckParams
+        // @CheckParams
         public String engineNo;
-        @CheckParams
+        // @CheckParams
         public String licenseNo;
-        @CheckParams
+        // @CheckParams
         public String frameNo;
 
         public String firstRegisterDate;
