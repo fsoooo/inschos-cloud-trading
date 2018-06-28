@@ -62,8 +62,11 @@ public class Bill {
     }
 
     public static class GetBillListRequest extends BaseRequest {
-        public String insuranceCompanyId;
-        public String principalName;
+        // 1-保险公司，2-负责人
+        public String searchType;
+        public String searchKey;
+        // 结算状态，0-未结算，1-已结算
+        public String billStatus;
     }
 
     public static class GetBillListResponse extends BaseResponse {

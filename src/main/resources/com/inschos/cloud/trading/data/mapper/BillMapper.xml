@@ -58,11 +58,21 @@
                 <when test="page.start>0">
                     `id`&lt;=(select `id` from cust_warranty_bill
                     where `manager_uuid`=#{manager_uuid} AND `state`=1
-                    <if test="insurance_company_id!=null and insurance_company_id!=''">
-                        AND `insurance_company_id`=#{manager_uuid}
+                    <if test="searchType!=null and searchType!=''">
+                        <choose>
+                            <when test='searchType=="1"'>
+                                AND `insurance_company_id`in (${insurance_company_id_string})
+                            </when>
+                            <when test='searchType=="2"'>
+                                AND `principal` like concat("%",#{search},"%")
+                            </when>
+                            <otherwise>
+                                and 1=1
+                            </otherwise>
+                        </choose>
                     </if>
-                    <if test="principal_string!=null and principal_string!=''">
-                        AND `principal` in (${principal_string})
+                    <if test="is_settlement!=null and is_settlement!=''">
+                        AND `is_settlement`=#{is_settlement}
                     </if>
                     ORDER BY `id` DESC limit #{page.start},1
                     )
@@ -72,27 +82,47 @@
                 </otherwise>
             </choose>
             AND `manager_uuid`=#{manager_uuid} AND `state`=1
-            <if test="insurance_company_id!=null and insurance_company_id!=''">
-                AND `insurance_company_id`=#{manager_uuid}
+            <if test="searchType!=null and searchType!=''">
+                <choose>
+                    <when test='searchType=="1"'>
+                        AND `insurance_company_id`in (${insurance_company_id_string})
+                    </when>
+                    <when test='searchType=="2"'>
+                        AND `principal` like concat("%",#{search},"%")
+                    </when>
+                    <otherwise>
+                        and 1=1
+                    </otherwise>
+                </choose>
             </if>
-            <if test="principal_string!=null and principal_string!=''">
-                AND `principal` in (${principal_string})
+            <if test="is_settlement!=null and is_settlement!=''">
+                AND `is_settlement`=#{is_settlement}
             </if>
             ORDER BY `id` DESC limit #{page.offset}
         </where>
     </select>
 
     <select id="findBillCountByManagerUuid" parameterType="com.inschos.cloud.trading.model.BillModel"
-            resultType="com.inschos.cloud.trading.model.BillModel">
+            resultType="long">
         select
         COUNT(`id`)
         from cust_warranty_bill
         WHERE `manager_uuid`=#{manager_uuid} AND `state`=1
-        <if test="insurance_company_id!=null and insurance_company_id!=''">
-            AND `insurance_company_id`=#{manager_uuid}
+        <if test="searchType!=null and searchType!=''">
+            <choose>
+                <when test='searchType=="1"'>
+                    AND `insurance_company_id`in (${insurance_company_id_string})
+                </when>
+                <when test='searchType=="2"'>
+                    AND `principal` like concat("%",#{search},"%")
+                </when>
+                <otherwise>
+                    and 1=1
+                </otherwise>
+            </choose>
         </if>
-        <if test="principal_string!=null and principal_string!=''">
-            AND `principal` in (${principal_string})
+        <if test="is_settlement!=null and is_settlement!=''">
+            AND `is_settlement`=#{is_settlement}
         </if>
     </select>
 

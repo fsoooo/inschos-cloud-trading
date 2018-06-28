@@ -77,6 +77,9 @@ public class BillModel {
     public Page page;
 
     public String principal_string;
+    public String search;
+    public String searchType;
+    public String insurance_company_id_string;
     public String insurance_company_name;
     public String principal_name;
 

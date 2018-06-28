@@ -87,6 +87,7 @@ public class BillAction extends BaseAction {
         billModel.remark = request.remark;
         billModel.created_at = time;
         billModel.updated_at = time;
+        billModel.state = "1";
 
         billModel.bill_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
 
@@ -299,25 +300,43 @@ public class BillAction extends BaseAction {
 
         BillModel billModel = new BillModel();
         billModel.manager_uuid = actionBean.managerUuid;
-        billModel.insurance_company_id = request.insuranceCompanyId;
 
+        if (StringKit.isEmpty(request.searchType)) {
+            request.searchKey = "";
+        } else {
+            if (StringKit.isEmpty(request.searchKey)) {
+                return json(BaseResponse.CODE_FAILURE, "关键字不能为空", response);
+            }
 
-        if (!StringKit.isEmpty(request.principalName)) {
-            List<AgentBean> allBySearchName = agentClient.getAllBySearchName(actionBean.managerUuid, request.principalName);
+            billModel.searchType = request.searchType;
+            switch (request.searchType) {
+                case "1":
+                    InsuranceCompanyBean insuranceCompanyBean = new InsuranceCompanyBean();
+                    insuranceCompanyBean.managerUuid = actionBean.managerUuid;
+                    insuranceCompanyBean.name = request.searchKey;
+                    List<InsuranceCompanyBean> listInsuranceCompany = companyClient.getListInsuranceCompany(insuranceCompanyBean);
 
-            if (allBySearchName != null && !allBySearchName.isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                int size = allBySearchName.size();
-                for (int i = 0; i < size; i++) {
-                    AgentBean agentBean = allBySearchName.get(i);
-                    sb.append(agentBean.id);
-                    if (i != size - 1) {
-                        sb.append(",");
+                    if (listInsuranceCompany != null && !listInsuranceCompany.isEmpty()) {
+                        StringBuilder sb1 = new StringBuilder();
+                        int size = listInsuranceCompany.size();
+                        for (int i = 0; i < size; i++) {
+                            InsuranceCompanyBean insuranceCompanyBean1 = listInsuranceCompany.get(i);
+                            sb1.append(insuranceCompanyBean1.id);
+                            if (i != size - 1) {
+                                sb1.append(",");
+                            }
+                        }
+                        billModel.insurance_company_id_string = sb1.toString();
                     }
-                }
-                billModel.principal_string = sb.toString();
+
+                    break;
+                case "2":
+                    billModel.search = request.searchKey;
+                    break;
             }
         }
+
+        billModel.is_settlement = request.billStatus;
 
         if (StringKit.isEmpty(request.pageSize)) {
             request.pageSize = "10";
@@ -335,17 +354,17 @@ public class BillAction extends BaseAction {
         if (billByManagerUuid != null && !billByManagerUuid.isEmpty()) {
             for (BillModel model : billByManagerUuid) {
 
-                String s = agentName.get(model.principal);
-                if (s == null && StringKit.isInteger(model.principal)) {
-                    AgentBean agentById = agentClient.getAgentById(Long.valueOf(model.principal));
-                    if (agentById != null) {
-                        agentName.put(model.principal, agentById.name);
-                    } else {
-                        agentName.put(model.principal, "");
-                    }
-                } else {
-                    model.principal_name = s;
-                }
+//                String s = agentName.get(model.principal);
+//                if (s == null && StringKit.isInteger(model.principal)) {
+//                    AgentBean agentById = agentClient.getAgentById(Long.valueOf(model.principal));
+//                    if (agentById != null) {
+//                        agentName.put(model.principal, agentById.name);
+//                    } else {
+//                        agentName.put(model.principal, "");
+//                    }
+//                } else {
+//                    model.principal_name = s;
+//                }
 
                 String s1 = companyName.get(model.insurance_company_id);
                 if (s1 == null && StringKit.isInteger(model.insurance_company_id)) {
