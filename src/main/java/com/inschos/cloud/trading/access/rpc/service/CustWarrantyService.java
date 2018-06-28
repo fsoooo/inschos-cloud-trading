@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.access.rpc.service;
 
 import com.inschos.cloud.trading.access.rpc.bean.AccountUuidBean;
+import com.inschos.cloud.trading.access.rpc.bean.InsuranceRecordBean;
 import com.inschos.cloud.trading.access.rpc.bean.ManagerUuidBean;
 import com.inschos.cloud.trading.access.rpc.bean.PolicyholderCountBean;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
@@ -29,5 +30,16 @@ public interface CustWarrantyService {
      * pay_status
      */
     int getPolicyCountByCostStatus(InsurancePolicyModel search);
+
+    /**
+     * managerUuid，业管uuid
+     * personType，人员类型
+     * cardType，证件类型
+     * cardCode，证件号
+     *
+     * @param insuranceRecord
+     * @return
+     */
+    InsuranceRecordBean getInsuranceRecord(InsuranceRecordBean insuranceRecord);
 
 }

@@ -44,11 +44,15 @@ public interface InsurancePolicyMapper {
 
     long findInsurancePolicyCountByActualPayTime(InsurancePolicyModel insurancePolicyModel);
 
-    List<InsurancePolicyModel> setTest (InsurancePolicyModel insurancePolicyModel);
+    List<InsurancePolicyModel> setTest(InsurancePolicyModel insurancePolicyModel);
 
     InsurancePolicyModel findExistsValid(InsurancePolicyModel search);
 
     int findCountByAgentWarrantyStatus(InsurancePolicyModel search);
 
     int findCountByAgentCostStatus(InsurancePolicyModel search);
+
+    List<InsurancePolicyModel> findInsuranceRecordListByManagerUuid(InsurancePolicyModel search);
+
+    long findInsuranceRecordCountByManagerUuid(InsurancePolicyModel search);
 }

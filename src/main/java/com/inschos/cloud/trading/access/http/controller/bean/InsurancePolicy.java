@@ -258,6 +258,7 @@ public class InsurancePolicy {
         public String actualPayTimeText;
 
         // 被保险人
+        public String policyholderText;
         public String insuredText;
         public String insuredDetailText;
 
