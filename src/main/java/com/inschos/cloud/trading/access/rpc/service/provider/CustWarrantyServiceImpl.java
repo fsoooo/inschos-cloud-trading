@@ -7,6 +7,8 @@ import com.inschos.cloud.trading.access.rpc.bean.InsuranceRecordBean;
 import com.inschos.cloud.trading.access.rpc.bean.ManagerUuidBean;
 import com.inschos.cloud.trading.access.rpc.bean.PolicyholderCountBean;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
+import com.inschos.cloud.trading.assist.kit.JsonKit;
+import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
@@ -135,6 +137,8 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
         if (StringKit.isEmpty(insuranceRecord.pageSize)) {
             insuranceRecord.pageSize = "10";
         }
+
+        L.log.debug(JsonKit.bean2Json(insuranceRecord));
 
         InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
         insurancePolicyModel.page = setPage(insuranceRecord.lastId, insuranceRecord.pageNum, insuranceRecord.pageSize);

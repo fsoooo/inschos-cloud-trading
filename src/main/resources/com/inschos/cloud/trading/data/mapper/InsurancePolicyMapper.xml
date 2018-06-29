@@ -814,7 +814,7 @@
                     1=1
                 </otherwise>
             </choose>
-            and `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND (`cust_warranty`.`warranty_status`=2 OR `cust_warranty`.`warranty_status`=3 OR `cust_warranty`.`warranty_status`=4 OR `cust_warranty`.`warranty_status`=5)
+            and `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND (`cust_warranty`.`warranty_status`=2 OR `cust_warranty`.`warranty_status`=3 OR `cust_warranty`.`warranty_status`=4 OR `cust_warranty`.`warranty_status`=5) AND `cust_warranty_person`.`type`=#{person_type} AND `cust_warranty_person`.`card_type`=#{card_type} AND  `cust_warranty_person`.`card_code`=#{card_code}
             ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
         </where>
     </select>
