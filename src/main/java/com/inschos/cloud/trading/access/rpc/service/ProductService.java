@@ -41,4 +41,6 @@ public interface ProductService {
 
     ProductPayCategoryBean getProductPayCategory(long id);
 
+    List<ProductPayCategoryBean> listProductPayCategory(List<String> id);
+
 }
