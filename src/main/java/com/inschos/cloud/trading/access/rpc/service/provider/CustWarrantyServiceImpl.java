@@ -145,8 +145,8 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
 
         insurancePolicyModel.manager_uuid = insuranceRecord.managerUuid;
         insurancePolicyModel.person_type = insuranceRecord.personType;
-        insurancePolicyModel.card_code = insuranceRecord.cardType;
-        insurancePolicyModel.card_type = insuranceRecord.cardCode;
+        insurancePolicyModel.card_code = insuranceRecord.cardCode;
+        insurancePolicyModel.card_type = insuranceRecord.cardType;
 
         List<InsurancePolicyModel> insuranceRecordListByManagerUuid = insurancePolicyDao.findInsuranceRecordListByManagerUuid(insurancePolicyModel);
         long total = insurancePolicyDao.findInsuranceRecordCountByManagerUuid(insurancePolicyModel);
