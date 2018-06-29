@@ -797,7 +797,7 @@
         -- `cust_warranty_person`.`name` policy_holder_name,`cust_warranty_person`.`phone` policy_holder_phone,
         `cust_warranty_person`.`type` person_type,`cust_warranty_person`.`card_type` card_type,`cust_warranty_person`.`card_code` card_code
         from cust_warranty
-        LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=#{person_type} AND `cust_warranty_person`.`card_type`=#{card_type} AND  `cust_warranty_person`.`card_code`=#{card_code}
+        LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
         <where>
             <choose>
                 <when test="page.lastId>0">
@@ -805,8 +805,8 @@
                 </when>
                 <when test="page.start>0">
                     `cust_warranty`.`id`&lt;=(select `cust_warranty`.`id` from cust_warranty
-                    LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=#{person_type} AND `cust_warranty_person`.`card_type`=#{card_type} AND  `cust_warranty_person`.`card_code`=#{card_code}
-                    where `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND (`cust_warranty`.`warranty_status`=2 OR `cust_warranty`.`warranty_status`=3 OR `cust_warranty`.`warranty_status`=4 OR `cust_warranty`.`warranty_status`=5)
+                    LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
+                    where `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND (`cust_warranty`.`warranty_status`=2 OR `cust_warranty`.`warranty_status`=3 OR `cust_warranty`.`warranty_status`=4 OR `cust_warranty`.`warranty_status`=5) AND `cust_warranty_person`.`type`=#{person_type} AND `cust_warranty_person`.`card_type`=#{card_type} AND  `cust_warranty_person`.`card_code`=#{card_code}
                     ORDER BY `cust_warranty`.`id` DESC limit #{page.start},1
                     )
                 </when>
@@ -825,8 +825,8 @@
         select
         COUNT(`cust_warranty`.`id`)
         from cust_warranty
-        LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=#{person_type} AND `cust_warranty_person`.`card_type`=#{card_type} AND  `cust_warranty_person`.`card_code`=#{card_code}
-        where `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND (`cust_warranty`.`warranty_status`=2 OR `cust_warranty`.`warranty_status`=3 OR `cust_warranty`.`warranty_status`=4 OR `cust_warranty`.`warranty_status`=5)
+        LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
+        where `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND (`cust_warranty`.`warranty_status`=2 OR `cust_warranty`.`warranty_status`=3 OR `cust_warranty`.`warranty_status`=4 OR `cust_warranty`.`warranty_status`=5) AND `cust_warranty_person`.`type`=#{person_type} AND `cust_warranty_person`.`card_type`=#{card_type} AND  `cust_warranty_person`.`card_code`=#{card_code}
     </select>
 
 </mapper>

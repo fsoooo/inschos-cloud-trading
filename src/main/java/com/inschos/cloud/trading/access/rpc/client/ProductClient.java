@@ -141,4 +141,15 @@ public class ProductClient {
         }
     }
 
+    public ProductBean getProductByCode(String code) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getProductByCode(code) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
 }

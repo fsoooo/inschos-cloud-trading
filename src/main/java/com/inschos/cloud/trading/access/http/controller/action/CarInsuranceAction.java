@@ -1355,31 +1355,13 @@ public class CarInsuranceAction extends BaseAction {
                 }
             }
 
-            List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
-            ProductBean ciProduct = null;
-            if (ciList != null && !ciList.isEmpty()) {
-                for (ProductBean productBean : ciList) {
-                    if (productBean.code.contains(request.applyUnderwriting.insurerCode)) {
-                        ciProduct = productBean;
-                        break;
-                    }
-                }
-            }
+            ProductBean ciProduct = productClient.getProductByCode(request.applyUnderwriting.insurerCode + "_CAR_COMPULSORY");
 
             if (ciProduct == null) {
                 return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
             }
 
-            List<ProductBean> biList = productClient.getPlatformProductAll(actionBean.managerUuid, 43);
-            ProductBean biProduct = null;
-            if (biList != null && !biList.isEmpty()) {
-                for (ProductBean productBean : biList) {
-                    if (productBean.code.contains(request.applyUnderwriting.insurerCode)) {
-                        biProduct = productBean;
-                        break;
-                    }
-                }
-            }
+            ProductBean biProduct = productClient.getProductByCode(request.applyUnderwriting.insurerCode + "_CAR_BUSINESS");
 
             if (biProduct == null) {
                 return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
@@ -1430,7 +1412,7 @@ public class CarInsuranceAction extends BaseAction {
 
                 ciProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
                 ciProposal.warranty_status = warrantyStatus;
-                ciProposal.pay_category_id = "一次性缴费";
+                ciProposal.pay_category_id = String.valueOf(ciProduct.payCategoryId);
                 ciProposal.integral = String.valueOf(ciIntegral.doubleValue());
                 ciProposal.state = "1";
                 ciProposal.created_at = time;
@@ -1577,7 +1559,7 @@ public class CarInsuranceAction extends BaseAction {
 
                 biProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
                 biProposal.warranty_status = warrantyStatus;
-                biProposal.pay_category_id = "一次性缴费";
+                biProposal.pay_category_id = String.valueOf(biProduct.payCategoryId);
                 biProposal.integral = String.valueOf(biIntegral.doubleValue());
                 biProposal.state = "1";
                 biProposal.created_at = time;

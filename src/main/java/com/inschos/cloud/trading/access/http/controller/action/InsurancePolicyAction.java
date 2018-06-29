@@ -1621,4 +1621,19 @@ public class InsurancePolicyAction extends BaseAction {
         return custWarrantyCostListResult;
     }
 
+    public String setTest() {
+
+        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        insurancePolicyModel.page = setPage(null, "1", "10");
+
+        insurancePolicyModel.manager_uuid = "2";
+        insurancePolicyModel.person_type = "1";
+        insurancePolicyModel.card_code = "110101199312160523";
+        insurancePolicyModel.card_type = "1";
+
+        List<InsurancePolicyModel> insuranceRecordListByManagerUuid = insurancePolicyDao.findInsuranceRecordListByManagerUuid(insurancePolicyModel);
+
+        return JsonKit.bean2Json(insuranceRecordListByManagerUuid);
+    }
+
 }

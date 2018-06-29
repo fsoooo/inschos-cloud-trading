@@ -37,4 +37,6 @@ public interface ProductService {
 
     List<ProductBean> getListProduct(String name, String managerUuid);
 
+    ProductBean getProductByCode(String code);
+
 }
