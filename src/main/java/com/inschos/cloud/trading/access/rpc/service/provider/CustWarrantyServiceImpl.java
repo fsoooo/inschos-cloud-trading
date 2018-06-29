@@ -175,9 +175,11 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
                     policyModel.insured_name = sb.toString();
                 }
 
+                InsuranceParticipantModel policyHolderNameAndMobileByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(policyModel.warranty_uuid);
+
                 InsurancePolicy.GetInsurancePolicy insurancePolicy = new InsurancePolicy.GetInsurancePolicy(policyModel);
 
-                insurancePolicy.policyholderText = policyModel.policy_holder_name;
+                insurancePolicy.policyholderText = policyHolderNameAndMobileByWarrantyUuid.name;
                 insurancePolicy.insuredText = policyModel.insured_name;
 
                 insuranceRecord.data.add(insurancePolicy);
