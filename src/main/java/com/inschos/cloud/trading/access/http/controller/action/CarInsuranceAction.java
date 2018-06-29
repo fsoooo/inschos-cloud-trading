@@ -1457,6 +1457,7 @@ public class CarInsuranceAction extends BaseAction {
                 ciCustWarrantyCostModel.warranty_uuid = ciProposal.warranty_uuid;
                 ciCustWarrantyCostModel.pay_time = ciProposal.start_time;
                 ciCustWarrantyCostModel.phase = "1";
+                ciCustWarrantyCostModel.is_settlement = "0";
                 ciCustWarrantyCostModel.premium = request.applyUnderwriting.ciInsuredPremium;
                 ciCustWarrantyCostModel.tax_money = request.applyUnderwriting.ciCarShipTax;
                 ciCustWarrantyCostModel.pay_status = payState;
@@ -1600,6 +1601,7 @@ public class CarInsuranceAction extends BaseAction {
                 biCustWarrantyCostModel.warranty_uuid = biProposal.warranty_uuid;
                 biCustWarrantyCostModel.pay_time = biProposal.start_time;
                 biCustWarrantyCostModel.phase = "1";
+                biCustWarrantyCostModel.is_settlement = "0";
                 biCustWarrantyCostModel.premium = request.applyUnderwriting.biInsuredPremium;
                 biCustWarrantyCostModel.tax_money = request.applyUnderwriting.biCarShipTax;
                 biCustWarrantyCostModel.pay_status = payState;

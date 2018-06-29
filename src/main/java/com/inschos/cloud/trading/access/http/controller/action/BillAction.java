@@ -214,6 +214,7 @@ public class BillAction extends BaseAction {
                 custWarrantyCostModel.search = request.searchKey;
                 custWarrantyCostModel.searchType = request.searchType;
                 custWarrantyCostModel.ins_company_id = billByBillUuid.insurance_company_id;
+                custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
                 custWarrantyCostModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 Set<String> productIds = new HashSet<>();
@@ -263,6 +264,7 @@ public class BillAction extends BaseAction {
                 offlineInsurancePolicyModel.search = request.searchKey;
                 offlineInsurancePolicyModel.searchType = request.searchType;
                 offlineInsurancePolicyModel.insurance_company = company.name;
+                offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
                 offlineInsurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 List<OfflineInsurancePolicyModel> completePayListByManagerUuid1 = offlineInsurancePolicyDao.findCompletePayListByManagerUuid(offlineInsurancePolicyModel);
