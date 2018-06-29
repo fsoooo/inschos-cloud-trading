@@ -83,7 +83,7 @@ public class InsurancePolicyModel {
     /**
      * 分期方式
      */
-    public String by_stages_way;
+    public String pay_category_id;
     /**
      * 佣金 0表示未结算，1表示已结算
      */

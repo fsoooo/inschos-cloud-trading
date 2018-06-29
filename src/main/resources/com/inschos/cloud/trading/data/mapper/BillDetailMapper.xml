@@ -42,7 +42,7 @@
 
         `cust_warranty`.`id` online_id,`cust_warranty`.`pre_policy_no` online_pre_policy_no,`cust_warranty`.`warranty_code` online_warranty_code,`cust_warranty`.`account_uuid` online_account_uuid,
         `cust_warranty`.`agent_id` online_agent_id,`cust_warranty`.`channel_id` online_channel_id,`cust_warranty`.`plan_id` online_plan_id,`cust_warranty`.`product_id` online_product_id,`cust_warranty`.`start_time` online_start_time,`cust_warranty`.`end_time` online_end_time,
-        `cust_warranty`.`ins_company_id` online_ins_company_id,`cust_warranty`.`count` online_count,`cust_warranty`.`by_stages_way` online_by_stages_way,`cust_warranty`.`warranty_url` online_warranty_url,`cust_warranty`.`warranty_from` online_warranty_from,
+        `cust_warranty`.`ins_company_id` online_ins_company_id,`cust_warranty`.`count` online_count,`cust_warranty`.`pay_category_id` online_pay_category_id,`cust_warranty`.`warranty_url` online_warranty_url,`cust_warranty`.`warranty_from` online_warranty_from,
         `cust_warranty`.`type` online_type,`cust_warranty`.`warranty_status` online_warranty_status,`cust_warranty`.`created_at` online_created_at,`cust_warranty`.`updated_at` online_updated_at,
 
         `cust_warranty_cost`.`pay_time` online_pay_time,`cust_warranty_cost`.`phase` online_phase,`cust_warranty_cost`.`tax_money` online_tax_money,`cust_warranty_cost`.`actual_pay_time` online_actual_pay_time,`cust_warranty_cost`.`premium` online_premium,
@@ -104,7 +104,7 @@
 
                     `cust_warranty`.`id` ,`cust_warranty`.`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`account_uuid` ,
                     `cust_warranty`.`agent_id` ,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time` ,`cust_warranty`.`end_time` ,
-                    `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`warranty_url` ,`cust_warranty`.`warranty_from` ,
+                    `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,`cust_warranty`.`warranty_url` ,`cust_warranty`.`warranty_from` ,
                     `cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`created_at`,`cust_warranty`.`updated_at` ,
 
                     `cust_warranty_cost`.`pay_time`,`cust_warranty_cost`.`phase`,`cust_warranty_cost`.`tax_money`,`cust_warranty_cost`.`actual_pay_time` ,`cust_warranty_cost`.`premium`,
@@ -151,7 +151,7 @@
 
             `cust_warranty`.`id` ,`cust_warranty`.`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`account_uuid` ,
             `cust_warranty`.`agent_id` ,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time` ,`cust_warranty`.`end_time` ,
-            `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`warranty_url` ,`cust_warranty`.`warranty_from` ,
+            `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,`cust_warranty`.`warranty_url` ,`cust_warranty`.`warranty_from` ,
             `cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`created_at`,`cust_warranty`.`updated_at` ,
 
             `cust_warranty_cost`.`pay_time`,`cust_warranty_cost`.`phase`,`cust_warranty_cost`.`tax_money`,`cust_warranty_cost`.`actual_pay_time` ,`cust_warranty_cost`.`premium`,

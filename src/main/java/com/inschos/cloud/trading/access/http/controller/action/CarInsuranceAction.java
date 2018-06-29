@@ -1430,7 +1430,7 @@ public class CarInsuranceAction extends BaseAction {
 
                 ciProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
                 ciProposal.warranty_status = warrantyStatus;
-                ciProposal.by_stages_way = "一次性缴费";
+                ciProposal.pay_category_id = "一次性缴费";
                 ciProposal.integral = String.valueOf(ciIntegral.doubleValue());
                 ciProposal.state = "1";
                 ciProposal.created_at = time;
@@ -1577,7 +1577,7 @@ public class CarInsuranceAction extends BaseAction {
 
                 biProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
                 biProposal.warranty_status = warrantyStatus;
-                biProposal.by_stages_way = "一次性缴费";
+                biProposal.pay_category_id = "一次性缴费";
                 biProposal.integral = String.valueOf(biIntegral.doubleValue());
                 biProposal.state = "1";
                 biProposal.created_at = time;

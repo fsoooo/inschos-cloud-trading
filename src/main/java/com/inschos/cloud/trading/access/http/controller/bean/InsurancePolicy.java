@@ -324,7 +324,7 @@ public class InsurancePolicy {
             this.term = start + "-" + end;
             this.insCompanyId = model.ins_company_id;
             this.count = model.count;
-            this.byStagesWay = model.by_stages_way;
+            this.byStagesWay = model.pay_category_id;
             this.isSettlement = model.is_settlement;
             this.isSettlementText = model.isSettlementText(isSettlement);
             this.warrantyUrl = model.warranty_url;

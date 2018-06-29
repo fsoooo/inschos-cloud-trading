@@ -292,7 +292,7 @@ public class BillDetailModel {
     /**
      * 分期方式
      */
-    public String online_by_stages_way;
+    public String online_pay_category_id;
 
     /**
      * 电子保单下载地址

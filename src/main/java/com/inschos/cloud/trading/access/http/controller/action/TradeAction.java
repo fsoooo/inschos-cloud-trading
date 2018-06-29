@@ -122,18 +122,18 @@ public class TradeAction extends BaseAction {
 
                     InsurancePolicyModel policyModel = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(firstPhase.warranty_uuid);
 
-                    if(policyModel!=null){
+                    if (policyModel != null) {
                         ProductBean product = productClient.getProduct(Long.valueOf(policyModel.product_id));
-                        if(product!=null){
-                            RpcResponse<RspPayBean> rpcResponse = insureServiceClient.pay(payBean,String.valueOf(product.id));
+                        if (product != null) {
+                            RpcResponse<RspPayBean> rpcResponse = insureServiceClient.pay(payBean, String.valueOf(product.id));
 
-                            if (rpcResponse==null || rpcResponse.code != RpcResponse.CODE_SUCCESS) {
+                            if (rpcResponse == null || rpcResponse.code != RpcResponse.CODE_SUCCESS) {
                                 firstPhase.pay_status = CustWarrantyCostModel.PAY_STATUS_FAILED;
                                 firstPhase.updated_at = TimeKit.curTimeMillis2Str();
                                 custWarrantyCostDao.updatePayStatusByWarrantyUuidPhase(firstPhase);
                                 msg = null;
                                 // TODO: 2018/6/25 修改请求信息
-                            }else{
+                            } else {
                                 isOk = true;
                                 msg = rpcResponse.message;
                             }
@@ -141,20 +141,20 @@ public class TradeAction extends BaseAction {
                     }
 
                 }
-                if(isOk){
+                if (isOk) {
                     response.data = new TradeBean.InsureRspData();
                     response.data.status = CustWarrantyCostModel.PAY_STATUS_WAIT;
                     response.data.statusTxt = firstPhase.payStatusText(CustWarrantyCostModel.PAY_STATUS_WAIT);
                     response.data.warrantyUuid = firstPhase.warranty_uuid;
                     response.data.payNo = request.payNo;
                     return json(BaseResponse.CODE_SUCCESS, "缴费已发起", response);
-                }else{
+                } else {
                     response.data = new TradeBean.InsureRspData();
                     response.data.status = CustWarrantyCostModel.PAY_STATUS_FAILED;
                     response.data.statusTxt = firstPhase.payStatusText(response.data.status);
                     response.data.warrantyUuid = firstPhase.warranty_uuid;
                     response.data.payNo = request.payNo;
-                    return json(BaseResponse.CODE_FAILURE, msg!=null?msg:"缴费失败", response);
+                    return json(BaseResponse.CODE_FAILURE, msg != null ? msg : "缴费失败", response);
                 }
 
             }
@@ -277,7 +277,7 @@ public class TradeAction extends BaseAction {
 //            payCategory.name = "趸缴";
 //        }
         if (payCategory != null) {
-            policyModel.by_stages_way = payCategory.name;
+            policyModel.pay_category_id = String.valueOf(payCategory.id);
 
 
             InsureBean insureBean = tranBean(request);
@@ -319,10 +319,10 @@ public class TradeAction extends BaseAction {
 
             if (!StringKit.isEmpty(request.policyholder.area)) {
                 String[] split = StringKit.split(request.policyholder.area, "-");
-                if(split!=null){
-                    if(split.length>0){
+                if (split != null) {
+                    if (split.length > 0) {
                         insureBean.province = split[0];
-                        if(split.length>1){
+                        if (split.length > 1) {
                             insureBean.city = split[1];
                         }
                     }
@@ -335,7 +335,7 @@ public class TradeAction extends BaseAction {
 
             TradeBean.InsureRspData data = new TradeBean.InsureRspData();
             if (method == 1) {
-                RpcResponse<RspInsureBean> rpcResponse = insureServiceClient.insure(insureBean,request.productId);
+                RpcResponse<RspInsureBean> rpcResponse = insureServiceClient.insure(insureBean, request.productId);
 
 
                 if (rpcResponse.data != null) {
@@ -373,7 +373,7 @@ public class TradeAction extends BaseAction {
                     }
                 }
             } else {
-                RpcResponse<RspPreInsureBean> rpcResponse = insureServiceClient.preInsure(insureBean,request.productId);
+                RpcResponse<RspPreInsureBean> rpcResponse = insureServiceClient.preInsure(insureBean, request.productId);
 
 
             }
