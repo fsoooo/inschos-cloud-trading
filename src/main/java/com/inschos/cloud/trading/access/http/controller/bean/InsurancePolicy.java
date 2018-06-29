@@ -194,7 +194,7 @@ public class InsurancePolicy {
         public String payCategoryName;
 
         //佣金 0表示未结算，1表示已结算
-        public String isSettlement;
+        // public String isSettlement;
 
         //佣金 0表示未结算，1表示已结算（显示用）
         public String isSettlementText;
@@ -327,8 +327,8 @@ public class InsurancePolicy {
             this.insCompanyId = model.ins_company_id;
             this.count = model.count;
             this.payCategoryId = model.pay_category_id;
-            this.isSettlement = model.is_settlement;
-            this.isSettlementText = model.isSettlementText(isSettlement);
+//            this.isSettlement = model.is_settlement;
+//            this.isSettlementText = model.isSettlementText(isSettlement);
             this.warrantyUrl = model.warranty_url;
             this.warrantyFrom = model.warranty_from;
             this.warrantyFromText = model.warrantyFromText(warrantyFrom);
