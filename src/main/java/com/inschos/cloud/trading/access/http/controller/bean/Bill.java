@@ -26,7 +26,7 @@ public class Bill {
         public String billName;
         @CheckParams(hintName = "保险公司")
         public String insuranceCompanyId;
-        public String principalId;
+        public String principal;
         public List<BillInsurancePolicy> warrantyList;
         public String remark;
     }
@@ -202,8 +202,7 @@ public class Bill {
             this.billName = model.bill_name;
             this.insuranceCompanyId = model.insurance_company_id;
             this.insuranceCompanyName = model.insurance_company_name;
-            this.principal = model.id;
-            this.principalName = model.principal_name;
+            this.principal = model.principal;
             this.isSettlement = model.is_settlement;
             if (!StringKit.isEmpty(model.is_settlement)) {
                 this.isSettlementText = model.isSettlementText(model.is_settlement);

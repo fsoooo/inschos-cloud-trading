@@ -1,14 +1,12 @@
 package com.inschos.cloud.trading.access.http.controller.action;
 
 import com.inschos.cloud.trading.access.http.controller.bean.*;
-import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
 import com.inschos.cloud.trading.access.rpc.bean.InsuranceCompanyBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
 import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.access.rpc.client.CompanyClient;
 import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
-import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.BillDao;
@@ -86,7 +84,7 @@ public class BillAction extends BaseAction {
 
         billModel.bill_name = request.billName;
         billModel.insurance_company_id = request.insuranceCompanyId;
-        billModel.principal = request.principalId;
+        billModel.principal = request.principal;
         billModel.remark = request.remark;
         billModel.created_at = time;
         billModel.updated_at = time;
@@ -353,7 +351,7 @@ public class BillAction extends BaseAction {
         long total = billDao.findBillCountByManagerUuid(billModel);
         response.data = new ArrayList<>();
 
-        Map<String, String> agentName = new HashMap<>();
+//        Map<String, String> agentName = new HashMap<>();
         Map<String, String> companyName = new HashMap<>();
 
         if (billByManagerUuid != null && !billByManagerUuid.isEmpty()) {
@@ -414,6 +412,14 @@ public class BillAction extends BaseAction {
 
         if (billByBillUuid == null) {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
+        }
+
+        if (StringKit.isInteger(billByBillUuid.insurance_company_id)) {
+            InsuranceCompanyBean company = companyClient.getCompany(Long.valueOf(billByBillUuid.insurance_company_id));
+
+            if (company != null) {
+                billByBillUuid.insurance_company_name = company.name;
+            }
         }
 
         response.data = new Bill.BillBean(billByBillUuid);
