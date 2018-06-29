@@ -1424,6 +1424,13 @@ public class InsurancePolicyAction extends BaseAction {
                 product = productClient.getProduct(Long.valueOf(insurancePolicyDetailByWarrantyCode.product_id));
             }
 
+            if (StringKit.isInteger(insurancePolicyDetailByWarrantyCode.pay_category_id)) {
+                ProductPayCategoryBean productPayCategory = productClient.getProductPayCategory(Long.valueOf(insurancePolicyDetailByWarrantyCode.pay_category_id));
+                if (productPayCategory != null) {
+                    response.data.byStagesWay = productPayCategory.name;
+                }
+            }
+
             if (insuranceParticipantByWarrantyCode != null && !insuranceParticipantByWarrantyCode.isEmpty()) {
                 if (product != null) {
                     response.data.productName = product.name;

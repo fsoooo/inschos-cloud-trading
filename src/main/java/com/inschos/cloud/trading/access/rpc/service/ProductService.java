@@ -39,4 +39,6 @@ public interface ProductService {
 
     ProductBean getProductByCode(String code);
 
+    ProductPayCategoryBean getProductPayCategory(long id);
+
 }

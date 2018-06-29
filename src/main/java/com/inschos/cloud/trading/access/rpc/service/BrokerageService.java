@@ -13,4 +13,5 @@ public interface BrokerageService {
     String getBrokerageByChannelIdForManagerSystem(ChannelIdBean bean);
 
     String getIncomeByManagerUuidAndAccountUuidForManagerSystem(IncomeBean bean);
+
 }
