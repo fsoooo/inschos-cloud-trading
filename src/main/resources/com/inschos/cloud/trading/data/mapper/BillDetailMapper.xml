@@ -194,7 +194,6 @@
                     </otherwise>
                 </choose>
             </if>
-            GROUP BY `cust_warranty_bill_detail`.`id`
     </select>
 
 </mapper>

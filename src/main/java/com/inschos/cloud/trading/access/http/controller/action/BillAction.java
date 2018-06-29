@@ -1,9 +1,6 @@
 package com.inschos.cloud.trading.access.http.controller.action;
 
-import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
-import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
-import com.inschos.cloud.trading.access.http.controller.bean.Bill;
-import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
+import com.inschos.cloud.trading.access.http.controller.bean.*;
 import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
 import com.inschos.cloud.trading.access.rpc.bean.InsuranceCompanyBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
@@ -11,6 +8,7 @@ import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.access.rpc.client.CompanyClient;
 import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
+import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.BillDao;
@@ -74,6 +72,11 @@ public class BillAction extends BaseAction {
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        BillModel billByBillName = billDao.findBillByBillName(request.billName);
+        if (billByBillName != null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单'" + request.billName + "'已存在", response);
         }
 
         String time = String.valueOf(System.currentTimeMillis());
@@ -392,6 +395,30 @@ public class BillAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取结算单列表成功", response);
     }
 
+    public String getBillInfo(ActionBean actionBean) {
+        Bill.GetBillInfoRequest request = JsonKit.json2Bean(actionBean.body, Bill.GetBillInfoRequest.class);
+        Bill.GetBillInfoResponse response = new Bill.GetBillInfoResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+
+        if (billByBillUuid == null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
+        }
+
+        response.data = new Bill.BillBean(billByBillUuid);
+
+        return json(BaseResponse.CODE_SUCCESS, "获取结算单信息成功", response);
+    }
+
     public String getBillDetail(ActionBean actionBean) {
         Bill.GetBillDetailRequest request = JsonKit.json2Bean(actionBean.body, Bill.GetBillDetailRequest.class);
         Bill.GetBillDetailResponse response = new Bill.GetBillDetailResponse();
@@ -403,6 +430,12 @@ public class BillAction extends BaseAction {
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+
+        if (billByBillUuid == null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
         }
 
         if (StringKit.isEmpty(request.pageSize)) {
@@ -547,76 +580,6 @@ public class BillAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取下载地址成功", response);
     }
 
-    public String clearingBill(ActionBean actionBean) {
-        Bill.ClearingBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.ClearingBillRequest.class);
-        Bill.ClearingBillResponse response = new Bill.ClearingBillResponse();
-
-        if (request == null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
-        }
-
-        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
-        if (entries != null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
-        }
-
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
-
-        if (billByBillUuid == null) {
-            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
-        }
-
-        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
-            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能重复结算", response);
-        }
-
-        int i = billDao.clearingBill(billByBillUuid);
-
-        String str;
-        if (i > 0) {
-            str = json(BaseResponse.CODE_SUCCESS, "结算成功", response);
-        } else {
-            str = json(BaseResponse.CODE_FAILURE, "结算失败", response);
-        }
-
-        return str;
-    }
-
-    public String cancelClearingBill(ActionBean actionBean) {
-        Bill.CancelClearingBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.CancelClearingBillRequest.class);
-        Bill.CancelClearingBillResponse response = new Bill.CancelClearingBillResponse();
-
-        if (request == null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
-        }
-
-        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
-        if (entries != null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
-        }
-
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
-
-        if (billByBillUuid == null) {
-            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
-        }
-
-        if (!StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
-            return json(BaseResponse.CODE_FAILURE, "该结算单未结算，不能执行取消结算操作", response);
-        }
-
-        int i = billDao.cancelClearingBill(billByBillUuid);
-
-        String str;
-        if (i > 0) {
-            str = json(BaseResponse.CODE_SUCCESS, "取消结算成功", response);
-        } else {
-            str = json(BaseResponse.CODE_FAILURE, "取消结算失败", response);
-        }
-
-        return str;
-    }
-
     public String deleteBill(ActionBean actionBean) {
         Bill.DeleteBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.DeleteBillRequest.class);
         Bill.DeleteBillResponse response = new Bill.DeleteBillResponse();
@@ -730,6 +693,77 @@ public class BillAction extends BaseAction {
 
         return str;
     }
+
+
+//    public String clearingBill(ActionBean actionBean) {
+//        Bill.ClearingBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.ClearingBillRequest.class);
+//        Bill.ClearingBillResponse response = new Bill.ClearingBillResponse();
+//
+//        if (request == null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+//        }
+//
+//        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+//        if (entries != null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+//        }
+//
+//        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+//
+//        if (billByBillUuid == null) {
+//            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
+//        }
+//
+//        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
+//            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能重复结算", response);
+//        }
+//
+//        int i = billDao.clearingBill(billByBillUuid);
+//
+//        String str;
+//        if (i > 0) {
+//            str = json(BaseResponse.CODE_SUCCESS, "结算成功", response);
+//        } else {
+//            str = json(BaseResponse.CODE_FAILURE, "结算失败", response);
+//        }
+//
+//        return str;
+//    }
+//
+//    public String cancelClearingBill(ActionBean actionBean) {
+//        Bill.CancelClearingBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.CancelClearingBillRequest.class);
+//        Bill.CancelClearingBillResponse response = new Bill.CancelClearingBillResponse();
+//
+//        if (request == null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+//        }
+//
+//        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+//        if (entries != null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+//        }
+//
+//        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+//
+//        if (billByBillUuid == null) {
+//            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
+//        }
+//
+//        if (!StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
+//            return json(BaseResponse.CODE_FAILURE, "该结算单未结算，不能执行取消结算操作", response);
+//        }
+//
+//        int i = billDao.cancelClearingBill(billByBillUuid);
+//
+//        String str;
+//        if (i > 0) {
+//            str = json(BaseResponse.CODE_SUCCESS, "取消结算成功", response);
+//        } else {
+//            str = json(BaseResponse.CODE_FAILURE, "取消结算失败", response);
+//        }
+//
+//        return str;
+//    }
 
     private List<Bill.BillInsurancePolicy> dealBillDetailModelList(List<BillDetailModel> list) {
         List<Bill.BillInsurancePolicy> result = new ArrayList<>();

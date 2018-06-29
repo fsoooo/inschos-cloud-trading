@@ -73,7 +73,17 @@ public class Bill {
         public List<BillBean> data;
     }
 
+    public static class GetBillInfoRequest extends BaseRequest {
+        @CheckParams(hintName = "结算单uuid")
+        public String billUuid;
+    }
+
+    public static class GetBillInfoResponse extends BaseResponse {
+        public BillBean data;
+    }
+
     public static class GetBillDetailRequest extends BaseRequest {
+        @CheckParams(hintName = "结算单uuid")
         public String billUuid;
         // 1-保单号，2-保险产品，3-被保险人
         public String searchType;

@@ -23,6 +23,8 @@ public interface BillMapper {
 
     BillModel findBillByBillUuid(String bill_uuid);
 
+    BillModel findBillByBillName(String bill_name);
+
     List<BillModel> findBillByManagerUuid(BillModel billModel);
 
     long findBillCountByManagerUuid(BillModel billModel);

@@ -363,6 +363,10 @@ public class BillDao extends BaseDao {
         return billMapper.findBillByBillUuid(bill_uuid);
     }
 
+    public BillModel findBillByBillName(String bill_name){
+        return billMapper.findBillByBillName(bill_name);
+    }
+
     public List<BillModel> findBillByManagerUuid(BillModel billModel) {
         return billMapper.findBillByManagerUuid(billModel);
     }
