@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 作者：zhangyunhe
  */
 @Controller
-@RequestMapping("/trade/")
+@RequestMapping("/web/ohins/")
 public class OtherInsuranceController {
 
     @Autowired

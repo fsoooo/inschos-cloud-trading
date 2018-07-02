@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 作者：zhangyunhe
  */
 @Controller
-@RequestMapping("/")
+@RequestMapping("/web")
 public class TradeController {
 
     @Autowired
