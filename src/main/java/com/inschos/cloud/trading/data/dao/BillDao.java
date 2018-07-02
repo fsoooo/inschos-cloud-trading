@@ -332,18 +332,35 @@ public class BillDao extends BaseDao {
 
         if (list != null && !list.isEmpty()) {
             for (BillDetailModel billDetail : list) {
-                i = billDetailMapper.deleteBillDetailById(billDetail.id);
-
-                if (i <= 0) {
-                    rollBack();
-                    return i;
-                }
 
                 if (StringKit.equals(billDetail.type, BillDetailModel.TYPE_ON_LINE)) {
+
                     custWarrantyCostModel.id = billDetail.cost_id;
+
+                    if (StringKit.equals(custWarrantyCostModel.is_settlement,"0")) {
+                        i = billDetailMapper.deleteBillDetailById(billDetail.id);
+
+                        if (i <= 0) {
+                            rollBack();
+                            return i;
+                        }
+                    }
+
+
                     i = custWarrantyCostMapper.updateSettlementAndBillUuidByCostId(custWarrantyCostModel);
                 } else if (StringKit.equals(billDetail.type, BillDetailModel.TYPE_OFF_LINE)) {
+
                     offlineInsurancePolicyModel.warranty_uuid = billDetail.warranty_uuid;
+
+                    if (StringKit.equals(offlineInsurancePolicyModel.is_settlement,"0")) {
+                        i = billDetailMapper.deleteBillDetailById(billDetail.id);
+
+                        if (i <= 0) {
+                            rollBack();
+                            return i;
+                        }
+                    }
+
                     i = offlineInsurancePolicyMapper.updateSettlementAndBillUuidByWarrantyUuid(offlineInsurancePolicyModel);
                 } else {
                     i = -1;

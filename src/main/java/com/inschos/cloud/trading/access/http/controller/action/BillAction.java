@@ -978,6 +978,7 @@ public class BillAction extends BaseAction {
                 billDetailModel.type = billInsurancePolicy.warrantyType;
                 billDetailModel.created_at = time;
                 billDetailModel.updated_at = time;
+                dealBillInsurancePolicyList.result.add(billDetailModel);
                 BigDecimal brokerage;
 
                 if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_ON_LINE)) {
