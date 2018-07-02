@@ -255,7 +255,7 @@ public class OfflineInsurancePolicyModel {
 
         if (pay_status == null) {
             flag = false;
-            reasonList.add(new ErrorReason("支付状态不能为空", "brokerage"));
+            reasonList.add(new ErrorReason("支付状态不能为空", "payStatus"));
         } else {
             switch (pay_status) {
                 case "未支付":
@@ -265,7 +265,7 @@ public class OfflineInsurancePolicyModel {
                     pay_status = CustWarrantyCostModel.PAY_STATUS_SUCCESS;
                     break;
                 default:
-                    reasonList.add(new ErrorReason("支付状态只能为：未支付/已支付", "brokerage"));
+                    reasonList.add(new ErrorReason("支付状态只能为：未支付/已支付", "payStatus"));
                     break;
             }
         }
