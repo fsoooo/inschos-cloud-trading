@@ -1,10 +1,8 @@
 package com.inschos.cloud.trading.model;
 
-import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.TimeKit;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 

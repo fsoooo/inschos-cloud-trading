@@ -797,7 +797,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         // actionBean.managerUuid
 
-        String fileUrl = fileClient.getFileUrl("线下单模板20180622线下单模板20180622");
+        String fileUrl = fileClient.getFileUrl("OFFLINE_20180702OFFLINE_20180702");
 
         InputStream inputStream = HttpClientKit.downloadFile(fileUrl);
 
