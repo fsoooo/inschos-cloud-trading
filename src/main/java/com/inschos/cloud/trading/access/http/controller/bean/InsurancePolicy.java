@@ -1261,6 +1261,8 @@ public class InsurancePolicy {
         public String updatedAtText;
 
         // public String reason;
+        public String isSettlement;
+        public String isSettlementText;
 
         public String reason;
         public List<OfflineInsurancePolicyModel.ErrorReason> reasonList;
@@ -1345,6 +1347,9 @@ public class InsurancePolicy {
                 }
                 this.reason = sb.toString();
             }
+            this.isSettlement = offlineInsurancePolicyModel.is_settlement;
+            BillModel billModel = new BillModel();
+            this.isSettlementText = billModel.isSettlementText(offlineInsurancePolicyModel.is_settlement);
         }
 
     }

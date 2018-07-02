@@ -1323,9 +1323,9 @@ public class InsurancePolicyAction extends BaseAction {
                     if (split.length > 1 && needLogo) {
                         Boolean aBoolean1 = file.get(split[0]);
                         if (aBoolean1 == null) {
-                            String fileUrl1 = fileClient.getFileUrl("property_key_" + split[0]);
-                            fileUrl.put(split[0], fileUrl1);
-                            file.put(split[0], !StringKit.isEmpty(fileUrl1));
+                            url = fileClient.getFileUrl("property_key_" + split[0]);
+                            fileUrl.put(split[0], url);
+                            file.put(split[0], !StringKit.isEmpty(url));
                         } else {
                             if (aBoolean1) {
                                 url = fileUrl.get(split[0]);
