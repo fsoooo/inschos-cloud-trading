@@ -32,7 +32,7 @@ public class Bill {
     }
 
     public static class CreateBillResponse extends BaseResponse {
-
+        public String data;
     }
 
     public static class AddBillDetailRequest extends BaseRequest {

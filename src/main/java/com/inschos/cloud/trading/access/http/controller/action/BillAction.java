@@ -107,6 +107,7 @@ public class BillAction extends BaseAction {
 
         String str;
         if (i > 0) {
+            response.data = billModel.id;
             str = json(BaseResponse.CODE_SUCCESS, "添加结算单成功", response);
         } else {
             str = json(BaseResponse.CODE_FAILURE, "添加结算单失败", response);
