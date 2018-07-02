@@ -607,9 +607,9 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
         }
 
-        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
-            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能删除修改明细信息", response);
-        }
+//        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
+//            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能删除修改明细信息", response);
+//        }
 
         int i = billDao.deleteBill(billByBillUuid);
 
@@ -646,9 +646,9 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
         }
 
-        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
-            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能删除修改明细信息", response);
-        }
+//        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
+//            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能删除修改明细信息", response);
+//        }
 
         BigDecimal bigDecimal = new BigDecimal(0);
         List<BillDetailModel> list = new ArrayList<>();
