@@ -598,11 +598,33 @@
                     <if test="type!=null and type!=''">
                         and `cust_warranty`.`type`=#{type}
                     </if>
-                    <if test="start_time!=null and start_time!=''">
-                        and `cust_warranty`.`created_at`&gt;=#{start_time}
-                    </if>
-                    <if test="end_time!=null and end_time!=''">
-                        and `cust_warranty`.`created_at`&lt;#{end_time}
+                    <if test="time_type!=null and time_type!=''">
+                        <choose>
+                            <when test='time_type=="1"'>
+                                <if test="start_time!=null and start_time!=''">
+                                    and `cust_warranty`.`created_at`&gt;=#{start_time}
+                                </if>
+                                <if test="end_time!=null and end_time!=''">
+                                    and `cust_warranty`.`created_at`&lt;#{end_time}
+                                </if>
+                            </when>
+                            <when test='time_type=="2"'>
+                                <if test="start_time!=null and start_time!=''">
+                                    and `cust_warranty`.`start_time`&gt;=#{start_time}
+                                </if>
+                                <if test="end_time!=null and end_time!=''">
+                                    and `cust_warranty`.`start_time`&lt;#{end_time}
+                                </if>
+                            </when>
+                            <when test='time_type=="3"'>
+                                <if test="start_time!=null and start_time!=''">
+                                    and `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time}
+                                </if>
+                                <if test="end_time!=null and end_time!=''">
+                                    and `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time}
+                                </if>
+                            </when>
+                        </choose>
                     </if>
                     ORDER BY `cust_warranty`.`id` DESC limit #{page.start},1
                     )
@@ -650,11 +672,33 @@
             <if test="type!=null and type!=''">
                 and `cust_warranty`.`type`=#{type}
             </if>
-            <if test="start_time!=null and start_time!=''">
-                and `cust_warranty`.`created_at`&gt;=#{start_time}
-            </if>
-            <if test="end_time!=null and end_time!=''">
-                and `cust_warranty`.`created_at`&lt;#{end_time}
+            <if test="time_type!=null and time_type!=''">
+                <choose>
+                    <when test='time_type=="1"'>
+                        <if test="start_time!=null and start_time!=''">
+                            and `cust_warranty`.`created_at`&gt;=#{start_time}
+                        </if>
+                        <if test="end_time!=null and end_time!=''">
+                            and `cust_warranty`.`created_at`&lt;#{end_time}
+                        </if>
+                    </when>
+                    <when test='time_type=="2"'>
+                        <if test="start_time!=null and start_time!=''">
+                            and `cust_warranty`.`start_time`&gt;=#{start_time}
+                        </if>
+                        <if test="end_time!=null and end_time!=''">
+                            and `cust_warranty`.`start_time`&lt;#{end_time}
+                        </if>
+                    </when>
+                    <when test='time_type=="3"'>
+                        <if test="start_time!=null and start_time!=''">
+                            and `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time}
+                        </if>
+                        <if test="end_time!=null and end_time!=''">
+                            and `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time}
+                        </if>
+                    </when>
+                </choose>
             </if>
             ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
         </where>
@@ -710,11 +754,33 @@
         <if test="type!=null and type!=''">
             AND `cust_warranty`.`type`=#{type}
         </if>
-        <if test="start_time!=null and start_time!=''">
-            AND `cust_warranty`.`created_at`&gt;=#{start_time}
-        </if>
-        <if test="end_time!=null and end_time!=''">
-            AND `cust_warranty`.`created_at`&lt;#{end_time}
+        <if test="time_type!=null and time_type!=''">
+            <choose>
+                <when test='time_type=="1"'>
+                    <if test="start_time!=null and start_time!=''">
+                        and `cust_warranty`.`created_at`&gt;=#{start_time}
+                    </if>
+                    <if test="end_time!=null and end_time!=''">
+                        and `cust_warranty`.`created_at`&lt;#{end_time}
+                    </if>
+                </when>
+                <when test='time_type=="2"'>
+                    <if test="start_time!=null and start_time!=''">
+                        and `cust_warranty`.`start_time`&gt;=#{start_time}
+                    </if>
+                    <if test="end_time!=null and end_time!=''">
+                        and `cust_warranty`.`start_time`&lt;#{end_time}
+                    </if>
+                </when>
+                <when test='time_type=="3"'>
+                    <if test="start_time!=null and start_time!=''">
+                        and `cust_warranty_cost`.`actual_pay_time`&gt;=#{start_time}
+                    </if>
+                    <if test="end_time!=null and end_time!=''">
+                        and `cust_warranty_cost`.`actual_pay_time`&lt;#{end_time}
+                    </if>
+                </when>
+            </choose>
         </if>
     </select>
 
