@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by IceAnt on 2018/5/16.
  */
 @Controller
-@RequestMapping("/stat")
+@RequestMapping("/web/stat")
 public class StatisticController {
 
     @Autowired

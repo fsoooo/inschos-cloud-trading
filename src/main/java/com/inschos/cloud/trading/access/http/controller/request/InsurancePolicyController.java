@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 作者：zhangyunhe
  */
 @Controller
-@RequestMapping("/trade/")
+@RequestMapping("/web/trade/")
 public class InsurancePolicyController {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
