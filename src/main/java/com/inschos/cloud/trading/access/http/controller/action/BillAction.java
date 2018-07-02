@@ -48,9 +48,6 @@ public class BillAction extends BaseAction {
     private OfflineInsurancePolicyDao offlineInsurancePolicyDao;
 
     @Autowired
-    private AgentClient agentClient;
-
-    @Autowired
     private ProductClient productClient;
 
     @Autowired
@@ -184,6 +181,28 @@ public class BillAction extends BaseAction {
             }
         }
 
+        if (StringKit.isEmpty(request.timeType)) {
+            request.startTime = "";
+            request.endTime = "";
+        } else {
+            switch (request.timeType) {
+                case "1":
+                case "2":
+                    if (!StringKit.isInteger(request.startTime) || !StringKit.isInteger(request.endTime)) {
+                        return json(BaseResponse.CODE_FAILURE, "时间错误", response);
+                    }
+
+                    if (Long.valueOf(request.startTime) >= Long.valueOf(request.endTime)) {
+                        return json(BaseResponse.CODE_FAILURE, "开始时间不能晚于或等于结束时间", response);
+                    }
+
+                    break;
+                default:
+                    return json(BaseResponse.CODE_FAILURE, "时间类型不正确", response);
+            }
+        }
+
+
         BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
 
         if (billByBillUuid == null) {
@@ -214,6 +233,9 @@ public class BillAction extends BaseAction {
                 custWarrantyCostModel.searchType = request.searchType;
                 custWarrantyCostModel.ins_company_id = billByBillUuid.insurance_company_id;
                 custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
+                custWarrantyCostModel.time_type = request.timeType;
+                custWarrantyCostModel.start_time = request.startTime;
+                custWarrantyCostModel.end_time = request.endTime;
                 custWarrantyCostModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 Set<String> productIds = new HashSet<>();
@@ -264,6 +286,9 @@ public class BillAction extends BaseAction {
                 offlineInsurancePolicyModel.searchType = request.searchType;
                 offlineInsurancePolicyModel.insurance_company = company.name;
                 offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
+                offlineInsurancePolicyModel.time_type = request.timeType;
+                offlineInsurancePolicyModel.start_time = request.startTime;
+                offlineInsurancePolicyModel.end_time = request.endTime;
                 offlineInsurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 List<OfflineInsurancePolicyModel> completePayListByManagerUuid1 = offlineInsurancePolicyDao.findCompletePayListByManagerUuid(offlineInsurancePolicyModel);

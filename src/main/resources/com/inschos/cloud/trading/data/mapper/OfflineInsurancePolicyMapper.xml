@@ -202,6 +202,19 @@
                             </otherwise>
                         </choose>
                     </if>
+                    <if test="start_time!=null and start_time!='' and end_time!=null and end_time!=''">
+                        <choose>
+                            <when test='time_type=="1"'>
+                                and `offline_cust_warranty`.`order_time`&lt;=#{start_time} AND `offline_cust_warranty`.`order_time`&gt;#{end_time}
+                            </when>
+                            <when test='time_type=="2"'>
+                                and `offline_cust_warranty`.`start_time`&lt;=#{start_time} AND `offline_cust_warranty`.`start_time`&gt;#{end_time}
+                            </when>
+                            <otherwise>
+                                and 1=1
+                            </otherwise>
+                        </choose>
+                    </if>
                     ORDER BY `id` DESC limit #{page.start},1
                     )
                 </when>
@@ -223,6 +236,19 @@
                     </otherwise>
                 </choose>
             </if>
+            <if test="start_time!=null and start_time!='' and end_time!=null and end_time!=''">
+                <choose>
+                    <when test='time_type=="1"'>
+                        and `offline_cust_warranty`.`order_time`&lt;=#{start_time} AND `offline_cust_warranty`.`order_time`&gt;#{end_time}
+                    </when>
+                    <when test='time_type=="2"'>
+                        and `offline_cust_warranty`.`start_time`&lt;=#{start_time} AND `offline_cust_warranty`.`start_time`&gt;#{end_time}
+                    </when>
+                    <otherwise>
+                        and 1=1
+                    </otherwise>
+                </choose>
+            </if>
             ORDER BY `cust_warranty`.`id` DESC limit #{page.offset}
         </where>
     </select>
@@ -233,6 +259,19 @@
         COUNT(id)
         from offline_cust_warranty
         where `warranty_uuid`=#{warranty_uuid} AND `state`=1 AND `insurance_company`=#{insurance_company} AND `is_settlement`=0 AND (`bill_uuid` is NULL OR `bill_uuid`='')
+        <if test="start_time!=null and start_time!='' and end_time!=null and end_time!=''">
+            <choose>
+                <when test='time_type=="1"'>
+                    and `offline_cust_warranty`.`order_time`&lt;=#{start_time} AND `offline_cust_warranty`.`order_time`&gt;#{end_time}
+                </when>
+                <when test='time_type=="2"'>
+                    and `offline_cust_warranty`.`start_time`&lt;=#{start_time} AND `offline_cust_warranty`.`start_time`&gt;#{end_time}
+                </when>
+                <otherwise>
+                    and 1=1
+                </otherwise>
+            </choose>
+        </if>
     </select>
 
 </mapper>

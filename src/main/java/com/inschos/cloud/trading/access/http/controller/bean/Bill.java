@@ -55,6 +55,10 @@ public class Bill {
         // 1-保单号，3-被保险人
         public String searchType;
         public String searchKey;
+        // 1-签单时间（下单时间），2-起保时间，3-缴费时间
+        public String timeType;
+        public String startTime;
+        public String endTime;
     }
 
     public static class GetBillEnableInsurancePolicyListResponse extends BaseResponse {
