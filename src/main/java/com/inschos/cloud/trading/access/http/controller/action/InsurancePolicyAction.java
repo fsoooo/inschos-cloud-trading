@@ -1183,6 +1183,7 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         Set<String> productId = new HashSet<>();
+        Set<String> payCategoryId = new HashSet<>();
         Set<String> channelId = new HashSet<>();
         Set<String> agentId = new HashSet<>();
         HashMap<String, String> fileUrl = new HashMap<>();
@@ -1197,6 +1198,7 @@ public class InsurancePolicyAction extends BaseAction {
                 InsurancePolicy.GetInsurancePolicyItemBean model = new InsurancePolicy.GetInsurancePolicyItemBean(policyListByWarrantyStatusOrSearch);
 
                 productId.add(model.productId);
+                payCategoryId.add(model.payCategoryId);
                 channelId.add(model.channelId);
                 agentId.add(model.agentId);
 
@@ -1265,6 +1267,20 @@ public class InsurancePolicyAction extends BaseAction {
                 }
             }
 
+            List<String> payCategoryIds = new ArrayList<>(payCategoryId);
+            Map<String, ProductPayCategoryBean> payCategoryMap = new HashMap<>();
+
+            if (!ids.isEmpty()) {
+                List<ProductPayCategoryBean> payCategoryBeans = productClient.listProductPayCategory(payCategoryIds);
+
+                if (payCategoryBeans != null && !payCategoryBeans.isEmpty()) {
+                    for (ProductPayCategoryBean productPayCategoryBean : payCategoryBeans) {
+                        payCategoryMap.put(String.valueOf(productPayCategoryBean.id), productPayCategoryBean);
+                    }
+                }
+            }
+
+
             Map<String, ChannelBean> channelMap = new HashMap<>();
             if (needChannel) {
                 List<String> channelIds = new ArrayList<>(channelId);
@@ -1324,6 +1340,11 @@ public class InsurancePolicyAction extends BaseAction {
                     if (channelBean != null) {
                         getInsurancePolicyItemBean.channelName = channelBean.name;
                     }
+                }
+
+                ProductPayCategoryBean productPayCategoryBean = payCategoryMap.get(getInsurancePolicyItemBean.payCategoryId);
+                if (productPayCategoryBean != null) {
+                    getInsurancePolicyItemBean.payCategoryName = productPayCategoryBean.name;
                 }
 
                 if (needAgent && !agentMap.isEmpty()) {
@@ -1401,6 +1422,8 @@ public class InsurancePolicyAction extends BaseAction {
 
             response.data = new InsurancePolicy.GetInsurancePolicyDetail(insurancePolicyDetailByWarrantyCode, custWarrantyCostListResult.premium, custWarrantyCostListResult.payMoney, custWarrantyCostListResult.taxMoney, custWarrantyCostListResult.warrantyStatusForPay, custWarrantyCostListResult.warrantyStatusForPayText);
 
+            response.data.costList = custWarrantyCostListResult.list;
+
             response.data.insuredList = new ArrayList<>();
             response.data.beneficiaryList = new ArrayList<>();
 
@@ -1422,6 +1445,13 @@ public class InsurancePolicyAction extends BaseAction {
             ProductBean product = null;
             if (StringKit.isInteger(insurancePolicyDetailByWarrantyCode.product_id)) {
                 product = productClient.getProduct(Long.valueOf(insurancePolicyDetailByWarrantyCode.product_id));
+            }
+
+            if (StringKit.isInteger(insurancePolicyDetailByWarrantyCode.pay_category_id)) {
+                ProductPayCategoryBean productPayCategory = productClient.getProductPayCategory(Long.valueOf(insurancePolicyDetailByWarrantyCode.pay_category_id));
+                if (productPayCategory != null) {
+                    response.data.payCategoryName = productPayCategory.name;
+                }
             }
 
             if (insuranceParticipantByWarrantyCode != null && !insuranceParticipantByWarrantyCode.isEmpty()) {
@@ -1578,6 +1608,7 @@ public class InsurancePolicyAction extends BaseAction {
         BigDecimal taxMoney = new BigDecimal("0.00");
         String warrantyStatusForPay = "";
         String warrantyStatusForPayText = "";
+        List<InsurancePolicy.CustWarrantyCost> list;
     }
 
     /**
@@ -1590,35 +1621,53 @@ public class InsurancePolicyAction extends BaseAction {
      */
     private CustWarrantyCostListResult dealCustWarrantyCostList(List<CustWarrantyCostModel> list) {
         CustWarrantyCostListResult custWarrantyCostListResult = new CustWarrantyCostListResult();
+        custWarrantyCostListResult.list = new ArrayList<>();
 
-        boolean isFindLast = false;
+        boolean isFindLast;
         int size1 = list.size();
 
         for (int i = size1 - 1; i > -1; i--) {
             CustWarrantyCostModel custWarrantyCostModel1 = list.get(i);
-            if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
-                custWarrantyCostListResult.premium = custWarrantyCostListResult.premium.add(new BigDecimal(custWarrantyCostModel1.premium));
-            }
+            isFindLast = StringKit.equals(custWarrantyCostModel1.pay_status, CustWarrantyCostModel.PAY_STATUS_SUCCESS);
 
-            if (StringKit.isNumeric(custWarrantyCostModel1.tax_money)) {
-                custWarrantyCostListResult.taxMoney = custWarrantyCostListResult.taxMoney.add(new BigDecimal(custWarrantyCostModel1.tax_money));
-            }
+            if (isFindLast) {
+                if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
+                    custWarrantyCostListResult.premium = custWarrantyCostListResult.premium.add(new BigDecimal(custWarrantyCostModel1.premium));
+                }
 
-            if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
-                custWarrantyCostListResult.payMoney = custWarrantyCostListResult.payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
-            }
+                if (StringKit.isNumeric(custWarrantyCostModel1.tax_money)) {
+                    custWarrantyCostListResult.taxMoney = custWarrantyCostListResult.taxMoney.add(new BigDecimal(custWarrantyCostModel1.tax_money));
+                }
 
-            if (!isFindLast) {
-                isFindLast = !StringKit.isEmpty(custWarrantyCostModel1.actual_pay_time);
+                if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
+                    custWarrantyCostListResult.payMoney = custWarrantyCostListResult.payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
+                }
             }
 
             if (isFindLast || i == 0) {
                 custWarrantyCostListResult.warrantyStatusForPay = custWarrantyCostModel1.pay_status;
                 custWarrantyCostListResult.warrantyStatusForPayText = custWarrantyCostModel1.payStatusText(custWarrantyCostModel1.pay_status);
             }
+
+            custWarrantyCostListResult.list.add(new InsurancePolicy.CustWarrantyCost(custWarrantyCostModel1));
         }
 
         return custWarrantyCostListResult;
+    }
+
+    public String setTest() {
+
+        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+        insurancePolicyModel.page = setPage(null, "1", "10");
+
+        insurancePolicyModel.manager_uuid = "2";
+        insurancePolicyModel.person_type = "1";
+        insurancePolicyModel.card_code = "110101199312160523";
+        insurancePolicyModel.card_type = "1";
+
+        List<InsurancePolicyModel> insuranceRecordListByManagerUuid = insurancePolicyDao.findInsuranceRecordListByManagerUuid(insurancePolicyModel);
+
+        return JsonKit.bean2Json(insuranceRecordListByManagerUuid);
     }
 
 }

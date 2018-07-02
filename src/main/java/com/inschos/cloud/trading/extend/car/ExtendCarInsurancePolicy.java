@@ -85,6 +85,7 @@ public class ExtendCarInsurancePolicy {
         public String coverageCode;
         public String coverageName;
         public String insuredAmount;
+        public int sort = Byte.MAX_VALUE;
     }
 
     public static class GetCarInfoRequest extends CarInsuranceRequest {
@@ -98,11 +99,11 @@ public class ExtendCarInsurancePolicy {
 
     public static class CarInfo {
         public String responseNo;
-        @CheckParams
+        // @CheckParams
         public String engineNo;
-        @CheckParams
+        // @CheckParams
         public String licenseNo;
-        @CheckParams
+        // @CheckParams
         public String frameNo;
 
         public String firstRegisterDate;

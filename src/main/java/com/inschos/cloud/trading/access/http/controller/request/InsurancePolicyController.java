@@ -119,4 +119,11 @@ public class InsurancePolicyController {
         return insurancePolicyAction.getOfflineInsurancePolicyDetail(actionBean);
     }
 
+    @GetActionBeanAnnotation
+    @RequestMapping("set_test")
+    @ResponseBody
+    public String setTest(ActionBean actionBean) {
+        return insurancePolicyAction.setTest();
+    }
+
 }

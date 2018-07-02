@@ -83,7 +83,7 @@ public class InsurancePolicyModel {
     /**
      * 分期方式
      */
-    public String by_stages_way;
+    public String pay_category_id;
     /**
      * 佣金 0表示未结算，1表示已结算
      */
@@ -101,7 +101,7 @@ public class InsurancePolicyModel {
      */
     public String type;
     /**
-     * 保单状态 1投保中, 2待生效,3保障中, 4可续保,5已过保，6已退保 7已失效
+     * 保单状态 1-投保中，2-待生效，3-保障中，4-可续保，5-已过保，6-已退保，7-已失效
      */
     public String warranty_status;
     /**
@@ -180,6 +180,8 @@ public class InsurancePolicyModel {
     public String agent_id_string;
     public long currentTime = System.currentTimeMillis();
     public List<InsuranceParticipantModel> insured_list;
+
+    public String person_type;
 
     // 核保成功
     public static final String APPLY_UNDERWRITING_SUCCESS = "0";
@@ -384,6 +386,11 @@ public class InsurancePolicyModel {
      * 投保人电话
      */
     public String policy_holder_phone;
+
+    /**
+     * 投保人姓名
+     */
+    public String insured_name;
 
     /**
      * 流水号

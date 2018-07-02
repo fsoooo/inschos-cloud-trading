@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.extend.car;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -31,7 +32,6 @@ public class SignatureTools {
 
     public static final String SIGN_TASK_RSA_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCyF3iNNA6HyAi6SyEjpTSpmHwuBR7nq3sbQ5Pxn4+wTVSJBup+ACHCyu+BsfqU+WBlb2FG4CArYrXh+dzLAO0fd2z2jhbEivpS5XtncUz2ePTFal08bbJd9yYIa225zRcNY8i6njK5IRahx7EjjZw4EKOz1nURCfeXplTwZe8PzwIDAQAB";
     public static final String SIGN_TASK_RSA_PRIVATE_KEY = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBALIXeI00DofICLpLISOlNKmYfC4FHuerextDk/Gfj7BNVIkG6n4AIcLK74Gx+pT5YGVvYUbgICtiteH53MsA7R93bPaOFsSK+lLle2dxTPZ49MVqXTxtsl33JghrbbnNFw1jyLqeMrkhFqHHsSONnDgQo7PWdREJ95emVPBl7w/PAgMBAAECgYEAp9jVJogEldZi22mJnzXKL3lmuFzdJs2IpkaHvfd7jlcjsE3TXdOz/goTt3HN0PBD+PYDgbAkwZ8z+vnqLW3/DNEuCrBHdrsLH+suM82lNA8VThwpXXLihvCyQFWmWKtIfgEVpzHPjXG10oJ2yxbfYmqG8E0BaNU49jVdW9uWgGkCQQDfwiNvpqBtBD41REmgyvVMuenVmrEjACB4usMvv5Mm7UWbTqrmxwmw6xQPdFssLg3mNAtfrj4WWCEtzhGQE+7dAkEAy8DO6BoDDrr8teSVv2UMJHHgaWnljmC3bFGYLwhB8E9AKB6Dnle5TA6bU0LXAQ/k978C7bYmpB8zsydzziQwmwJAJSS1+y++y7n7lZ4LVty6EY1/Co1OQFAiE8h05DU5+SlD9778UajSrAKp5tLa25+dgQw8oxpqhg0FHPRrJ+6XJQJBALs3bGaEEC8mzTFs2dPFS0TpheQWM6GBaMiUqJr+oWfnyfGTKCkEPfSOr1Xv4pLNQfwKfOxjJFpFeUGyjIvrYOUCQFuwgUOEdrH0ZxQErJUb0pIRWSal6B0H1oF4CqM1+eC7X3KqMCFIhKJmmCqpDNH9ZA2yDhO+FyLHS/keSNPCibY=";
-
 
     /**
      * 获取私钥对象

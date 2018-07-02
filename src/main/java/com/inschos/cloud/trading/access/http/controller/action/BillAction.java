@@ -1,10 +1,6 @@
 package com.inschos.cloud.trading.access.http.controller.action;
 
-import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
-import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
-import com.inschos.cloud.trading.access.http.controller.bean.Bill;
-import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
-import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
+import com.inschos.cloud.trading.access.http.controller.bean.*;
 import com.inschos.cloud.trading.access.rpc.bean.InsuranceCompanyBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
 import com.inschos.cloud.trading.access.rpc.client.AgentClient;
@@ -13,10 +9,7 @@ import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.*;
-import com.inschos.cloud.trading.data.dao.BillDao;
-import com.inschos.cloud.trading.data.dao.BillDetailDao;
-import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
-import com.inschos.cloud.trading.data.dao.OfflineInsurancePolicyDao;
+import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -46,13 +39,13 @@ public class BillAction extends BaseAction {
     private BillDetailDao billDetailDao;
 
     @Autowired
+    private InsurancePolicyDao insurancePolicyDao;
+
+    @Autowired
     private CustWarrantyCostDao custWarrantyCostDao;
 
     @Autowired
     private OfflineInsurancePolicyDao offlineInsurancePolicyDao;
-
-    @Autowired
-    private AgentClient agentClient;
 
     @Autowired
     private ProductClient productClient;
@@ -76,6 +69,11 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
+        BillModel billByBillName = billDao.findBillByBillName(request.billName);
+        if (billByBillName != null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单'" + request.billName + "'已存在", response);
+        }
+
         String time = String.valueOf(System.currentTimeMillis());
 
         BillModel billModel = new BillModel();
@@ -83,10 +81,11 @@ public class BillAction extends BaseAction {
 
         billModel.bill_name = request.billName;
         billModel.insurance_company_id = request.insuranceCompanyId;
-        billModel.principal = request.principalId;
+        billModel.principal = request.principal;
         billModel.remark = request.remark;
         billModel.created_at = time;
         billModel.updated_at = time;
+        billModel.state = "1";
 
         billModel.bill_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
 
@@ -105,6 +104,7 @@ public class BillAction extends BaseAction {
 
         String str;
         if (i > 0) {
+            response.data = billModel.bill_uuid;
             str = json(BaseResponse.CODE_SUCCESS, "添加结算单成功", response);
         } else {
             str = json(BaseResponse.CODE_FAILURE, "添加结算单失败", response);
@@ -136,6 +136,32 @@ public class BillAction extends BaseAction {
 
         if (!dealBillInsurancePolicyList.isSuccess) {
             return json(BaseResponse.CODE_FAILURE, dealBillInsurancePolicyList.message, response);
+        }
+
+        if (dealBillInsurancePolicyList.result != null && !dealBillInsurancePolicyList.result.isEmpty()) {
+            BillDetailModel billDetailModel = new BillDetailModel();
+            billDetailModel.warranty_list = new ArrayList<>();
+            for (BillDetailModel detailModel : dealBillInsurancePolicyList.result) {
+                billDetailModel.warranty_list.add(detailModel.warranty_uuid);
+            }
+
+            BillDetailModel billDetailByWarrantyUuids = billDetailDao.findBillDetailByWarrantyUuids(billDetailModel);
+
+            if (billDetailByWarrantyUuids != null) {
+                String str = "";
+                if (StringKit.equals(billDetailByWarrantyUuids.type, BillDetailModel.TYPE_ON_LINE)) {
+                    InsurancePolicyModel insurancePolicyDetailByWarrantyUuid = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(billDetailByWarrantyUuids.warranty_uuid);
+                    if (insurancePolicyDetailByWarrantyUuid != null) {
+                        str = insurancePolicyDetailByWarrantyUuid.warranty_code;
+                    }
+                } else if (StringKit.equals(billDetailByWarrantyUuids.type, BillDetailModel.TYPE_OFF_LINE)) {
+                    OfflineInsurancePolicyModel offlineInsurancePolicyByWarrantyUuid = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyUuid(billDetailByWarrantyUuids.warranty_uuid);
+                    if (offlineInsurancePolicyByWarrantyUuid != null) {
+                        str = offlineInsurancePolicyByWarrantyUuid.warranty_code;
+                    }
+                }
+                return json(BaseResponse.CODE_FAILURE, "结算单'" + str + "'已存在", response);
+            }
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
@@ -181,6 +207,28 @@ public class BillAction extends BaseAction {
             }
         }
 
+        if (StringKit.isEmpty(request.timeType)) {
+            request.startTime = "";
+            request.endTime = "";
+        } else {
+            switch (request.timeType) {
+                case "1":
+                case "2":
+                    if (!StringKit.isInteger(request.startTime) || !StringKit.isInteger(request.endTime)) {
+                        return json(BaseResponse.CODE_FAILURE, "时间错误", response);
+                    }
+
+                    if (Long.valueOf(request.startTime) >= Long.valueOf(request.endTime)) {
+                        return json(BaseResponse.CODE_FAILURE, "开始时间不能晚于或等于结束时间", response);
+                    }
+
+                    break;
+                default:
+                    return json(BaseResponse.CODE_FAILURE, "时间类型不正确", response);
+            }
+        }
+
+
         BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
 
         if (billByBillUuid == null) {
@@ -210,6 +258,10 @@ public class BillAction extends BaseAction {
                 custWarrantyCostModel.search = request.searchKey;
                 custWarrantyCostModel.searchType = request.searchType;
                 custWarrantyCostModel.ins_company_id = billByBillUuid.insurance_company_id;
+                custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
+                custWarrantyCostModel.time_type = request.timeType;
+                custWarrantyCostModel.start_time = request.startTime;
+                custWarrantyCostModel.end_time = request.endTime;
                 custWarrantyCostModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 Set<String> productIds = new HashSet<>();
@@ -259,6 +311,10 @@ public class BillAction extends BaseAction {
                 offlineInsurancePolicyModel.search = request.searchKey;
                 offlineInsurancePolicyModel.searchType = request.searchType;
                 offlineInsurancePolicyModel.insurance_company = company.name;
+                offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
+                offlineInsurancePolicyModel.time_type = request.timeType;
+                offlineInsurancePolicyModel.start_time = request.startTime;
+                offlineInsurancePolicyModel.end_time = request.endTime;
                 offlineInsurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 List<OfflineInsurancePolicyModel> completePayListByManagerUuid1 = offlineInsurancePolicyDao.findCompletePayListByManagerUuid(offlineInsurancePolicyModel);
@@ -299,25 +355,43 @@ public class BillAction extends BaseAction {
 
         BillModel billModel = new BillModel();
         billModel.manager_uuid = actionBean.managerUuid;
-        billModel.insurance_company_id = request.insuranceCompanyId;
 
+        if (StringKit.isEmpty(request.searchType)) {
+            request.searchKey = "";
+        } else {
+            if (StringKit.isEmpty(request.searchKey)) {
+                return json(BaseResponse.CODE_FAILURE, "关键字不能为空", response);
+            }
 
-        if (!StringKit.isEmpty(request.principalName)) {
-            List<AgentBean> allBySearchName = agentClient.getAllBySearchName(actionBean.managerUuid, request.principalName);
+            billModel.searchType = request.searchType;
+            switch (request.searchType) {
+                case "1":
+                    InsuranceCompanyBean insuranceCompanyBean = new InsuranceCompanyBean();
+                    insuranceCompanyBean.managerUuid = actionBean.managerUuid;
+                    insuranceCompanyBean.name = request.searchKey;
+                    List<InsuranceCompanyBean> listInsuranceCompany = companyClient.getListInsuranceCompany(insuranceCompanyBean);
 
-            if (allBySearchName != null && !allBySearchName.isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                int size = allBySearchName.size();
-                for (int i = 0; i < size; i++) {
-                    AgentBean agentBean = allBySearchName.get(i);
-                    sb.append(agentBean.id);
-                    if (i != size - 1) {
-                        sb.append(",");
+                    if (listInsuranceCompany != null && !listInsuranceCompany.isEmpty()) {
+                        StringBuilder sb1 = new StringBuilder();
+                        int size = listInsuranceCompany.size();
+                        for (int i = 0; i < size; i++) {
+                            InsuranceCompanyBean insuranceCompanyBean1 = listInsuranceCompany.get(i);
+                            sb1.append(insuranceCompanyBean1.id);
+                            if (i != size - 1) {
+                                sb1.append(",");
+                            }
+                        }
+                        billModel.insurance_company_id_string = sb1.toString();
                     }
-                }
-                billModel.principal_string = sb.toString();
+
+                    break;
+                case "2":
+                    billModel.search = request.searchKey;
+                    break;
             }
         }
+
+        billModel.is_settlement = request.billStatus;
 
         if (StringKit.isEmpty(request.pageSize)) {
             request.pageSize = "10";
@@ -329,28 +403,29 @@ public class BillAction extends BaseAction {
         long total = billDao.findBillCountByManagerUuid(billModel);
         response.data = new ArrayList<>();
 
-        Map<String, String> agentName = new HashMap<>();
+//        Map<String, String> agentName = new HashMap<>();
         Map<String, String> companyName = new HashMap<>();
 
         if (billByManagerUuid != null && !billByManagerUuid.isEmpty()) {
             for (BillModel model : billByManagerUuid) {
 
-                String s = agentName.get(model.principal);
-                if (s == null && StringKit.isInteger(model.principal)) {
-                    AgentBean agentById = agentClient.getAgentById(Long.valueOf(model.principal));
-                    if (agentById != null) {
-                        agentName.put(model.principal, agentById.name);
-                    } else {
-                        agentName.put(model.principal, "");
-                    }
-                } else {
-                    model.principal_name = s;
-                }
+//                String s = agentName.get(model.principal);
+//                if (s == null && StringKit.isInteger(model.principal)) {
+//                    AgentBean agentById = agentClient.getAgentById(Long.valueOf(model.principal));
+//                    if (agentById != null) {
+//                        agentName.put(model.principal, agentById.name);
+//                    } else {
+//                        agentName.put(model.principal, "");
+//                    }
+//                } else {
+//                    model.principal_name = s;
+//                }
 
                 String s1 = companyName.get(model.insurance_company_id);
                 if (s1 == null && StringKit.isInteger(model.insurance_company_id)) {
                     InsuranceCompanyBean company = companyClient.getCompany(Long.valueOf(model.insurance_company_id));
                     if (company != null) {
+                        model.insurance_company_name = company.name;
                         companyName.put(model.insurance_company_id, company.name);
                     } else {
                         companyName.put(model.insurance_company_id, "");
@@ -372,6 +447,38 @@ public class BillAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取结算单列表成功", response);
     }
 
+    public String getBillInfo(ActionBean actionBean) {
+        Bill.GetBillInfoRequest request = JsonKit.json2Bean(actionBean.body, Bill.GetBillInfoRequest.class);
+        Bill.GetBillInfoResponse response = new Bill.GetBillInfoResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+
+        if (billByBillUuid == null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
+        }
+
+        if (StringKit.isInteger(billByBillUuid.insurance_company_id)) {
+            InsuranceCompanyBean company = companyClient.getCompany(Long.valueOf(billByBillUuid.insurance_company_id));
+
+            if (company != null) {
+                billByBillUuid.insurance_company_name = company.name;
+            }
+        }
+
+        response.data = new Bill.BillBean(billByBillUuid);
+
+        return json(BaseResponse.CODE_SUCCESS, "获取结算单信息成功", response);
+    }
+
     public String getBillDetail(ActionBean actionBean) {
         Bill.GetBillDetailRequest request = JsonKit.json2Bean(actionBean.body, Bill.GetBillDetailRequest.class);
         Bill.GetBillDetailResponse response = new Bill.GetBillDetailResponse();
@@ -383,6 +490,12 @@ public class BillAction extends BaseAction {
         List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
         if (entries != null) {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+
+        if (billByBillUuid == null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
         }
 
         if (StringKit.isEmpty(request.pageSize)) {
@@ -527,76 +640,6 @@ public class BillAction extends BaseAction {
         return json(BaseResponse.CODE_SUCCESS, "获取下载地址成功", response);
     }
 
-    public String clearingBill(ActionBean actionBean) {
-        Bill.ClearingBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.ClearingBillRequest.class);
-        Bill.ClearingBillResponse response = new Bill.ClearingBillResponse();
-
-        if (request == null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
-        }
-
-        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
-        if (entries != null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
-        }
-
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
-
-        if (billByBillUuid == null) {
-            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
-        }
-
-        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
-            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能重复结算", response);
-        }
-
-        int i = billDao.clearingBill(billByBillUuid);
-
-        String str;
-        if (i > 0) {
-            str = json(BaseResponse.CODE_SUCCESS, "结算成功", response);
-        } else {
-            str = json(BaseResponse.CODE_FAILURE, "结算失败", response);
-        }
-
-        return str;
-    }
-
-    public String cancelClearingBill(ActionBean actionBean) {
-        Bill.CancelClearingBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.CancelClearingBillRequest.class);
-        Bill.CancelClearingBillResponse response = new Bill.CancelClearingBillResponse();
-
-        if (request == null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
-        }
-
-        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
-        if (entries != null) {
-            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
-        }
-
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
-
-        if (billByBillUuid == null) {
-            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
-        }
-
-        if (!StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
-            return json(BaseResponse.CODE_FAILURE, "该结算单未结算，不能执行取消结算操作", response);
-        }
-
-        int i = billDao.cancelClearingBill(billByBillUuid);
-
-        String str;
-        if (i > 0) {
-            str = json(BaseResponse.CODE_SUCCESS, "取消结算成功", response);
-        } else {
-            str = json(BaseResponse.CODE_FAILURE, "取消结算失败", response);
-        }
-
-        return str;
-    }
-
     public String deleteBill(ActionBean actionBean) {
         Bill.DeleteBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.DeleteBillRequest.class);
         Bill.DeleteBillResponse response = new Bill.DeleteBillResponse();
@@ -616,9 +659,9 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
         }
 
-        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
-            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能删除修改明细信息", response);
-        }
+//        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
+//            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能删除修改明细信息", response);
+//        }
 
         int i = billDao.deleteBill(billByBillUuid);
 
@@ -655,9 +698,9 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
         }
 
-        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
-            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能删除修改明细信息", response);
-        }
+//        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
+//            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能删除修改明细信息", response);
+//        }
 
         BigDecimal bigDecimal = new BigDecimal(0);
         List<BillDetailModel> list = new ArrayList<>();
@@ -710,6 +753,77 @@ public class BillAction extends BaseAction {
 
         return str;
     }
+
+
+//    public String clearingBill(ActionBean actionBean) {
+//        Bill.ClearingBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.ClearingBillRequest.class);
+//        Bill.ClearingBillResponse response = new Bill.ClearingBillResponse();
+//
+//        if (request == null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+//        }
+//
+//        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+//        if (entries != null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+//        }
+//
+//        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+//
+//        if (billByBillUuid == null) {
+//            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
+//        }
+//
+//        if (StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
+//            return json(BaseResponse.CODE_FAILURE, "该结算单已结算，不能重复结算", response);
+//        }
+//
+//        int i = billDao.clearingBill(billByBillUuid);
+//
+//        String str;
+//        if (i > 0) {
+//            str = json(BaseResponse.CODE_SUCCESS, "结算成功", response);
+//        } else {
+//            str = json(BaseResponse.CODE_FAILURE, "结算失败", response);
+//        }
+//
+//        return str;
+//    }
+//
+//    public String cancelClearingBill(ActionBean actionBean) {
+//        Bill.CancelClearingBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.CancelClearingBillRequest.class);
+//        Bill.CancelClearingBillResponse response = new Bill.CancelClearingBillResponse();
+//
+//        if (request == null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+//        }
+//
+//        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+//        if (entries != null) {
+//            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+//        }
+//
+//        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+//
+//        if (billByBillUuid == null) {
+//            return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
+//        }
+//
+//        if (!StringKit.equals(billByBillUuid.is_settlement, BillModel.SETTLEMENT_STATE_ALREADY)) {
+//            return json(BaseResponse.CODE_FAILURE, "该结算单未结算，不能执行取消结算操作", response);
+//        }
+//
+//        int i = billDao.cancelClearingBill(billByBillUuid);
+//
+//        String str;
+//        if (i > 0) {
+//            str = json(BaseResponse.CODE_SUCCESS, "取消结算成功", response);
+//        } else {
+//            str = json(BaseResponse.CODE_FAILURE, "取消结算失败", response);
+//        }
+//
+//        return str;
+//    }
 
     private List<Bill.BillInsurancePolicy> dealBillDetailModelList(List<BillDetailModel> list) {
         List<Bill.BillInsurancePolicy> result = new ArrayList<>();
@@ -782,6 +896,14 @@ public class BillAction extends BaseAction {
                 if (StringKit.isInteger(detailModel.online_start_time)) {
                     billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.online_start_time)));
                 }
+                billInsurancePolicy.endTime = detailModel.online_end_time;
+                if (StringKit.isInteger(detailModel.online_end_time)) {
+                    billInsurancePolicy.endTimeText = sdf.format(new Date(Long.valueOf(detailModel.online_end_time)));
+                }
+                billInsurancePolicy.orderTime = detailModel.online_created_at;
+                if (StringKit.isInteger(detailModel.online_created_at)) {
+                    billInsurancePolicy.orderTimeText = sdf.format(new Date(Long.valueOf(detailModel.online_created_at)));
+                }
                 billInsurancePolicy.phase = detailModel.online_phase;
 
             } else if (StringKit.equals(detailModel.type, BillDetailModel.TYPE_OFF_LINE)) {
@@ -819,6 +941,14 @@ public class BillAction extends BaseAction {
                 billInsurancePolicy.startTime = detailModel.offline_start_time;
                 if (StringKit.isInteger(detailModel.offline_start_time)) {
                     billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.offline_start_time)));
+                }
+                billInsurancePolicy.endTime = detailModel.offline_end_time;
+                if (StringKit.isInteger(detailModel.offline_end_time)) {
+                    billInsurancePolicy.endTimeText = sdf.format(new Date(Long.valueOf(detailModel.offline_end_time)));
+                }
+                billInsurancePolicy.orderTime = detailModel.offline_order_time;
+                if (StringKit.isInteger(detailModel.offline_order_time)) {
+                    billInsurancePolicy.orderTimeText = sdf.format(new Date(Long.valueOf(detailModel.offline_order_time)));
                 }
                 billInsurancePolicy.phase = detailModel.offline_payment_time;
 
@@ -890,6 +1020,7 @@ public class BillAction extends BaseAction {
                 billDetailModel.type = billInsurancePolicy.warrantyType;
                 billDetailModel.created_at = time;
                 billDetailModel.updated_at = time;
+                dealBillInsurancePolicyList.result.add(billDetailModel);
                 BigDecimal brokerage;
 
                 if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_ON_LINE)) {

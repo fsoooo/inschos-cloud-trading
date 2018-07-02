@@ -141,4 +141,37 @@ public class ProductClient {
         }
     }
 
+    public ProductBean getProductByCode(String code) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getProductByCode(code) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public ProductPayCategoryBean getProductPayCategory(long id) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getProductPayCategory(id) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public List<ProductPayCategoryBean> listProductPayCategory(List<String> id) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.listProductPayCategory(id) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
 }

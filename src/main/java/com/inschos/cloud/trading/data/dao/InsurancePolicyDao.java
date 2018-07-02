@@ -152,30 +152,31 @@ public class InsurancePolicyDao extends BaseDao {
 
     /**
      * 投保 保单
-     * @param policyModel  保单
-     * @param costModels 缴费单
+     *
+     * @param policyModel 保单
+     * @param costModels  缴费单
      * @return
      */
-    public int insure(InsurancePolicyModel policyModel,List<CustWarrantyCostModel> costModels){
+    public int insure(InsurancePolicyModel policyModel, List<CustWarrantyCostModel> costModels) {
         int flag = 0;
 
         flag = insurancePolicyMapper.addInsurancePolicy(policyModel);
-        if(flag>0){
+        if (flag > 0) {
 
             for (InsuranceParticipantModel participantModel : policyModel.insured_list) {
                 flag = insuranceParticipantMapper.addInsuranceParticipant(participantModel);
-                if(flag==0){
+                if (flag == 0) {
                     rollBack();
                     break;
                 }
             }
 
-            if(flag>0){
+            if (flag > 0) {
                 for (CustWarrantyCostModel costModel : costModels) {
 
                     flag = custWarrantyCostMapper.addCustWarrantyCost(costModel);
 
-                    if(flag==0){
+                    if (flag == 0) {
                         rollBack();
                         break;
                     }
@@ -188,8 +189,8 @@ public class InsurancePolicyDao extends BaseDao {
         return flag;
     }
 
-    public InsurancePolicyModel findExistsValid(InsurancePolicyModel search){
-        return search!=null?insurancePolicyMapper.findExistsValid(search):null;
+    public InsurancePolicyModel findExistsValid(InsurancePolicyModel search) {
+        return search != null ? insurancePolicyMapper.findExistsValid(search) : null;
     }
 
     public int updateInsurancePolicyProPolicyNoForCarInsurance(UpdateInsurancePolicyProPolicyNoForCarInsurance updateInsurancePolicyProPolicyNoForCarInsurance) {
@@ -489,17 +490,19 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
     }
 
-    public List<InsurancePolicyModel> setTest(InsurancePolicyModel insurancePolicyModel) {
-        return insurancePolicyMapper.setTest(insurancePolicyModel);
+    public int findCountByAgentWarrantyStatus(InsurancePolicyModel search) {
+        return search != null ? insurancePolicyMapper.findCountByAgentWarrantyStatus(search) : 0;
     }
 
-    public int findCountByAgentWarrantyStatus(InsurancePolicyModel search){
-        return search!=null?insurancePolicyMapper.findCountByAgentWarrantyStatus(search):0;
+    public int findCountByAgentCostStatus(InsurancePolicyModel search) {
+        return search != null ? insurancePolicyMapper.findCountByAgentCostStatus(search) : 0;
     }
 
-    public int findCountByAgentCostStatus(InsurancePolicyModel search){
-        return search!=null?insurancePolicyMapper.findCountByAgentCostStatus(search):0;
+    public List<InsurancePolicyModel> findInsuranceRecordListByManagerUuid(InsurancePolicyModel search) {
+        return insurancePolicyMapper.findInsuranceRecordListByManagerUuid(search);
     }
 
-
+    public long findInsuranceRecordCountByManagerUuid(InsurancePolicyModel search) {
+        return insurancePolicyMapper.findInsuranceRecordCountByManagerUuid(search);
+    }
 }

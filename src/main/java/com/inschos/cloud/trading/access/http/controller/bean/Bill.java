@@ -26,13 +26,13 @@ public class Bill {
         public String billName;
         @CheckParams(hintName = "保险公司")
         public String insuranceCompanyId;
-        public String principalId;
+        public String principal;
         public List<BillInsurancePolicy> warrantyList;
         public String remark;
     }
 
     public static class CreateBillResponse extends BaseResponse {
-
+        public String data;
     }
 
     public static class AddBillDetailRequest extends BaseRequest {
@@ -55,6 +55,10 @@ public class Bill {
         // 1-保单号，3-被保险人
         public String searchType;
         public String searchKey;
+        // 1-签单时间（下单时间），2-起保时间，3-缴费时间
+        public String timeType;
+        public String startTime;
+        public String endTime;
     }
 
     public static class GetBillEnableInsurancePolicyListResponse extends BaseResponse {
@@ -62,15 +66,28 @@ public class Bill {
     }
 
     public static class GetBillListRequest extends BaseRequest {
-        public String insuranceCompanyId;
-        public String principalName;
+        // 1-保险公司，2-负责人
+        public String searchType;
+        public String searchKey;
+        // 结算状态，0-未结算，1-已结算
+        public String billStatus;
     }
 
     public static class GetBillListResponse extends BaseResponse {
         public List<BillBean> data;
     }
 
+    public static class GetBillInfoRequest extends BaseRequest {
+        @CheckParams(hintName = "结算单uuid")
+        public String billUuid;
+    }
+
+    public static class GetBillInfoResponse extends BaseResponse {
+        public BillBean data;
+    }
+
     public static class GetBillDetailRequest extends BaseRequest {
+        @CheckParams(hintName = "结算单uuid")
         public String billUuid;
         // 1-保单号，2-保险产品，3-被保险人
         public String searchType;
@@ -82,6 +99,7 @@ public class Bill {
     }
 
     public static class DownloadBillDetailRequest extends BaseRequest {
+        @CheckParams(hintName = "结算单uuid")
         public String billUuid;
     }
 
@@ -188,14 +206,17 @@ public class Bill {
             this.billName = model.bill_name;
             this.insuranceCompanyId = model.insurance_company_id;
             this.insuranceCompanyName = model.insurance_company_name;
-            this.principal = model.id;
-            this.principalName = model.principal_name;
+            this.principal = model.principal;
             this.isSettlement = model.is_settlement;
             if (!StringKit.isEmpty(model.is_settlement)) {
                 this.isSettlementText = model.isSettlementText(model.is_settlement);
             }
             this.billMoney = model.bill_money;
-            if (!StringKit.isNumeric(model.bill_money)) {
+            if (StringKit.isNumeric(model.bill_money)) {
+                BigDecimal bigDecimal = new BigDecimal(model.bill_money);
+                DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+                this.billMoney = decimalFormat.format(bigDecimal.doubleValue());
+            } else {
                 this.billMoney = "0.00";
             }
             this.billMoneyText = "¥" + this.billMoney;
@@ -228,8 +249,10 @@ public class Bill {
         BILL_DETAIL_LIST.add("phase");
         BILL_DETAIL_LIST.add("feeRate");
         BILL_DETAIL_LIST.add("fee");
+        BILL_DETAIL_LIST.add("startTimeText");
+        BILL_DETAIL_LIST.add("endTimeText");
+        BILL_DETAIL_LIST.add("orderTimeText");
         BILL_DETAIL_LIST.add("billTimeText");
-        BILL_DETAIL_LIST.add("createdAtText");
 
     }
 
@@ -252,8 +275,10 @@ public class Bill {
         billInsurancePolicy.phase = "缴费期";
         billInsurancePolicy.feeRate = "佣金比（%）";
         billInsurancePolicy.fee = "佣金（元）";
+        billInsurancePolicy.startTimeText = "起保时间";
+        billInsurancePolicy.endTimeText = "终止时间";
+        billInsurancePolicy.orderTimeText = "签单时间";
         billInsurancePolicy.billTimeText = "结算时间";
-        billInsurancePolicy.createdAtText = "创建时间";
 
         return billInsurancePolicy;
     }
@@ -286,17 +311,21 @@ public class Bill {
         public String premium;
         public String premiumText;
 
-        // 生效时间
+        // 起保时间
         public String startTime;
         public String startTimeText;
 
-        // 起保时间
+        // 终止时间
         public String endTime;
         public String endTimeText;
 
-        // 终止时间
+        // 结算时间
         public String billTime;
         public String billTimeText;
+
+        // 签单时间
+        public String orderTime;
+        public String orderTimeText;
 
         // 生成时间
         public String createdAt;
@@ -349,6 +378,10 @@ public class Bill {
             this.endTime = custWarrantyCostModel.warranty_end_time;
             if (StringKit.isInteger(custWarrantyCostModel.warranty_end_time)) {
                 this.endTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.warranty_end_time)));
+            }
+            this.orderTime = custWarrantyCostModel.created_at;
+            if (StringKit.isInteger(custWarrantyCostModel.created_at)) {
+                this.orderTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.created_at)));
             }
             this.createdAt = custWarrantyCostModel.created_at;
             if (StringKit.isInteger(custWarrantyCostModel.created_at)) {
@@ -426,6 +459,10 @@ public class Bill {
             this.endTime = offlineInsurancePolicyModel.end_time;
             if (StringKit.isInteger(offlineInsurancePolicyModel.end_time)) {
                 this.endTimeText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.end_time)));
+            }
+            this.orderTime = offlineInsurancePolicyModel.order_time;
+            if (StringKit.isInteger(offlineInsurancePolicyModel.order_time)) {
+                this.orderTimeText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.order_time)));
             }
             this.createdAt = offlineInsurancePolicyModel.created_at;
             if (StringKit.isInteger(offlineInsurancePolicyModel.created_at)) {

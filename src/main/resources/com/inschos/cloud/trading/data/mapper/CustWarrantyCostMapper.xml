@@ -89,7 +89,7 @@
             parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
             resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
         select
-        `cust_warranty_cost`.`id`,`cust_warranty`.`warranty_uuid`,`cust_warranty`.`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,`cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,`cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,`cust_warranty`.`express_address`,`cust_warranty`.`express_province_code`,`cust_warranty`.`express_city_code`,`cust_warranty`.`express_county_code`,`cust_warranty`.`delivery_type`,`cust_warranty`.`created_at`,`cust_warranty`.`updated_at`
+        `cust_warranty_cost`.`id`,`cust_warranty`.`warranty_uuid`,`cust_warranty`.`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,`cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,`cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,`cust_warranty`.`express_address`,`cust_warranty`.`express_province_code`,`cust_warranty`.`express_city_code`,`cust_warranty`.`express_county_code`,`cust_warranty`.`delivery_type`,`cust_warranty`.`created_at`,`cust_warranty`.`updated_at`
         from cust_warranty_cost LEFT JOIN cust_warranty ON
         cust_warranty.warranty_uuid=cust_warranty_cost.warranty_uuid
         <where>
@@ -179,7 +179,7 @@
             resultType="com.inschos.cloud.trading.model.BrokerageStatisticListModel">
         select
         `cust_warranty`.`id` warranty_id,`cust_warranty`.`warranty_uuid`,`cust_warranty`.`warranty_code`,
-        `cust_warranty`.`product_id`,`cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,
+        `cust_warranty`.`product_id`,`cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,
         `cust_warranty`.`warranty_status`,
         `cust_warranty_cost`.`phase`,`cust_warranty_cost`.`premium`,`cust_warranty_cost`.`actual_pay_time`,
         `cust_warranty_brokerage`.`id`
@@ -254,7 +254,7 @@
         select
         `cust_warranty`.`id` id,`cust_warranty`.`warranty_uuid`
         warranty_uuid,`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,
-        `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,`cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,
+        `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,`cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,
         `cust_warranty`.`express_address`,`cust_warranty`.`express_province_code`,`cust_warranty`.`express_city_code`,`cust_warranty`.`express_county_code`,`cust_warranty`.`delivery_type`,
         `cust_warranty`.`created_at` created_at,`cust_warranty`.`updated_at` updated_at,
         `cust_warranty_car`.`car_code` car_code,`cust_warranty_car`.`frame_no` frame_no,
@@ -475,7 +475,7 @@
             parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
             resultType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
         select
-        `id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`ins_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`ins_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`car_integral`,`created_at`,`updated_at`
+        `cust_warranty_cost`.`id`,`cust_warranty_cost`.`warranty_uuid`,`cust_warranty_brokerage`.`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`ins_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`ins_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`car_integral`,`cust_warranty_brokerage`.`created_at`,`cust_warranty_brokerage`.`updated_at`
         from cust_warranty_cost
         LEFT JOIN cust_warranty_brokerage ON
         `cust_warranty_cost`.`id`=`cust_warranty_brokerage`.`cost_id`
@@ -486,12 +486,12 @@
             parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
             resultType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
         select
-        `cust_warranty_cost`.`id` id,`cust_warranty_cost`.`pay_time` pay_time,`cust_warranty_cost`.`phase` phase,`cust_warranty_cost`.`tax_money` tax_money,`cust_warranty_cost`.`actual_pay_time` actual_pay_time,
+        `cust_warranty_cost`.`id` id,`cust_warranty_cost`.`warranty_uuid` warranty_uuid,`cust_warranty_cost`.`pay_time` pay_time,`cust_warranty_cost`.`phase` phase,`cust_warranty_cost`.`tax_money` tax_money,`cust_warranty_cost`.`actual_pay_time` actual_pay_time,`cust_warranty_cost`.`premium` premium,
         `cust_warranty_cost`.`pay_way` pay_way,`cust_warranty_cost`.`pay_money` pay_money,`cust_warranty_cost`.`pay_status` pay_status,`cust_warranty_cost`.`created_at` created_at,`cust_warranty_cost`.`updated_at` updated_at,
 
         `cust_warranty`.`id` warranty_id,`cust_warranty`.`pre_policy_no` pre_policy_no,`cust_warranty`.`warranty_code` warranty_code,`cust_warranty`.`account_uuid` account_uuid,`cust_warranty`.`manager_uuid` manager_uuid,
         `cust_warranty`.`agent_id` agent_id,`cust_warranty`.`channel_id` channel_id,`cust_warranty`.`plan_id` plan_id,`cust_warranty`.`product_id` product_id,`cust_warranty`.`start_time` warranty_start_time,`cust_warranty`.`end_time` warranty_end_time,
-        `cust_warranty`.`ins_company_id` ins_company_id,`cust_warranty`.`count` warranty_count,`cust_warranty`.`by_stages_way` by_stages_way,`cust_warranty`.`warranty_url` warranty_url,`cust_warranty`.`warranty_from` warranty_from,
+        `cust_warranty`.`ins_company_id` ins_company_id,`cust_warranty`.`count` warranty_count,`cust_warranty`.`pay_category_id` pay_category_id,`cust_warranty`.`warranty_url` warranty_url,`cust_warranty`.`warranty_from` warranty_from,
         `cust_warranty`.`type` warranty_type,`cust_warranty`.`warranty_status` warranty_status,`cust_warranty`.`created_at` warranty_created_at,`cust_warranty`.`updated_at` warranty_updated_at,
 
         `cust_warranty_brokerage`.`id` brokerage_id,`cust_warranty_brokerage`.`warranty_money` warranty_money,`cust_warranty_brokerage`.`ins_money` ins_money,`cust_warranty_brokerage`.`manager_money` manager_money,
@@ -530,12 +530,25 @@
                             </otherwise>
                         </choose>
                     </if>
-                    GROUP BY `cust_warranty_cost`.`id`,`cust_warranty_cost`.`pay_time`,`cust_warranty_cost`.`phase`,`cust_warranty_cost`.`tax_money`,`cust_warranty_cost`.`actual_pay_time`,
+                    <if test="start_time!=null and start_time!='' and end_time!=null and end_time!=''">
+                        <choose>
+                            <when test='time_type=="1"'>
+                                and `cust_warranty_cost`.`actual_pay_time`&lt;=#{start_time} AND `cust_warranty_cost`.`actual_pay_time`&gt;#{end_time}
+                            </when>
+                            <when test='time_type=="2"'>
+                                and `cust_warranty`.`start_time`&lt;=#{start_time} AND `cust_warranty`.`start_time`&gt;#{end_time}
+                            </when>
+                            <otherwise>
+                                and 1=1
+                            </otherwise>
+                        </choose>
+                    </if>
+                    GROUP BY `cust_warranty_cost`.`warranty_uuid`,`cust_warranty_cost`.`id`,`cust_warranty_cost`.`pay_time`,`cust_warranty_cost`.`phase`,`cust_warranty_cost`.`tax_money`,`cust_warranty_cost`.`actual_pay_time`,`cust_warranty_cost`.`premium`,
                     `cust_warranty_cost`.`pay_way`,`cust_warranty_cost`.`pay_money`,`cust_warranty_cost`.`pay_status`,`cust_warranty_cost`.`created_at`,`cust_warranty_cost`.`updated_at`,
 
                     `cust_warranty`.`id`,`cust_warranty`.`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`account_uuid`,`cust_warranty`.`manager_uuid`,
                     `cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,
-                    `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,
+                    `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,
                     `cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`created_at`,`cust_warranty`.`updated_at`,
 
                     `cust_warranty_brokerage`.`id`,`cust_warranty_brokerage`.`warranty_money`,`cust_warranty_brokerage`.`ins_money`,`cust_warranty_brokerage`.`manager_money`,
@@ -563,12 +576,25 @@
                     </otherwise>
                 </choose>
             </if>
-            GROUP BY `cust_warranty_cost`.`id`,`cust_warranty_cost`.`pay_time`,`cust_warranty_cost`.`phase`,`cust_warranty_cost`.`tax_money`,`cust_warranty_cost`.`actual_pay_time`,
+            <if test="start_time!=null and start_time!='' and end_time!=null and end_time!=''">
+                <choose>
+                    <when test='time_type=="1"'>
+                        and `cust_warranty_cost`.`actual_pay_time`&lt;=#{start_time} AND `cust_warranty_cost`.`actual_pay_time`&gt;#{end_time}
+                    </when>
+                    <when test='time_type=="2"'>
+                        and `cust_warranty`.`start_time`&lt;=#{start_time} AND `cust_warranty`.`start_time`&gt;#{end_time}
+                    </when>
+                    <otherwise>
+                        and 1=1
+                    </otherwise>
+                </choose>
+            </if>
+            GROUP BY `cust_warranty_cost`.`warranty_uuid`,`cust_warranty_cost`.`id`,`cust_warranty_cost`.`pay_time`,`cust_warranty_cost`.`phase`,`cust_warranty_cost`.`tax_money`,`cust_warranty_cost`.`actual_pay_time`,`cust_warranty_cost`.`premium`,
             `cust_warranty_cost`.`pay_way`,`cust_warranty_cost`.`pay_money`,`cust_warranty_cost`.`pay_status`,`cust_warranty_cost`.`created_at`,`cust_warranty_cost`.`updated_at`,
 
             `cust_warranty`.`id`,`cust_warranty`.`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`account_uuid`,`cust_warranty`.`manager_uuid`,
             `cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,
-            `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`by_stages_way`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,
+            `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,
             `cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`created_at`,`cust_warranty`.`updated_at`,
 
             `cust_warranty_brokerage`.`id`,`cust_warranty_brokerage`.`warranty_money`,`cust_warranty_brokerage`.`ins_money`,`cust_warranty_brokerage`.`manager_money`,
@@ -596,6 +622,19 @@
                 </when>
                 <when test='searchType=="3"'>
                     and `cust_warranty_person`.`name` like concat("%",#{search},"%")
+                </when>
+                <otherwise>
+                    and 1=1
+                </otherwise>
+            </choose>
+        </if>
+        <if test="start_time!=null and start_time!='' and end_time!=null and end_time!=''">
+            <choose>
+                <when test='time_type=="1"'>
+                    and `cust_warranty_cost`.`actual_pay_time`&lt;=#{start_time} AND `cust_warranty_cost`.`actual_pay_time`&gt;#{end_time}
+                </when>
+                <when test='time_type=="2"'>
+                    and `cust_warranty`.`start_time`&lt;=#{start_time} AND `cust_warranty`.`start_time`&gt;#{end_time}
                 </when>
                 <otherwise>
                     and 1=1

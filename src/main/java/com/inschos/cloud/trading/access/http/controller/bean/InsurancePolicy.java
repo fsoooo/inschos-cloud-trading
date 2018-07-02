@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.access.http.controller.action.CarInsuranceAction;
 import com.inschos.cloud.trading.annotation.CheckParams;
+import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 import com.inschos.cloud.trading.model.*;
@@ -189,10 +190,11 @@ public class InsurancePolicy {
         public String count;
 
         //分期方式
-        public String byStagesWay;
+        public String payCategoryId;
+        public String payCategoryName;
 
         //佣金 0表示未结算，1表示已结算
-        public String isSettlement;
+        // public String isSettlement;
 
         //佣金 0表示未结算，1表示已结算（显示用）
         public String isSettlementText;
@@ -258,6 +260,7 @@ public class InsurancePolicy {
         public String actualPayTimeText;
 
         // 被保险人
+        public String policyholderText;
         public String insuredText;
         public String insuredDetailText;
 
@@ -323,9 +326,9 @@ public class InsurancePolicy {
             this.term = start + "-" + end;
             this.insCompanyId = model.ins_company_id;
             this.count = model.count;
-            this.byStagesWay = model.by_stages_way;
-            this.isSettlement = model.is_settlement;
-            this.isSettlementText = model.isSettlementText(isSettlement);
+            this.payCategoryId = model.pay_category_id;
+//            this.isSettlement = model.is_settlement;
+//            this.isSettlementText = model.isSettlementText(isSettlement);
             this.warrantyUrl = model.warranty_url;
             this.warrantyFrom = model.warranty_from;
             this.warrantyFromText = model.warrantyFromText(warrantyFrom);
@@ -458,6 +461,8 @@ public class InsurancePolicy {
         public List<InsurancePolicyParticipantInfo> beneficiaryList;
         // 车辆信息（仅车险有此信息）
         public CarInfo carInfo;
+
+        public List<CustWarrantyCost> costList;
 
         public GetInsurancePolicyDetail() {
             super();
@@ -1521,6 +1526,123 @@ public class InsurancePolicy {
         public String count;
         public String time;
         public List<InsurancePolicy.GetInsurancePolicyItemBean> list;
+    }
+
+    public static class CustWarrantyCost {
+
+        //主键
+        public String id;
+
+        //内部保单唯一标识
+        public String warrantyUuid;
+
+        //应支付时间
+        public String payTime;
+        public String payTimeText;
+
+        //第几期
+        public String phase;
+
+        //保单价格
+        public String premium;
+        public String premiumText;
+
+        //税费
+        public String taxMoney;
+        public String taxMoneyText;
+
+        //实际支付时间
+        public String actualPayTime;
+        public String actualPayTimeText;
+
+        //支付方式 1 银联 2 支付宝 3 微信 4现金
+        public String payWay;
+        public String payWayText;
+
+        //付款金额
+        public String payMoney;
+        public String payMoneyText;
+
+        //支付状态  201-核保中 202-核保失败 203-待支付 204-支付中 205-支付取消 206-支付成功
+        public String payStatus;
+        public String payStatusText;
+
+        //结算状态，0-未结算，1-已结算
+        public String isSettlement;
+        public String isSettlementText;
+
+        //结算单uuid
+        public String billUuid;
+
+        //创建时间
+        public String createdAt;
+        public String createdAtText;
+
+        //结束时间
+        public String updatedAt;
+        public String updatedAtText;
+
+        public CustWarrantyCost() {
+
+        }
+
+        public CustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel) {
+            if (custWarrantyCostModel == null) {
+                return;
+            }
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+            this.id = custWarrantyCostModel.id;
+            this.warrantyUuid = custWarrantyCostModel.warranty_uuid;
+            this.payTime = custWarrantyCostModel.pay_time;
+            if (StringKit.isInteger(custWarrantyCostModel.pay_time)) {
+                this.payTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.pay_time)));
+            }
+            this.phase = custWarrantyCostModel.phase;
+            if (StringKit.isNumeric(custWarrantyCostModel.premium)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyCostModel.premium);
+                this.premium = decimalFormat.format(bigDecimal.doubleValue());
+            } else {
+                this.premium = "0.00";
+            }
+            this.premiumText = "¥" + this.premium;
+            if (StringKit.isNumeric(custWarrantyCostModel.tax_money)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyCostModel.tax_money);
+                this.taxMoney = decimalFormat.format(bigDecimal.doubleValue());
+            } else {
+                this.taxMoney = "0.00";
+            }
+            this.taxMoneyText = "¥" + this.taxMoney;
+            this.actualPayTime = custWarrantyCostModel.actual_pay_time;
+            if (StringKit.isInteger(custWarrantyCostModel.actual_pay_time)) {
+                this.actualPayTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.actual_pay_time)));
+            }
+            this.payWay = custWarrantyCostModel.pay_way;
+            this.payWayText = custWarrantyCostModel.payWayText(custWarrantyCostModel.pay_way);
+            if (StringKit.isNumeric(custWarrantyCostModel.pay_money)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyCostModel.pay_money);
+                this.payMoney = decimalFormat.format(bigDecimal.doubleValue());
+            } else {
+                this.payMoney = "0.00";
+            }
+            this.payMoneyText = "¥" + this.taxMoney;
+            this.payStatus = custWarrantyCostModel.pay_status;
+            this.payStatusText = custWarrantyCostModel.payStatusText(custWarrantyCostModel.pay_status);
+            this.isSettlement = custWarrantyCostModel.is_settlement;
+            BillModel billModel = new BillModel();
+            this.isSettlementText = billModel.isSettlementText(custWarrantyCostModel.is_settlement);
+            this.billUuid = custWarrantyCostModel.id;
+            this.createdAt = custWarrantyCostModel.created_at;
+            if (StringKit.isInteger(custWarrantyCostModel.created_at)) {
+                this.createdAtText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.created_at)));
+            }
+            this.updatedAt = custWarrantyCostModel.updated_at;
+            if (StringKit.isInteger(custWarrantyCostModel.updated_at)) {
+                this.updatedAtText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.updated_at)));
+            }
+        }
     }
 
 }

@@ -53,6 +53,8 @@ public class BillDetailModel {
     public String searchType;
     public String max_time = String.valueOf(TimeKit.MAX_MILLIS);
     public String product_id_string;
+    public List<String> warranty_list;
+
 
     // 网销
     public static final String TYPE_ON_LINE = "1";
@@ -292,7 +294,7 @@ public class BillDetailModel {
     /**
      * 分期方式
      */
-    public String online_by_stages_way;
+    public String online_pay_category_id;
 
     /**
      * 电子保单下载地址

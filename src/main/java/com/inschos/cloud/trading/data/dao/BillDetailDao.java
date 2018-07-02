@@ -52,4 +52,8 @@ public class BillDetailDao extends BaseDao {
     public long findBillDetailCountByBillUuid(BillDetailModel billDetailModel) {
         return billDetailMapper.findBillDetailCountByBillUuid(billDetailModel);
     }
+
+    public BillDetailModel findBillDetailByWarrantyUuids(BillDetailModel billDetailModel) {
+        return billDetailMapper.findBillDetailByWarrantyUuids(billDetailModel);
+    }
 }

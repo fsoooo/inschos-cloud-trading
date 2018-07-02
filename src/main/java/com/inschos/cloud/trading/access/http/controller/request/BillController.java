@@ -51,6 +51,13 @@ public class BillController {
     }
 
     @GetActionBeanAnnotation
+    @RequestMapping("get_bill_info")
+    @ResponseBody
+    public String getBillInfo(ActionBean actionBean) {
+        return billAction.getBillInfo(actionBean);
+    }
+
+    @GetActionBeanAnnotation
     @RequestMapping("get_bill_detail")
     @ResponseBody
     public String getBillDetail(ActionBean actionBean) {
@@ -64,19 +71,19 @@ public class BillController {
         return billAction.downloadBillDetail(actionBean);
     }
 
-    @GetActionBeanAnnotation
-    @RequestMapping("clearing_bill")
-    @ResponseBody
-    public String clearingBill(ActionBean actionBean) {
-        return billAction.clearingBill(actionBean);
-    }
-
-    @GetActionBeanAnnotation
-    @RequestMapping("cancel_clearing_bill")
-    @ResponseBody
-    public String cancelClearingBill(ActionBean actionBean) {
-        return billAction.cancelClearingBill(actionBean);
-    }
+//    @GetActionBeanAnnotation
+//    @RequestMapping("clearing_bill")
+//    @ResponseBody
+//    public String clearingBill(ActionBean actionBean) {
+//        return billAction.clearingBill(actionBean);
+//    }
+//
+//    @GetActionBeanAnnotation
+//    @RequestMapping("cancel_clearing_bill")
+//    @ResponseBody
+//    public String cancelClearingBill(ActionBean actionBean) {
+//        return billAction.cancelClearingBill(actionBean);
+//    }
 
     @GetActionBeanAnnotation
     @RequestMapping("delete_bill")

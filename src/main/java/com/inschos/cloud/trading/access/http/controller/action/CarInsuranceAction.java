@@ -1355,31 +1355,13 @@ public class CarInsuranceAction extends BaseAction {
                 }
             }
 
-            List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
-            ProductBean ciProduct = null;
-            if (ciList != null && !ciList.isEmpty()) {
-                for (ProductBean productBean : ciList) {
-                    if (productBean.code.contains(request.applyUnderwriting.insurerCode)) {
-                        ciProduct = productBean;
-                        break;
-                    }
-                }
-            }
+            ProductBean ciProduct = productClient.getProductByCode(request.applyUnderwriting.insurerCode + "_CAR_COMPULSORY");
 
             if (ciProduct == null) {
                 return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
             }
 
-            List<ProductBean> biList = productClient.getPlatformProductAll(actionBean.managerUuid, 43);
-            ProductBean biProduct = null;
-            if (biList != null && !biList.isEmpty()) {
-                for (ProductBean productBean : biList) {
-                    if (productBean.code.contains(request.applyUnderwriting.insurerCode)) {
-                        biProduct = productBean;
-                        break;
-                    }
-                }
-            }
+            ProductBean biProduct = productClient.getProductByCode(request.applyUnderwriting.insurerCode + "_CAR_BUSINESS");
 
             if (biProduct == null) {
                 return json(BaseResponse.CODE_FAILURE, "申请核保失败", response);
@@ -1430,7 +1412,7 @@ public class CarInsuranceAction extends BaseAction {
 
                 ciProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
                 ciProposal.warranty_status = warrantyStatus;
-                ciProposal.by_stages_way = "一次性缴费";
+                ciProposal.pay_category_id = String.valueOf(ciProduct.payCategoryId);
                 ciProposal.integral = String.valueOf(ciIntegral.doubleValue());
                 ciProposal.state = "1";
                 ciProposal.created_at = time;
@@ -1457,6 +1439,7 @@ public class CarInsuranceAction extends BaseAction {
                 ciCustWarrantyCostModel.warranty_uuid = ciProposal.warranty_uuid;
                 ciCustWarrantyCostModel.pay_time = ciProposal.start_time;
                 ciCustWarrantyCostModel.phase = "1";
+                ciCustWarrantyCostModel.is_settlement = "0";
                 ciCustWarrantyCostModel.premium = request.applyUnderwriting.ciInsuredPremium;
                 ciCustWarrantyCostModel.tax_money = request.applyUnderwriting.ciCarShipTax;
                 ciCustWarrantyCostModel.pay_status = payState;
@@ -1576,7 +1559,7 @@ public class CarInsuranceAction extends BaseAction {
 
                 biProposal.type = InsurancePolicyModel.POLICY_TYPE_CAR;
                 biProposal.warranty_status = warrantyStatus;
-                biProposal.by_stages_way = "一次性缴费";
+                biProposal.pay_category_id = String.valueOf(biProduct.payCategoryId);
                 biProposal.integral = String.valueOf(biIntegral.doubleValue());
                 biProposal.state = "1";
                 biProposal.created_at = time;
@@ -1600,6 +1583,7 @@ public class CarInsuranceAction extends BaseAction {
                 biCustWarrantyCostModel.warranty_uuid = biProposal.warranty_uuid;
                 biCustWarrantyCostModel.pay_time = biProposal.start_time;
                 biCustWarrantyCostModel.phase = "1";
+                biCustWarrantyCostModel.is_settlement = "0";
                 biCustWarrantyCostModel.premium = request.applyUnderwriting.biInsuredPremium;
                 biCustWarrantyCostModel.tax_money = request.applyUnderwriting.biCarShipTax;
                 biCustWarrantyCostModel.pay_status = payState;
@@ -2577,6 +2561,9 @@ public class CarInsuranceAction extends BaseAction {
         for (ExtendCarInsurancePolicy.InsuranceInfoDetail datum : data) {
             CarInsurance.InsuranceInfo insuranceInfo = new CarInsurance.InsuranceInfo();
             insuranceInfo.coverageCode = datum.coverageCode;
+            if (StringKit.equals(insuranceInfo.coverageCode, CarInfoModel.COVERAGE_CODE_FORCEPREMIUM)) {
+                insuranceInfo.sort = 0;
+            }
             insuranceInfo.coverageName = datum.coverageName;
 
             if (map.get(datum.coverageCode) != null) {
@@ -2629,6 +2616,13 @@ public class CarInsuranceAction extends BaseAction {
             list.add(insuranceInfo);
         }
 
+        list.sort(new Comparator<CarInsurance.InsuranceInfo>() {
+            @Override
+            public int compare(CarInsurance.InsuranceInfo o1, CarInsurance.InsuranceInfo o2) {
+                return o1.sort - o2.sort;
+            }
+        });
+
         return list;
     }
 
@@ -2642,14 +2636,17 @@ public class CarInsuranceAction extends BaseAction {
      * @return 错误信息
      */
     private String dealCarInfoResponseNo(String signToken, boolean notLicenseNo, ExtendCarInsurancePolicy.CarInfo carInfo) {
-        String[] split = signToken.split("\\*");
-
         boolean verify = false;
-        if (split.length == 2) {
-            boolean frameNo = SignatureTools.verify(carInfo.frameNo, split[0], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
-            boolean engineNo = SignatureTools.verify(carInfo.engineNo, split[1], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
-            verify = frameNo || engineNo;
+        if (!StringKit.isEmpty(signToken)) {
+            String[] split = signToken.split("\\*");
+
+            if (split.length == 2) {
+                boolean frameNo = SignatureTools.verify(carInfo.frameNo, split[0], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+                boolean engineNo = SignatureTools.verify(carInfo.engineNo, split[1], SignatureTools.SIGN_CAR_RSA_PUBLIC_KEY);
+                verify = frameNo || engineNo;
+            }
         }
+
 
         if (!verify) {
             if (StringKit.isEmpty(carInfo.frameNo) || StringKit.equals(carInfo.frameNo, "null")) {
@@ -2761,7 +2758,7 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             // 修理期间费用补偿险Z2，校验天数和每天的保额
-            if (StringKit.equals(insuranceInfoDetail.coverageCode, "Z2") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
+            if (StringKit.equals(insuranceInfoDetail.coverageCode, CarInfoModel.COVERAGE_CODE_Z2) && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
                 if (StringKit.isInteger(insuranceInfo.day)) {
                     Integer integer = Integer.valueOf(insuranceInfo.day);
                     if (integer > Z2_MAX_DAY || integer < Z2_MIN_DAY) {
@@ -2796,7 +2793,7 @@ public class CarInsuranceAction extends BaseAction {
             }
 
             // 玻璃险破碎险F，校验是否国产、进口
-            if (StringKit.equals(insuranceInfoDetail.coverageCode, "F") && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
+            if (StringKit.equals(insuranceInfoDetail.coverageCode, CarInfoModel.COVERAGE_CODE_F) && StringKit.equals(insuranceInfoDetail.insuredAmount, "Y")) {
                 boolean flag = false;
                 CarInsurance.InsuranceInfo whole = map.get(insuranceInfoDetail.coverageCode);
                 for (String s : whole.sourceOption) {

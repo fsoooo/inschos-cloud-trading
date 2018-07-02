@@ -75,6 +75,7 @@ public class CustWarrantyCostModel {
     //======================search====================
 
     public String manager_uuid;
+    public String time_type;
     public String start_time;
     public String end_time;
     public String time_range_type;

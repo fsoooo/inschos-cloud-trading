@@ -37,4 +37,10 @@ public interface ProductService {
 
     List<ProductBean> getListProduct(String name, String managerUuid);
 
+    ProductBean getProductByCode(String code);
+
+    ProductPayCategoryBean getProductPayCategory(long id);
+
+    List<ProductPayCategoryBean> listProductPayCategory(List<String> id);
+
 }
