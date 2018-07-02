@@ -188,7 +188,7 @@
                 </when>
                 <when test="page.start>0">
                     `id`&lt;=(select `id` from offline_cust_warranty
-                    where `warranty_uuid`=#{warranty_uuid} AND `state`=1 AND `insurance_company`=#{insurance_company} AND `is_settlement`=0 AND (`bill_uuid` is NULL OR `bill_uuid`='')
+                    where `warranty_uuid`=#{warranty_uuid} AND `state`=1 AND `pay_status`=206 AND `insurance_company`=#{insurance_company} AND `is_settlement`=0 AND (`bill_uuid` is NULL OR `bill_uuid`='')
                     <if test="search!=null and search!=''">
                         <choose>
                             <when test='searchType=="1"'>
@@ -222,7 +222,7 @@
                     1=1
                 </otherwise>
             </choose>
-            AND `warranty_uuid`=#{warranty_uuid} AND `state`=1 AND `insurance_company`=#{insurance_company} AND `is_settlement`=0 AND (`bill_uuid` is NULL OR `bill_uuid`='')
+            AND `warranty_uuid`=#{warranty_uuid} AND `state`=1 AND `pay_status`=206 AND `insurance_company`=#{insurance_company} AND `is_settlement`=0 AND (`bill_uuid` is NULL OR `bill_uuid`='')
             <if test="search!=null and search!=''">
                 <choose>
                     <when test='searchType=="1"'>
@@ -258,7 +258,7 @@
         select
         COUNT(id)
         from offline_cust_warranty
-        where `warranty_uuid`=#{warranty_uuid} AND `state`=1 AND `insurance_company`=#{insurance_company} AND `is_settlement`=0 AND (`bill_uuid` is NULL OR `bill_uuid`='')
+        where `warranty_uuid`=#{warranty_uuid} AND `state`=1 AND `pay_status`=206 AND `insurance_company`=#{insurance_company} AND `is_settlement`=0 AND (`bill_uuid` is NULL OR `bill_uuid`='')
         <if test="start_time!=null and start_time!='' and end_time!=null and end_time!=''">
             <choose>
                 <when test='time_type=="1"'>

@@ -249,8 +249,10 @@ public class Bill {
         BILL_DETAIL_LIST.add("phase");
         BILL_DETAIL_LIST.add("feeRate");
         BILL_DETAIL_LIST.add("fee");
+        BILL_DETAIL_LIST.add("startTimeText");
+        BILL_DETAIL_LIST.add("endTimeText");
+        BILL_DETAIL_LIST.add("orderTimeText");
         BILL_DETAIL_LIST.add("billTimeText");
-        BILL_DETAIL_LIST.add("createdAtText");
 
     }
 
@@ -273,8 +275,10 @@ public class Bill {
         billInsurancePolicy.phase = "缴费期";
         billInsurancePolicy.feeRate = "佣金比（%）";
         billInsurancePolicy.fee = "佣金（元）";
+        billInsurancePolicy.startTimeText = "起保时间";
+        billInsurancePolicy.endTimeText = "终止时间";
+        billInsurancePolicy.orderTimeText = "签单时间";
         billInsurancePolicy.billTimeText = "结算时间";
-        billInsurancePolicy.createdAtText = "创建时间";
 
         return billInsurancePolicy;
     }
@@ -307,17 +311,21 @@ public class Bill {
         public String premium;
         public String premiumText;
 
-        // 生效时间
+        // 起保时间
         public String startTime;
         public String startTimeText;
 
-        // 起保时间
+        // 终止时间
         public String endTime;
         public String endTimeText;
 
-        // 终止时间
+        // 结算时间
         public String billTime;
         public String billTimeText;
+
+        // 签单时间
+        public String orderTime;
+        public String orderTimeText;
 
         // 生成时间
         public String createdAt;
@@ -370,6 +378,10 @@ public class Bill {
             this.endTime = custWarrantyCostModel.warranty_end_time;
             if (StringKit.isInteger(custWarrantyCostModel.warranty_end_time)) {
                 this.endTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.warranty_end_time)));
+            }
+            this.orderTime = custWarrantyCostModel.created_at;
+            if (StringKit.isInteger(custWarrantyCostModel.created_at)) {
+                this.orderTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.created_at)));
             }
             this.createdAt = custWarrantyCostModel.created_at;
             if (StringKit.isInteger(custWarrantyCostModel.created_at)) {
@@ -447,6 +459,10 @@ public class Bill {
             this.endTime = offlineInsurancePolicyModel.end_time;
             if (StringKit.isInteger(offlineInsurancePolicyModel.end_time)) {
                 this.endTimeText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.end_time)));
+            }
+            this.orderTime = offlineInsurancePolicyModel.order_time;
+            if (StringKit.isInteger(offlineInsurancePolicyModel.order_time)) {
+                this.orderTimeText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.order_time)));
             }
             this.createdAt = offlineInsurancePolicyModel.created_at;
             if (StringKit.isInteger(offlineInsurancePolicyModel.created_at)) {

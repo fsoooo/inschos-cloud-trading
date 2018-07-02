@@ -896,6 +896,14 @@ public class BillAction extends BaseAction {
                 if (StringKit.isInteger(detailModel.online_start_time)) {
                     billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.online_start_time)));
                 }
+                billInsurancePolicy.endTime = detailModel.online_end_time;
+                if (StringKit.isInteger(detailModel.online_end_time)) {
+                    billInsurancePolicy.endTimeText = sdf.format(new Date(Long.valueOf(detailModel.online_end_time)));
+                }
+                billInsurancePolicy.orderTime = detailModel.online_created_at;
+                if (StringKit.isInteger(detailModel.online_created_at)) {
+                    billInsurancePolicy.orderTimeText = sdf.format(new Date(Long.valueOf(detailModel.online_created_at)));
+                }
                 billInsurancePolicy.phase = detailModel.online_phase;
 
             } else if (StringKit.equals(detailModel.type, BillDetailModel.TYPE_OFF_LINE)) {
@@ -933,6 +941,14 @@ public class BillAction extends BaseAction {
                 billInsurancePolicy.startTime = detailModel.offline_start_time;
                 if (StringKit.isInteger(detailModel.offline_start_time)) {
                     billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.offline_start_time)));
+                }
+                billInsurancePolicy.endTime = detailModel.offline_end_time;
+                if (StringKit.isInteger(detailModel.offline_end_time)) {
+                    billInsurancePolicy.endTimeText = sdf.format(new Date(Long.valueOf(detailModel.offline_end_time)));
+                }
+                billInsurancePolicy.orderTime = detailModel.offline_order_time;
+                if (StringKit.isInteger(detailModel.offline_order_time)) {
+                    billInsurancePolicy.orderTimeText = sdf.format(new Date(Long.valueOf(detailModel.offline_order_time)));
                 }
                 billInsurancePolicy.phase = detailModel.offline_payment_time;
 

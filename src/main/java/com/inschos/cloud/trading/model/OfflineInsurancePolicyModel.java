@@ -1,5 +1,6 @@
 package com.inschos.cloud.trading.model;
 
+import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.assist.kit.TimeKit;
 
@@ -242,14 +243,31 @@ public class OfflineInsurancePolicyModel {
             }
         }
 
-        if (!StringKit.isEmpty(premium) && !StringKit.isNumeric(premium)) {
+        if (!StringKit.isNumeric(premium)) {
             flag = false;
             reasonList.add(new ErrorReason("保费必须是数字", "premium"));
         }
 
-        if (!StringKit.isEmpty(brokerage) && !StringKit.isNumeric(brokerage)) {
+        if (!StringKit.isNumeric(brokerage)) {
             flag = false;
             reasonList.add(new ErrorReason("应收佣金必须是数字", "brokerage"));
+        }
+
+        if (pay_status == null) {
+            flag = false;
+            reasonList.add(new ErrorReason("支付状态不能为空", "brokerage"));
+        } else {
+            switch (pay_status) {
+                case "未支付":
+                    pay_status = CustWarrantyCostModel.PAY_STATUS_WAIT;
+                    break;
+                case "已支付":
+                    pay_status = CustWarrantyCostModel.PAY_STATUS_SUCCESS;
+                    break;
+                default:
+                    reasonList.add(new ErrorReason("支付状态只能为：未支付/已支付", "brokerage"));
+                    break;
+            }
         }
 
         return flag;
