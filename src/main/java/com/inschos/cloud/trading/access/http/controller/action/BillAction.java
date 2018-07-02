@@ -9,10 +9,7 @@ import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.*;
-import com.inschos.cloud.trading.data.dao.BillDao;
-import com.inschos.cloud.trading.data.dao.BillDetailDao;
-import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
-import com.inschos.cloud.trading.data.dao.OfflineInsurancePolicyDao;
+import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -40,6 +37,9 @@ public class BillAction extends BaseAction {
 
     @Autowired
     private BillDetailDao billDetailDao;
+
+    @Autowired
+    private InsurancePolicyDao insurancePolicyDao;
 
     @Autowired
     private CustWarrantyCostDao custWarrantyCostDao;
@@ -136,6 +136,32 @@ public class BillAction extends BaseAction {
 
         if (!dealBillInsurancePolicyList.isSuccess) {
             return json(BaseResponse.CODE_FAILURE, dealBillInsurancePolicyList.message, response);
+        }
+
+        if (dealBillInsurancePolicyList.result != null && !dealBillInsurancePolicyList.result.isEmpty()) {
+            BillDetailModel billDetailModel = new BillDetailModel();
+            billDetailModel.warranty_list = new ArrayList<>();
+            for (BillDetailModel detailModel : dealBillInsurancePolicyList.result) {
+                billDetailModel.warranty_list.add(detailModel.warranty_uuid);
+            }
+
+            BillDetailModel billDetailByWarrantyUuids = billDetailDao.findBillDetailByWarrantyUuids(billDetailModel);
+
+            if (billDetailByWarrantyUuids != null) {
+                String str = "";
+                if (StringKit.equals(billDetailByWarrantyUuids.type, BillDetailModel.TYPE_ON_LINE)) {
+                    InsurancePolicyModel insurancePolicyDetailByWarrantyUuid = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(billDetailByWarrantyUuids.warranty_uuid);
+                    if (insurancePolicyDetailByWarrantyUuid != null) {
+                        str = insurancePolicyDetailByWarrantyUuid.warranty_code;
+                    }
+                } else if (StringKit.equals(billDetailByWarrantyUuids.type, BillDetailModel.TYPE_OFF_LINE)) {
+                    OfflineInsurancePolicyModel offlineInsurancePolicyByWarrantyUuid = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyUuid(billDetailByWarrantyUuids.warranty_uuid);
+                    if (offlineInsurancePolicyByWarrantyUuid != null) {
+                        str = offlineInsurancePolicyByWarrantyUuid.warranty_code;
+                    }
+                }
+                return json(BaseResponse.CODE_FAILURE, "结算单'" + str + "'已存在", response);
+            }
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");

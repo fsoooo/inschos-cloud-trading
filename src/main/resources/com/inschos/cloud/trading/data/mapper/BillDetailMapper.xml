@@ -26,6 +26,27 @@
         from cust_warranty_bill_detail where `id`=#{_parameter}
     </select>
 
+    <select id="findBillDetailByWarrantyUuids" parameterType="com.inschos.cloud.trading.model.BillDetailModel"
+            resultType="com.inschos.cloud.trading.model.BillDetailModel">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_warranty_bill_detail
+        <where>
+            <choose>
+                <when test="warranty_list!=null and !warranty_list.isEmpty()">
+                    `warranty_uuid` in
+                    <foreach collection="warranty_list" open="(" separator="," close=")" item="item">
+                        #{item}
+                    </foreach>
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+        </where>
+        limit 1;
+    </select>
+
     <select id="findBillDetailByBillUuid" parameterType="com.inschos.cloud.trading.model.BillDetailModel"
             resultType="com.inschos.cloud.trading.model.BillDetailModel">
         select

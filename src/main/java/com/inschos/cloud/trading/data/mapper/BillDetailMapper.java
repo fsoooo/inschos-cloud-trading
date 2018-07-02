@@ -21,4 +21,6 @@ public interface BillDetailMapper {
 
     long findBillDetailCountByBillUuid (BillDetailModel billDetailModel);
 
+    BillDetailModel findBillDetailByWarrantyUuids (BillDetailModel billDetailModel);
+
 }
