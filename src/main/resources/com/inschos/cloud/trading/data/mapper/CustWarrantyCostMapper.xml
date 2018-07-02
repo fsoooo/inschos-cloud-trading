@@ -475,7 +475,7 @@
             parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
             resultType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
         select
-        `id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`ins_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`ins_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`car_integral`,`created_at`,`updated_at`
+        `cust_warranty_cost`.`id`,`cust_warranty_cost`.`warranty_uuid`,`cust_warranty_brokerage`.`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`ins_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`ins_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`car_integral`,`cust_warranty_brokerage`.`created_at`,`cust_warranty_brokerage`.`updated_at`
         from cust_warranty_cost
         LEFT JOIN cust_warranty_brokerage ON
         `cust_warranty_cost`.`id`=`cust_warranty_brokerage`.`cost_id`
