@@ -69,11 +69,6 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        BillModel billByBillName = billDao.findBillByBillName(request.billName);
-        if (billByBillName != null) {
-            return json(BaseResponse.CODE_FAILURE, "结算单'" + request.billName + "'已存在", response);
-        }
-
         String time = String.valueOf(System.currentTimeMillis());
 
         BillModel billModel = new BillModel();
@@ -86,6 +81,11 @@ public class BillAction extends BaseAction {
         billModel.created_at = time;
         billModel.updated_at = time;
         billModel.state = "1";
+
+        BillModel billByBillName = billDao.findBillByBillName(billModel);
+        if (billByBillName != null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单'" + request.billName + "'已存在", response);
+        }
 
         billModel.bill_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
 

@@ -45,10 +45,10 @@
         from cust_warranty_bill where `bill_uuid`=#{_parameter} AND `state`=1
     </select>
 
-    <select id="findBillByBillName" parameterType="String" resultType="com.inschos.cloud.trading.model.BillModel">
+    <select id="findBillByBillName" parameterType="com.inschos.cloud.trading.model.BillMode" resultType="com.inschos.cloud.trading.model.BillModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty_bill where `bill_name`=#{_parameter} AND `state`=1
+        from cust_warranty_bill where `bill_name`=#{bill_name} AND `manager_uuid`=#{manager_uuid} AND `state`=1
     </select>
 
     <select id="findBillByManagerUuid" parameterType="com.inschos.cloud.trading.model.BillModel"

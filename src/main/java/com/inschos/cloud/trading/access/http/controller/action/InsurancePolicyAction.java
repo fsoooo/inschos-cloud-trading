@@ -619,6 +619,7 @@ public class InsurancePolicyAction extends BaseAction {
                     } else if (success) {
                         offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
                         offlineInsurancePolicyModel.warranty_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
+                        offlineInsurancePolicyModel.is_settlement = "0";
                         offlineInsurancePolicyModel.created_at = time;
                         offlineInsurancePolicyModel.updated_at = time;
                         offlineInsurancePolicyModel.state = "1";
