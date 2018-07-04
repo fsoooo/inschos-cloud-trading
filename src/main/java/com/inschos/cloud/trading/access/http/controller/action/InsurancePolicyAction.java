@@ -1630,18 +1630,16 @@ public class InsurancePolicyAction extends BaseAction {
             CustWarrantyCostModel custWarrantyCostModel1 = list.get(i);
             isFindLast = StringKit.equals(custWarrantyCostModel1.pay_status, CustWarrantyCostModel.PAY_STATUS_SUCCESS);
 
-            if (isFindLast) {
-                if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
-                    custWarrantyCostListResult.premium = custWarrantyCostListResult.premium.add(new BigDecimal(custWarrantyCostModel1.premium));
-                }
+            if (StringKit.isNumeric(custWarrantyCostModel1.premium)) {
+                custWarrantyCostListResult.premium = custWarrantyCostListResult.premium.add(new BigDecimal(custWarrantyCostModel1.premium));
+            }
 
-                if (StringKit.isNumeric(custWarrantyCostModel1.tax_money)) {
-                    custWarrantyCostListResult.taxMoney = custWarrantyCostListResult.taxMoney.add(new BigDecimal(custWarrantyCostModel1.tax_money));
-                }
+            if (StringKit.isNumeric(custWarrantyCostModel1.tax_money)) {
+                custWarrantyCostListResult.taxMoney = custWarrantyCostListResult.taxMoney.add(new BigDecimal(custWarrantyCostModel1.tax_money));
+            }
 
-                if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
-                    custWarrantyCostListResult.payMoney = custWarrantyCostListResult.payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
-                }
+            if (StringKit.isNumeric(custWarrantyCostModel1.pay_money)) {
+                custWarrantyCostListResult.payMoney = custWarrantyCostListResult.payMoney.add(new BigDecimal(custWarrantyCostModel1.pay_money));
             }
 
             if (isFindLast || i == 0) {
