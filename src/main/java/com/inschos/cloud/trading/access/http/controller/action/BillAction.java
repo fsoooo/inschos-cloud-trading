@@ -896,7 +896,7 @@ public class BillAction extends BaseAction {
                     billInsurancePolicy.feeRate = "0.00";
                     billInsurancePolicy.feeRateText = "0.00%";
                 }
-
+                billInsurancePolicy.feeRatePercentage = decimalFormat.format(new BigDecimal(billInsurancePolicy.feeRate).multiply(new BigDecimal(100)).doubleValue());
                 billInsurancePolicy.startTime = detailModel.online_start_time;
                 if (StringKit.isInteger(detailModel.online_start_time)) {
                     billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.online_start_time)));
@@ -923,7 +923,7 @@ public class BillAction extends BaseAction {
                 } else {
                     billInsurancePolicy.fee = "0.00";
                 }
-                billInsurancePolicy.feeText = String.format("¥%s", billInsurancePolicy.feeText);
+                billInsurancePolicy.feeText = String.format("¥%s", billInsurancePolicy.fee);
 
                 if (StringKit.isNumeric(detailModel.offline_premium)) {
                     BigDecimal bigDecimal = new BigDecimal(detailModel.offline_premium);
@@ -943,6 +943,7 @@ public class BillAction extends BaseAction {
                     billInsurancePolicy.feeRateText = "0.00%";
                 }
                 billInsurancePolicy.premiumText = "¥" + billInsurancePolicy.premium;
+                billInsurancePolicy.feeRatePercentage = decimalFormat.format(new BigDecimal(billInsurancePolicy.feeRate).multiply(new BigDecimal(100)).doubleValue());
                 billInsurancePolicy.startTime = detailModel.offline_start_time;
                 if (StringKit.isInteger(detailModel.offline_start_time)) {
                     billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.offline_start_time)));

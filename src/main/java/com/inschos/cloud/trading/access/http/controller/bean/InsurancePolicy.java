@@ -194,10 +194,10 @@ public class InsurancePolicy {
         public String payCategoryName;
 
         //佣金 0表示未结算，1表示已结算
-        // public String isSettlement;
-
+        public String isSettlement;
         //佣金 0表示未结算，1表示已结算（显示用）
         public String isSettlementText;
+
         public String brokerage;
         public String brokerageText;
 

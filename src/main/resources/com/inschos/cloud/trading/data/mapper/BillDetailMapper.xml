@@ -87,7 +87,7 @@
         LEFT JOIN cust_warranty ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty`.`warranty_uuid`
         LEFT JOIN cust_warranty_cost ON `cust_warranty_bill_detail`.`cost_id`=`cust_warranty_cost`.`id`
         LEFT JOIN cust_warranty_brokerage ON `cust_warranty_bill_detail`.`cost_id`=`cust_warranty_brokerage`.`cost_id`
-        LEFT JOIN cust_warranty_person ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
+        LEFT JOIN cust_warranty_person ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`record_end_time`=2145888000000
         <where>
             <choose>
                 <when test="page.lastId>0">
@@ -95,7 +95,13 @@
                 </when>
                 <when test="page.start>0">
                     `cust_warranty_bill_detail`.`id`&lt;=(select `cust_warranty_bill_detail`.`id` from cust_warranty_bill_detail
-                    where `cust_warranty_bill_detail`.`bill_uuid`=#{bill_uuid} AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`record_end_time`=#{max_time}
+                    LEFT JOIN cust_warranty_bill ON `cust_warranty_bill_detail`.`bill_uuid`=`cust_warranty_bill`.`bill_uuid`
+                    LEFT JOIN offline_cust_warranty ON `cust_warranty_bill_detail`.`warranty_uuid`=`offline_cust_warranty`.`warranty_uuid`
+                    LEFT JOIN cust_warranty ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty`.`warranty_uuid`
+                    LEFT JOIN cust_warranty_cost ON `cust_warranty_bill_detail`.`cost_id`=`cust_warranty_cost`.`id`
+                    LEFT JOIN cust_warranty_brokerage ON `cust_warranty_bill_detail`.`cost_id`=`cust_warranty_brokerage`.`cost_id`
+                    LEFT JOIN cust_warranty_person ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`record_end_time`=2145888000000
+                    where `cust_warranty_bill_detail`.`bill_uuid`=#{bill_uuid}
                     <if test="search!=null and search!=''">
                         <choose>
                             <when test='searchType=="1"'>
@@ -142,7 +148,7 @@
                     1=1
                 </otherwise>
             </choose>
-            AND `cust_warranty_bill_detail`.`bill_uuid`=#{bill_uuid} AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`record_end_time`=#{max_time}
+            AND `cust_warranty_bill_detail`.`bill_uuid`=#{bill_uuid}
             <if test="search!=null and search!=''">
                 <choose>
                     <when test='searchType=="1"'>
@@ -197,8 +203,8 @@
         LEFT JOIN cust_warranty ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty`.`warranty_uuid`
         LEFT JOIN cust_warranty_cost ON `cust_warranty_bill_detail`.`cost_id`=`cust_warranty_cost`.`id`
         LEFT JOIN cust_warranty_brokerage ON `cust_warranty_bill_detail`.`cost_id`=`cust_warranty_brokerage`.`cost_id`
-        LEFT JOIN cust_warranty_person ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
-        where `cust_warranty_bill_detail`.`bill_uuid`=#{bill_uuid} AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`record_end_time`=#{max_time}
+        LEFT JOIN cust_warranty_person ON `cust_warranty_bill_detail`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid` AND `cust_warranty_person`.`type`=2 AND `cust_warranty_person`.`record_end_time`=2145888000000
+        where `cust_warranty_bill_detail`.`bill_uuid`=#{bill_uuid}
             <if test="search!=null and search!=''">
                 <choose>
                     <when test='searchType=="1"'>
