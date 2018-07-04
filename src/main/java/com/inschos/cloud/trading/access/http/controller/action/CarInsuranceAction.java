@@ -544,7 +544,7 @@ public class CarInsuranceAction extends BaseAction {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
 
-                List<ProductBean> productBeans = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
+                List<ProductBean> productBeans = productClient.getProductByAutomobileList(actionBean.managerUuid);
                 Map<String, ProductBean> hashMap = new HashMap<>();
 
                 if (productBeans != null && !productBeans.isEmpty()) {
@@ -995,16 +995,7 @@ public class CarInsuranceAction extends BaseAction {
 
                     insurancePolicy.productName = "";
 
-                    List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
-                    ProductBean ciProduct = null;
-                    if (ciList != null && !ciList.isEmpty()) {
-                        for (ProductBean productBean : ciList) {
-                            if (productBean.code.contains(datum.insurerCode)) {
-                                ciProduct = productBean;
-                                break;
-                            }
-                        }
-                    }
+                    ProductBean ciProduct = productClient.getProductByCode(request.insurerCode + "_CAR_COMPULSORY");
 
                     if (ciProduct == null) {
                         return json(BaseResponse.CODE_FAILURE, "获取参考保费错误", response);
@@ -1190,16 +1181,7 @@ public class CarInsuranceAction extends BaseAction {
 
                     datum.productName = "";
 
-                    List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
-                    ProductBean ciProduct = null;
-                    if (ciList != null && !ciList.isEmpty()) {
-                        for (ProductBean productBean : ciList) {
-                            if (productBean.code.contains(datum.insurerCode)) {
-                                ciProduct = productBean;
-                                break;
-                            }
-                        }
-                    }
+                    ProductBean ciProduct = productClient.getProductByCode(request.insurerCode + "_CAR_COMPULSORY");
 
                     if (ciProduct == null) {
                         return json(BaseResponse.CODE_FAILURE, "获取精准保费错误", response);

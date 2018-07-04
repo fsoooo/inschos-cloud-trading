@@ -174,4 +174,15 @@ public class ProductClient {
         }
     }
 
+    public List<ProductBean> getProductByAutomobileList(String managerUuid) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getProductByAutomobileList(managerUuid) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
 }
