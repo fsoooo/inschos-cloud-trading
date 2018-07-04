@@ -1241,6 +1241,7 @@ public class InsurancePolicy {
 
         // 保费支付状态
         public String payStatus;
+        public String payStatusText;
 
         // 应收佣金
         public String brokerage;
@@ -1316,6 +1317,8 @@ public class InsurancePolicy {
             }
             this.premiumText = "¥" + this.premium;
             this.payStatus = offlineInsurancePolicyModel.pay_status;
+            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+            this.payStatusText = custWarrantyCostModel.payStatusText(offlineInsurancePolicyModel.pay_status);
             if (StringKit.isNumeric(offlineInsurancePolicyModel.brokerage)) {
                 BigDecimal bigDecimal = new BigDecimal(offlineInsurancePolicyModel.brokerage);
                 this.brokerage = money.format(bigDecimal.doubleValue());

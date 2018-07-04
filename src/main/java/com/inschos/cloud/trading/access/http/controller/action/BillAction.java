@@ -371,6 +371,7 @@ public class BillAction extends BaseAction {
                     insuranceCompanyBean.name = request.searchKey;
                     List<InsuranceCompanyBean> listInsuranceCompany = companyClient.getListInsuranceCompany(insuranceCompanyBean);
 
+
                     if (listInsuranceCompany != null && !listInsuranceCompany.isEmpty()) {
                         StringBuilder sb1 = new StringBuilder();
                         int size = listInsuranceCompany.size();
@@ -381,7 +382,11 @@ public class BillAction extends BaseAction {
                                 sb1.append(",");
                             }
                         }
-                        billModel.insurance_company_id_string = sb1.toString();
+                        billModel.insurance_company_id_string = "";
+                    } else {
+                        response.data = new ArrayList<>();
+                        response.page = setPageBean("0", request.pageNum, request.pageSize, 0, 0);
+                        return json(BaseResponse.CODE_SUCCESS, "获取结算单列表成功", response);
                     }
 
                     break;

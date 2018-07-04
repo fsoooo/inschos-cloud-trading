@@ -1,5 +1,7 @@
 package com.inschos.cloud.trading.extend.car;
 
+import com.inschos.cloud.trading.access.http.controller.bean.BaseRequest;
+import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
 import com.inschos.cloud.trading.assist.kit.StringKit;
@@ -513,6 +515,14 @@ public class ExtendCarInsurancePolicy {
         public String billNo;
     }
 
+    public static class GetInsuranceStatementRequest extends CarInsuranceRequest {
+        public String insurerCodes;
+    }
+
+    public static class GetInsuranceStatementResponse extends CarInsuranceResponse {
+        public List<InsuranceStatement> data;
+    }
+
     public static class GetPayLinkRequest extends CarInsuranceRequest {
         public String bizID;
     }
@@ -710,6 +720,11 @@ public class ExtendCarInsurancePolicy {
             // return brandName + familyName + engineDesc + parentVehName + remark;
             return "";
         }
+    }
+
+    public static class InsuranceStatement {
+        public String insurerCode;
+        public String statementContent;
     }
 
 }

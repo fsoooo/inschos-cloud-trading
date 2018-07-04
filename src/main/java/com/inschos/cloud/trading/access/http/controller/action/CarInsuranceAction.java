@@ -1823,6 +1823,59 @@ public class CarInsuranceAction extends BaseAction {
     }
 
     /**
+     * 获取保险公司投保声明
+     * FINISH: 2018/7/4
+     *
+     * @param actionBean 请求参数
+     * @return 响应json
+     */
+    public String getInsuranceStatement(ActionBean actionBean) {
+        CarInsurance.GetInsuranceStatementRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceStatementRequest.class);
+        CarInsurance.GetInsuranceStatementResponse response = new CarInsurance.GetInsuranceStatementResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        ExtendCarInsurancePolicy.GetInsuranceStatementRequest getInsuranceStatementRequest = new ExtendCarInsurancePolicy.GetInsuranceStatementRequest();
+        getInsuranceStatementRequest.insurerCodes = request.insurerCode;
+
+        ExtendCarInsurancePolicy.GetInsuranceStatementResponse result = new CarInsuranceHttpRequest<>(get_insurance_statement, getInsuranceStatementRequest, ExtendCarInsurancePolicy.GetInsuranceStatementResponse.class).post();
+
+        if (result == null) {
+            result = new ExtendCarInsurancePolicy.GetInsuranceStatementResponse();
+            dealNullResponse(result);
+        }
+
+        // 验签
+        String str;
+        if (result.verify) {
+            if (result.state == CarInsuranceResponse.RESULT_OK) {
+                if (result.data != null && !result.data.isEmpty()) {
+
+                    ExtendCarInsurancePolicy.InsuranceStatement insuranceStatement = result.data.get(0);
+                    response.data = insuranceStatement.statementContent;
+
+                    str = json(BaseResponse.CODE_SUCCESS, "获取支付链接成功", response);
+                } else {
+                    str = json(BaseResponse.CODE_FAILURE, "获取投保说明失败", response);
+                }
+            } else {
+                str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
+            }
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
+        }
+
+        return str;
+    }
+
+    /**
      * 获取支付连接
      * FINISH: 2018/4/10
      *

@@ -632,6 +632,15 @@ public class CarInsurance {
         public ExtendCarInsurancePolicy.PayLink data;
     }
 
+    public static class GetInsuranceStatementRequest extends BaseRequest {
+        @CheckParams(hintName = "保险公司标识")
+        public String insurerCode;
+    }
+
+    public static class GetInsuranceStatementResponse extends BaseResponse {
+        public String data;
+    }
+
     public static class VerifyPhoneCodeRequest extends BaseRequest {
         public String verificationCode;
         public String bizID;

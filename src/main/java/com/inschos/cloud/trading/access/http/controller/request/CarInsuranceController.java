@@ -155,6 +155,15 @@ public class CarInsuranceController {
         return carInsuranceAction.getPremiumCalibrateAndApplyUnderwriting(actionBean);
     }
 
+
+    @GetActionBeanAnnotation
+    @RequestMapping("car_insurance/insurance_statement")
+    @ResponseBody
+    public String getInsuranceStatement(ActionBean actionBean) {
+        return carInsuranceAction.getInsuranceStatement(actionBean);
+    }
+
+
     @GetActionBeanAnnotation
     @RequestMapping("car_insurance/resolve_identity_card")
     @ResponseBody
