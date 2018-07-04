@@ -42,13 +42,13 @@
     <select id="findBillByBillUuid" parameterType="String" resultType="com.inschos.cloud.trading.model.BillModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty_bill where `bill_uuid`=#{_parameter}
+        from cust_warranty_bill where `bill_uuid`=#{_parameter} AND `state`=1
     </select>
 
     <select id="findBillByBillName" parameterType="String" resultType="com.inschos.cloud.trading.model.BillModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty_bill where `bill_name`=#{_parameter}
+        from cust_warranty_bill where `bill_name`=#{_parameter} AND `state`=1
     </select>
 
     <select id="findBillByManagerUuid" parameterType="com.inschos.cloud.trading.model.BillModel"
@@ -136,7 +136,7 @@
             resultType="com.inschos.cloud.trading.model.BillModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty_bill where `insurance_company_id`=#{insurance_company_id}
+        from cust_warranty_bill where `insurance_company_id`=#{insurance_company_id} AND `state`=1
     </select>
 
 </mapper>

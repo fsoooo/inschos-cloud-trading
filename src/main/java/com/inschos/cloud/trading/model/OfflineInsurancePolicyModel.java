@@ -196,6 +196,11 @@ public class OfflineInsurancePolicyModel {
             reasonList.add(new ErrorReason("保单号不能为空", "warrantyCode"));
         }
 
+        if (!StringKit.isInteger(payment_time) && Long.valueOf(payment_time) >= 0l) {
+            flag = false;
+            reasonList.add(new ErrorReason("缴费期必须是正整数", "paymentTime"));
+        }
+
         List<SimpleDateFormat> sdfs = new ArrayList<>();
         sdfs.add(new SimpleDateFormat("yyyy/MM/dd"));
         sdfs.add(new SimpleDateFormat("yyyy-MM-dd"));
