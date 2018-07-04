@@ -132,6 +132,10 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
         }
 
+        if (request.warrantyList == null || request.warrantyList.isEmpty()) {
+            return json(BaseResponse.CODE_FAILURE, "无可结算数据", response);
+        }
+
         DealBillInsurancePolicyList dealBillInsurancePolicyList = dealBillInsurancePolicyList(request.billUuid, request.warrantyList);
 
         if (!dealBillInsurancePolicyList.isSuccess) {
