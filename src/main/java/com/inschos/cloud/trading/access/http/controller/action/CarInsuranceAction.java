@@ -9,10 +9,7 @@ import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.access.rpc.client.TaskResultClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.TimeKit;
-import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
+import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.car.*;
 import com.inschos.cloud.trading.model.*;
@@ -546,6 +543,15 @@ public class CarInsuranceAction extends BaseAction {
 
                 List<ProductBean> productBeans = productClient.getProductByAutomobileList(actionBean.managerUuid);
                 Map<String, ProductBean> hashMap = new HashMap<>();
+
+                L.log.debug("=============================================================================================================================");
+                if (productBeans != null && !productBeans.isEmpty()) {
+                    L.log.debug("productBeans = " + Arrays.toString(productBeans.toArray(new ProductBean[1])););
+                } else {
+                    L.log.debug("productBeans = null");
+                }
+                L.log.debug("=============================================================================================================================");
+
 
                 if (productBeans != null && !productBeans.isEmpty()) {
                     for (ProductBean productBean : productBeans) {
