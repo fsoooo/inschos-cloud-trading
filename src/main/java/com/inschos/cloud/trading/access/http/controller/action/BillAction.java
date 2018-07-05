@@ -168,6 +168,10 @@ public class BillAction extends BaseAction {
             }
         }
 
+        if (StringKit.isNumeric(billByBillUuid.bill_money)) {
+            dealBillInsurancePolicyList.brokerage = new BigDecimal(billByBillUuid.bill_money).add(dealBillInsurancePolicyList.brokerage);
+        }
+
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         String brokerage = decimalFormat.format(dealBillInsurancePolicyList.brokerage.doubleValue());
 
@@ -1048,6 +1052,7 @@ public class BillAction extends BaseAction {
                         brokerage = new BigDecimal("0");
                     }
                 } else if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_OFF_LINE)) {
+                    offlineInsurancePolicyModel.warranty_uuid = billInsurancePolicy.warrantyUuid;
                     OfflineInsurancePolicyModel brokerageByWarrantyUuid = offlineInsurancePolicyDao.findBrokerageByWarrantyUuid(offlineInsurancePolicyModel);
 
                     if (brokerageByWarrantyUuid != null && StringKit.isNumeric(brokerageByWarrantyUuid.brokerage)) {

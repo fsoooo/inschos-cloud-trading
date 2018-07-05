@@ -91,6 +91,7 @@ public class BillDao extends BaseDao {
             offlineInsurancePolicyModel.updated_at = time;
 
             for (BillDetailModel billDetailModel : list) {
+
                 i = billDetailMapper.addBillDetail(billDetailModel);
 
                 if (i <= 0) {
