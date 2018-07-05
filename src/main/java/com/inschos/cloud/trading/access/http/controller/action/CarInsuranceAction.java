@@ -546,7 +546,7 @@ public class CarInsuranceAction extends BaseAction {
 
                 L.log.debug("=============================================================================================================================");
                 if (productBeans != null && !productBeans.isEmpty()) {
-                    L.log.debug("productBeans = " + Arrays.toString(productBeans.toArray(new ProductBean[1])););
+                    L.log.debug("productBeans = " + Arrays.toString(productBeans.toArray(new ProductBean[1])));
                 } else {
                     L.log.debug("productBeans = null");
                 }
