@@ -544,13 +544,13 @@ public class CarInsuranceAction extends BaseAction {
                 List<ProductBean> productBeans = productClient.getProductByAutomobileList(actionBean.managerUuid);
                 Map<String, ProductBean> hashMap = new HashMap<>();
 
-                L.log.debug("=============================================================================================================================");
-                if (productBeans != null && !productBeans.isEmpty()) {
-                    L.log.debug("productBeans = " + Arrays.toString(productBeans.toArray(new ProductBean[1])));
-                } else {
-                    L.log.debug("productBeans = null");
-                }
-                L.log.debug("=============================================================================================================================");
+//                L.log.debug("=============================================================================================================================");
+//                if (productBeans != null && !productBeans.isEmpty()) {
+//                    L.log.debug("productBeans = " + Arrays.toString(productBeans.toArray(new ProductBean[1])));
+//                } else {
+//                    L.log.debug("productBeans = null");
+//                }
+//                L.log.debug("=============================================================================================================================");
 
 
                 if (productBeans != null && !productBeans.isEmpty()) {
