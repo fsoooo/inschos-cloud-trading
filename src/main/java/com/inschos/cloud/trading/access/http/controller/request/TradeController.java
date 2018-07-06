@@ -103,4 +103,20 @@ public class TradeController {
 //    }
 
 
+        // 投保
+    @GetActionBeanAnnotation
+    @RequestMapping("/insure")
+    @ResponseBody
+    public String insurea(ActionBean bean) {
+
+
+        return "";
+    }
+
+
+
+
+
+
+
 }
