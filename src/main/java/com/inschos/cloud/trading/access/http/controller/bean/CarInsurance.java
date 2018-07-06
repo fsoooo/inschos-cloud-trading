@@ -5,6 +5,7 @@ import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.CarInsuranceRequest;
 import com.inschos.cloud.trading.extend.car.CarInsuranceResponse;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
+import com.inschos.cloud.trading.model.CarInfoModel;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -302,6 +303,53 @@ public class CarInsurance {
         public String maxAmount;
         public String minAmount;
         public String insuredPremiumText;
+
+        public void dealInsuranceInfoSort () {
+            switch (coverageCode) {
+                case CarInfoModel.COVERAGE_CODE_FORCEPREMIUM:
+                    sort = 0;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_A:
+                    sort = 5;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_B:
+                    sort = 10;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_D3:
+                    sort = 15;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_D4:
+                    sort = 20;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_G1:
+                    sort = 25;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_F:
+                    sort = 30;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_Z:
+                    sort = 35;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_L:
+                    sort = 40;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_X1:
+                    sort = 45;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_R:
+                    sort = 50;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_Z2:
+                    sort = 55;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_Q3:
+                    sort = 60;
+                    break;
+                case CarInfoModel.COVERAGE_CODE_Z3:
+                    sort = 65;
+                    break;
+            }
+        }
 
     }
 

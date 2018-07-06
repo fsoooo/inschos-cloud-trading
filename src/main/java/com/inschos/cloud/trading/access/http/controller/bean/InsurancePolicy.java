@@ -696,7 +696,11 @@ public class InsurancePolicy {
                     } else if (StringKit.equals(o.coverageCode, "Z2")) {
                         o.insuredAmountText = o.amount + "元/天 × " + o.day + "天";
                     }
+
+                    o.dealInsuranceInfoSort();
                 }
+
+                this.coverageList.sort((o1, o2) -> o1.sort - o2.sort);
             }
             this.spAgreement = model.parseSpAgreement(model.sp_agreement);
             this.bjCodeFlag = model.bj_code_flag;

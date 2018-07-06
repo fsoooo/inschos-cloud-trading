@@ -2599,9 +2599,9 @@ public class CarInsuranceAction extends BaseAction {
         for (ExtendCarInsurancePolicy.InsuranceInfoDetail datum : data) {
             CarInsurance.InsuranceInfo insuranceInfo = new CarInsurance.InsuranceInfo();
             insuranceInfo.coverageCode = datum.coverageCode;
-            if (StringKit.equals(insuranceInfo.coverageCode, CarInfoModel.COVERAGE_CODE_FORCEPREMIUM)) {
-                insuranceInfo.sort = 0;
-            }
+
+            insuranceInfo.dealInsuranceInfoSort();
+
             insuranceInfo.coverageName = datum.coverageName;
 
             if (map.get(datum.coverageCode) != null) {
@@ -2967,6 +2967,8 @@ public class CarInsuranceAction extends BaseAction {
             insuranceInfo.insuredAmount = insurancePolicyInfo.insuredAmount;
             insuranceInfo.insuredPremium = insurancePolicyInfo.insuredPremium;
 
+            insuranceInfo.dealInsuranceInfoSort();
+
             if (!insurancePolicyInfo.coverageCode.startsWith("M")) {
                 ExtendCarInsurancePolicy.InsurancePolicyInfo insurancePolicyInfo1 = map.get(insurancePolicyInfo.coverageCode);
 
@@ -3002,8 +3004,12 @@ public class CarInsuranceAction extends BaseAction {
             }
         }
 
+        result.sort((o1, o2) -> o1.sort - o2.sort);
+
         return result;
     }
+
+
 
     /**
      * 检查提交的投保险别列表是否与实际的投保险别列表一致
