@@ -824,7 +824,7 @@
           count(1)
         from cust_warranty
         <where>
-            `warranty_uuid`=#{warranty_uuid} and agent_id = #{agent_id} and warranty_status=#{warranty_status}
+            `manager_uuid`=#{manager_uuid} and agent_id = #{agent_id} and warranty_status=#{warranty_status}
             <if test="end_time!=null">
                 and start_time&lt;= #{end_time}
             </if>
@@ -841,7 +841,7 @@
         from cust_warranty w
         left join cust_warranty_cost c  on w.warranty_uuid=c.warranty_uuid and c.phase=1
         <where>
-            w.`warranty_uuid`=#{warranty_uuid} and w.agent_id = #{agent_id} and w.warranty_status=1 and w.state=1
+            w.`manager_uuid`=#{manager_uuid} and w.agent_id = #{agent_id} and w.warranty_status=1 and w.state=1
             and c.pay_status=#{pay_status}
             <if test="end_time!=null">
                 and w.start_time&lt;= #{end_time}
