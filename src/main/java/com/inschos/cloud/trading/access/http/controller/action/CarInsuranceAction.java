@@ -552,13 +552,15 @@ public class CarInsuranceAction extends BaseAction {
 //                }
 //                L.log.debug("=============================================================================================================================");
 
-
                 if (productBeans != null && !productBeans.isEmpty()) {
+                    Set<String> set = new HashSet<>();
                     for (ProductBean productBean : productBeans) {
                         String[] split = productBean.code.split("_");
-                        if (split.length > 0) {
-                            if (productBean.sellStatus == 1) {
+                        if (split.length > 0 && productBean.sellStatus == 1) {
+                            if (set.contains(split[0])) {
                                 hashMap.put(split[0], productBean);
+                            } else {
+                                set.add(split[0]);
                             }
                         }
                     }
@@ -583,12 +585,7 @@ public class CarInsuranceAction extends BaseAction {
                         }
                     }
 
-                    list.sort(new Comparator<ExtendCarInsurancePolicy.InsuranceCompany>() {
-                        @Override
-                        public int compare(ExtendCarInsurancePolicy.InsuranceCompany o1, ExtendCarInsurancePolicy.InsuranceCompany o2) {
-                            return o1.sort - o2.sort;
-                        }
-                    });
+                    list.sort((o1, o2) -> o1.sort - o2.sort);
 
                     response.data = list;
                 } else {
