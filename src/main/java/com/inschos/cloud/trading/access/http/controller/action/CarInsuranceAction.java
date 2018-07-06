@@ -1001,7 +1001,8 @@ public class CarInsuranceAction extends BaseAction {
                     ProductBean ciProduct = productClient.getProductByCode(request.insurerCode + "_CAR_COMPULSORY");
 
                     if (ciProduct == null) {
-                        return json(BaseResponse.CODE_FAILURE, "获取参考保费错误", response);
+                        // return json(BaseResponse.CODE_FAILURE, "获取参考保费错误", response);
+                        return json(BaseResponse.CODE_FAILURE, request.insurerCode + "_CAR_COMPULSORY，啥都没有", response);
                     }
 
                     insurancePolicy.companyLogo = fileClient.getFileUrl("property_key_" + datum.insurerCode);
