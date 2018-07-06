@@ -32,6 +32,25 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<!-- 进行拦截 /web 下的controller -->
+			<mvc:mapping path="/web/**"/>
+
+			<!-- 排除拦截 -->
+			<!--<mvc:exclude-mapping path="/" />-->
+
+			<bean class="com.inschos.cloud.trading.access.http.interceptor.CommonInterceptor">
+				<!-- 排除拦截 -->
+				<property name="excludedUrls">
+					<list>
+						<value>/</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
 
 	<!-- 自动扫描(自动注入) -->
 	<context:component-scan base-package="com.inschos.cloud.trading.access.http.controller"
