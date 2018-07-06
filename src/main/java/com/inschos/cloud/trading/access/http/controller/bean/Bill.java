@@ -6,6 +6,7 @@ import com.inschos.cloud.trading.model.BillDetailModel;
 import com.inschos.cloud.trading.model.BillModel;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.OfflineInsurancePolicyModel;
+import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -247,7 +248,7 @@ public class Bill {
         BILL_DETAIL_LIST.add("insuredName");
         BILL_DETAIL_LIST.add("premium");
         BILL_DETAIL_LIST.add("phase");
-        BILL_DETAIL_LIST.add("feeRate");
+        BILL_DETAIL_LIST.add("feeRatePercentage");
         BILL_DETAIL_LIST.add("fee");
         BILL_DETAIL_LIST.add("startTimeText");
         BILL_DETAIL_LIST.add("endTimeText");
@@ -261,7 +262,7 @@ public class Bill {
     static {
         BILL_DETAIL_FIELD_TYPE = new HashMap<>();
         BILL_DETAIL_FIELD_TYPE.put("premium", TYPE_DOUBLE);
-        BILL_DETAIL_FIELD_TYPE.put("feeRate", TYPE_DOUBLE);
+        BILL_DETAIL_FIELD_TYPE.put("feeRatePercentage", TYPE_DOUBLE);
         BILL_DETAIL_FIELD_TYPE.put("fee", TYPE_DOUBLE);
     }
 
@@ -273,7 +274,7 @@ public class Bill {
         billInsurancePolicy.insuredName = "被保险人";
         billInsurancePolicy.premium = "保费（元）";
         billInsurancePolicy.phase = "缴费期";
-        billInsurancePolicy.feeRate = "佣金比（%）";
+        billInsurancePolicy.feeRatePercentage = "佣金比（%）";
         billInsurancePolicy.fee = "佣金（元）";
         billInsurancePolicy.startTimeText = "起保时间";
         billInsurancePolicy.endTimeText = "终止时间";
@@ -336,6 +337,7 @@ public class Bill {
 
         // 手续费（%）
         public String feeRate;
+        public String feeRatePercentage;
         public String feeRateText;
 
         // 手续费（元）
@@ -406,6 +408,8 @@ public class Bill {
             }
             this.feeText = "¥" + this.fee;
 
+            this.feeRatePercentage = decimalFormat.format(new BigDecimal(this.feeRate).multiply(new BigDecimal(100)).doubleValue());
+
             this.warrantyType = "1";
             this.warrantyTypeText = new BillDetailModel().typeText(this.warrantyType);
         }
@@ -432,7 +436,7 @@ public class Bill {
             } else {
                 this.fee = "0.00";
             }
-            this.feeText = "¥" + offlineInsurancePolicyModel.brokerage;
+            this.feeText = "¥" + this.fee;
 
             if (StringKit.isNumeric(offlineInsurancePolicyModel.premium)) {
                 BigDecimal bigDecimal = new BigDecimal(offlineInsurancePolicyModel.premium);
@@ -452,6 +456,9 @@ public class Bill {
                 this.feeRateText = "0.00%";
             }
             this.premiumText = "¥" + this.premium;
+
+            this.feeRatePercentage = decimalFormat.format(new BigDecimal(this.feeRate).multiply(new BigDecimal(100)).doubleValue());
+
             this.startTime = offlineInsurancePolicyModel.start_time;
             if (StringKit.isInteger(offlineInsurancePolicyModel.start_time)) {
                 this.startTimeText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.start_time)));

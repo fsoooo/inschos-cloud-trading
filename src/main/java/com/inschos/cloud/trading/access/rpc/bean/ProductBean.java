@@ -35,4 +35,34 @@ public class ProductBean {
 
     public String amount;
 
+    @Override
+    public String toString() {
+        return "ProductBean{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", content='" + content + '\'' +
+                ", insuranceCoId=" + insuranceCoId +
+                ", insuranceCoName='" + insuranceCoName + '\'' +
+                ", categoryId=" + categoryId +
+                ", categoryName='" + categoryName + '\'' +
+                ", minPeople=" + minPeople +
+                ", maxPeople=" + maxPeople +
+                ", sellStatus=" + sellStatus +
+                ", insStatus=" + insStatus +
+                ", basePrice='" + basePrice + '\'' +
+                ", baseBrokerage='" + baseBrokerage + '\'' +
+                ", payType=" + payType +
+                ", observationPeriod=" + observationPeriod +
+                ", coolingOffPeriod=" + coolingOffPeriod +
+                ", latestDate='" + latestDate + '\'' +
+                ", earliestDate='" + earliestDate + '\'' +
+                ", code='" + code + '\'' +
+                ", payCategoryId=" + payCategoryId +
+                ", payCategoryName='" + payCategoryName + '\'' +
+                ", payCategoryTimes=" + payCategoryTimes +
+                ", payCategoryTimesUnit='" + payCategoryTimesUnit + '\'' +
+                ", amount='" + amount + '\'' +
+                '}';
+    }
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 作者：zhangyunhe
  */
 @Controller
-@RequestMapping("/web/trade/")
+@RequestMapping("/web/bill/")
 public class BillController {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")

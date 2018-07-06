@@ -9,10 +9,7 @@ import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.access.rpc.client.TaskResultClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.TimeKit;
-import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
+import com.inschos.cloud.trading.assist.kit.*;
 import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.car.*;
 import com.inschos.cloud.trading.model.*;
@@ -544,8 +541,17 @@ public class CarInsuranceAction extends BaseAction {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
 
-                List<ProductBean> productBeans = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
+                List<ProductBean> productBeans = productClient.getProductByAutomobileList(actionBean.managerUuid);
                 Map<String, ProductBean> hashMap = new HashMap<>();
+
+//                L.log.debug("=============================================================================================================================");
+//                if (productBeans != null && !productBeans.isEmpty()) {
+//                    L.log.debug("productBeans = " + Arrays.toString(productBeans.toArray(new ProductBean[1])));
+//                } else {
+//                    L.log.debug("productBeans = null");
+//                }
+//                L.log.debug("=============================================================================================================================");
+
 
                 if (productBeans != null && !productBeans.isEmpty()) {
                     for (ProductBean productBean : productBeans) {
@@ -995,16 +1001,7 @@ public class CarInsuranceAction extends BaseAction {
 
                     insurancePolicy.productName = "";
 
-                    List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
-                    ProductBean ciProduct = null;
-                    if (ciList != null && !ciList.isEmpty()) {
-                        for (ProductBean productBean : ciList) {
-                            if (productBean.code.contains(datum.insurerCode)) {
-                                ciProduct = productBean;
-                                break;
-                            }
-                        }
-                    }
+                    ProductBean ciProduct = productClient.getProductByCode(request.insurerCode + "_CAR_COMPULSORY");
 
                     if (ciProduct == null) {
                         return json(BaseResponse.CODE_FAILURE, "获取参考保费错误", response);
@@ -1190,16 +1187,7 @@ public class CarInsuranceAction extends BaseAction {
 
                     datum.productName = "";
 
-                    List<ProductBean> ciList = productClient.getPlatformProductAll(actionBean.managerUuid, 42);
-                    ProductBean ciProduct = null;
-                    if (ciList != null && !ciList.isEmpty()) {
-                        for (ProductBean productBean : ciList) {
-                            if (productBean.code.contains(datum.insurerCode)) {
-                                ciProduct = productBean;
-                                break;
-                            }
-                        }
-                    }
+                    ProductBean ciProduct = productClient.getProductByCode(request.insurerCode + "_CAR_COMPULSORY");
 
                     if (ciProduct == null) {
                         return json(BaseResponse.CODE_FAILURE, "获取精准保费错误", response);
@@ -1820,6 +1808,59 @@ public class CarInsuranceAction extends BaseAction {
         } else {
             return premiumCalibrate;
         }
+    }
+
+    /**
+     * 获取保险公司投保声明
+     * FINISH: 2018/7/4
+     *
+     * @param actionBean 请求参数
+     * @return 响应json
+     */
+    public String getInsuranceStatement(ActionBean actionBean) {
+        CarInsurance.GetInsuranceStatementRequest request = JsonKit.json2Bean(actionBean.body, CarInsurance.GetInsuranceStatementRequest.class);
+        CarInsurance.GetInsuranceStatementResponse response = new CarInsurance.GetInsuranceStatementResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        ExtendCarInsurancePolicy.GetInsuranceStatementRequest getInsuranceStatementRequest = new ExtendCarInsurancePolicy.GetInsuranceStatementRequest();
+        getInsuranceStatementRequest.insurerCodes = request.insurerCode;
+
+        ExtendCarInsurancePolicy.GetInsuranceStatementResponse result = new CarInsuranceHttpRequest<>(get_insurance_statement, getInsuranceStatementRequest, ExtendCarInsurancePolicy.GetInsuranceStatementResponse.class).post();
+
+        if (result == null) {
+            result = new ExtendCarInsurancePolicy.GetInsuranceStatementResponse();
+            dealNullResponse(result);
+        }
+
+        // 验签
+        String str;
+        if (result.verify) {
+            if (result.state == CarInsuranceResponse.RESULT_OK) {
+                if (result.data != null && !result.data.isEmpty()) {
+
+                    ExtendCarInsurancePolicy.InsuranceStatement insuranceStatement = result.data.get(0);
+                    response.data = insuranceStatement.statementContent;
+
+                    str = json(BaseResponse.CODE_SUCCESS, "获取支付链接成功", response);
+                } else {
+                    str = json(BaseResponse.CODE_FAILURE, "获取投保说明失败", response);
+                }
+            } else {
+                str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
+            }
+        } else {
+            str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
+        }
+
+        return str;
     }
 
     /**

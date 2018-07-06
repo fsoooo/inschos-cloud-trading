@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 作者：zhangyunhe
  */
 @Controller
-@RequestMapping("/web/trade/")
+@RequestMapping("/web/car_insurance/")
 public class CarInsuranceController {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -22,77 +22,77 @@ public class CarInsuranceController {
     private CarInsuranceAction carInsuranceAction;
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_province_code")
+    @RequestMapping("get_province_code")
     @ResponseBody
     public String getProvinceCode(ActionBean actionBean) {
         return carInsuranceAction.getProvinceCode(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_city_code")
+    @RequestMapping("get_city_code")
     @ResponseBody
     public String getCityCode(ActionBean actionBean) {
         return carInsuranceAction.getCityCode(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_car_info")
+    @RequestMapping("get_car_info")
     @ResponseBody
     public String getCarInfoByLicenceNumberOrFrameNumber(ActionBean actionBean) {
         return carInsuranceAction.getCarInfoByLicenceNumberOrFrameNumber(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_car_model")
+    @RequestMapping("get_car_model")
     @ResponseBody
     public String getCarModel(ActionBean actionBean) {
         return carInsuranceAction.getCarModel(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_car_model_info")
+    @RequestMapping("get_car_model_info")
     @ResponseBody
     public String getCarModelInfo(ActionBean actionBean) {
         return carInsuranceAction.getCarModelInfo(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_car_model_by_key")
+    @RequestMapping("get_car_model_by_key")
     @ResponseBody
     public String getCarModelByKey(ActionBean actionBean) {
         return carInsuranceAction.getCarModelByKey(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_by_area")
+    @RequestMapping("get_insurance_by_area")
     @ResponseBody
     public String getInsuranceByArea(ActionBean actionBean) {
         return carInsuranceAction.getInsuranceByArea(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_start_time")
+    @RequestMapping("get_insurance_start_time")
     @ResponseBody
     public String getInsuranceStartTime(ActionBean actionBean) {
         return carInsuranceAction.getInsuranceStartTime(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_premium")
+    @RequestMapping("get_premium")
     @ResponseBody
     public String getPremium(ActionBean actionBean) {
         return carInsuranceAction.getPremium(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_insurance_info")
+    @RequestMapping("get_insurance_info")
     @ResponseBody
     public String getInsuranceInfo(ActionBean actionBean) {
         return carInsuranceAction.getInsuranceInfo(actionBean);
     }
 
 //    @GetActionBeanAnnotation
-//    @RequestMapping("car_insurance/prepare_take_insure")
+//    @RequestMapping("prepare_take_insure")
 //    @ResponseBody
 //    // NOTENABLED: 2018/4/3 目前的接口都是客户端单独请求
 //    public String getInsuranceCompanyAndInsuranceStartTimeAndPremium(ActionBean actionBean) {
@@ -100,70 +100,79 @@ public class CarInsuranceController {
 //    }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/prepare_take_insure")
+    @RequestMapping("prepare_take_insure")
     @ResponseBody
     public String getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfo(ActionBean actionBean) {
         return carInsuranceAction.getInsuranceCompanyAndInsuranceStartTimeAndInsuranceInfoActionBean(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_premium_calibrate")
+    @RequestMapping("get_premium_calibrate")
     @ResponseBody
     public String getPremiumCalibrate(ActionBean actionBean) {
         return carInsuranceAction.getPremiumCalibrate(actionBean);
     }
 
 //    @GetActionBeanAnnotation
-//    @RequestMapping("car_insurance/get_premium_factor")
+//    @RequestMapping("get_premium_factor")
 //    @ResponseBody
 //    public String getPremiumFactor(ActionBean actionBean) {
 //        return carInsuranceAction.getPremiumFactor(actionBean);
 //    }
 
 //    @GetActionBeanAnnotation
-//    @RequestMapping("car_insurance/apply_underwriting")
+//    @RequestMapping("apply_underwriting")
 //    @ResponseBody
 //    public String applyUnderwriting(ActionBean actionBean) {
 //        return carInsuranceAction.applyUnderwriting(actionBean);
 //    }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_pay_link")
+    @RequestMapping("get_pay_link")
     @ResponseBody
     public String getPayLink(ActionBean actionBean) {
         return carInsuranceAction.getPayLink(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/verify_phone_code")
+    @RequestMapping("verify_phone_code")
     @ResponseBody
     public String verifyPhoneCode(ActionBean actionBean) {
         return carInsuranceAction.verifyPhoneCode(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/get_phone_verify_code")
+    @RequestMapping("get_phone_verify_code")
     @ResponseBody
     public String getPhoneVerifyCode(ActionBean actionBean) {
         return carInsuranceAction.getPhoneVerifyCode(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/direct_insure")
+    @RequestMapping("direct_insure")
     @ResponseBody
     public String getPremiumCalibrateAndApplyUnderwriting(ActionBean actionBean) {
         return carInsuranceAction.getPremiumCalibrateAndApplyUnderwriting(actionBean);
     }
 
+
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/resolve_identity_card")
+    @RequestMapping("insurance_statement")
+    @ResponseBody
+    public String getInsuranceStatement(ActionBean actionBean) {
+        return carInsuranceAction.getInsuranceStatement(actionBean);
+    }
+
+
+    @GetActionBeanAnnotation
+    @RequestMapping("resolve_identity_card")
     @ResponseBody
     public String resolveIdentityCard(ActionBean actionBean) {
         return carInsuranceAction.resolveIdentityCard(actionBean);
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("car_insurance/resolve_driving_license")
+    @RequestMapping("resolve_driving_license")
     @ResponseBody
     public String resolveDrivingLicense(ActionBean actionBean) {
         return carInsuranceAction.resolveDrivingLicense(actionBean);
@@ -171,7 +180,7 @@ public class CarInsuranceController {
 
     // 回调接口
     @GetActionBeanAnnotation(isCheckAccess = false)
-    @RequestMapping("car_insurance/send_apply_underwriting_result")
+    @RequestMapping("send_apply_underwriting_result")
     @ResponseBody
     public String sendApplyUnderwritingResult(ActionBean actionBean) {
         return carInsuranceAction.sendApplyUnderwritingResult(actionBean);
@@ -179,7 +188,7 @@ public class CarInsuranceController {
 
     // 回调接口
     @GetActionBeanAnnotation(isCheckAccess = false)
-    @RequestMapping("car_insurance/send_insurance_policy")
+    @RequestMapping("send_insurance_policy")
     @ResponseBody
     public String sendInsurancePolicy(ActionBean actionBean) {
         return carInsuranceAction.sendInsurancePolicy(actionBean);
@@ -187,7 +196,7 @@ public class CarInsuranceController {
 
     // 回调接口
     @GetActionBeanAnnotation(isCheckAccess = false)
-    @RequestMapping("car_insurance/send__express_info")
+    @RequestMapping("send_express_info")
     @ResponseBody
     public String sendExpressInfo(ActionBean actionBean) {
         return carInsuranceAction.sendExpressInfo(actionBean);

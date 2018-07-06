@@ -42,13 +42,13 @@
     <select id="findBillByBillUuid" parameterType="String" resultType="com.inschos.cloud.trading.model.BillModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty_bill where `bill_uuid`=#{_parameter}
+        from cust_warranty_bill where `bill_uuid`=#{_parameter} AND `state`=1
     </select>
 
-    <select id="findBillByBillName" parameterType="String" resultType="com.inschos.cloud.trading.model.BillModel">
+    <select id="findBillByBillName" parameterType="com.inschos.cloud.trading.model.BillModel" resultType="com.inschos.cloud.trading.model.BillModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty_bill where `bill_name`=#{_parameter}
+        from cust_warranty_bill where `bill_name`=#{bill_name} AND `manager_uuid`=#{manager_uuid} AND `state`=1
     </select>
 
     <select id="findBillByManagerUuid" parameterType="com.inschos.cloud.trading.model.BillModel"
@@ -66,7 +66,7 @@
                     where `manager_uuid`=#{manager_uuid} AND `state`=1
                     <if test="searchType!=null and searchType!=''">
                         <choose>
-                            <when test='searchType=="1"'>
+                            <when test='searchType=="1" and insurance_company_id_string!=null and insurance_company_id_string!=""'>
                                 AND `insurance_company_id`in (${insurance_company_id_string})
                             </when>
                             <when test='searchType=="2"'>
@@ -90,7 +90,7 @@
             AND `manager_uuid`=#{manager_uuid} AND `state`=1
             <if test="searchType!=null and searchType!=''">
                 <choose>
-                    <when test='searchType=="1"'>
+                    <when test='searchType=="1" and insurance_company_id_string!=null and insurance_company_id_string!=""'>
                         AND `insurance_company_id`in (${insurance_company_id_string})
                     </when>
                     <when test='searchType=="2"'>
@@ -116,7 +116,7 @@
         WHERE `manager_uuid`=#{manager_uuid} AND `state`=1
         <if test="searchType!=null and searchType!=''">
             <choose>
-                <when test='searchType=="1"'>
+                <when test='searchType=="1" and insurance_company_id_string!=null and insurance_company_id_string!=""'>
                     AND `insurance_company_id`in (${insurance_company_id_string})
                 </when>
                 <when test='searchType=="2"'>
@@ -136,7 +136,7 @@
             resultType="com.inschos.cloud.trading.model.BillModel">
         select
         <include refid="Base_Column_List"/>
-        from cust_warranty_bill where `insurance_company_id`=#{insurance_company_id}
+        from cust_warranty_bill where `insurance_company_id`=#{insurance_company_id} AND `state`=1
     </select>
 
 </mapper>

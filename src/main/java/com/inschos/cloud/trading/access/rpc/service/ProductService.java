@@ -43,4 +43,6 @@ public interface ProductService {
 
     List<ProductPayCategoryBean> listProductPayCategory(List<String> id);
 
+    List<ProductBean> getProductByAutomobileList(String managerUuid);
+
 }

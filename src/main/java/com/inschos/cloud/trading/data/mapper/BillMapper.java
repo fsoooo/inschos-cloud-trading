@@ -23,7 +23,7 @@ public interface BillMapper {
 
     BillModel findBillByBillUuid(String bill_uuid);
 
-    BillModel findBillByBillName(String bill_name);
+    BillModel findBillByBillName(BillModel billModel);
 
     List<BillModel> findBillByManagerUuid(BillModel billModel);
 

@@ -98,10 +98,10 @@ public class BillModel {
         // 车结算状态，0-未结算，1-结算
         switch (isSettlement) {
             case SETTLEMENT_STATE_NOT:
-                str = "已结算";
+                str = "未结算";
                 break;
             case SETTLEMENT_STATE_ALREADY:
-                str = "未结算";
+                str = "已结算";
                 break;
         }
         return str;

@@ -69,11 +69,6 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        BillModel billByBillName = billDao.findBillByBillName(request.billName);
-        if (billByBillName != null) {
-            return json(BaseResponse.CODE_FAILURE, "结算单'" + request.billName + "'已存在", response);
-        }
-
         String time = String.valueOf(System.currentTimeMillis());
 
         BillModel billModel = new BillModel();
@@ -86,6 +81,11 @@ public class BillAction extends BaseAction {
         billModel.created_at = time;
         billModel.updated_at = time;
         billModel.state = "1";
+
+        BillModel billByBillName = billDao.findBillByBillName(billModel);
+        if (billByBillName != null) {
+            return json(BaseResponse.CODE_FAILURE, "结算单'" + request.billName + "'已存在", response);
+        }
 
         billModel.bill_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
 
@@ -132,6 +132,10 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
         }
 
+        if (request.warrantyList == null || request.warrantyList.isEmpty()) {
+            return json(BaseResponse.CODE_FAILURE, "无可结算数据", response);
+        }
+
         DealBillInsurancePolicyList dealBillInsurancePolicyList = dealBillInsurancePolicyList(request.billUuid, request.warrantyList);
 
         if (!dealBillInsurancePolicyList.isSuccess) {
@@ -162,6 +166,10 @@ public class BillAction extends BaseAction {
                 }
                 return json(BaseResponse.CODE_FAILURE, "结算单'" + str + "'已存在", response);
             }
+        }
+
+        if (StringKit.isNumeric(billByBillUuid.bill_money)) {
+            dealBillInsurancePolicyList.brokerage = new BigDecimal(billByBillUuid.bill_money).add(dealBillInsurancePolicyList.brokerage);
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
@@ -371,6 +379,7 @@ public class BillAction extends BaseAction {
                     insuranceCompanyBean.name = request.searchKey;
                     List<InsuranceCompanyBean> listInsuranceCompany = companyClient.getListInsuranceCompany(insuranceCompanyBean);
 
+
                     if (listInsuranceCompany != null && !listInsuranceCompany.isEmpty()) {
                         StringBuilder sb1 = new StringBuilder();
                         int size = listInsuranceCompany.size();
@@ -381,7 +390,11 @@ public class BillAction extends BaseAction {
                                 sb1.append(",");
                             }
                         }
-                        billModel.insurance_company_id_string = sb1.toString();
+                        billModel.insurance_company_id_string = "";
+                    } else {
+                        response.data = new ArrayList<>();
+                        response.page = setPageBean("0", request.pageNum, request.pageSize, 0, 0);
+                        return json(BaseResponse.CODE_SUCCESS, "获取结算单列表成功", response);
                     }
 
                     break;
@@ -891,7 +904,7 @@ public class BillAction extends BaseAction {
                     billInsurancePolicy.feeRate = "0.00";
                     billInsurancePolicy.feeRateText = "0.00%";
                 }
-
+                billInsurancePolicy.feeRatePercentage = decimalFormat.format(new BigDecimal(billInsurancePolicy.feeRate).multiply(new BigDecimal(100)).doubleValue());
                 billInsurancePolicy.startTime = detailModel.online_start_time;
                 if (StringKit.isInteger(detailModel.online_start_time)) {
                     billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.online_start_time)));
@@ -918,7 +931,7 @@ public class BillAction extends BaseAction {
                 } else {
                     billInsurancePolicy.fee = "0.00";
                 }
-                billInsurancePolicy.feeText = String.format("¥%s", billInsurancePolicy.feeText);
+                billInsurancePolicy.feeText = String.format("¥%s", billInsurancePolicy.fee);
 
                 if (StringKit.isNumeric(detailModel.offline_premium)) {
                     BigDecimal bigDecimal = new BigDecimal(detailModel.offline_premium);
@@ -938,6 +951,7 @@ public class BillAction extends BaseAction {
                     billInsurancePolicy.feeRateText = "0.00%";
                 }
                 billInsurancePolicy.premiumText = "¥" + billInsurancePolicy.premium;
+                billInsurancePolicy.feeRatePercentage = decimalFormat.format(new BigDecimal(billInsurancePolicy.feeRate).multiply(new BigDecimal(100)).doubleValue());
                 billInsurancePolicy.startTime = detailModel.offline_start_time;
                 if (StringKit.isInteger(detailModel.offline_start_time)) {
                     billInsurancePolicy.startTimeText = sdf.format(new Date(Long.valueOf(detailModel.offline_start_time)));
@@ -1038,6 +1052,7 @@ public class BillAction extends BaseAction {
                         brokerage = new BigDecimal("0");
                     }
                 } else if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_OFF_LINE)) {
+                    offlineInsurancePolicyModel.warranty_uuid = billInsurancePolicy.warrantyUuid;
                     OfflineInsurancePolicyModel brokerageByWarrantyUuid = offlineInsurancePolicyDao.findBrokerageByWarrantyUuid(offlineInsurancePolicyModel);
 
                     if (brokerageByWarrantyUuid != null && StringKit.isNumeric(brokerageByWarrantyUuid.brokerage)) {

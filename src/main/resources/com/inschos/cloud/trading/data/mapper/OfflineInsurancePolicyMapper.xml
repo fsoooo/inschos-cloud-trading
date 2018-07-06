@@ -83,7 +83,7 @@
                         and `insurance_company` like concat("%",#{search_company},"%")
                     </if>
                     <if test="search_channel!=null and search_channel!=''">
-                        and`channel_name` like concat("%",#{search_channel},"%")
+                        and `channel_name` like concat("%",#{search_channel},"%")
                     </if>
                     <if test="search_product!=null and search_product!=''">
                         and `insurance_product` like concat("%",#{search_product},"%")
@@ -157,13 +157,13 @@
             </choose>
         </if>
         <if test="search_company!=null and search_company!=''">
-            `insurance_company` like concat("%",#{search_company},"%")
+            and`insurance_company` like concat("%",#{search_company},"%")
         </if>
         <if test="search_channel!=null and search_channel!=''">
-            `channel_name` like concat("%",#{search_channel},"%")
+            and `channel_name` like concat("%",#{search_channel},"%")
         </if>
         <if test="search_product!=null and search_product!=''">
-            `insurance_product` like concat("%",#{search_product},"%")
+            and `insurance_product` like concat("%",#{search_product},"%")
         </if>
     </select>
 
