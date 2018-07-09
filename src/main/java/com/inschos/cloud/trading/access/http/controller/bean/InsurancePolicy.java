@@ -870,7 +870,7 @@ public class InsurancePolicy {
             insurancePolicy.startTimeText = "起保日期";
             insurancePolicy.premium = "保费（元）";
             insurancePolicy.payStatusText = "保费支付状态";
-            insurancePolicy.insMoney = "应收佣金";
+            insurancePolicy.managerMoney = "应收佣金";
             insurancePolicy.channelName = "归属机构";
             insurancePolicy.agentName = "归属人员";
 
@@ -891,7 +891,7 @@ public class InsurancePolicy {
         CAR_FIELD_LIST.add("startTimeText");
         CAR_FIELD_LIST.add("premium");
         CAR_FIELD_LIST.add("payStatusText");
-        CAR_FIELD_LIST.add("insMoney");
+        CAR_FIELD_LIST.add("managerMoney");
         CAR_FIELD_LIST.add("channelName");
         CAR_FIELD_LIST.add("agentName");
     }

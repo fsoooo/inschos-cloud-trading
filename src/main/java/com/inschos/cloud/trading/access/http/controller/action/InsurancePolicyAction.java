@@ -864,11 +864,15 @@ public class InsurancePolicyAction extends BaseAction {
                     }
                 }
 
+                Sheet sheetAt1 = sheets.getSheetAt(0);
                 Sheet sheetAt2 = sheets.getSheetAt(1);
                 Sheet sheetAt3 = sheets.getSheetAt(2);
 
                 ExcelModelKit.writeRow(sheetAt2, companyName, 2, 0, new HashMap<>());
                 ExcelModelKit.writeRow(sheetAt3, productName, 3, 0, new HashMap<>());
+
+                Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(InsurancePolicy.CAR_FIELD_LIST, 0);
+                ExcelModelKit.autoSizeColumn(sheetAt1, columnFieldMap.size() - 1);
 
                 flag = fileClient.upload(fileKey, fileName, ExcelModelKit.getWorkbookByteArray(sheets));
             }
