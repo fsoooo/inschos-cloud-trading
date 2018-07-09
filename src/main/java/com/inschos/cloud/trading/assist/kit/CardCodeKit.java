@@ -90,7 +90,7 @@ public class CardCodeKit {
             if (cardType == CARD_TYPE_ID_CARD) {
                 char c = cardCode.charAt(16);
 
-                if (c <= '9' && c >= '0') {
+                if (c < '0' || c > '9') {
                     return -1;
                 }
 
