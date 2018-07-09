@@ -1110,7 +1110,7 @@ public class CarInsuranceAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "投保人证件类型错误", response);
         }
 
-        Integer integer1 = Integer.valueOf(request.personInfo.ownerID);
+        Integer integer1 = Integer.valueOf(request.personInfo.ownerIdType);
         Date birthDayByCode1 = CardCodeKit.getBirthDayByCode(integer1, request.personInfo.ownerID);
         if (birthDayByCode1 == null) {
             return json(BaseResponse.CODE_FAILURE, "缺少车主证件信息或身份证号码不合法", response);
@@ -1138,7 +1138,7 @@ public class CarInsuranceAction extends BaseAction {
         request.personInfo.applicantBirthday = String.valueOf(birthDayByCode2.getTime());
         request.personInfo.applicantSex = String.valueOf(sexByCode2);
 
-        Integer integer3 = Integer.valueOf(request.personInfo.insuredID);
+        Integer integer3 = Integer.valueOf(request.personInfo.insuredIdType);
         Date birthDayByCode3 = CardCodeKit.getBirthDayByCode(integer3, request.personInfo.insuredID);
         if (birthDayByCode3 == null) {
             return json(BaseResponse.CODE_FAILURE, "缺少被保险人证件信息或身份证号码不合法", response);
