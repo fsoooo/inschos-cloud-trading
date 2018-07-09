@@ -221,6 +221,11 @@ public class OfflineInsurancePolicyModel {
             reasonList.add(new ErrorReason("缴费期必须是正整数", "paymentTime"));
         }
 
+        if (StringKit.isEmpty(insurance_product) || insurance_product.length() > 16) {
+            flag = false;
+            reasonList.add(new ErrorReason("保险产品不能为空，且最多为16个字符", "insuranceProduct"));
+        }
+
         List<SimpleDateFormat> sdfs = new ArrayList<>();
         sdfs.add(new SimpleDateFormat("yyyy/MM/dd"));
         sdfs.add(new SimpleDateFormat("yyyy-MM-dd"));
