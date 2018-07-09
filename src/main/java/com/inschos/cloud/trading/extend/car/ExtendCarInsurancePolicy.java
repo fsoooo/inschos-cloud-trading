@@ -353,9 +353,9 @@ public class ExtendCarInsurancePolicy {
         public String insuredID;
         @CheckParams(stringType = CheckParams.StringType.NUMBER)
         public String insuredIdType;
-        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
         public String insuredBirthday;
-        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
         public String insuredSex;
         @CheckParams
         public String insuredMobile;
@@ -365,9 +365,9 @@ public class ExtendCarInsurancePolicy {
         public String applicantID;
         @CheckParams(stringType = CheckParams.StringType.NUMBER)
         public String applicantIdType;
-        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
         public String applicantBirthday;
-        @CheckParams(stringType = CheckParams.StringType.NUMBER)
+        @CheckParams(isNecessity = false, stringType = CheckParams.StringType.NUMBER)
         public String applicantSex;
         @CheckParams
         public String applicantMobile;
