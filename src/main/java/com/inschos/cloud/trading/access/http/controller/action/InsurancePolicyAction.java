@@ -1132,7 +1132,7 @@ public class InsurancePolicyAction extends BaseAction {
                 }
                 insurancePolicyModel.insurance_co_id_string = sb.toString();
             } else {
-                insurancePolicyModel.insurance_co_id_string = "A";
+                insurancePolicyModel.insurance_co_id_string = "-1";
             }
         }
 
@@ -1154,7 +1154,7 @@ public class InsurancePolicyAction extends BaseAction {
                 }
                 insurancePolicyModel.product_id_string = sb.toString();
             } else {
-                insurancePolicyModel.product_id_string = "A";
+                insurancePolicyModel.product_id_string = "-1";
             }
         }
 
