@@ -22,13 +22,13 @@ import static com.inschos.cloud.trading.assist.kit.ExcelModelKit.TYPE_DOUBLE;
 public class InsurancePolicy {
 
     public static class GetInsurancePolicyListRequest extends BaseRequest {
-        // 保单状态
+        // 保单状态，1-待支付 2-待生效 3-保障中 4-已失效
         public String warrantyStatus;
         // 搜索关键字
         public String searchKey;
-        // 关键字字段类型
+        // 搜索关键字类型，1-保单号 2-代理人 3-投保人 4-车牌号 5-保险公司
         public String searchType;
-        // 时间类型
+        // 时间类型，1-签单时间（下单时间），2-起保时间，3-缴费时间
         public String timeType;
         // 起保开始时间
         public String startTime;

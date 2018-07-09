@@ -296,6 +296,9 @@
                             <when test='searchType=="4"'>
                                 and `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
                             </when>
+                            <when test='searchType=="5"'>
+                                and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
+                            </when>
                             <otherwise>
                                 and `warranty_code` like concat("%",#{search},"%")
                             </otherwise>
@@ -385,6 +388,9 @@
                     </when>
                     <when test='searchType=="4"'>
                         AND `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
+                    </when>
+                    <when test='searchType=="5"'>
+                        and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
                     </when>
                     <otherwise>
                         and `warranty_code` like concat("%",#{search},"%")
@@ -483,6 +489,9 @@
                 </when>
                 <when test='searchType=="4"'>
                     AND `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
+                </when>
+                <when test='searchType=="5"'>
+                    and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
                 </when>
                 <otherwise>
                     AND `warranty_code` like concat("%",#{search},"%")
@@ -590,6 +599,9 @@
                             <when test='searchType=="4"'>
                                 AND `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
                             </when>
+                            <when test='searchType=="5"'>
+                                and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
+                            </when>
                             <otherwise>
                                 AND `warranty_code` like concat("%",#{search},"%")
                             </otherwise>
@@ -663,6 +675,9 @@
                     </when>
                     <when test='searchType=="4"'>
                         AND `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
+                    </when>
+                    <when test='searchType=="5"'>
+                        and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
                     </when>
                     <otherwise>
                         AND `warranty_code` like concat("%",#{search},"%")
@@ -745,6 +760,9 @@
                 </when>
                 <when test='searchType=="4"'>
                     AND `cust_warranty_car`.`car_code` like concat("%",#{search},"%")
+                </when>
+                <when test='searchType=="5"'>
+                    and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
                 </when>
                 <otherwise>
                     AND `warranty_code` like concat("%",#{search},"%")
