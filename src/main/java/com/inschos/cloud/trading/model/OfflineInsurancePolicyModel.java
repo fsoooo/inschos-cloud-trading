@@ -196,9 +196,34 @@ public class OfflineInsurancePolicyModel {
             reasonList.add(new ErrorReason("保单号不能为空", "warrantyCode"));
         }
 
+        if (!StringKit.isEmpty(insured_name) && insured_name.length() > 16) {
+            flag = false;
+            reasonList.add(new ErrorReason("投保人最多为16个字符", "insuredName"));
+        }
+
+        if (!StringKit.isEmpty(policy_holder_name) && policy_holder_name.length() > 16) {
+            flag = false;
+            reasonList.add(new ErrorReason("被保险人人最多为16个字符", "policyHolderName"));
+        }
+
+        if (!StringKit.isEmpty(channel_name) && channel_name.length() > 16) {
+            flag = false;
+            reasonList.add(new ErrorReason("归属机构最多为16个字符", "channelName"));
+        }
+
+        if (!StringKit.isEmpty(agent_name) && agent_name.length() > 16) {
+            flag = false;
+            reasonList.add(new ErrorReason("归属代理人最多为16个字符", "agentName"));
+        }
+
         if (!StringKit.isInteger(payment_time) || Long.valueOf(payment_time) < 0) {
             flag = false;
             reasonList.add(new ErrorReason("缴费期必须是正整数", "paymentTime"));
+        }
+
+        if (StringKit.isEmpty(insurance_product) || insurance_product.length() > 16) {
+            flag = false;
+            reasonList.add(new ErrorReason("保险产品不能为空，且最多为16个字符", "insuranceProduct"));
         }
 
         List<SimpleDateFormat> sdfs = new ArrayList<>();

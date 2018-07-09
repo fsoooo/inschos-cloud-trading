@@ -1106,6 +1106,52 @@ public class CarInsuranceAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "缺少人员信息", response);
         }
 
+        if (!StringKit.isNumeric(request.personInfo.applicantIdType)) {
+            return json(BaseResponse.CODE_FAILURE, "投保人证件类型错误", response);
+        }
+
+        Integer integer1 = Integer.valueOf(request.personInfo.ownerIdType);
+        Date birthDayByCode1 = CardCodeKit.getBirthDayByCode(integer1, request.personInfo.ownerID);
+        if (birthDayByCode1 == null) {
+            return json(BaseResponse.CODE_FAILURE, "缺少车主证件信息或身份证号码不合法", response);
+        }
+
+        int sexByCode1 = CardCodeKit.getSexByCode(integer1, request.personInfo.ownerID);
+        if (sexByCode1 == -1) {
+            return json(BaseResponse.CODE_FAILURE, "缺少车主证件信息或身份证号码不合法", response);
+        }
+
+        request.personInfo.ownerBirthday = String.valueOf(birthDayByCode1.getTime());
+        request.personInfo.ownerSex = String.valueOf(sexByCode1);
+
+        Integer integer2 = Integer.valueOf(request.personInfo.applicantIdType);
+        Date birthDayByCode2 = CardCodeKit.getBirthDayByCode(integer2, request.personInfo.applicantID);
+        if (birthDayByCode2 == null) {
+            return json(BaseResponse.CODE_FAILURE, "缺少投保人证件信息或身份证号码不合法", response);
+        }
+
+        int sexByCode2 = CardCodeKit.getSexByCode(integer2, request.personInfo.applicantID);
+        if (sexByCode2 == -1) {
+            return json(BaseResponse.CODE_FAILURE, "缺少投保人证件信息或身份证号码不合法", response);
+        }
+
+        request.personInfo.applicantBirthday = String.valueOf(birthDayByCode2.getTime());
+        request.personInfo.applicantSex = String.valueOf(sexByCode2);
+
+        Integer integer3 = Integer.valueOf(request.personInfo.insuredIdType);
+        Date birthDayByCode3 = CardCodeKit.getBirthDayByCode(integer3, request.personInfo.insuredID);
+        if (birthDayByCode3 == null) {
+            return json(BaseResponse.CODE_FAILURE, "缺少被保险人证件信息或身份证号码不合法", response);
+        }
+
+        int sexByCode3 = CardCodeKit.getSexByCode(integer3, request.personInfo.insuredID);
+        if (sexByCode3 == -1) {
+            return json(BaseResponse.CODE_FAILURE, "缺少被保险人证件信息或身份证号码不合法", response);
+        }
+
+        request.personInfo.insuredBirthday = String.valueOf(birthDayByCode3.getTime());
+        request.personInfo.insuredSex = String.valueOf(sexByCode3);
+
         if (!request.personInfo.isEnable()) {
             return json(BaseResponse.CODE_FAILURE, "缺少人员信息或身份证号码不合法", response);
         }
@@ -3008,7 +3054,6 @@ public class CarInsuranceAction extends BaseAction {
 
         return result;
     }
-
 
 
     /**

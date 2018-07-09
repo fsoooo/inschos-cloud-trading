@@ -88,10 +88,6 @@ public class InsurancePolicyAction extends BaseAction {
         InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
         insurancePolicyModel.account_uuid = actionBean.accountUuid;
 
-        if (!StringKit.isEmpty(request.searchKey)) {
-            request.searchType = "1";
-        }
-
         String s = checkGetInsurancePolicyListParams(request, insurancePolicyModel);
 
         if (!StringKit.isEmpty(s)) {
@@ -1086,8 +1082,8 @@ public class InsurancePolicyAction extends BaseAction {
         insurancePolicyModel.warranty_status = request.warrantyStatus;
 
         insurancePolicyModel.search = request.searchKey;
-        // 1-保单号 2-代理人 3-投保人 4-车牌号
-        if (!StringKit.isEmpty(request.searchType) && (!StringKit.isNumeric(request.searchType) || Integer.valueOf(request.searchType) < 1 || Integer.valueOf(request.searchType) > 4)) {
+        // 1-保单号 2-代理人 3-投保人 4-车牌号 5-保险公司
+        if (!StringKit.isEmpty(request.searchType) && (!StringKit.isNumeric(request.searchType) || Integer.valueOf(request.searchType) < 1 || Integer.valueOf(request.searchType) > 6)) {
             return "搜索类型错误";
         } else if (StringKit.isEmpty(request.searchType)) {
             request.searchType = "";
@@ -1115,7 +1111,11 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyModel.time_type = request.timeType;
 
-        if (!StringKit.isEmpty(request.insuranceCompanyKey)) {
+        if (StringKit.equals(request.searchType, "5")) {
+            request.insuranceCompanyKey = request.searchKey;
+        }
+
+        if (!StringKit.isEmpty(request.insuranceCompanyKey) || StringKit.equals(request.searchType, "5")) {
             InsuranceCompanyBean insuranceCompanyBean = new InsuranceCompanyBean();
             insuranceCompanyBean.name = request.insuranceCompanyKey;
             insuranceCompanyBean.managerUuid = insurancePolicyModel.manager_uuid;
@@ -1131,7 +1131,13 @@ public class InsurancePolicyAction extends BaseAction {
                     }
                 }
                 insurancePolicyModel.insurance_co_id_string = sb.toString();
+            } else {
+                insurancePolicyModel.insurance_co_id_string = "-1";
             }
+        }
+
+        if (StringKit.equals(request.searchType, "6")) {
+            request.insuranceProductKey = request.searchKey;
         }
 
         if (!StringKit.isEmpty(request.insuranceProductKey)) {
@@ -1147,6 +1153,8 @@ public class InsurancePolicyAction extends BaseAction {
                     }
                 }
                 insurancePolicyModel.product_id_string = sb.toString();
+            } else {
+                insurancePolicyModel.product_id_string = "-1";
             }
         }
 
@@ -1176,10 +1184,10 @@ public class InsurancePolicyAction extends BaseAction {
      * 将列表处理为前台数据
      *
      * @param insurancePolicyModelList 保单列表
-     * @param parameter                 处理结果参数
+     * @param parameter                处理结果参数
      * @return 前台数据列表
      */
-    private List<InsurancePolicy.GetInsurancePolicyItemBean> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyModelList,DealInsurancePolicyResultParameter parameter) {
+    private List<InsurancePolicy.GetInsurancePolicyItemBean> dealInsurancePolicyResultList(List<InsurancePolicyModel> insurancePolicyModelList, DealInsurancePolicyResultParameter parameter) {
         List<InsurancePolicy.GetInsurancePolicyItemBean> result = new ArrayList<>();
         if (insurancePolicyModelList == null) {
             return result;

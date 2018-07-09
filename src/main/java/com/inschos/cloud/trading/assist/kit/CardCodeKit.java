@@ -85,6 +85,25 @@ public class CardCodeKit {
         return date;
     }
 
+    public static int getSexByCode(int cardType, String cardCode) {
+        if (isLegal(cardType, cardCode)) {
+            if (cardType == CARD_TYPE_ID_CARD) {
+                char c = cardCode.charAt(16);
+
+                if (c < '0' || c > '9') {
+                    return -1;
+                }
+
+                if (Byte.valueOf(String.valueOf(c)) % 2 == 0) {
+                    return 2;
+                } else {
+                    return 1;
+                }
+            }
+        }
+        return -1;
+    }
+
     public static String getCardTypeText(String cardType) {
         String str = "";
         if (!StringKit.isInteger(cardType)) {
