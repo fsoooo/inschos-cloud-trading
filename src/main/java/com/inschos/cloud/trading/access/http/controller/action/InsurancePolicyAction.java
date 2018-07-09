@@ -1083,7 +1083,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyModel.search = request.searchKey;
         // 1-保单号 2-代理人 3-投保人 4-车牌号 5-保险公司
-        if (!StringKit.isEmpty(request.searchType) && (!StringKit.isNumeric(request.searchType) || Integer.valueOf(request.searchType) < 1 || Integer.valueOf(request.searchType) > 5)) {
+        if (!StringKit.isEmpty(request.searchType) && (!StringKit.isNumeric(request.searchType) || Integer.valueOf(request.searchType) < 1 || Integer.valueOf(request.searchType) > 6)) {
             return "搜索类型错误";
         } else if (StringKit.isEmpty(request.searchType)) {
             request.searchType = "";
@@ -1136,6 +1136,10 @@ public class InsurancePolicyAction extends BaseAction {
             }
         }
 
+        if (StringKit.equals(request.searchType, "6")) {
+            request.insuranceProductKey = request.searchKey;
+        }
+
         if (!StringKit.isEmpty(request.insuranceProductKey)) {
             List<ProductBean> listProduct = productClient.getListProduct(request.insuranceProductKey, insurancePolicyModel.manager_uuid);
             if (listProduct != null && !listProduct.isEmpty()) {
@@ -1149,6 +1153,8 @@ public class InsurancePolicyAction extends BaseAction {
                     }
                 }
                 insurancePolicyModel.product_id_string = sb.toString();
+            } else {
+                insurancePolicyModel.product_id_string = "A";
             }
         }
 

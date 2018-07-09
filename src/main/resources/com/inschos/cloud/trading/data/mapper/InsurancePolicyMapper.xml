@@ -299,6 +299,9 @@
                             <when test='searchType=="5"'>
                                 and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
                             </when>
+                            <when test='searchType=="6"'>
+                                and `cust_warranty`.`product_id` in (${product_id_string})
+                            </when>
                             <otherwise>
                                 and `warranty_code` like concat("%",#{search},"%")
                             </otherwise>
@@ -308,7 +311,7 @@
                         and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
                     </if>
                     <if test="product_id_string!=null and product_id_string!=''">
-                        and `cust_warranty`.`product_id`=#{type} in (${product_id_string})
+                        and `cust_warranty`.`product_id` in (${product_id_string})
                     </if>
                     <if test="type!=null and type!=''">
                         and `cust_warranty`.`type`=#{type}
@@ -392,6 +395,9 @@
                     <when test='searchType=="5"'>
                         and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
                     </when>
+                    <when test='searchType=="6"'>
+                        and `cust_warranty`.`product_id` in (${product_id_string})
+                    </when>
                     <otherwise>
                         and `warranty_code` like concat("%",#{search},"%")
                     </otherwise>
@@ -401,7 +407,7 @@
                 and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
             </if>
             <if test="product_id_string!=null and product_id_string!=''">
-                and `cust_warranty`.`product_id`=#{type} in (${product_id_string})
+                and `cust_warranty`.`product_id` in (${product_id_string})
             </if>
             <if test="type!=null and type!=''">
                 and `cust_warranty`.`type`=#{type}
@@ -493,6 +499,9 @@
                 <when test='searchType=="5"'>
                     and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
                 </when>
+                <when test='searchType=="6"'>
+                    and `cust_warranty`.`product_id` in (${product_id_string})
+                </when>
                 <otherwise>
                     AND `warranty_code` like concat("%",#{search},"%")
                 </otherwise>
@@ -502,7 +511,7 @@
             and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
         </if>
         <if test="product_id_string!=null and product_id_string!=''">
-            and `cust_warranty`.`product_id`=#{type} in (${product_id_string})
+            and `cust_warranty`.`product_id` in (${product_id_string})
         </if>
         <if test="type!=null and type!=''">
             and `cust_warranty`.`type`=#{type}
@@ -602,6 +611,9 @@
                             <when test='searchType=="5"'>
                                 and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
                             </when>
+                            <when test='searchType=="6"'>
+                                and `cust_warranty`.`product_id` in (${product_id_string})
+                            </when>
                             <otherwise>
                                 AND `warranty_code` like concat("%",#{search},"%")
                             </otherwise>
@@ -678,6 +690,9 @@
                     </when>
                     <when test='searchType=="5"'>
                         and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
+                    </when>
+                    <when test='searchType=="6"'>
+                        and `cust_warranty`.`product_id` in (${product_id_string})
                     </when>
                     <otherwise>
                         AND `warranty_code` like concat("%",#{search},"%")
@@ -764,6 +779,9 @@
                 <when test='searchType=="5"'>
                     and `cust_warranty`.`ins_company_id` in (${insurance_co_id_string})
                 </when>
+                <when test='searchType=="6"'>
+                    and `cust_warranty`.`product_id` in (${product_id_string})
+                </when>
                 <otherwise>
                     AND `warranty_code` like concat("%",#{search},"%")
                 </otherwise>
@@ -800,28 +818,6 @@
                 </when>
             </choose>
         </if>
-    </select>
-
-
-    <select id="setTest"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
-        select
-        <include refid="Base_Column_List"/>
-        from cust_warranty
-        <where>
-            <choose>
-                <when test="uuids!=null and !uuids.isEmpty()">
-                    `warranty_uuid` in
-                    <foreach collection="uuids" open="(" separator="," close=")" item="item">
-                        #{item}
-                    </foreach>
-                </when>
-                <otherwise>
-                    1=1
-                </otherwise>
-            </choose>
-        </where>
     </select>
 
     <select id="findExistsValid" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
