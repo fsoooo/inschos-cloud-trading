@@ -10,7 +10,8 @@ import com.inschos.cloud.trading.assist.kit.ConstantKit;
 public class CarInsuranceCommon {
 
     private static final String SERVER_HOST_PRODUCT = "http://apiplus.ztwltech.com/v2.0";
-    private static final String SERVER_HOST_DEBUG = "http://api-mock.ztwltech.com/apply-mock/v2.0";
+     private static final String SERVER_HOST_DEBUG = "http://api-mock.ztwltech.com/apply-mock/v2.0";
+//    private static final String SERVER_HOST_DEBUG = SERVER_HOST_PRODUCT;
     private static final String SERVER_HOST;
 
     static {
