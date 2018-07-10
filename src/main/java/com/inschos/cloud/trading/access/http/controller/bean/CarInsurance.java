@@ -426,7 +426,7 @@ public class CarInsurance {
         // 非必传，是否代缴车船税 1-不代缴，null-代缴，目前只支持人保、太保、平安
         public String remittingTax;
 
-        @CheckParams(hintName = "签名")
+        // @CheckParams(hintName = "签名")
         public String signToken;
         public String thpBizID;
         @CheckParams(hintName = "市级代码")
