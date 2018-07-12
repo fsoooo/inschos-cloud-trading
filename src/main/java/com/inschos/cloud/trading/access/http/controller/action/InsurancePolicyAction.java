@@ -1093,7 +1093,7 @@ public class InsurancePolicyAction extends BaseAction {
                     return "保单状态错误";
             }
         }
-
+        insurancePolicyModel.queryWay = request.queryWay;
         insurancePolicyModel.warranty_status = request.warrantyStatus;
 
         insurancePolicyModel.search = request.searchKey;

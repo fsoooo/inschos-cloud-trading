@@ -178,6 +178,7 @@ public class InsurancePolicyModel {
     public String product_id_string;
     public String insurance_co_id_string;
     public String agent_id_string;
+    public String queryWay;
     public long currentTime = System.currentTimeMillis();
     public List<InsuranceParticipantModel> insured_list;
 
