@@ -574,17 +574,6 @@
         `cust_warranty_cost`.`phase`=1
         <where>
 
-            `cust_warranty`.`manager_uuid`=#{manager_uuid}
-            <choose>
-                <when test='queryWay!=null and queryWay=="1"'>
-                    and `cust_warranty`.`agent_id`=#{agent_id}
-                </when>
-                <otherwise>
-                    and `cust_warranty`.`account_uuid`=#{account_uuid}
-                </otherwise>
-            </choose>
-
-            AND `cust_warranty`.`state`=1
             <choose>
                 <when test="page.lastId>0">
                     `cust_warranty`.`id`&lt;#{page.lastId}
@@ -699,7 +688,17 @@
                     1=1
                 </otherwise>
             </choose>
+            and `cust_warranty`.`manager_uuid`=#{manager_uuid}
+            <choose>
+                <when test='queryWay!=null and queryWay=="1"'>
+                    and `cust_warranty`.`agent_id`=#{agent_id}
+                </when>
+                <otherwise>
+                    and `cust_warranty`.`account_uuid`=#{account_uuid}
+                </otherwise>
+            </choose>
 
+            AND `cust_warranty`.`state`=1
             <choose>
                 <when test='search_warranty_string=="1"'>
                     AND
