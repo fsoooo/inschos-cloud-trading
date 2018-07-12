@@ -115,12 +115,12 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
 
     @Override
     public int getPolicyCountByAgentStatus(InsurancePolicyModel search) {
-        return insurancePolicyDao.findCountByAgentWarrantyStatus(search);
+        return insurancePolicyDao.findCountByAUuidWarrantyStatus(search);
     }
 
     @Override
     public int getPolicyCountByCostStatus(InsurancePolicyModel search) {
-        return insurancePolicyDao.findCountByAgentCostStatus(search);
+        return insurancePolicyDao.findCountByAUuidCostStatus(search);
     }
 
     @Override

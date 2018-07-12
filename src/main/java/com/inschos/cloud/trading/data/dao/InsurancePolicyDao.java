@@ -490,11 +490,11 @@ public class InsurancePolicyDao extends BaseDao {
         return insurancePolicyMapper.findInsurancePolicyCountForManagerSystem(insurancePolicyModel);
     }
 
-    public int findCountByAgentWarrantyStatus(InsurancePolicyModel search) {
+    public int findCountByAUuidWarrantyStatus(InsurancePolicyModel search) {
         return search != null ? insurancePolicyMapper.findCountByAgentWarrantyStatus(search) : 0;
     }
 
-    public int findCountByAgentCostStatus(InsurancePolicyModel search) {
+    public int findCountByAUuidCostStatus(InsurancePolicyModel search) {
         return search != null ? insurancePolicyMapper.findCountByAgentCostStatus(search) : 0;
     }
 

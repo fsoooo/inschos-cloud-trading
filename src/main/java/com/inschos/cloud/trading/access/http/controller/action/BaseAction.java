@@ -165,7 +165,12 @@ public class BaseAction {
 //		return result;
 //	}
 
+
     public List<CheckParamsKit.Entry<String, String>> checkParams(Object obj) {
+        return checkParams(obj,null);
+    }
+
+    public List<CheckParamsKit.Entry<String, String>> checkParams(Object obj,List<String> ignores) {
         List<CheckParamsKit.Entry<String, String>> list = new ArrayList<>();
 
         if (obj == null) {
@@ -175,13 +180,14 @@ public class BaseAction {
             return list;
         }
 
-        CheckParamsKit.checkToArray(obj, list);
+        CheckParamsKit.checkToArray(obj, list,ignores);
         if (list.isEmpty()) {
             return null;
         } else {
             return list;
         }
     }
+
 
     protected Page setPage(String lastId, String num, String size) {
         Page page = new Page();

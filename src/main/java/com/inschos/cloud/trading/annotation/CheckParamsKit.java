@@ -144,7 +144,7 @@ public class CheckParamsKit {
         }
     }
 
-    public static void checkToArray(Object o, List<Entry<String, String>> result) {
+    public static void checkToArray(Object o, List<Entry<String, String>> result , List<String> ignores) {
         if (result == null) {
             return;
         }
@@ -161,6 +161,10 @@ public class CheckParamsKit {
 
                 Class<?> type = field.getType();
                 String name = type.getName();
+
+                if(ignores!=null && ignores.contains(fieldName)){
+                    continue;
+                }
 
                 if (isBasic(name)) {
                     try {
@@ -211,11 +215,11 @@ public class CheckParamsKit {
                             if (o1 == null) {
                                 result.add(new Entry<>(fieldName, "缺少" + chk.hintName() + "参数"));
                             } else {
-                                checkToArray(o1, result);
+                                checkToArray(o1, result,ignores);
                             }
                         } else {
                             if (o1 != null) {
-                                checkToArray(o1, result);
+                                checkToArray(o1, result,ignores);
                             }
                         }
                     } catch (IllegalAccessException e) {

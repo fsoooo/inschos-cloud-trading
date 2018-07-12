@@ -86,7 +86,16 @@ public class InsurancePolicyAction extends BaseAction {
         }
 
         InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
-        insurancePolicyModel.account_uuid = actionBean.accountUuid;
+
+        insurancePolicyModel.manager_uuid = actionBean.managerUuid;
+        if("1".equals(request.queryWay)){
+            if(actionBean.userType==4){
+                insurancePolicyModel.agent_id = actionBean.userId;
+            }
+        }else{
+            insurancePolicyModel.account_uuid = actionBean.accountUuid;
+        }
+
 
         String s = checkGetInsurancePolicyListParams(request, insurancePolicyModel);
 
@@ -1077,12 +1086,14 @@ public class InsurancePolicyAction extends BaseAction {
                 case "2":
                 case "3":
                 case "4":
+                case "90":
                     insurancePolicyModel.search_warranty_string = request.warrantyStatus;
                     break;
                 default:
                     return "保单状态错误";
             }
         }
+
         insurancePolicyModel.warranty_status = request.warrantyStatus;
 
         insurancePolicyModel.search = request.searchKey;

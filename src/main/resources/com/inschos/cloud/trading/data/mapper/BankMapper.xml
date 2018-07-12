@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.BankMapper">
+
+    <sql id="Base_Column_List">
+        `id`,`account_uuid`,`bank_name`,`bank_city`,`bank_code`,`bank_type`,`phone`,`status`,`state`,`created_at`,`updated_at`
+    </sql>
+
+    <insert id="insert" parameterType="Bank" keyProperty="id" useGeneratedKeys="true">
+        insert into bank(`id`,`account_uuid`,`bank_name`,`bank_city`,`bank_code`,`bank_type`,`phone`,`status`,`state`,`created_at`,`updated_at`)
+        values (#{id},#{account_uuid},#{bank_name},#{bank_city},#{bank_code},#{bank_type},#{phone},#{status},#{state},#{created_at},#{updated_at})
+    </insert>
+
+    <update id="update" parameterType="Bank">
+        update bank set
+          `account_uuid`=#{account_uuid},`bank_name`=#{bank_name},`bank_city`=#{bank_city},`bank_code`=#{bank_code},`bank_type`=#{bank_type},`phone`=#{phone},`status`=#{status},`state`=#{state},`created_at`=#{created_at},`updated_at`=#{updated_at}
+        where `id`=#{id}
+    </update>
+
+    <update id="updateState" parameterType="Bank">
+        update bank set
+          `state`=#{state}, `updated_at`=#{updated_at}
+        <where>
+            `id`=#{id}
+        </where>
+    </update>
+
+    <select id="selectOne" parameterType="long" resultType="Bank">
+        select
+        <include refid="Base_Column_List"/>
+        from bank
+        where `id`=#{id}
+    </select>
+
+    <select id="selectListByAuuid" parameterType="Bank" resultType="Bank">
+        select
+        <include refid="Base_Column_List"/>
+        from bank
+        <where>
+            `account_uuid`=#{account_uuid} and state=1
+        </where>
+    </select>
+
+    <select id="selectExistsOne" resultType="Bank" parameterType="Bank">
+        select
+        <include refid="Base_Column_List"/>
+        from bank
+        <where>
+            `account_uuid`=#{account_uuid} and `bank_code`=#{bank_code} and state=1
+        </where>
+        limit 1
+    </select>
+
+</mapper>

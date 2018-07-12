@@ -2,7 +2,6 @@ package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.access.http.controller.action.CarInsuranceAction;
 import com.inschos.cloud.trading.annotation.CheckParams;
-import com.inschos.cloud.trading.assist.kit.L;
 import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 import com.inschos.cloud.trading.model.*;
@@ -26,7 +25,7 @@ public class InsurancePolicy {
         public String warrantyStatus;
         // 搜索关键字
         public String searchKey;
-        // 搜索关键字类型，1-保单号 2-代理人 3-投保人 4-车牌号 5-保险公司
+        // 搜索关键字类型，1-保单号 2-代理人 3-投保人 4-车牌号 5-保险公司 6-保险产品 7被保人
         public String searchType;
         // 时间类型，1-签单时间（下单时间），2-起保时间，3-缴费时间
         public String timeType;
@@ -40,6 +39,10 @@ public class InsurancePolicy {
         public String insuranceProductKey;
         // 保险公司(关键字)
         public String insuranceCompanyKey;
+        // 查询方式： 默认账号, 1：代理人业绩
+        public String queryWay;
+
+
     }
 
     public static class GetInsurancePolicyListResponse extends BaseResponse {
