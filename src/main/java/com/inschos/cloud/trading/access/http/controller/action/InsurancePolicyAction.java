@@ -16,7 +16,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -88,11 +89,14 @@ public class InsurancePolicyAction extends BaseAction {
         InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
 
         insurancePolicyModel.manager_uuid = actionBean.managerUuid;
-        if("1".equals(request.queryWay)){
-            if(actionBean.userType==4){
-                insurancePolicyModel.agent_id = actionBean.userId;
+        if ("1".equals(request.queryWay)) {
+            if (actionBean.userType == 4) {
+                AgentBean agentBean = agentClient.getAgentInfoByPersonIdManagerUuid(actionBean.managerUuid, Long.valueOf(actionBean.userId));
+                if (agentBean != null) {
+                    insurancePolicyModel.agent_id = String.valueOf(agentBean.id);
+                }
             }
-        }else{
+        } else {
             insurancePolicyModel.account_uuid = actionBean.accountUuid;
         }
 
@@ -1098,7 +1102,7 @@ public class InsurancePolicyAction extends BaseAction {
 
         insurancePolicyModel.search = request.searchKey;
         // 1-保单号 2-代理人 3-投保人 4-车牌号 5-保险公司
-        if (!StringKit.isEmpty(request.searchType) && (!StringKit.isNumeric(request.searchType) || Integer.valueOf(request.searchType) < 1 || Integer.valueOf(request.searchType) > 6)) {
+        if (!StringKit.isEmpty(request.searchType) && (!StringKit.isNumeric(request.searchType) || Integer.valueOf(request.searchType) < 1 || Integer.valueOf(request.searchType) > 7)) {
             return "搜索类型错误";
         } else if (StringKit.isEmpty(request.searchType)) {
             request.searchType = "";
