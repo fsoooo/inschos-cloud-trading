@@ -39,6 +39,9 @@ public class BankBean {
 
     public static class ApplyAuthRequest extends BaseRequest{
 
+        @CheckParams(hintName = "来源",stringType = CheckParams.StringType.STRING,maxLen = 20)
+        public String origin;
+
         @CheckParams(hintName = "姓名",stringType = CheckParams.StringType.STRING,maxLen = 20)
         public String name;
 
@@ -55,6 +58,21 @@ public class BankBean {
 
 
     public static class ConfirmAuthRequest extends BaseRequest{
+
+        @CheckParams(hintName = "来源",stringType = CheckParams.StringType.STRING,maxLen = 20)
+        public String origin;
+
+        @CheckParams(hintName = "姓名",stringType = CheckParams.StringType.STRING,maxLen = 20)
+        public String name;
+
+        @CheckParams(hintName = "银行预留手机号",stringType = CheckParams.StringType.STRING,maxLen = 13)
+        public String bankPhone;
+
+        @CheckParams(hintName = "银行卡号",stringType = CheckParams.StringType.STRING,maxLen = 20)
+        public String bankCode;
+
+        @CheckParams(hintName = "身份证号",stringType = CheckParams.StringType.STRING,maxLen = 18)
+        public String idCard;
 
         @CheckParams(hintName = "验证序号",stringType = CheckParams.StringType.STRING,maxLen = 50)
         public String requestId;

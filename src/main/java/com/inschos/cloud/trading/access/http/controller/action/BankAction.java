@@ -4,10 +4,15 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BankBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
+import com.inschos.cloud.trading.access.rpc.client.PayAuthServiceClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.data.dao.BankDao;
 import com.inschos.cloud.trading.model.Bank;
 import com.inschos.common.assist.kit.TimeKit;
+import com.inschos.dock.bean.BankConfirmBean;
+import com.inschos.dock.bean.RpcResponse;
+import com.inschos.dock.bean.RspBankApplyBean;
+import com.inschos.dock.bean.RspBankConfirmBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +29,8 @@ public class BankAction extends BaseAction {
 
     @Autowired
     private BankDao bankDao;
+    @Autowired
+    private PayAuthServiceClient payAuthServiceClient;
 
     public String add(ActionBean bean) {
 
@@ -141,11 +148,11 @@ public class BankAction extends BaseAction {
         }
 
         Bank bank = bankDao.findOne(Long.valueOf(request.id));
-        if(bank!=null){
+        if (bank != null) {
             BankBean.BankData data = toData(bank);
             response.data = data;
             return json(BaseResponse.CODE_SUCCESS, "成功", response);
-        }else{
+        } else {
             return json(BaseResponse.CODE_FAILURE, "获取详情失败", response);
         }
     }
@@ -163,9 +170,9 @@ public class BankAction extends BaseAction {
         long bankId = Long.valueOf(request.id);
         Bank bank = bankDao.findOne(bankId);
 
-        if(bank!=null){
+        if (bank != null) {
 
-            if(bank.status==Bank.BANK_AUTH_STATUS_OK){
+            if (bank.status == Bank.BANK_AUTH_STATUS_OK) {
                 // TODO: 2018/7/12 银行解绑
             }
 
@@ -173,17 +180,17 @@ public class BankAction extends BaseAction {
             bank.state = 0;
             bank.updated_at = TimeKit.currentTimeMillis();
 
-            if(bankDao.updateState(bank)>0) {
+            if (bankDao.updateState(bank) > 0) {
                 return json(BaseResponse.CODE_SUCCESS, "删除成功", response);
-            }else{
+            } else {
                 return json(BaseResponse.CODE_FAILURE, "删除失败", response);
             }
-        }else{
+        } else {
             return json(BaseResponse.CODE_FAILURE, "删除失败", response);
         }
     }
 
-    public String applyAuth(ActionBean bean){
+    public String applyAuth(ActionBean bean) {
         BankBean.ApplyAuthRequest request = requst2Bean(bean.body, BankBean.ApplyAuthRequest.class);
         BankBean.ApplyAuthResponse response = new BankBean.ApplyAuthResponse();
 
@@ -192,21 +199,26 @@ public class BankAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        // TODO: 2018/7/12  鉴权发送
+        //鉴权发送
+        com.inschos.dock.bean.BankBean bankBean = new com.inschos.dock.bean.BankBean();
+        bankBean.userName = request.name;
+        bankBean.bankCode = request.bankCode;
+        bankBean.phone = request.bankPhone;
+        bankBean.idCard = request.idCard;
+        RpcResponse<RspBankApplyBean> rpcResponse = payAuthServiceClient.bankApplyAuth(request.origin, bankBean);
 
-        if(true){
-
-        }else{
-
+        if (rpcResponse != null) {
+            if (rpcResponse.code == RpcResponse.CODE_SUCCESS) {
+                return json(BaseResponse.CODE_SUCCESS, rpcResponse.message, response);
+            } else {
+                return json(BaseResponse.CODE_FAILURE, rpcResponse.message, response);
+            }
+        } else {
+            return json(BaseResponse.CODE_FAILURE, "发送失败", response);
         }
-
-
-        
-        
-        return json(BaseResponse.CODE_FAILURE, "验证发送", response);
     }
 
-    public String confirmAuth(ActionBean bean){
+    public String confirmAuth(ActionBean bean) {
         BankBean.ConfirmAuthRequest request = requst2Bean(bean.body, BankBean.ConfirmAuthRequest.class);
         BaseResponse response = new BaseResponse();
 
@@ -215,9 +227,34 @@ public class BankAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
+        //  鉴权确认
+        BankConfirmBean bankConfirmBean = new BankConfirmBean();
+        bankConfirmBean.requestId = request.requestId;
+        bankConfirmBean.vdCode = request.vdCode;
+        bankConfirmBean.userName = request.name;
+        bankConfirmBean.bankCode = request.bankCode;
+        bankConfirmBean.phone = request.bankPhone;
+        bankConfirmBean.idCard = request.idCard;
+        RpcResponse<RspBankConfirmBean> rpcResponse = payAuthServiceClient.bankConfirmAuth(request.origin, bankConfirmBean);
+
+        Bank search = new Bank();
+        search.account_uuid = bean.accountUuid;
+        search.bank_code = request.bankCode;
+        Bank bank = bankDao.findExistsOne(search);
+
+        boolean authOk = rpcResponse != null && rpcResponse.code == RpcResponse.CODE_SUCCESS;
+
+        if(authOk){
+
+        }
 
 
-        return json(BaseResponse.CODE_FAILURE, "删除失败", response);
+        if (rpcResponse.code == RpcResponse.CODE_SUCCESS) {
+            return json(BaseResponse.CODE_SUCCESS, rpcResponse.message, response);
+        } else {
+            return json(BaseResponse.CODE_FAILURE, rpcResponse.message, response);
+        }
+
     }
 
     private BankBean.BankData toData(Bank bank) {

@@ -865,7 +865,7 @@ public class InsurancePolicy {
             GetInsurancePolicyItemBean insurancePolicy = new GetInsurancePolicyItemBean();
 
             insurancePolicy.warrantyCode = "保单号";
-            insurancePolicy.insuredDetailText = "被保人";
+            insurancePolicy.insuredDetailText = "被保险人";
             insurancePolicy.policyHolderName = "投保人";
             insurancePolicy.productName = "保险产品";
             insurancePolicy.insuranceCompanyName = "保险公司";
