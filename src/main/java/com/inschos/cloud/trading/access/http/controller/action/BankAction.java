@@ -9,10 +9,10 @@ import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.data.dao.BankDao;
 import com.inschos.cloud.trading.model.Bank;
 import com.inschos.common.assist.kit.TimeKit;
-import com.inschos.yunda.bean.BankConfirmBean;
-import com.inschos.yunda.bean.RpcResponse;
-import com.inschos.yunda.bean.RspBankApplyBean;
-import com.inschos.yunda.bean.RspBankConfirmBean;
+import com.inschos.dock.bean.BankConfirmBean;
+import com.inschos.dock.bean.RpcResponse;
+import com.inschos.dock.bean.RspBankApplyBean;
+import com.inschos.dock.bean.RspBankConfirmBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -200,7 +200,7 @@ public class BankAction extends BaseAction {
         }
 
         //鉴权发送
-        com.inschos.yunda.bean.BankBean bankBean = new com.inschos.yunda.bean.BankBean();
+        com.inschos.dock.bean.BankBean bankBean = new com.inschos.dock.bean.BankBean();
         bankBean.userName = request.name;
         bankBean.bankCode = request.bankCode;
         bankBean.phone = request.bankPhone;
