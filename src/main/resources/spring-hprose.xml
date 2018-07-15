@@ -67,7 +67,7 @@
         <property name="service" ref="insureCallBackServiceImpl"/>
         <!-- 接口-->
         <property name="serviceInterface"
-                  value="com.inschos.yunda.api.CallBackService"/>
+                  value="com.inschos.dock.api.CallBackService"/>
     </bean>
 
 </beans>
