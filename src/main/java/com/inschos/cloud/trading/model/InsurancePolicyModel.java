@@ -101,7 +101,7 @@ public class InsurancePolicyModel {
      */
     public String type;
     /**
-     * 保单状态 1-投保中，2-待生效，3-保障中，4-可续保，5-已过保，6-已退保，7-已失效
+     * 保单状态 1-投保中，2-待生效，3-保障中，4-可续保，5-已过保，6-已失效,7-已退保
      */
     public String warranty_status;
     /**
