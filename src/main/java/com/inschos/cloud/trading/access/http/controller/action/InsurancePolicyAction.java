@@ -1368,22 +1368,25 @@ public class InsurancePolicyAction extends BaseAction {
                     getInsurancePolicyItemBean.insuranceProductName = productBean.displayName;
                     getInsurancePolicyItemBean.insuranceCompanyName = productBean.insuranceCoName;
 
-                    String[] split = productBean.code.split("_");
+                    if(!StringKit.isEmpty(productBean.code)){
+                        String[] split = productBean.code.split("_");
 
-                    String url = null;
-                    if (split.length > 1 && parameter.needLogo) {
-                        Boolean aBoolean1 = file.get(split[0]);
-                        if (aBoolean1 == null) {
-                            url = fileClient.getFileUrl("property_key_" + split[0]);
-                            fileUrl.put(split[0], url);
-                            file.put(split[0], !StringKit.isEmpty(url));
-                        } else {
-                            if (aBoolean1) {
-                                url = fileUrl.get(split[0]);
+                        String url = null;
+                        if (split.length > 1 && parameter.needLogo) {
+                            Boolean aBoolean1 = file.get(split[0]);
+                            if (aBoolean1 == null) {
+                                url = fileClient.getFileUrl("property_key_" + split[0]);
+                                fileUrl.put(split[0], url);
+                                file.put(split[0], !StringKit.isEmpty(url));
+                            } else {
+                                if (aBoolean1) {
+                                    url = fileUrl.get(split[0]);
+                                }
                             }
+                            getInsurancePolicyItemBean.insuranceCompanyLogo = url;
                         }
-                        getInsurancePolicyItemBean.insuranceCompanyLogo = url;
                     }
+
                 }
 
                 if (parameter.needChannel && !channelMap.isEmpty()) {
