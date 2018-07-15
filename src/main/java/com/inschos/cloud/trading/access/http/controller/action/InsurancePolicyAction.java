@@ -1511,10 +1511,13 @@ public class InsurancePolicyAction extends BaseAction {
                     response.data.insuranceProductName = product.displayName;
                     response.data.insuranceCompanyName = product.insuranceCoName;
 
-                    String[] split = product.code.split("_");
-                    if (split.length > 1) {
-                        response.data.insuranceCompanyLogo = fileClient.getFileUrl("property_key_" + split[0]);
+                    if(!StringKit.isEmpty(product.code)){
+                        String[] split = product.code.split("_");
+                        if (split.length > 1) {
+                            response.data.insuranceCompanyLogo = fileClient.getFileUrl("property_key_" + split[0]);
+                        }
                     }
+
                 }
 
                 for (InsuranceParticipantModel insuranceParticipantModel : insuranceParticipantByWarrantyCode) {
