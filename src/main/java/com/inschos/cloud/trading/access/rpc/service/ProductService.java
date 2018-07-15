@@ -1,11 +1,7 @@
 package com.inschos.cloud.trading.access.rpc.service;
 
-import com.inschos.cloud.trading.access.rpc.bean.PayCategoryBean;
-import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
-import com.inschos.cloud.trading.access.rpc.bean.ProductBrokerageBean;
-import com.inschos.cloud.trading.access.rpc.bean.ProductBrokerageInfoBean;
-import com.inschos.yunda.bean.InsureBean;
 import com.inschos.cloud.trading.access.rpc.bean.*;
+import com.inschos.dock.bean.InsureBean;
 
 import java.util.List;
 

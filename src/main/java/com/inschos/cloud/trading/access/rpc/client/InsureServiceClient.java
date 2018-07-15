@@ -1,8 +1,8 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
 import com.inschos.cloud.trading.assist.kit.L;
-import com.inschos.yunda.api.InsureService;
-import com.inschos.yunda.bean.*;
+import com.inschos.dock.api.InsureService;
+import com.inschos.dock.bean.*;
 import hprose.client.HproseHttpClient;
 import org.springframework.stereotype.Component;
 

@@ -2,9 +2,9 @@ package com.inschos.cloud.trading.access.rpc.service.provider;
 
 import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.assist.kit.L;
-import com.inschos.yunda.api.CallBackService;
-import com.inschos.yunda.bean.RpcResponse;
-import com.inschos.yunda.bean.RspPayBean;
+import com.inschos.dock.api.CallBackService;
+import com.inschos.dock.bean.RpcResponse;
+import com.inschos.dock.bean.RspPayBean;
 import org.springframework.stereotype.Service;
 
 /**

@@ -3,7 +3,7 @@ package com.inschos.cloud.trading.access.rpc.client;
 import com.inschos.cloud.trading.access.rpc.bean.*;
 import com.inschos.cloud.trading.access.rpc.service.ProductService;
 import com.inschos.cloud.trading.assist.kit.L;
-import com.inschos.yunda.bean.InsureBean;
+import com.inschos.dock.bean.InsureBean;
 import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
