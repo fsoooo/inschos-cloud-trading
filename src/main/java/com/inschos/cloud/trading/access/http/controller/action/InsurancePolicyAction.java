@@ -100,6 +100,9 @@ public class InsurancePolicyAction extends BaseAction {
             insurancePolicyModel.account_uuid = actionBean.accountUuid;
         }
 
+        if (actionBean.managerUuid.equals("14463303497682968") && "3".equals(request.searchType)) {
+            request.searchKey = "";
+        }
 
         String s = checkGetInsurancePolicyListParams(request, insurancePolicyModel);
 
@@ -1226,6 +1229,9 @@ public class InsurancePolicyAction extends BaseAction {
             BillModel billModel = new BillModel();
             for (int i = 0; i < size1; i++) {
                 InsurancePolicyModel policyListByWarrantyStatusOrSearch = insurancePolicyModelList.get(i);
+                if ("14463303497682968".equals(policyListByWarrantyStatusOrSearch.manager_uuid)){
+                    policyListByWarrantyStatusOrSearch.policy_holder_name = "";
+                }
                 InsurancePolicy.GetInsurancePolicyItemBean model = new InsurancePolicy.GetInsurancePolicyItemBean(policyListByWarrantyStatusOrSearch);
 
                 productId.add(model.productId);
@@ -1368,7 +1374,7 @@ public class InsurancePolicyAction extends BaseAction {
                     getInsurancePolicyItemBean.insuranceProductName = productBean.displayName;
                     getInsurancePolicyItemBean.insuranceCompanyName = productBean.insuranceCoName;
 
-                    if(!StringKit.isEmpty(productBean.code)){
+                    if (!StringKit.isEmpty(productBean.code)) {
                         String[] split = productBean.code.split("_");
 
                         String url = null;
@@ -1514,7 +1520,7 @@ public class InsurancePolicyAction extends BaseAction {
                     response.data.insuranceProductName = product.displayName;
                     response.data.insuranceCompanyName = product.insuranceCoName;
 
-                    if(!StringKit.isEmpty(product.code)){
+                    if (!StringKit.isEmpty(product.code)) {
                         String[] split = product.code.split("_");
                         if (split.length > 1) {
                             response.data.insuranceCompanyLogo = fileClient.getFileUrl("property_key_" + split[0]);
@@ -1525,7 +1531,15 @@ public class InsurancePolicyAction extends BaseAction {
 
                 for (InsuranceParticipantModel insuranceParticipantModel : insuranceParticipantByWarrantyCode) {
                     InsurancePolicy.InsurancePolicyParticipantInfo insurancePolicyParticipantInfo = new InsurancePolicy.InsurancePolicyParticipantInfo(insuranceParticipantModel);
+
+                    if ("14463303497682968".equals(insurancePolicyDetailByWarrantyCode.manager_uuid)){
+                        insurancePolicyParticipantInfo.name = "";
+                        insurancePolicyParticipantInfo.cardType = "";
+                        insurancePolicyParticipantInfo.cardTypeText = "";
+                    }
+
                     if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_POLICYHOLDER)) {
+
                         response.data.policyHolder = insurancePolicyParticipantInfo;
                     } else if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_INSURED)) {
                         response.data.insuredList.add(insurancePolicyParticipantInfo);
