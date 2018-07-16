@@ -1536,6 +1536,7 @@ public class InsurancePolicyAction extends BaseAction {
                         insurancePolicyParticipantInfo.name = "";
                         insurancePolicyParticipantInfo.cardType = "";
                         insurancePolicyParticipantInfo.cardTypeText = "";
+                        insurancePolicyParticipantInfo.cardCode = "";
                     }
 
                     if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_POLICYHOLDER)) {
