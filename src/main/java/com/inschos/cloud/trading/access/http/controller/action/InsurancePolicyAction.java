@@ -1222,6 +1222,8 @@ public class InsurancePolicyAction extends BaseAction {
         HashMap<String, String> fileUrl = new HashMap<>();
         HashMap<String, Boolean> file = new HashMap<>();
 
+        String managerUuid = "";
+
         if (!insurancePolicyModelList.isEmpty()) {
             InsuranceParticipantModel insuranceParticipantModel = new InsuranceParticipantModel();
             StringBuilder warrantyUuidString = new StringBuilder();
@@ -1229,6 +1231,7 @@ public class InsurancePolicyAction extends BaseAction {
             BillModel billModel = new BillModel();
             for (int i = 0; i < size1; i++) {
                 InsurancePolicyModel policyListByWarrantyStatusOrSearch = insurancePolicyModelList.get(i);
+                managerUuid = policyListByWarrantyStatusOrSearch.manager_uuid;
                 if ("14463303497682968".equals(policyListByWarrantyStatusOrSearch.manager_uuid)){
                     policyListByWarrantyStatusOrSearch.policy_holder_name = "";
                 }
@@ -1417,13 +1420,15 @@ public class InsurancePolicyAction extends BaseAction {
                 if (parameter.needInsured && !insuredName.isEmpty()) {
                     InsuranceParticipantModel insuranceParticipantModel1 = insuredName.get(getInsurancePolicyItemBean.warrantyUuid);
                     if (insuranceParticipantModel1 != null && !StringKit.isEmpty(insuranceParticipantModel1.name)) {
-                        if (insuranceParticipantModel1.count > 1) {
-                            String[] split = insuranceParticipantModel1.name.split(",");
-                            getInsurancePolicyItemBean.insuredText = split[0] + "等" + insuranceParticipantModel1.count + "人";
-                        } else {
-                            getInsurancePolicyItemBean.insuredText = insuranceParticipantModel1.name;
+                        if(!"14463303497682968".equals(managerUuid)){
+                            if (insuranceParticipantModel1.count > 1) {
+                                String[] split = insuranceParticipantModel1.name.split(",");
+                                getInsurancePolicyItemBean.insuredText = split[0] + "等" + insuranceParticipantModel1.count + "人";
+                            } else {
+                                getInsurancePolicyItemBean.insuredText = insuranceParticipantModel1.name;
+                            }
+                            getInsurancePolicyItemBean.insuredDetailText = insuranceParticipantModel1.name;
                         }
-                        getInsurancePolicyItemBean.insuredDetailText = insuranceParticipantModel1.name;
                     }
                 }
             }

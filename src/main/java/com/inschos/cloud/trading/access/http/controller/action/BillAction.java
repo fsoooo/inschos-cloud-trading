@@ -1,9 +1,10 @@
 package com.inschos.cloud.trading.access.http.controller.action;
 
-import com.inschos.cloud.trading.access.http.controller.bean.*;
+import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
+import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
+import com.inschos.cloud.trading.access.http.controller.bean.Bill;
 import com.inschos.cloud.trading.access.rpc.bean.InsuranceCompanyBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
-import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.access.rpc.client.CompanyClient;
 import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
@@ -328,7 +329,11 @@ public class BillAction extends BaseAction {
                 List<OfflineInsurancePolicyModel> completePayListByManagerUuid1 = offlineInsurancePolicyDao.findCompletePayListByManagerUuid(offlineInsurancePolicyModel);
                 if (completePayListByManagerUuid1 != null && !completePayListByManagerUuid1.isEmpty()) {
                     for (OfflineInsurancePolicyModel offlineInsurancePolicyModel1 : completePayListByManagerUuid1) {
-                        response.data.add(new Bill.BillInsurancePolicy(offlineInsurancePolicyModel1));
+                        Bill.BillInsurancePolicy insurancePolicy = new Bill.BillInsurancePolicy(offlineInsurancePolicyModel1);
+                        if("14463303497682968".equals(actionBean.managerUuid)){
+                            insurancePolicy.insuredName = "";
+                        }
+                        response.data.add(insurancePolicy);
                     }
                 }
 
@@ -558,7 +563,7 @@ public class BillAction extends BaseAction {
 
         List<BillDetailModel> billDetailByBillUuid = billDetailDao.findBillDetailByBillUuid(billDetailModel);
         long total = billDetailDao.findBillDetailCountByBillUuid(billDetailModel);
-        response.data = dealBillDetailModelList(billDetailByBillUuid);
+        response.data = dealBillDetailModelList(billDetailByBillUuid,actionBean.managerUuid);
 
         String lastId = "0";
         if (!response.data.isEmpty()) {
@@ -613,7 +618,7 @@ public class BillAction extends BaseAction {
         do {
             List<BillDetailModel> billDetailByBillUuid = billDetailDao.findBillDetailByBillUuid(billDetailModel);
 
-            List<Bill.BillInsurancePolicy> billInsurancePolicies = dealBillDetailModelList(billDetailByBillUuid);
+            List<Bill.BillInsurancePolicy> billInsurancePolicies = dealBillDetailModelList(billDetailByBillUuid,actionBean.managerUuid);
 
             if (!billInsurancePolicies.isEmpty()) {
                 list.clear();
@@ -838,7 +843,7 @@ public class BillAction extends BaseAction {
 //        return str;
 //    }
 
-    private List<Bill.BillInsurancePolicy> dealBillDetailModelList(List<BillDetailModel> list) {
+    private List<Bill.BillInsurancePolicy> dealBillDetailModelList(List<BillDetailModel> list,String managerUuid) {
         List<Bill.BillInsurancePolicy> result = new ArrayList<>();
         if (list == null || list.isEmpty()) {
             return result;
@@ -876,7 +881,9 @@ public class BillAction extends BaseAction {
                 productIds.add(detailModel.online_product_id);
                 companyIds.add(detailModel.online_ins_company_id);
 
-                billInsurancePolicy.insuredName = detailModel.online_person_name;
+
+
+
 
                 billInsurancePolicy.premium = detailModel.online_premium;
                 if (StringKit.isNumeric(detailModel.online_premium)) {
@@ -968,6 +975,9 @@ public class BillAction extends BaseAction {
 
             } else {
                 continue;
+            }
+            if("14463303497682968".equals(managerUuid)){
+                billInsurancePolicy.insuredName = "";
             }
             result.add(billInsurancePolicy);
         }
