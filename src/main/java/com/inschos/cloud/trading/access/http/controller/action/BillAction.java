@@ -562,6 +562,7 @@ public class BillAction extends BaseAction {
         billDetailModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
         List<BillDetailModel> billDetailByBillUuid = billDetailDao.findBillDetailByBillUuid(billDetailModel);
+
         long total = billDetailDao.findBillDetailCountByBillUuid(billDetailModel);
         response.data = dealBillDetailModelList(billDetailByBillUuid,actionBean.managerUuid);
 
@@ -979,6 +980,7 @@ public class BillAction extends BaseAction {
             if("14463303497682968".equals(managerUuid)){
                 billInsurancePolicy.insuredName = "";
             }
+            billInsurancePolicy.type = detailModel.online_type;
             result.add(billInsurancePolicy);
         }
 

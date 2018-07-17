@@ -6,7 +6,6 @@ import com.inschos.cloud.trading.model.BillDetailModel;
 import com.inschos.cloud.trading.model.BillModel;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.OfflineInsurancePolicyModel;
-import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -348,6 +347,9 @@ public class Bill {
         public String warrantyType;
         public String warrantyTypeText;
 
+        //险种类型
+        public String type;
+
         public BillInsurancePolicy() {
 
         }
@@ -412,6 +414,7 @@ public class Bill {
 
             this.warrantyType = "1";
             this.warrantyTypeText = new BillDetailModel().typeText(this.warrantyType);
+
         }
 
         public BillInsurancePolicy(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
