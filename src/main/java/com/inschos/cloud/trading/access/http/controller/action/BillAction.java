@@ -227,15 +227,19 @@ public class BillAction extends BaseAction {
                         request.timeType = null;
                         request.startTime = "";
                         request.endTime = "";
+
+                        break;
+
                     }else if(!StringKit.isInteger(request.startTime)){
                         request.startTime = "0";
                     }else if(!StringKit.isInteger(request.endTime)){
                         request.endTime = String.valueOf(TimeKit.MAX_MILLIS);
                     }
-
                     if (Long.valueOf(request.startTime) >= Long.valueOf(request.endTime)) {
                         return json(BaseResponse.CODE_FAILURE, "开始时间不能晚于或等于结束时间", response);
                     }
+
+
 
                     break;
                 default:
