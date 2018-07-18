@@ -223,8 +223,12 @@ public class BillAction extends BaseAction {
             switch (request.timeType) {
                 case "1":
                 case "2":
-                    if (!StringKit.isInteger(request.startTime) || !StringKit.isInteger(request.endTime)) {
+                    if (!StringKit.isInteger(request.startTime) && !StringKit.isInteger(request.endTime)) {
                         return json(BaseResponse.CODE_FAILURE, "时间错误", response);
+                    }else if(!StringKit.isInteger(request.startTime)){
+                        request.startTime = "0";
+                    }else if(!StringKit.isInteger(request.endTime)){
+                        request.endTime = String.valueOf(TimeKit.MAX_MILLIS);
                     }
 
                     if (Long.valueOf(request.startTime) >= Long.valueOf(request.endTime)) {
