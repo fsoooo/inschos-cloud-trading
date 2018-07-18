@@ -224,7 +224,9 @@ public class BillAction extends BaseAction {
                 case "1":
                 case "2":
                     if (!StringKit.isInteger(request.startTime) && !StringKit.isInteger(request.endTime)) {
-                        return json(BaseResponse.CODE_FAILURE, "时间错误", response);
+                        request.timeType = null;
+                        request.startTime = "";
+                        request.endTime = "";
                     }else if(!StringKit.isInteger(request.startTime)){
                         request.startTime = "0";
                     }else if(!StringKit.isInteger(request.endTime)){
