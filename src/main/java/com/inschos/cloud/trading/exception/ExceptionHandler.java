@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.exception;
 
 
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
+import com.inschos.common.assist.kit.L;
 import org.apache.log4j.DefaultThrowableRenderer;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
