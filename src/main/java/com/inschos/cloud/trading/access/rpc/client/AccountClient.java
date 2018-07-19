@@ -2,7 +2,7 @@ package com.inschos.cloud.trading.access.rpc.client;
 
 import com.inschos.cloud.trading.access.rpc.bean.AccountBean;
 import com.inschos.cloud.trading.access.rpc.service.AccountService;
-import com.inschos.cloud.trading.assist.kit.L;
+import com.inschos.common.assist.kit.L;
 import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

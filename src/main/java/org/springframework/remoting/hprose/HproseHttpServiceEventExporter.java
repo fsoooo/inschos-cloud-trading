@@ -1,7 +1,7 @@
 package org.springframework.remoting.hprose;
 
 
-import com.inschos.cloud.trading.assist.kit.L;
+import com.inschos.common.assist.kit.L;
 import hprose.common.HproseContext;
 import hprose.server.HproseHttpServiceEvent;
 import hprose.server.HttpContext;

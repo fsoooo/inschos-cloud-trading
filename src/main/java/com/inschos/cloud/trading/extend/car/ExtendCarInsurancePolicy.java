@@ -1,10 +1,8 @@
 package com.inschos.cloud.trading.extend.car;
 
-import com.inschos.cloud.trading.access.http.controller.bean.BaseRequest;
-import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.common.assist.kit.StringKit;
 
 import java.util.Date;
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.inschos.cloud.trading.extend.other;
 
-import com.inschos.cloud.trading.assist.kit.HttpClientKit;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
 import com.inschos.cloud.trading.extend.car.SignatureTools;
+import com.inschos.common.assist.kit.HttpClientKit;
+import com.inschos.common.assist.kit.JsonKit;
 
 import java.io.IOException;
 

@@ -1,14 +1,5 @@
 package com.inschos.cloud.trading.extend.file;
 
-import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.HttpClientKit;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.L;
-import com.inschos.cloud.trading.extend.car.CarInsuranceResponse;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 /**
  * 创建日期：2018/4/23 on 15:32
  * 描述：

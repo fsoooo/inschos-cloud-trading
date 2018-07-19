@@ -11,22 +11,21 @@ import javax.annotation.PostConstruct;
 @Component
 public class ConstantKit {
 
-	public static boolean IS_PRODUCT = true;
+    public static boolean IS_PRODUCT = true;
 
-	public static int API_CODE=2;
-
-
-
-	// 解决静态变量不能注解的问题
-
-	@Value("${IS_PRODUCT}")
-	private boolean _is_product = true;
+    public static int API_CODE = 2;
 
 
-	@PostConstruct
-	public void init() {
-		IS_PRODUCT = this._is_product;
+    // 解决静态变量不能注解的问题
 
-	}
+    @Value("${IS_PRODUCT}")
+    private boolean _is_product = true;
+
+
+    @PostConstruct
+    public void init() {
+        IS_PRODUCT = this._is_product;
+
+    }
 
 }

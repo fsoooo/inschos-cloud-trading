@@ -1,7 +1,8 @@
 package com.inschos.cloud.trading.access.rpc.service.provider;
 
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.L;
+
+import com.inschos.common.assist.kit.JsonKit;
+import com.inschos.common.assist.kit.L;
 import com.inschos.dock.api.CallBackService;
 import com.inschos.dock.bean.RpcResponse;
 import com.inschos.dock.bean.RspPayBean;

@@ -1,6 +1,5 @@
 package com.inschos.cloud.trading.access.rpc.bean;
 
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.PolicyListCountModel;
 
 /**

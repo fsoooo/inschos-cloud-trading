@@ -1,7 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.service;
 
 import com.inschos.cloud.trading.access.rpc.bean.InsuranceCompanyBean;
-import com.inschos.cloud.trading.assist.kit.L;
 
 import java.util.List;
 

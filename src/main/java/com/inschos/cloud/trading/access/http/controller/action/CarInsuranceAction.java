@@ -9,11 +9,15 @@ import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.access.rpc.client.TaskResultClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.*;
+import com.inschos.cloud.trading.assist.kit.CardCodeKit;
+import com.inschos.cloud.trading.assist.kit.TimeKit;
+import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.car.*;
 import com.inschos.cloud.trading.model.*;
 import com.inschos.cloud.trading.model.fordao.*;
+import com.inschos.common.assist.kit.JsonKit;
+import com.inschos.common.assist.kit.StringKit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

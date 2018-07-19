@@ -2,7 +2,6 @@ package com.inschos.cloud.trading.access.rpc.bean;
 
 import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.access.http.controller.bean.PageBean;
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
 
 import java.util.List;
 

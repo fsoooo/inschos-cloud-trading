@@ -2,9 +2,9 @@ package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.access.http.controller.action.CarInsuranceAction;
 import com.inschos.cloud.trading.annotation.CheckParams;
-import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 import com.inschos.cloud.trading.model.*;
+import com.inschos.common.assist.kit.StringKit;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;

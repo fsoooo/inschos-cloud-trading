@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.annotation;
 
-import com.inschos.cloud.trading.assist.kit.StringKit;
+
+import com.inschos.common.assist.kit.StringKit;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

@@ -29,4 +29,6 @@ public class BrokerageStatisticListModel {
     public String channel_rate;
     public String agent_rate;
 
+    public String pay_category_id;
+
 }

@@ -6,10 +6,16 @@ import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
 import com.inschos.cloud.trading.access.rpc.bean.*;
 import com.inschos.cloud.trading.access.rpc.client.*;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.*;
+import com.inschos.cloud.trading.assist.kit.ExcelModel;
+import com.inschos.cloud.trading.assist.kit.ExcelModelKit;
+import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
+import com.inschos.common.assist.kit.HttpClientKit;
+import com.inschos.common.assist.kit.JsonKit;
+import com.inschos.common.assist.kit.MD5Kit;
+import com.inschos.common.assist.kit.StringKit;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -965,14 +971,24 @@ public class InsurancePolicyAction extends BaseAction {
                 InsuranceParticipantModel holder = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(brokerageStatisticListModel.warranty_uuid);
                 InsurancePolicy.InsurancePolicyBrokerageStatistic insurancePolicyBrokerageStatistic = new InsurancePolicy.InsurancePolicyBrokerageStatistic(brokerageStatisticListModel);
                 insurancePolicyBrokerageStatistic.customerName = holder.name;
+                if("14463303497682968".equals(actionBean.managerUuid)){
+                    insurancePolicyBrokerageStatistic.customerName = "";
+                }
                 insurancePolicyBrokerageStatistic.customerMobile = holder.phone;
                 if (StringKit.isInteger(brokerageStatisticListModel.product_id)) {
                     ProductBean product = productClient.getProduct(Long.valueOf(brokerageStatisticListModel.product_id));
                     if (product != null) {
                         insurancePolicyBrokerageStatistic.insuranceName = product.insuranceCoName;
-                        insurancePolicyBrokerageStatistic.productName = product.displayName;
+                        insurancePolicyBrokerageStatistic.productName = StringKit.isEmpty(product.displayName)?product.name:product.displayName;
                     }
                 }
+                if(StringKit.isInteger(brokerageStatisticListModel.pay_category_id)){
+                    PayCategoryBean category = productClient.getOnePayCategory(Long.valueOf(brokerageStatisticListModel.pay_category_id));
+                    if(category!=null){
+                        insurancePolicyBrokerageStatistic.byStagesWay = category.name;
+                    }
+                }
+
                 lastId = insurancePolicyBrokerageStatistic.costId;
                 response.data.add(insurancePolicyBrokerageStatistic);
             }

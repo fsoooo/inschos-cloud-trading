@@ -1,8 +1,8 @@
 package com.inschos.cloud.trading.model;
 
-import com.inschos.cloud.trading.assist.kit.TimeKit;
 
-import java.util.ArrayList;
+import com.inschos.common.assist.kit.TimeKit;
+
 import java.util.List;
 
 /**

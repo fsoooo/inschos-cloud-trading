@@ -1,13 +1,10 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.extend.car.CarInsuranceRequest;
-import com.inschos.cloud.trading.extend.car.CarInsuranceResponse;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.common.assist.kit.StringKit;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 

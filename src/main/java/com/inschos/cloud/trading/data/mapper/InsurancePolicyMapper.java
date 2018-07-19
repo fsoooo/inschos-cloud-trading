@@ -55,4 +55,6 @@ public interface InsurancePolicyMapper {
     List<InsurancePolicyModel> findInsuranceRecordListByManagerUuid(InsurancePolicyModel search);
 
     long findInsuranceRecordCountByManagerUuid(InsurancePolicyModel search);
+
+    InsurancePolicyModel findPremiumCountByCustomerManager(InsurancePolicyModel search);
 }

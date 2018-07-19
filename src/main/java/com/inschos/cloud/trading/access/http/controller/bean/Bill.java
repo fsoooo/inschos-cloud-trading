@@ -1,11 +1,11 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
-import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.model.BillDetailModel;
 import com.inschos.cloud.trading.model.BillModel;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.OfflineInsurancePolicyModel;
+import com.inschos.common.assist.kit.StringKit;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;

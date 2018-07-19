@@ -1,12 +1,11 @@
 package com.inschos.cloud.trading.data.dao;
 
-import com.inschos.cloud.trading.access.http.controller.bean.Bill;
-import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.BillDetailMapper;
 import com.inschos.cloud.trading.data.mapper.BillMapper;
 import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
 import com.inschos.cloud.trading.data.mapper.OfflineInsurancePolicyMapper;
 import com.inschos.cloud.trading.model.*;
+import com.inschos.common.assist.kit.StringKit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,18 +1,22 @@
 package com.inschos.cloud.trading.access.http.controller.action;
 
-import com.inschos.cloud.trading.access.http.controller.bean.*;
-import com.inschos.cloud.trading.access.http.controller.bean.StatisticBean.*;
+import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
+import com.inschos.cloud.trading.access.http.controller.bean.BaseRequest;
+import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
+import com.inschos.cloud.trading.access.http.controller.bean.StatisticBean;
+import com.inschos.cloud.trading.access.http.controller.bean.StatisticBean.InsureStsItem;
 import com.inschos.cloud.trading.access.http.controller.bean.StatisticBean.InsureStsTotalForAgentSelfResponse;
+import com.inschos.cloud.trading.access.http.controller.bean.StatisticBean.InsureTotalData;
 import com.inschos.cloud.trading.access.http.controller.bean.StatisticBean.InsureTotalStatistic;
 import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
 import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.TimeKit;
 import com.inschos.cloud.trading.data.dao.CustWarrantyBrokerageDao;
 import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.model.*;
+import com.inschos.common.assist.kit.StringKit;
+import com.inschos.common.assist.kit.TimeKit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

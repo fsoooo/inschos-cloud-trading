@@ -1,6 +1,7 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
-import com.inschos.cloud.trading.assist.kit.L;
+
+import com.inschos.common.assist.kit.L;
 import com.inschos.dock.api.InsureService;
 import com.inschos.dock.bean.*;
 import hprose.client.HproseHttpClient;

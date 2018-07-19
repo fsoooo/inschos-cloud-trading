@@ -1,9 +1,9 @@
 package com.inschos.cloud.trading.model;
 
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.TimeKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
+import com.inschos.common.assist.kit.StringKit;
+import com.inschos.common.assist.kit.TimeKit;
 
 /**
  * 创建日期：2018/3/23 on 11:52

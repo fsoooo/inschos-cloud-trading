@@ -1,8 +1,8 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
-import com.inschos.cloud.trading.assist.kit.TimeKit;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
+import com.inschos.common.assist.kit.TimeKit;
 
 import java.util.List;
 

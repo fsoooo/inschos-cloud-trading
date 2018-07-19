@@ -1,15 +1,11 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
-import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
 import com.inschos.cloud.trading.access.rpc.bean.TaskResultDataBean;
-import com.inschos.cloud.trading.access.rpc.service.ProductService;
 import com.inschos.cloud.trading.access.rpc.service.TaskResultService;
-import com.inschos.cloud.trading.assist.kit.L;
+import com.inschos.common.assist.kit.L;
 import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * 创建日期：2018/5/17 on 13:51

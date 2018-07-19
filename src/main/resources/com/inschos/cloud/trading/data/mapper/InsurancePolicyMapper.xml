@@ -126,6 +126,7 @@
             <if test="product_id_string!=null and product_id_string!=''">
                 and `product_id` in (${product_id_string})
             </if>
+            and warranty_status in (2,3,4,5)
         </where>
         GROUP BY `product_id`
     </select>
@@ -976,5 +977,25 @@
         LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
         where `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND (`cust_warranty`.`warranty_status`=2 OR `cust_warranty`.`warranty_status`=3 OR `cust_warranty`.`warranty_status`=4 OR `cust_warranty`.`warranty_status`=5) AND `cust_warranty_person`.`type`=#{person_type} AND `cust_warranty_person`.`card_type`=#{card_type} AND  `cust_warranty_person`.`card_code`=#{card_code}
     </select>
+
+    <select id="findPremiumCountByCustomerManager"
+            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+        select
+        count(1) `times`, sum(cust_warranty.premium) premium
+        from cust_warranty
+        LEFT JOIN `cust_warranty_person` ON `cust_warranty`.`warranty_uuid`=`cust_warranty_person`.`warranty_uuid`
+        <where>
+            `cust_warranty`.`manager_uuid`=#{manager_uuid} AND `cust_warranty`.`state`=1 AND (`cust_warranty`.`warranty_status`=2 OR `cust_warranty`.`warranty_status`=3 OR `cust_warranty`.`warranty_status`=4 OR `cust_warranty`.`warranty_status`=5) AND `cust_warranty_person`.`type`=#{person_type} AND `cust_warranty_person`.`card_type`=#{card_type} AND  `cust_warranty_person`.`card_code`=#{card_code}
+            <if test='end_time!=null and end_time!=""'>
+                and `cust_warranty_person`.record_start_time &lt;=#{end_time}
+            </if>
+            <if test='start_time!=null and start_time!=""'>
+                and `cust_warranty_person`.record_end_time &gt;=#{start_time}
+            </if>
+
+        </where>
+    </select>
+
 
 </mapper>

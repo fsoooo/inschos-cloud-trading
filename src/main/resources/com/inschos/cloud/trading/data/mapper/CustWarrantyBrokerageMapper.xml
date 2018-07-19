@@ -117,6 +117,7 @@
                 select from_unixtime(cb.created_at/1000,"%Y-%m") `time_text`,sum(cb.`manager_money`) `brokerage`
             </otherwise>
         </choose>
+
         from cust_warranty_brokerage cb
         where cb.`created_at`>=#{start_time} AND cb.`created_at`&lt;#{end_time} AND cb.`manager_uuid`=#{manager_uuid}
         group by `time_text`;

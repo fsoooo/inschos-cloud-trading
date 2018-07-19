@@ -42,4 +42,9 @@ public interface CustWarrantyService {
      */
     InsuranceRecordBean getInsuranceRecord(InsuranceRecordBean insuranceRecord);
 
+
+
+
+
+
 }

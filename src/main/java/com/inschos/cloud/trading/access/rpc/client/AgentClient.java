@@ -2,8 +2,8 @@ package com.inschos.cloud.trading.access.rpc.client;
 
 import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
 import com.inschos.cloud.trading.access.rpc.service.AgentService;
-import com.inschos.cloud.trading.assist.kit.L;
-import com.inschos.cloud.trading.assist.kit.StringKit;
+import com.inschos.common.assist.kit.L;
+import com.inschos.common.assist.kit.StringKit;
 import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

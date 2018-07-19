@@ -1,10 +1,10 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.TimeKit;
 import com.inschos.cloud.trading.model.BrokerageStatisticModel;
 import com.inschos.cloud.trading.model.PremiumStatisticModel;
+import com.inschos.common.assist.kit.StringKit;
+import com.inschos.common.assist.kit.TimeKit;
 
 import java.util.List;
 

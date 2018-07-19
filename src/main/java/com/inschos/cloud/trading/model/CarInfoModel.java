@@ -3,9 +3,9 @@ package com.inschos.cloud.trading.model;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
+import com.inschos.common.assist.kit.JsonKit;
+import com.inschos.common.assist.kit.StringKit;
 
 import java.util.Date;
 import java.util.List;

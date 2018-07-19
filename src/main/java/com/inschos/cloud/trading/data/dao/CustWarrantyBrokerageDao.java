@@ -1,10 +1,11 @@
 package com.inschos.cloud.trading.data.dao;
 
-import com.inschos.cloud.trading.assist.kit.StringKit;
+
 import com.inschos.cloud.trading.data.mapper.CustWarrantyBrokerageMapper;
 import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
 import com.inschos.cloud.trading.model.BrokerageStatisticModel;
 import com.inschos.cloud.trading.model.CustWarrantyBrokerageModel;
+import com.inschos.common.assist.kit.StringKit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

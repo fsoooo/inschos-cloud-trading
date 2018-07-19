@@ -8,14 +8,14 @@ import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
 import com.inschos.cloud.trading.access.rpc.client.InsureServiceClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.TimeKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.model.CustWarrantyCostModel;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.common.assist.kit.StringKit;
+import com.inschos.common.assist.kit.TimeKit;
 import com.inschos.dock.bean.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -331,7 +331,7 @@ public class TradeAction extends BaseAction {
             // TODO: 2018/6/25
 
 //                insureBean.insurePeriod;
-//                insureBean.PeriodUnit;
+//                insureBean.periodUnit;
 
             TradeBean.InsureRspData data = new TradeBean.InsureRspData();
             if (method == 1) {

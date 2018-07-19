@@ -5,7 +5,6 @@ import com.inschos.cloud.trading.access.rpc.bean.IncomeBean;
 import com.inschos.cloud.trading.access.rpc.service.BrokerageService;
 import com.inschos.cloud.trading.data.dao.CustWarrantyBrokerageDao;
 import com.inschos.cloud.trading.model.CustWarrantyBrokerageModel;
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,8 +1,12 @@
 package com.inschos.cloud.trading.model;
 
-import com.inschos.cloud.trading.assist.kit.StringKit;
 
-import java.util.*;
+import com.inschos.common.assist.kit.StringKit;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 创建日期：2018/3/22 on 16:43
@@ -593,6 +597,8 @@ public class InsurancePolicyModel {
     public String pay_status;
 
     public String actual_pay_time;
+
+    public int times;
 
     // 需要查询佣金为1，不需要为0
     public String needBrokerage = "0";

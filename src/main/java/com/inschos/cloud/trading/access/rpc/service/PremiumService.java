@@ -2,6 +2,7 @@ package com.inschos.cloud.trading.access.rpc.service;
 
 import com.inschos.cloud.trading.access.rpc.bean.AccountUuidBean;
 import com.inschos.cloud.trading.access.rpc.bean.ChannelIdBean;
+import com.inschos.cloud.trading.access.rpc.bean.CustomerBean;
 
 /**
  * 创建日期：2018/4/20 on 16:43
@@ -15,4 +16,7 @@ public interface PremiumService {
     String getPremiumByAccountUuidForManagerSystem(AccountUuidBean bean);
 
     String getPremiumCountByChannelIdForManagerSystem(ChannelIdBean bean);
+
+    CustomerBean getPremiumCountByCustomerForManager(CustomerBean bean);
+
 }

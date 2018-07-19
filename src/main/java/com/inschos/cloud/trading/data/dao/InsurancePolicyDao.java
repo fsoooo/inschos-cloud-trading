@@ -1,9 +1,9 @@
 package com.inschos.cloud.trading.data.dao;
 
-import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.mapper.*;
 import com.inschos.cloud.trading.model.*;
 import com.inschos.cloud.trading.model.fordao.*;
+import com.inschos.common.assist.kit.StringKit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -504,5 +504,9 @@ public class InsurancePolicyDao extends BaseDao {
 
     public long findInsuranceRecordCountByManagerUuid(InsurancePolicyModel search) {
         return insurancePolicyMapper.findInsuranceRecordCountByManagerUuid(search);
+    }
+
+    public InsurancePolicyModel findPremiumCountByCustomerManager(InsurancePolicyModel search) {
+        return search != null ? insurancePolicyMapper.findPremiumCountByCustomerManager(search) : null;
     }
 }

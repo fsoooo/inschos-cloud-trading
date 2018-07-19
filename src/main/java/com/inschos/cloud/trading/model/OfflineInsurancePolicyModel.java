@@ -1,10 +1,12 @@
 package com.inschos.cloud.trading.model;
 
-import com.inschos.cloud.trading.assist.kit.StringKit;
+
 import com.inschos.cloud.trading.assist.kit.TimeKit;
+import com.inschos.common.assist.kit.StringKit;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 创建日期：2018/5/29 on 18:11
@@ -356,5 +358,7 @@ public class OfflineInsurancePolicyModel {
         title.reason = "导入失败原因";
         return title;
     }
+
+
 
 }

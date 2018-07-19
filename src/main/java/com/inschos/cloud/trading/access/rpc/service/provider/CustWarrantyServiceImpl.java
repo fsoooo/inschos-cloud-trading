@@ -7,15 +7,15 @@ import com.inschos.cloud.trading.access.rpc.bean.InsuranceRecordBean;
 import com.inschos.cloud.trading.access.rpc.bean.ManagerUuidBean;
 import com.inschos.cloud.trading.access.rpc.bean.PolicyholderCountBean;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.L;
-import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
 import com.inschos.cloud.trading.model.InsuranceParticipantModel;
 import com.inschos.cloud.trading.model.InsurancePolicyModel;
 import com.inschos.cloud.trading.model.Page;
 import com.inschos.cloud.trading.model.PolicyListCountModel;
+import com.inschos.common.assist.kit.JsonKit;
+import com.inschos.common.assist.kit.L;
+import com.inschos.common.assist.kit.StringKit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

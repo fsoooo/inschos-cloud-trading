@@ -1,7 +1,8 @@
 package com.inschos.cloud.trading.model;
 
-import com.inschos.cloud.trading.assist.kit.StringKit;
-import com.inschos.cloud.trading.assist.kit.TimeKit;
+
+import com.inschos.common.assist.kit.StringKit;
+import com.inschos.common.assist.kit.TimeKit;
 
 /**
  * 创建日期：2018/4/19 on 10:49

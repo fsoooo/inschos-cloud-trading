@@ -1,5 +1,7 @@
 package com.inschos.cloud.trading.assist.kit;
 
+import com.inschos.common.assist.kit.StringKit;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

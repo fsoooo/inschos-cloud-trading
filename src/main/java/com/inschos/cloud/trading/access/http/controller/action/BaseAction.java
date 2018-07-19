@@ -3,10 +3,10 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.PageBean;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
-import com.inschos.cloud.trading.assist.kit.JsonKit;
-import com.inschos.cloud.trading.assist.kit.StringKit;
 import com.inschos.cloud.trading.extend.car.CallBackCarInsuranceResponse;
 import com.inschos.cloud.trading.model.Page;
+import com.inschos.common.assist.kit.JsonKit;
+import com.inschos.common.assist.kit.StringKit;
 
 import java.util.ArrayList;
 import java.util.List;
