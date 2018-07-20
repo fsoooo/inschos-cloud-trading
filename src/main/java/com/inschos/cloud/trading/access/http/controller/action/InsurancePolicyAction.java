@@ -972,7 +972,7 @@ public class InsurancePolicyAction extends BaseAction {
                 InsurancePolicy.InsurancePolicyBrokerageStatistic insurancePolicyBrokerageStatistic = new InsurancePolicy.InsurancePolicyBrokerageStatistic(brokerageStatisticListModel);
                 insurancePolicyBrokerageStatistic.customerName = holder.name;
                 if("14463303497682968".equals(actionBean.managerUuid)){
-                    insurancePolicyBrokerageStatistic.customerName = "";
+                    insurancePolicyBrokerageStatistic.customerName = "***";
                 }
                 insurancePolicyBrokerageStatistic.customerMobile = holder.phone;
                 if (StringKit.isInteger(brokerageStatisticListModel.product_id)) {
@@ -1249,7 +1249,7 @@ public class InsurancePolicyAction extends BaseAction {
                 InsurancePolicyModel policyListByWarrantyStatusOrSearch = insurancePolicyModelList.get(i);
                 managerUuid = policyListByWarrantyStatusOrSearch.manager_uuid;
                 if ("14463303497682968".equals(policyListByWarrantyStatusOrSearch.manager_uuid)){
-                    policyListByWarrantyStatusOrSearch.policy_holder_name = "";
+                    policyListByWarrantyStatusOrSearch.policy_holder_name = "***";
                 }
                 InsurancePolicy.GetInsurancePolicyItemBean model = new InsurancePolicy.GetInsurancePolicyItemBean(policyListByWarrantyStatusOrSearch);
 
@@ -1444,6 +1444,10 @@ public class InsurancePolicyAction extends BaseAction {
                                 getInsurancePolicyItemBean.insuredText = insuranceParticipantModel1.name;
                             }
                             getInsurancePolicyItemBean.insuredDetailText = insuranceParticipantModel1.name;
+                        }else{
+                            getInsurancePolicyItemBean.insuredText = "***";
+                            getInsurancePolicyItemBean.insuredDetailText = "***";
+
                         }
                     }
                 }
@@ -1554,10 +1558,8 @@ public class InsurancePolicyAction extends BaseAction {
                     InsurancePolicy.InsurancePolicyParticipantInfo insurancePolicyParticipantInfo = new InsurancePolicy.InsurancePolicyParticipantInfo(insuranceParticipantModel);
 
                     if ("14463303497682968".equals(insurancePolicyDetailByWarrantyCode.manager_uuid)){
-                        insurancePolicyParticipantInfo.name = "";
-                        insurancePolicyParticipantInfo.cardType = "";
-                        insurancePolicyParticipantInfo.cardTypeText = "";
-                        insurancePolicyParticipantInfo.cardCode = "";
+                        insurancePolicyParticipantInfo.name = "***";
+                        insurancePolicyParticipantInfo.cardCode = "******************";
                     }
 
                     if (StringKit.equals(insurancePolicyParticipantInfo.type, InsuranceParticipantModel.TYPE_POLICYHOLDER)) {

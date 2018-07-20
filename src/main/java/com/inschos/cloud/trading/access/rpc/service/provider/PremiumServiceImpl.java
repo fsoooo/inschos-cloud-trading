@@ -90,7 +90,7 @@ public class PremiumServiceImpl implements PremiumService {
         insurancePolicyModel.manager_uuid = bean.managerUuid;
         insurancePolicyModel.person_type = bean.personType;
 
-        if (bean.cardCode != null && bean.cardType!=null) {
+        if (bean.cardCode != null && bean.cardType != null) {
             insurancePolicyModel.card_code = bean.cardCode;
             insurancePolicyModel.card_type = bean.cardType;
         } else {
@@ -101,11 +101,13 @@ public class PremiumServiceImpl implements PremiumService {
 
         InsurancePolicyModel manager = insurancePolicyDao.findPremiumCountByCustomerManager(insurancePolicyModel);
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-        if(manager!=null){
-            BigDecimal decimal = new BigDecimal(manager.premium);
+        if (manager != null) {
             bean.times = manager.times;
-            bean.premium = decimalFormat.format(decimal.doubleValue());
-        }else{
+            if (!StringKit.isEmpty(manager.premium)) {
+                BigDecimal decimal = new BigDecimal(manager.premium);
+                bean.premium = decimalFormat.format(decimal.doubleValue());
+            }
+        } else {
             bean.times = 0;
             bean.premium = "0.00";
         }

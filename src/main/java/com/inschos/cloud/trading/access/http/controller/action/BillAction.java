@@ -347,7 +347,7 @@ public class BillAction extends BaseAction {
                     for (OfflineInsurancePolicyModel offlineInsurancePolicyModel1 : completePayListByManagerUuid1) {
                         Bill.BillInsurancePolicy insurancePolicy = new Bill.BillInsurancePolicy(offlineInsurancePolicyModel1);
                         if("14463303497682968".equals(actionBean.managerUuid)){
-                            insurancePolicy.insuredName = "";
+                            insurancePolicy.insuredName = "***";
                         }
                         response.data.add(insurancePolicy);
                     }
@@ -994,7 +994,7 @@ public class BillAction extends BaseAction {
                 continue;
             }
             if("14463303497682968".equals(managerUuid)){
-                billInsurancePolicy.insuredName = "";
+                billInsurancePolicy.insuredName = "***";
             }
             billInsurancePolicy.type = detailModel.online_type;
             result.add(billInsurancePolicy);
