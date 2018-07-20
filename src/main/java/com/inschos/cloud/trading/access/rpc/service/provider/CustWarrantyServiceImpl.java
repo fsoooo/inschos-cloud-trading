@@ -182,6 +182,7 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
 
                 if("2".equals(policyModel.warranty_status) || "3".equals(policyModel.warranty_status) || "4".equals(policyModel.warranty_status) || "5".equals(policyModel.warranty_status)){
                     CustWarrantyCostModel costModel = new CustWarrantyCostModel();
+                    costModel.warranty_uuid = policyModel.warranty_uuid;
                     CustWarrantyCostModel firstPhase = custWarrantyCostDao.findFirstPhase(costModel);
                     if(firstPhase!=null){
                         policyModel.premium = firstPhase.premium;
