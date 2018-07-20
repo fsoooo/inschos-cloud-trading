@@ -1672,7 +1672,7 @@ public class InsurancePolicyAction extends BaseAction {
                 }
 
                 if (itemPremium.compareTo(BigDecimal.ZERO) != 0 && itemBrokerage.compareTo(BigDecimal.ZERO) != 0 && insurancePolicyCount.compareTo(BigDecimal.ZERO) != 0) {
-                    BigDecimal divide = itemBrokerage.divide(itemPremium, 6, BigDecimal.ROUND_HALF_DOWN).divide(insurancePolicyCount, 6, BigDecimal.ROUND_HALF_DOWN);
+                    BigDecimal divide = itemBrokerage.divide(itemPremium, 6, BigDecimal.ROUND_HALF_DOWN);
                     item.averageBrokeragePercentage = String.valueOf((divide.doubleValue()));
                     divide = divide.multiply(new BigDecimal("100"));
                     item.averageBrokeragePercentageText = decimalFormat.format(divide.doubleValue()) + "%";
