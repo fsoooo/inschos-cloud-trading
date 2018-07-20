@@ -10,7 +10,7 @@ import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.access.rpc.client.TaskResultClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
-import com.inschos.cloud.trading.assist.kit.TimeKit;
+import com.inschos.cloud.trading.assist.kit.Time2Kit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.car.*;
@@ -414,7 +414,7 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String calculateDateByShowDate = TimeKit.parseMillisecondByShowDate(sdf, result.data.firstRegisterDate);
+                String calculateDateByShowDate = Time2Kit.parseMillisecondByShowDate(sdf, result.data.firstRegisterDate);
 
                 if (calculateDateByShowDate == null) {
                     result.data.firstRegisterDate = "";
@@ -748,8 +748,8 @@ public class CarInsuranceAction extends BaseAction {
             if (result.state == CarInsuranceResponse.RESULT_OK) {
                 response.data = result.data;
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                response.data.biStartTimeValue = TimeKit.parseMillisecondByShowDate(sdf, result.data.biStartTime);
-                response.data.ciStartTimeValue = TimeKit.parseMillisecondByShowDate(sdf, result.data.ciStartTime);
+                response.data.biStartTimeValue = Time2Kit.parseMillisecondByShowDate(sdf, result.data.biStartTime);
+                response.data.ciStartTimeValue = Time2Kit.parseMillisecondByShowDate(sdf, result.data.ciStartTime);
                 str = json(BaseResponse.CODE_SUCCESS, "获取日期成功", response);
             } else {
                 str = json(BaseResponse.CODE_FAILURE, result.msg + "(" + result.msgCode + ")", response);
@@ -1220,13 +1220,13 @@ public class CarInsuranceAction extends BaseAction {
                 response.data.insurancePolicyPremiumDetails = new ArrayList<>();
                 DecimalFormat decimalFormat = new DecimalFormat("#0.00");
                 for (ExtendCarInsurancePolicy.InsurancePolicyPremiumDetail datum : result.data) {
-                    datum.biBeginDateValue = TimeKit.parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
+                    datum.biBeginDateValue = Time2Kit.parseMillisecondByShowDate(dateSdf, datum.biBeginDate);
                     String s1 = nextYearMillisecond(datum.biBeginDateValue);
                     if (StringKit.isInteger(s1) && s1 != null) {
                         datum.biInsuranceTermText = dateSdf.format(new Date(Long.valueOf(datum.biBeginDateValue))) + "-" + dateSdf.format(new Date(Long.valueOf(s1)));
                     }
 
-                    datum.ciBeginDateValue = TimeKit.parseMillisecondByShowDate(dateSdf, datum.ciBeginDate);
+                    datum.ciBeginDateValue = Time2Kit.parseMillisecondByShowDate(dateSdf, datum.ciBeginDate);
                     s1 = nextYearMillisecond(datum.ciBeginDateValue);
                     if (StringKit.isInteger(s1) && s1 != null) {
                         datum.ciInsuranceTermText = dateSdf.format(new Date(Long.valueOf(datum.ciBeginDateValue))) + "-" + dateSdf.format(new Date(Long.valueOf(s1)));
@@ -2328,7 +2328,7 @@ public class CarInsuranceAction extends BaseAction {
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.ciProposalNo = request.data.ciPolicyNo;
                 updateInsurancePolicyStatusAndWarrantyCodeForCarInsurance.biProposalNo = request.data.biPolicyNo;
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String time = TimeKit.parseMillisecondByShowDate(sdf, request.data.payTime);
+                String time = Time2Kit.parseMillisecondByShowDate(sdf, request.data.payTime);
                 if (StringKit.isEmpty(time)) {
                     time = String.valueOf(System.currentTimeMillis());
                 }
@@ -2560,7 +2560,7 @@ public class CarInsuranceAction extends BaseAction {
                 }
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String calculateDateByShowDate = TimeKit.parseMillisecondByShowDate(sdf, result.data.firstRegisterDate);
+                String calculateDateByShowDate = Time2Kit.parseMillisecondByShowDate(sdf, result.data.firstRegisterDate);
 
                 if (calculateDateByShowDate == null) {
                     result.data.firstRegisterDate = "";
@@ -3121,7 +3121,7 @@ public class CarInsuranceAction extends BaseAction {
             Integer integer = Integer.valueOf(split[0]);
             integer += 1;
             String date = integer + "-" + split[1] + "-" + split[2];
-            return TimeKit.parseMillisecondByShowDate(sdf, date);
+            return Time2Kit.parseMillisecondByShowDate(sdf, date);
         } else {
             return null;
         }

@@ -12,10 +12,7 @@ import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.*;
 import com.inschos.cloud.trading.extend.file.FileUpload;
 import com.inschos.cloud.trading.model.*;
-import com.inschos.common.assist.kit.HttpClientKit;
-import com.inschos.common.assist.kit.JsonKit;
-import com.inschos.common.assist.kit.MD5Kit;
-import com.inschos.common.assist.kit.StringKit;
+import com.inschos.common.assist.kit.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -425,47 +422,53 @@ public class InsurancePolicyAction extends BaseAction {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        String startTime;
-        String endTime;
+        long startTime;
+        long endTime;
 
         // 时间范围类型，1-今日，2-本月，3-本年，4-历年
         switch (request.timeRangeType) {
             case "1":
                 //noinspection MagicConstant
                 calendar.set(year, month, day, 0, 0, 0);
-                startTime = String.valueOf(calendar.getTimeInMillis());
+                startTime = calendar.getTimeInMillis();
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
-                endTime = String.valueOf(calendar.getTimeInMillis());
+                endTime = calendar.getTimeInMillis();
                 break;
             case "2":
                 //noinspection MagicConstant
                 calendar.set(year, month, 1, 0, 0, 0);
-                startTime = String.valueOf(calendar.getTimeInMillis());
+                startTime = calendar.getTimeInMillis();
                 calendar.add(Calendar.MONTH, 1);
-                endTime = String.valueOf(calendar.getTimeInMillis());
+                endTime = calendar.getTimeInMillis();
                 break;
             case "3":
                 calendar.set(year, Calendar.JANUARY, 1, 0, 0, 0);
-                startTime = String.valueOf(calendar.getTimeInMillis());
+                startTime = calendar.getTimeInMillis();
                 calendar.add(Calendar.YEAR, 1);
-                endTime = String.valueOf(calendar.getTimeInMillis());
+                endTime = calendar.getTimeInMillis();
                 break;
             case "4":
-                startTime = "0";
+                startTime = 0;
                 calendar.set(year, Calendar.JANUARY, 1, 0, 0, 0);
                 calendar.add(Calendar.YEAR, 1);
-                endTime = String.valueOf(calendar.getTimeInMillis());
+                endTime = calendar.getTimeInMillis();
                 break;
             default:
                 return json(BaseResponse.CODE_FAILURE, "时间范围类型错误", response);
         }
-        custWarrantyCostModel.start_time = startTime;
-        custWarrantyCostModel.end_time = endTime;
+        startTime = TimeKit.getDayStartTime(startTime);
+        endTime = TimeKit.getDayEndTime(endTime);
+
+        String startTimeStr = String.valueOf(startTime);
+        String endTimeStr = String.valueOf(endTime);
+
+        custWarrantyCostModel.start_time = startTimeStr;
+        custWarrantyCostModel.end_time = endTimeStr;
         custWarrantyCostModel.time_range_type = request.timeRangeType;
         custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
 
-        custWarrantyBrokerageModel.start_time = startTime;
-        custWarrantyBrokerageModel.end_time = endTime;
+        custWarrantyBrokerageModel.start_time = startTimeStr;
+        custWarrantyBrokerageModel.end_time = endTimeStr;
         custWarrantyBrokerageModel.time_range_type = request.timeRangeType;
         custWarrantyBrokerageModel.manager_uuid = actionBean.managerUuid;
 
@@ -477,10 +480,10 @@ public class InsurancePolicyAction extends BaseAction {
         response.data = new InsurancePolicy.InsurancePolicyStatisticDetail();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        response.data.startTime = startTime;
-        response.data.startTimeText = sdf.format(new Date(Long.valueOf(startTime)));
-        response.data.endTime = endTime;
-        response.data.endTimeText = sdf.format(new Date(Long.valueOf(endTime)));
+        response.data.startTime = startTimeStr;
+        response.data.startTimeText = sdf.format(new Date(startTime));
+        response.data.endTime = endTimeStr;
+        response.data.endTimeText = sdf.format(new Date(endTime));
 
         BigDecimal premium = new BigDecimal("0.00");
         int count = 0;

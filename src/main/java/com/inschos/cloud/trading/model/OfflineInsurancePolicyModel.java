@@ -1,7 +1,7 @@
 package com.inschos.cloud.trading.model;
 
 
-import com.inschos.cloud.trading.assist.kit.TimeKit;
+import com.inschos.cloud.trading.assist.kit.Time2Kit;
 import com.inschos.common.assist.kit.StringKit;
 
 import java.text.SimpleDateFormat;
@@ -234,7 +234,7 @@ public class OfflineInsurancePolicyModel {
         sdfs.add(new SimpleDateFormat("yyyy年MM月dd日"));
 
         if (!StringKit.isEmpty(order_time)) {
-            String ot = TimeKit.parseMillisecondByShowDate(sdfs, order_time);
+            String ot = Time2Kit.parseMillisecondByShowDate(sdfs, order_time);
             if (ot == null) {
                 flag = false;
                 reasonList.add(new ErrorReason("签单日期格式错误（年/月/日 或者 年-月-日）", "orderTime"));
@@ -244,7 +244,7 @@ public class OfflineInsurancePolicyModel {
         }
 
         if (!StringKit.isEmpty(real_income_time)) {
-            String rit = TimeKit.parseMillisecondByShowDate(sdfs, real_income_time);
+            String rit = Time2Kit.parseMillisecondByShowDate(sdfs, real_income_time);
             if (rit == null) {
                 flag = false;
                 reasonList.add(new ErrorReason("实收日期格式错误（年/月/日 或者 年-月-日）", "realIncomeTime"));
@@ -254,7 +254,7 @@ public class OfflineInsurancePolicyModel {
         }
 
         if (!StringKit.isEmpty(start_time)) {
-            String st = TimeKit.parseMillisecondByShowDate(sdfs, start_time);
+            String st = Time2Kit.parseMillisecondByShowDate(sdfs, start_time);
             if (st == null) {
                 flag = false;
                 reasonList.add(new ErrorReason("起保时间格式错误（年/月/日 或者 年-月-日）", "startTime"));
@@ -264,7 +264,7 @@ public class OfflineInsurancePolicyModel {
         }
 
         if (!StringKit.isEmpty(end_time)) {
-            String et = TimeKit.parseMillisecondByShowDate(sdfs, end_time);
+            String et = Time2Kit.parseMillisecondByShowDate(sdfs, end_time);
             if (et == null) {
                 flag = false;
                 reasonList.add(new ErrorReason("终止时间格式错误（年/月/日 或者 年-月-日）", "endTime"));

@@ -12,7 +12,7 @@ import java.util.List;
  * date     2018/7/19
  * version  v1.0.0
  */
-public class TimeKit {
+public class Time2Kit {
 
     /**
      * 格式化时间戳用
