@@ -106,6 +106,8 @@ public class PremiumServiceImpl implements PremiumService {
             if (!StringKit.isEmpty(manager.premium)) {
                 BigDecimal decimal = new BigDecimal(manager.premium);
                 bean.premium = decimalFormat.format(decimal.doubleValue());
+            }else{
+                bean.premium = "0.00";
             }
         } else {
             bean.times = 0;
