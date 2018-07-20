@@ -7,12 +7,10 @@ import com.inschos.cloud.trading.access.rpc.bean.InsuranceRecordBean;
 import com.inschos.cloud.trading.access.rpc.bean.ManagerUuidBean;
 import com.inschos.cloud.trading.access.rpc.bean.PolicyholderCountBean;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
+import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
 import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
 import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
-import com.inschos.cloud.trading.model.InsuranceParticipantModel;
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
-import com.inschos.cloud.trading.model.Page;
-import com.inschos.cloud.trading.model.PolicyListCountModel;
+import com.inschos.cloud.trading.model.*;
 import com.inschos.common.assist.kit.JsonKit;
 import com.inschos.common.assist.kit.L;
 import com.inschos.common.assist.kit.StringKit;
@@ -37,6 +35,8 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
 
     @Autowired
     private InsuranceParticipantDao insuranceParticipantDao;
+    @Autowired
+    private CustWarrantyCostDao custWarrantyCostDao;
 
     @Override
     public String getPolicyholderCountByTimeOrAccountId(AccountUuidBean custWarrantyPolicyholderCountBean) {
@@ -179,6 +179,17 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
                 }
 
                 InsuranceParticipantModel policyHolderNameAndMobileByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(policyModel.warranty_uuid);
+
+                if("2".equals(policyModel.warranty_status) || "3".equals(policyModel.warranty_status) || "4".equals(policyModel.warranty_status) || "5".equals(policyModel.warranty_status)){
+                    CustWarrantyCostModel costModel = new CustWarrantyCostModel();
+                    CustWarrantyCostModel firstPhase = custWarrantyCostDao.findFirstPhase(costModel);
+                    if(firstPhase!=null){
+                        policyModel.premium = firstPhase.premium;
+                        policyModel.pay_status = firstPhase.pay_status;
+                        policyModel.pay_money = firstPhase.pay_money;
+                    }
+                }
+
 
                 InsurancePolicy.GetInsurancePolicy insurancePolicy = new InsurancePolicy.GetInsurancePolicy(policyModel);
 
