@@ -50,11 +50,19 @@ public class OfflineInsurancePolicyDao {
         return offlineInsurancePolicyMapper.findBrokerageByWarrantyUuid(offlineInsurancePolicyModel);
     }
 
-    public List<OfflineInsurancePolicyModel> findCompletePayListByManagerUuid (OfflineInsurancePolicyModel offlineInsurancePolicyModel){
+    public List<OfflineInsurancePolicyModel> findCompletePayListByManagerUuid(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
         return offlineInsurancePolicyMapper.findCompletePayListByManagerUuid(offlineInsurancePolicyModel);
     }
 
-    public long findCompletePayCountByManagerUuid (OfflineInsurancePolicyModel offlineInsurancePolicyModel){
+    public long findCompletePayCountByManagerUuid(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
         return offlineInsurancePolicyMapper.findCompletePayCountByManagerUuid(offlineInsurancePolicyModel);
+    }
+
+    public long updatePayStatusByWarrantyUuid(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
+        return offlineInsurancePolicyMapper.updatePayStatusByWarrantyUuid(offlineInsurancePolicyModel);
+    }
+
+    public long updateStateByWarrantyUuid(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
+        return offlineInsurancePolicyMapper.updateStateByWarrantyUuid(offlineInsurancePolicyModel);
     }
 }

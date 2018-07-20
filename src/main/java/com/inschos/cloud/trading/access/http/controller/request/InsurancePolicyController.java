@@ -113,10 +113,17 @@ public class InsurancePolicyController {
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("set_test")
+    @RequestMapping("update_offline_insurance_policy_pay_status")
     @ResponseBody
-    public String setTest(ActionBean actionBean) {
-        return insurancePolicyAction.setTest();
+    public String updateOfflineInsurancePolicyPayStatus(ActionBean actionBean) {
+        return insurancePolicyAction.updateOfflineInsurancePolicyPayStatus(actionBean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("delete_offline_insurance_policy")
+    @ResponseBody
+    public String deleteOfflineInsurancePolicy(ActionBean actionBean) {
+        return insurancePolicyAction.deleteOfflineInsurancePolicy(actionBean);
     }
 
 }

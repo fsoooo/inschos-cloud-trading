@@ -31,4 +31,8 @@ public interface OfflineInsurancePolicyMapper {
 
     long findCompletePayCountByManagerUuid (OfflineInsurancePolicyModel offlineInsurancePolicyModel);
 
+    long updatePayStatusByWarrantyUuid (OfflineInsurancePolicyModel offlineInsurancePolicyModel);
+
+    long updateStateByWarrantyUuid (OfflineInsurancePolicyModel offlineInsurancePolicyModel);
+
 }

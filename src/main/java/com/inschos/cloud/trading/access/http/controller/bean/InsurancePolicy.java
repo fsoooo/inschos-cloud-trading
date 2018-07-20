@@ -119,6 +119,26 @@ public class InsurancePolicy {
         public List<GetInsurancePolicyItemBean> data;
     }
 
+    public static class UpdateOfflineInsurancePolicyPayStatusRequest extends BaseRequest {
+        @CheckParams(hintName = "保单uuid")
+        public String warrantyUuid;
+        @CheckParams(hintName = "支付状态")
+        public String payStatus;
+    }
+
+    public static class UpdateOfflineInsurancePolicyPayStatusResponse extends BaseResponse {
+
+    }
+
+    public static class DeleteOfflineInsurancePolicyRequest extends BaseRequest {
+        @CheckParams(hintName = "保单uuid")
+        public String warrantyUuid;
+    }
+
+    public static class DeleteOfflineInsurancePolicyResponse extends BaseResponse {
+
+    }
+
     public static class GetInsurancePolicy {
 
         public String id;
