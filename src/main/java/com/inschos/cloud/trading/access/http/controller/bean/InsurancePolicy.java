@@ -1062,6 +1062,7 @@ public class InsurancePolicy {
         public String actualPayTime;
         public String actualPayTimeText;
         public String brokerageId;
+        public String type;
 
         public String warrantyMoney;
         public String warrantyMoneyText;
@@ -1107,10 +1108,11 @@ public class InsurancePolicy {
             this.insCompanyId = brokerageStatisticListModel.ins_company_id;
 
             this.count = brokerageStatisticListModel.count;
-            this.byStagesWay = brokerageStatisticListModel.by_stages_way;
+//            this.byStagesWay = brokerageStatisticListModel.by_stages_way;
 
             this.warrantyStatus = brokerageStatisticListModel.warranty_status;
             this.phase = brokerageStatisticListModel.phase;
+            this.type = brokerageStatisticListModel.type;
 
             if (!StringKit.isEmpty(brokerageStatisticListModel.premium) && StringKit.isNumeric(brokerageStatisticListModel.premium)) {
                 this.premium = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.premium).doubleValue());
