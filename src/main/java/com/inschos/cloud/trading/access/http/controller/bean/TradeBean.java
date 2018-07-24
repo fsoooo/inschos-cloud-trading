@@ -39,6 +39,8 @@ public class TradeBean {
         public InsurePersonData beneficiary;
 
         public String businessParams;
+
+        public Object selectQuote;
     }
 
     public static class InsureResponse extends BaseResponse {
@@ -65,6 +67,18 @@ public class TradeBean {
     }
 
 
+    public static class QuoteRequest extends BaseRequest {
+
+        @CheckParams(hintName = "产品ID", stringType = CheckParams.StringType.NUMBER, maxLen = 20)
+        public String productId;
+
+        /**本次所有选中项的值*/
+        public String new_val;
+        /**被改变项的值*/
+        public String old_val;
+        /**旧的试算因子项*/
+        public String old_option;
+    }
 
 
 
