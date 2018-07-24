@@ -6,7 +6,7 @@
       `id`,`manager_uuid`,`bill_uuid`,`bill_name`,`insurance_company_id`,`principal`,`is_settlement`,`remark`,`bill_money`,`bill_time`,`created_at`,`updated_at`,`state`
     </sql>
 
-    <insert id="addBill" parameterType="com.inschos.cloud.trading.model.BillModel" useGeneratedKeys="true"
+    <insert id="addBill" parameterType="com.inschos.cloud.trading.model.Bill" useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty_bill
         (`id`,`manager_uuid`,`bill_uuid`,`bill_name`,`insurance_company_id`,`principal`,`is_settlement`,`remark`,`bill_money`,`bill_time`,`created_at`,`updated_at`,`state`)
@@ -14,45 +14,45 @@
         (#{id},#{manager_uuid},#{bill_uuid},#{bill_name},#{insurance_company_id},#{principal},#{is_settlement},#{remark},#{bill_money},#{bill_time},#{created_at},#{updated_at},#{state})
     </insert>
 
-    <update id="deleteBill" parameterType="com.inschos.cloud.trading.model.BillModel">
+    <update id="deleteBill" parameterType="com.inschos.cloud.trading.model.Bill">
         update cust_warranty_bill set
         `state`=#{state},`updated_at`=#{updated_at}
         where `bill_uuid`=#{bill_uuid}
     </update>
 
     <update id="updateBillSettlementAndMoneyAndTimeByBillUuid"
-            parameterType="com.inschos.cloud.trading.model.BillModel">
+            parameterType="com.inschos.cloud.trading.model.Bill">
         update cust_warranty_bill set
         `is_settlement`=#{is_settlement},`bill_money`=#{bill_money},`bill_time`=#{bill_time},`updated_at`=#{updated_at}
         where `bill_uuid`=#{bill_uuid}
     </update>
 
-    <update id="updateBillMoneyByBillUuid" parameterType="com.inschos.cloud.trading.model.BillModel">
+    <update id="updateBillMoneyByBillUuid" parameterType="com.inschos.cloud.trading.model.Bill">
         update cust_warranty_bill set
         `bill_money`=#{bill_money},`updated_at`=#{updated_at}
         where `bill_uuid`=#{bill_uuid}
     </update>
 
-    <update id="updateSettlementByBillUuid" parameterType="com.inschos.cloud.trading.model.BillModel">
+    <update id="updateSettlementByBillUuid" parameterType="com.inschos.cloud.trading.model.Bill">
         update cust_warranty_bill set
         `is_settlement`=#{is_settlement},`updated_at`=#{updated_at}
         where `bill_uuid`=#{bill_uuid}
     </update>
 
-    <select id="findBillByBillUuid" parameterType="String" resultType="com.inschos.cloud.trading.model.BillModel">
+    <select id="findBillByBillUuid" parameterType="String" resultType="com.inschos.cloud.trading.model.Bill">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_bill where `bill_uuid`=#{_parameter} AND `state`=1
     </select>
 
-    <select id="findBillByBillName" parameterType="com.inschos.cloud.trading.model.BillModel" resultType="com.inschos.cloud.trading.model.BillModel">
+    <select id="findBillByBillName" parameterType="com.inschos.cloud.trading.model.Bill" resultType="com.inschos.cloud.trading.model.Bill">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_bill where `bill_name`=#{bill_name} AND `manager_uuid`=#{manager_uuid} AND `state`=1
     </select>
 
-    <select id="findBillByManagerUuid" parameterType="com.inschos.cloud.trading.model.BillModel"
-            resultType="com.inschos.cloud.trading.model.BillModel">
+    <select id="findBillByManagerUuid" parameterType="com.inschos.cloud.trading.model.Bill"
+            resultType="com.inschos.cloud.trading.model.Bill">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_bill
@@ -108,7 +108,7 @@
         </where>
     </select>
 
-    <select id="findBillCountByManagerUuid" parameterType="com.inschos.cloud.trading.model.BillModel"
+    <select id="findBillCountByManagerUuid" parameterType="com.inschos.cloud.trading.model.Bill"
             resultType="long">
         select
         COUNT(`id`)
@@ -133,7 +133,7 @@
     </select>
 
     <select id="findBillByInsuranceCompany" parameterType="String"
-            resultType="com.inschos.cloud.trading.model.BillModel">
+            resultType="com.inschos.cloud.trading.model.Bill">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_bill where `insurance_company_id`=#{insurance_company_id} AND `state`=1

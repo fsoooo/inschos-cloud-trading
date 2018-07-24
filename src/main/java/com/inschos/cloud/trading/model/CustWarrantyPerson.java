@@ -10,7 +10,7 @@ import com.inschos.common.assist.kit.TimeKit;
  * 描述：
  * 作者：zhangyunhe
  */
-public class InsuranceParticipantModel {
+public class CustWarrantyPerson {
 
     /**
      * 主键
@@ -142,7 +142,7 @@ public class InsuranceParticipantModel {
 
     public String max_time = String.valueOf(TimeKit.MAX_MILLIS);
 
-    public InsuranceParticipantModel() {
+    public CustWarrantyPerson() {
 
     }
 
@@ -157,7 +157,7 @@ public class InsuranceParticipantModel {
      * @param endTime      结束时间
      * @param personInfo   人员信息
      */
-    public InsuranceParticipantModel(String warrantyUuid, String type, String relationName, String time, String startTime, String endTime, ExtendCarInsurancePolicy.InsuranceParticipant personInfo) {
+    public CustWarrantyPerson(String warrantyUuid, String type, String relationName, String time, String startTime, String endTime, ExtendCarInsurancePolicy.InsuranceParticipant personInfo) {
         this.warranty_uuid = warrantyUuid;
         this.type = type;
         this.relation_name = relationName;

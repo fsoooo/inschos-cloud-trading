@@ -5,7 +5,7 @@ package com.inschos.cloud.trading.model;
  * 描述：
  * 作者：zhangyunhe
  */
-public class CarRecordModel {
+public class CustCar {
 
     /**
      * 主键

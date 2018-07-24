@@ -1,6 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.service.provider;
 
-import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
+import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicyBean;
 import com.inschos.cloud.trading.access.http.controller.bean.PageBean;
 import com.inschos.cloud.trading.access.rpc.bean.AccountUuidBean;
 import com.inschos.cloud.trading.access.rpc.bean.InsuranceRecordBean;
@@ -8,8 +8,8 @@ import com.inschos.cloud.trading.access.rpc.bean.ManagerUuidBean;
 import com.inschos.cloud.trading.access.rpc.bean.PolicyholderCountBean;
 import com.inschos.cloud.trading.access.rpc.service.CustWarrantyService;
 import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
-import com.inschos.cloud.trading.data.dao.InsuranceParticipantDao;
-import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
+import com.inschos.cloud.trading.data.dao.CustWarrantyPersonDao;
+import com.inschos.cloud.trading.data.dao.CustWarrantyDao;
 import com.inschos.cloud.trading.model.*;
 import com.inschos.common.assist.kit.JsonKit;
 import com.inschos.common.assist.kit.L;
@@ -31,10 +31,10 @@ import java.util.Map;
 public class CustWarrantyServiceImpl implements CustWarrantyService {
 
     @Autowired
-    private InsurancePolicyDao insurancePolicyDao;
+    private CustWarrantyDao custWarrantyDao;
 
     @Autowired
-    private InsuranceParticipantDao insuranceParticipantDao;
+    private CustWarrantyPersonDao custWarrantyPersonDao;
     @Autowired
     private CustWarrantyCostDao custWarrantyCostDao;
 
@@ -42,22 +42,22 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
     public String getPolicyholderCountByTimeOrAccountId(AccountUuidBean custWarrantyPolicyholderCountBean) {
         String result = "0";
         if (custWarrantyPolicyholderCountBean != null) {
-            InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+            CustWarranty custWarranty = new CustWarranty();
             if (!StringKit.isEmpty(custWarrantyPolicyholderCountBean.accountUuid)) {
-                insurancePolicyModel.account_uuid = custWarrantyPolicyholderCountBean.accountUuid;
+                custWarranty.account_uuid = custWarrantyPolicyholderCountBean.accountUuid;
             } else {
                 return result;
             }
 
             if (!StringKit.isEmpty(custWarrantyPolicyholderCountBean.managerUuid)) {
-                insurancePolicyModel.manager_uuid = custWarrantyPolicyholderCountBean.managerUuid;
+                custWarranty.manager_uuid = custWarrantyPolicyholderCountBean.managerUuid;
             } else {
                 return result;
             }
 
-            insurancePolicyModel.start_time = custWarrantyPolicyholderCountBean.startTime;
-            insurancePolicyModel.end_time = custWarrantyPolicyholderCountBean.endTime;
-            long count = insurancePolicyDao.findInsurancePolicyListCountByTimeAndAccountUuid(insurancePolicyModel);
+            custWarranty.start_time = custWarrantyPolicyholderCountBean.startTime;
+            custWarranty.end_time = custWarrantyPolicyholderCountBean.endTime;
+            long count = custWarrantyDao.findInsurancePolicyListCountByTimeAndAccountUuid(custWarranty);
             result = String.valueOf(count);
         }
         return result;
@@ -67,9 +67,9 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
     public List<PolicyholderCountBean> getPolicyholderCountByTimeOrManagerUuid(ManagerUuidBean custWarrantyPolicyholderCountBean) {
         List<PolicyholderCountBean> result = new ArrayList<>();
         if (custWarrantyPolicyholderCountBean != null) {
-            InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
+            CustWarranty custWarranty = new CustWarranty();
             if (!StringKit.isEmpty(custWarrantyPolicyholderCountBean.managerUuid)) {
-                insurancePolicyModel.manager_uuid = custWarrantyPolicyholderCountBean.managerUuid;
+                custWarranty.manager_uuid = custWarrantyPolicyholderCountBean.managerUuid;
             } else {
                 return result;
             }
@@ -86,24 +86,24 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
                     stringBuilder.append(",");
                 }
             }
-            insurancePolicyModel.product_id_string = stringBuilder.toString();
+            custWarranty.product_id_string = stringBuilder.toString();
 
-            insurancePolicyModel.start_time = custWarrantyPolicyholderCountBean.startTime;
-            insurancePolicyModel.end_time = custWarrantyPolicyholderCountBean.endTime;
-            List<PolicyListCountModel> insurancePolicyListCountByTimeAndManagerUuidAndProductId = insurancePolicyDao.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(insurancePolicyModel);
-            Map<String, PolicyListCountModel> map = new HashMap<>();
+            custWarranty.start_time = custWarrantyPolicyholderCountBean.startTime;
+            custWarranty.end_time = custWarrantyPolicyholderCountBean.endTime;
+            List<PolicyListCount> insurancePolicyListCountByTimeAndManagerUuidAndProductId = custWarrantyDao.findInsurancePolicyListCountByTimeAndManagerUuidAndProductId(custWarranty);
+            Map<String, PolicyListCount> map = new HashMap<>();
 
-            for (PolicyListCountModel policyListCountModel : insurancePolicyListCountByTimeAndManagerUuidAndProductId) {
-                map.put(policyListCountModel.product_id, policyListCountModel);
+            for (PolicyListCount policyListCount : insurancePolicyListCountByTimeAndManagerUuidAndProductId) {
+                map.put(policyListCount.product_id, policyListCount);
             }
 
             for (String productId : custWarrantyPolicyholderCountBean.productIds) {
-                PolicyListCountModel policyListCountModel = map.get(productId);
+                PolicyListCount policyListCount = map.get(productId);
                 PolicyholderCountBean policyholderCountBean;
-                if (policyListCountModel == null) {
+                if (policyListCount == null) {
                     policyholderCountBean = new PolicyholderCountBean(productId, 0);
                 } else {
-                    policyholderCountBean = new PolicyholderCountBean(policyListCountModel);
+                    policyholderCountBean = new PolicyholderCountBean(policyListCount);
                 }
                 result.add(policyholderCountBean);
             }
@@ -114,13 +114,13 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
 
 
     @Override
-    public int getPolicyCountByAgentStatus(InsurancePolicyModel search) {
-        return insurancePolicyDao.findCountByAUuidWarrantyStatus(search);
+    public int getPolicyCountByAgentStatus(CustWarranty search) {
+        return custWarrantyDao.findCountByAUuidWarrantyStatus(search);
     }
 
     @Override
-    public int getPolicyCountByCostStatus(InsurancePolicyModel search) {
-        return insurancePolicyDao.findCountByAUuidCostStatus(search);
+    public int getPolicyCountByCostStatus(CustWarranty search) {
+        return custWarrantyDao.findCountByAUuidCostStatus(search);
     }
 
     @Override
@@ -139,35 +139,35 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
 
         L.log.debug(JsonKit.bean2Json(insuranceRecord));
 
-        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
-        insurancePolicyModel.page = setPage(insuranceRecord.lastId, insuranceRecord.pageNum, insuranceRecord.pageSize);
+        CustWarranty custWarranty = new CustWarranty();
+        custWarranty.page = setPage(insuranceRecord.lastId, insuranceRecord.pageNum, insuranceRecord.pageSize);
 
-        insurancePolicyModel.manager_uuid = insuranceRecord.managerUuid;
-        insurancePolicyModel.person_type = insuranceRecord.personType;
-        insurancePolicyModel.card_code = insuranceRecord.cardCode;
-        insurancePolicyModel.card_type = insuranceRecord.cardType;
+        custWarranty.manager_uuid = insuranceRecord.managerUuid;
+        custWarranty.person_type = insuranceRecord.personType;
+        custWarranty.card_code = insuranceRecord.cardCode;
+        custWarranty.card_type = insuranceRecord.cardType;
 
-        List<InsurancePolicyModel> insuranceRecordListByManagerUuid = insurancePolicyDao.findInsuranceRecordListByManagerUuid(insurancePolicyModel);
-        long total = insurancePolicyDao.findInsuranceRecordCountByManagerUuid(insurancePolicyModel);
+        List<CustWarranty> insuranceRecordListByManagerUuid = custWarrantyDao.findInsuranceRecordListByManagerUuid(custWarranty);
+        long total = custWarrantyDao.findInsuranceRecordCountByManagerUuid(custWarranty);
 
         int listSize = 0;
         insuranceRecord.data = new ArrayList<>();
 
         if (insuranceRecordListByManagerUuid != null && !insuranceRecordListByManagerUuid.isEmpty()) {
-            for (InsurancePolicyModel policyModel : insuranceRecordListByManagerUuid) {
+            for (CustWarranty policyModel : insuranceRecordListByManagerUuid) {
 
-                List<InsuranceParticipantModel> insuranceParticipantInsuredByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantInsuredByWarrantyUuid(policyModel.warranty_uuid);
+                List<CustWarrantyPerson> insuranceParticipantInsuredByWarrantyUuid = custWarrantyPersonDao.findInsuranceParticipantInsuredByWarrantyUuid(policyModel.warranty_uuid);
 
                 if (insuranceParticipantInsuredByWarrantyUuid != null && !insuranceParticipantInsuredByWarrantyUuid.isEmpty()) {
                     StringBuilder sb = new StringBuilder();
                     int size = insuranceParticipantInsuredByWarrantyUuid.size();
                     for (int i = 0; i < size; i++) {
-                        InsuranceParticipantModel insuranceParticipantModel = insuranceParticipantInsuredByWarrantyUuid.get(i);
-                        sb.append(insuranceParticipantModel.name);
+                        CustWarrantyPerson custWarrantyPerson = insuranceParticipantInsuredByWarrantyUuid.get(i);
+                        sb.append(custWarrantyPerson.name);
 
-                        if (StringKit.isEmpty(insuranceParticipantModel.relation_name)) {
+                        if (StringKit.isEmpty(custWarrantyPerson.relation_name)) {
                             sb.append("(");
-                            sb.append(insuranceParticipantModel.relation_name);
+                            sb.append(custWarrantyPerson.relation_name);
                             sb.append(")");
                         }
 
@@ -178,12 +178,12 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
                     policyModel.insured_name = sb.toString();
                 }
 
-                InsuranceParticipantModel policyHolderNameAndMobileByWarrantyUuid = insuranceParticipantDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(policyModel.warranty_uuid);
+                CustWarrantyPerson policyHolderNameAndMobileByWarrantyUuid = custWarrantyPersonDao.findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid(policyModel.warranty_uuid);
 
                 if("2".equals(policyModel.warranty_status) || "3".equals(policyModel.warranty_status) || "4".equals(policyModel.warranty_status) || "5".equals(policyModel.warranty_status)){
-                    CustWarrantyCostModel costModel = new CustWarrantyCostModel();
+                    CustWarrantyCost costModel = new CustWarrantyCost();
                     costModel.warranty_uuid = policyModel.warranty_uuid;
-                    CustWarrantyCostModel firstPhase = custWarrantyCostDao.findFirstPhase(costModel);
+                    CustWarrantyCost firstPhase = custWarrantyCostDao.findFirstPhase(costModel);
                     if(firstPhase!=null){
                         policyModel.premium = firstPhase.premium;
                         policyModel.pay_status = firstPhase.pay_status;
@@ -192,7 +192,7 @@ public class CustWarrantyServiceImpl implements CustWarrantyService {
                 }
 
 
-                InsurancePolicy.GetInsurancePolicy insurancePolicy = new InsurancePolicy.GetInsurancePolicy(policyModel);
+                InsurancePolicyBean.GetInsurancePolicy insurancePolicy = new InsurancePolicyBean.GetInsurancePolicy(policyModel);
 
                 insurancePolicy.policyholderText = policyHolderNameAndMobileByWarrantyUuid.name;
                 insurancePolicy.insuredText = policyModel.insured_name;

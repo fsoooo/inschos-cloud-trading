@@ -13,7 +13,7 @@ import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.data.dao.CustWarrantyBrokerageDao;
 import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
-import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
+import com.inschos.cloud.trading.data.dao.CustWarrantyDao;
 import com.inschos.cloud.trading.model.*;
 import com.inschos.common.assist.kit.StringKit;
 import com.inschos.common.assist.kit.TimeKit;
@@ -37,7 +37,7 @@ public class StatisticAction extends BaseAction {
     @Autowired
     private CustWarrantyBrokerageDao custWarrantyBrokerageDao;
     @Autowired
-    private InsurancePolicyDao insurancePolicyDao;
+    private CustWarrantyDao custWarrantyDao;
     @Autowired
     private AgentClient agentClient;
 
@@ -101,8 +101,8 @@ public class StatisticAction extends BaseAction {
         }
 
 
-        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-        CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
+        CustWarrantyCost custWarrantyCost = new CustWarrantyCost();
+        CustWarrantyBrokerage custWarrantyBrokerage = new CustWarrantyBrokerage();
 
 
         String startTime = request.startTime;
@@ -110,20 +110,20 @@ public class StatisticAction extends BaseAction {
 
         // 时间范围类型，2-按月，3-按年
 
-        custWarrantyCostModel.start_time = startTime;
-        custWarrantyCostModel.end_time = endTime;
-        custWarrantyCostModel.time_range_type = request.timeRangeType;
-        custWarrantyCostModel.manager_uuid = bean.managerUuid;
-        custWarrantyCostModel.agent_id = agentId;
+        custWarrantyCost.start_time = startTime;
+        custWarrantyCost.end_time = endTime;
+        custWarrantyCost.time_range_type = request.timeRangeType;
+        custWarrantyCost.manager_uuid = bean.managerUuid;
+        custWarrantyCost.agent_id = agentId;
 
-        custWarrantyBrokerageModel.start_time = startTime;
-        custWarrantyBrokerageModel.end_time = endTime;
-        custWarrantyBrokerageModel.time_range_type = request.timeRangeType;
-        custWarrantyBrokerageModel.manager_uuid = bean.managerUuid;
-        custWarrantyBrokerageModel.agent_id = agentId;
+        custWarrantyBrokerage.start_time = startTime;
+        custWarrantyBrokerage.end_time = endTime;
+        custWarrantyBrokerage.time_range_type = request.timeRangeType;
+        custWarrantyBrokerage.manager_uuid = bean.managerUuid;
+        custWarrantyBrokerage.agent_id = agentId;
 
-        List<PremiumStatisticModel> custWarrantyCostStatistic = custWarrantyCostDao.findCustWarrantyCostStatistic(custWarrantyCostModel);
-        List<BrokerageStatisticModel> custWarrantyBrokerageStatistic = custWarrantyBrokerageDao.findStatisticByAgent(custWarrantyBrokerageModel);
+        List<PremiumStatistic> custWarrantyCostStatistic = custWarrantyCostDao.findCustWarrantyCostStatistic(custWarrantyCost);
+        List<BrokerageStatistic> custWarrantyBrokerageStatistic = custWarrantyBrokerageDao.findStatisticByAgent(custWarrantyBrokerage);
 
         LinkedHashMap<String, InsureStsItem> map = new LinkedHashMap<>();
 
@@ -133,28 +133,28 @@ public class StatisticAction extends BaseAction {
         BigDecimal premium = new BigDecimal("0.00");
         int count = 0;
         if (custWarrantyCostStatistic != null && !custWarrantyCostStatistic.isEmpty()) {
-            for (PremiumStatisticModel premiumStatisticModel : custWarrantyCostStatistic) {
-                InsureStsItem item = new InsureStsItem(premiumStatisticModel.time_text,request.timeRangeType);
-                item.setPremiumStatisticModel(premiumStatisticModel);
-                map.put(premiumStatisticModel.time_text, item);
-                premium = premium.add(new BigDecimal(premiumStatisticModel.premium));
+            for (PremiumStatistic premiumStatistic : custWarrantyCostStatistic) {
+                InsureStsItem item = new InsureStsItem(premiumStatistic.time_text,request.timeRangeType);
+                item.setPremiumStatisticModel(premiumStatistic);
+                map.put(premiumStatistic.time_text, item);
+                premium = premium.add(new BigDecimal(premiumStatistic.premium));
 
-                if (StringKit.isInteger(premiumStatisticModel.insurance_policy_count)) {
-                    count += Integer.valueOf(premiumStatisticModel.insurance_policy_count);
+                if (StringKit.isInteger(premiumStatistic.insurance_policy_count)) {
+                    count += Integer.valueOf(premiumStatistic.insurance_policy_count);
                 }
             }
         }
 
         BigDecimal brokerage = new BigDecimal("0.00");
         if (custWarrantyBrokerageStatistic != null && !custWarrantyBrokerageStatistic.isEmpty()) {
-            for (BrokerageStatisticModel brokerageStatisticModel : custWarrantyBrokerageStatistic) {
-                InsureStsItem item = map.getOrDefault(brokerageStatisticModel.time_text,null);
+            for (BrokerageStatistic brokerageStatistic : custWarrantyBrokerageStatistic) {
+                InsureStsItem item = map.getOrDefault(brokerageStatistic.time_text,null);
                 if (item == null) {
-                    item = new InsureStsItem(brokerageStatisticModel.time_text,request.timeRangeType);
-                    map.put(brokerageStatisticModel.time_text, item);
+                    item = new InsureStsItem(brokerageStatistic.time_text,request.timeRangeType);
+                    map.put(brokerageStatistic.time_text, item);
                 }
-                item.setBrokerageStatisticModel(brokerageStatisticModel);
-                brokerage = brokerage.add(new BigDecimal(brokerageStatisticModel.brokerage));
+                item.setBrokerageStatisticModel(brokerageStatistic);
+                brokerage = brokerage.add(new BigDecimal(brokerageStatistic.brokerage));
             }
         }
         response.data = dealPercentageByList(map, premium, brokerage);
@@ -218,25 +218,25 @@ public class StatisticAction extends BaseAction {
 
     private InsureTotalStatistic _agentTotalBrokerage(String managerUuid,String agentId){
 
-        CustWarrantyBrokerageModel custWarrantyBrokerageModel = new CustWarrantyBrokerageModel();
+        CustWarrantyBrokerage custWarrantyBrokerage = new CustWarrantyBrokerage();
 
 
 
-        custWarrantyBrokerageModel.manager_uuid = managerUuid;
-        custWarrantyBrokerageModel.agent_id = agentId;
+        custWarrantyBrokerage.manager_uuid = managerUuid;
+        custWarrantyBrokerage.agent_id = agentId;
 
 
         //noinspection MagicConstant
-        custWarrantyBrokerageModel.start_time = String.valueOf(TimeKit.getMonthStartTime());
-        custWarrantyBrokerageModel.end_time = String.valueOf(TimeKit.getMonthEndTime());
+        custWarrantyBrokerage.start_time = String.valueOf(TimeKit.getMonthStartTime());
+        custWarrantyBrokerage.end_time = String.valueOf(TimeKit.getMonthEndTime());
 
         // 当月的所有付款的
-        String monthAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerageModel);
+        String monthAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerage);
 
-        custWarrantyBrokerageModel.start_time = "0";
-        custWarrantyBrokerageModel.end_time = "0";
+        custWarrantyBrokerage.start_time = "0";
+        custWarrantyBrokerage.end_time = "0";
 
-        String totalAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerageModel);
+        String totalAmount = custWarrantyBrokerageDao.findCustWarrantyBrokerageTotalByManagerUuid(custWarrantyBrokerage);
 
         InsureTotalStatistic statistic = new InsureTotalStatistic();
         statistic.monthAmount = monthAmount;
@@ -247,23 +247,23 @@ public class StatisticAction extends BaseAction {
     private InsureTotalStatistic _agentTotalPremium(String managerUuid,String agentId){
 
 
-        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
+        CustWarrantyCost custWarrantyCost = new CustWarrantyCost();
 
-        custWarrantyCostModel.manager_uuid = managerUuid;
-        custWarrantyCostModel.agent_id = agentId;
+        custWarrantyCost.manager_uuid = managerUuid;
+        custWarrantyCost.agent_id = agentId;
 
         //noinspection MagicConstant
-        custWarrantyCostModel.start_time = String.valueOf(TimeKit.getMonthStartTime());
+        custWarrantyCost.start_time = String.valueOf(TimeKit.getMonthStartTime());
 
-        custWarrantyCostModel.end_time = String.valueOf(TimeKit.getMonthEndTime());
+        custWarrantyCost.end_time = String.valueOf(TimeKit.getMonthEndTime());
 
         // 当月的所有付款的
-        String monthAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCostModel);
+        String monthAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCost);
 
-        custWarrantyCostModel.start_time = "0";
-        custWarrantyCostModel.end_time = "0";
+        custWarrantyCost.start_time = "0";
+        custWarrantyCost.end_time = "0";
 
-        String totalAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCostModel);
+        String totalAmount = custWarrantyCostDao.findCustWarrantyCostTotalByManagerUuid(custWarrantyCost);
 
         InsureTotalStatistic statistic = new InsureTotalStatistic();
         statistic.monthAmount = monthAmount;
@@ -275,7 +275,7 @@ public class StatisticAction extends BaseAction {
     private InsureTotalStatistic _agentTotalWarrantyCount(String managerUuid,String agentId){
 
 
-        InsurancePolicyModel search = new InsurancePolicyModel();
+        CustWarranty search = new CustWarranty();
 
         search.manager_uuid = managerUuid;
         search.agent_id = agentId;
@@ -286,12 +286,12 @@ public class StatisticAction extends BaseAction {
         search.end_time = String.valueOf(TimeKit.getMonthEndTime());
 
         // 当月的所有付款的
-        int monthAmount = insurancePolicyDao.findEffectiveInsurancePolicyCountByAgentAndTime(search);
+        int monthAmount = custWarrantyDao.findEffectiveInsurancePolicyCountByAgentAndTime(search);
 
         search.start_time = "0";
         search.end_time = "0";
 
-        int totalAmount = insurancePolicyDao.findEffectiveInsurancePolicyCountByAgentAndTime(search);
+        int totalAmount = custWarrantyDao.findEffectiveInsurancePolicyCountByAgentAndTime(search);
 
         InsureTotalStatistic statistic = new InsureTotalStatistic();
         statistic.monthAmount = String.valueOf(monthAmount);

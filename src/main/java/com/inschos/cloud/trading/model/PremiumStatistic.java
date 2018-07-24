@@ -5,7 +5,7 @@ package com.inschos.cloud.trading.model;
  * 描述：
  * 作者：zhangyunhe
  */
-public class PremiumStatisticModel {
+public class PremiumStatistic {
 
     public String time_text;
     public String insurance_policy_count;

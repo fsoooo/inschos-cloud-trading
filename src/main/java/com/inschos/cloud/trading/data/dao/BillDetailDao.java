@@ -3,8 +3,8 @@ package com.inschos.cloud.trading.data.dao;
 import com.inschos.cloud.trading.data.mapper.BillDetailMapper;
 import com.inschos.cloud.trading.data.mapper.BillMapper;
 import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
-import com.inschos.cloud.trading.data.mapper.OfflineInsurancePolicyMapper;
-import com.inschos.cloud.trading.model.BillDetailModel;
+import com.inschos.cloud.trading.data.mapper.OfflineCustWarrantyMapper;
+import com.inschos.cloud.trading.model.BillDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,25 +28,25 @@ public class BillDetailDao extends BaseDao {
     private CustWarrantyCostMapper custWarrantyCostMapper;
 
     @Autowired
-    private OfflineInsurancePolicyMapper offlineInsurancePolicyMapper;
+    private OfflineCustWarrantyMapper offlineCustWarrantyMapper;
 
-    public int addBillDetail(BillDetailModel billDetailModel) {
-        return billDetailMapper.addBillDetail(billDetailModel);
+    public int addBillDetail(BillDetail billDetail) {
+        return billDetailMapper.addBillDetail(billDetail);
     }
 
-    public BillDetailModel findBillDetailById(String id) {
+    public BillDetail findBillDetailById(String id) {
         return billDetailMapper.findBillDetailById(id);
     }
 
-    public List<BillDetailModel> findBillDetailByBillUuid(BillDetailModel billDetailModel) {
-        return billDetailMapper.findBillDetailByBillUuid(billDetailModel);
+    public List<BillDetail> findBillDetailByBillUuid(BillDetail billDetail) {
+        return billDetailMapper.findBillDetailByBillUuid(billDetail);
     }
 
-    public long findBillDetailCountByBillUuid(BillDetailModel billDetailModel) {
-        return billDetailMapper.findBillDetailCountByBillUuid(billDetailModel);
+    public long findBillDetailCountByBillUuid(BillDetail billDetail) {
+        return billDetailMapper.findBillDetailCountByBillUuid(billDetail);
     }
 
-    public BillDetailModel findBillDetailByWarrantyUuids(BillDetailModel billDetailModel) {
-        return billDetailMapper.findBillDetailByWarrantyUuids(billDetailModel);
+    public BillDetail findBillDetailByWarrantyUuids(BillDetail billDetail) {
+        return billDetailMapper.findBillDetailByWarrantyUuids(billDetail);
     }
 }

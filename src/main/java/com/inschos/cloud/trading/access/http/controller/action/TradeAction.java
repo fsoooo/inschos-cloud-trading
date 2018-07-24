@@ -10,10 +10,11 @@ import com.inschos.cloud.trading.access.rpc.client.ProductClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
 import com.inschos.cloud.trading.assist.kit.WarrantyUuidWorker;
 import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
-import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
-import com.inschos.cloud.trading.model.CustWarrantyCostModel;
-import com.inschos.cloud.trading.model.InsuranceParticipantModel;
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.data.dao.CustWarrantyDao;
+import com.inschos.cloud.trading.model.CustWarranty;
+import com.inschos.cloud.trading.model.CustWarrantyCost;
+import com.inschos.cloud.trading.model.CustWarrantyPerson;
+import com.inschos.common.assist.kit.JsonKit;
 import com.inschos.common.assist.kit.StringKit;
 import com.inschos.common.assist.kit.TimeKit;
 import com.inschos.dock.bean.*;
@@ -32,7 +33,7 @@ public class TradeAction extends BaseAction {
     @Autowired
     private ProductClient productClient;
     @Autowired
-    private InsurancePolicyDao insurancePolicyDao;
+    private CustWarrantyDao custWarrantyDao;
     @Autowired
     private CustWarrantyCostDao custWarrantyCostDao;
 
@@ -65,7 +66,7 @@ public class TradeAction extends BaseAction {
 
         if (data != null) {
 
-            if (CustWarrantyCostModel.PAY_STATUS_WAIT.equals(data.status)) {
+            if (CustWarrantyCost.PAY_STATUS_WAIT.equals(data.status)) {
                 response.data = data;
                 return json(BaseResponse.CODE_SUCCESS, "待支付", response);
             } else {
@@ -99,12 +100,12 @@ public class TradeAction extends BaseAction {
 
         String[] split = StringKit.split(request.payNo, "-");
         if (split != null && split.length > 1) {
-            CustWarrantyCostModel search = new CustWarrantyCostModel();
+            CustWarrantyCost search = new CustWarrantyCost();
             search.phase = split[1];
             search.warranty_uuid = split[0];
-            CustWarrantyCostModel firstPhase = custWarrantyCostDao.findFirstPhase(search);
+            CustWarrantyCost firstPhase = custWarrantyCostDao.findFirstPhase(search);
             if (firstPhase != null) {
-                firstPhase.pay_status = CustWarrantyCostModel.PAY_STATUS_PROCESSING;
+                firstPhase.pay_status = CustWarrantyCost.PAY_STATUS_PROCESSING;
                 firstPhase.updated_at = TimeKit.curTimeMillis2Str();
                 boolean isOk = false;
                 String msg = null;
@@ -120,15 +121,18 @@ public class TradeAction extends BaseAction {
                         payBean.bankData.bankCode = request.bankData.bankCode;
                     }
 
-                    InsurancePolicyModel policyModel = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(firstPhase.warranty_uuid);
+                    CustWarranty policyModel = custWarrantyDao.findInsurancePolicyDetailByWarrantyUuid(firstPhase.warranty_uuid);
 
                     if (policyModel != null) {
                         ProductBean product = productClient.getProduct(Long.valueOf(policyModel.product_id));
                         if (product != null) {
-                            RpcResponse<RspPayBean> rpcResponse = insureServiceClient.pay(payBean, String.valueOf(product.id));
+                            payBean.key  = bean.managerUuid;
+                            payBean.secret = getSecret(bean.managerUuid);
+
+                            RpcResponse<RspPayBean> rpcResponse = insureServiceClient.pay(payBean, product.code);
 
                             if (rpcResponse == null || rpcResponse.code != RpcResponse.CODE_SUCCESS) {
-                                firstPhase.pay_status = CustWarrantyCostModel.PAY_STATUS_FAILED;
+                                firstPhase.pay_status = CustWarrantyCost.PAY_STATUS_FAILED;
                                 firstPhase.updated_at = TimeKit.curTimeMillis2Str();
                                 custWarrantyCostDao.updatePayStatusByWarrantyUuidPhase(firstPhase);
                                 msg = null;
@@ -143,14 +147,14 @@ public class TradeAction extends BaseAction {
                 }
                 if (isOk) {
                     response.data = new TradeBean.InsureRspData();
-                    response.data.status = CustWarrantyCostModel.PAY_STATUS_WAIT;
-                    response.data.statusTxt = firstPhase.payStatusText(CustWarrantyCostModel.PAY_STATUS_WAIT);
+                    response.data.status = CustWarrantyCost.PAY_STATUS_WAIT;
+                    response.data.statusTxt = firstPhase.payStatusText(CustWarrantyCost.PAY_STATUS_WAIT);
                     response.data.warrantyUuid = firstPhase.warranty_uuid;
                     response.data.payNo = request.payNo;
                     return json(BaseResponse.CODE_SUCCESS, "缴费已发起", response);
                 } else {
                     response.data = new TradeBean.InsureRspData();
-                    response.data.status = CustWarrantyCostModel.PAY_STATUS_FAILED;
+                    response.data.status = CustWarrantyCost.PAY_STATUS_FAILED;
                     response.data.statusTxt = firstPhase.payStatusText(response.data.status);
                     response.data.warrantyUuid = firstPhase.warranty_uuid;
                     response.data.payNo = request.payNo;
@@ -196,6 +200,51 @@ public class TradeAction extends BaseAction {
         }
     }
 
+    public String quote(ActionBean bean) {
+
+        TradeBean.QuoteRequest request = requst2Bean(bean.body, TradeBean.QuoteRequest.class);
+        BaseResponse response = new BaseResponse();
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        if(StringKit.isInteger(request.productId)){
+
+            ProductBean product = productClient.getProduct(Long.valueOf(request.productId));
+            if(product!=null){
+                QuoteBean quoteBean = new QuoteBean();
+                quoteBean.key  = bean.managerUuid;
+                quoteBean.secret = getSecret(bean.managerUuid);
+                quoteBean.old_option = request.old_option;
+                quoteBean.old_val = request.old_val;
+                quoteBean.new_val = request.new_val;
+                quoteBean.productCode = product.code;
+
+                RpcResponse<String> rpcResponse = insureServiceClient.quote(quoteBean, product.code);
+                if(rpcResponse.code==RpcResponse.CODE_SUCCESS){
+                    response.data = JsonKit.json2Bean(rpcResponse.data,Object.class);
+                    return json(BaseResponse.CODE_SUCCESS, "保费试算成功", response);
+                }else{
+                    return json(BaseResponse.CODE_FAILURE, "保费试算失败", response);
+                }
+            }
+
+        }
+        return json(BaseResponse.CODE_FAILURE, "保费试算失败", response);
+
+    }
+
+
+
+
+
     /**
      * @param bean
      * @param request
@@ -212,7 +261,7 @@ public class TradeAction extends BaseAction {
 
         String curTime = TimeKit.curTimeMillis2Str();
 
-        InsurancePolicyModel policyModel = new InsurancePolicyModel();
+        CustWarranty policyModel = new CustWarranty();
         String warrantyUuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
         policyModel.warranty_uuid = warrantyUuid;
         policyModel.account_uuid = accountUuid;
@@ -227,7 +276,7 @@ public class TradeAction extends BaseAction {
         policyModel.count = request.count;
         policyModel.business_no = request.businessNo;
         policyModel.order_time = curTime;
-        policyModel.warranty_status = InsurancePolicyModel.POLICY_STATUS_PENDING;
+        policyModel.warranty_status = CustWarranty.POLICY_STATUS_PENDING;
 
         policyModel.created_at = curTime;
         policyModel.updated_at = curTime;
@@ -237,17 +286,17 @@ public class TradeAction extends BaseAction {
 
 
         //投保人
-        policyModel.insured_list.add(request.policyholder.toParticipant(warrantyUuid, InsuranceParticipantModel.TYPE_POLICYHOLDER, curTime, request.startTime, request.endTime));
+        policyModel.insured_list.add(request.policyholder.toParticipant(warrantyUuid, CustWarrantyPerson.TYPE_POLICYHOLDER, curTime, request.startTime, request.endTime));
 
         //受益人
         if (request.beneficiary != null) {
-            policyModel.insured_list.add(request.beneficiary.toParticipant(warrantyUuid, InsuranceParticipantModel.TYPE_BENEFICIARY, curTime, request.startTime, request.endTime));
+            policyModel.insured_list.add(request.beneficiary.toParticipant(warrantyUuid, CustWarrantyPerson.TYPE_BENEFICIARY, curTime, request.startTime, request.endTime));
         }
 
         //被保人
         if (request.recognizees != null) {
             for (TradeBean.InsurePersonData recognizee : request.recognizees) {
-                policyModel.insured_list.add(recognizee.toParticipant(warrantyUuid, InsuranceParticipantModel.TYPE_INSURED, curTime, request.startTime, request.endTime));
+                policyModel.insured_list.add(recognizee.toParticipant(warrantyUuid, CustWarrantyPerson.TYPE_INSURED, curTime, request.startTime, request.endTime));
             }
         }
         long productId = Long.valueOf(request.productId);
@@ -290,26 +339,28 @@ public class TradeAction extends BaseAction {
             String premium = null;
 
             ProductBean productBean = productClient.getPremium(insureBean);
+            String productCode = null;
 
             if (productBean != null) {
                 premium = productBean.basePrice;
                 insureBean.premium = premium;
                 insureBean.amount = productBean.amount;
+                productCode = productBean.code;
             }
 
-            List<CustWarrantyCostModel> costModels = new ArrayList<>();
+            List<CustWarrantyCost> costModels = new ArrayList<>();
 
             for (int i = 1; i <= payCategory.times; i++) {
-                CustWarrantyCostModel costModel = new CustWarrantyCostModel();
+                CustWarrantyCost costModel = new CustWarrantyCost();
                 costModel.warranty_uuid = warrantyUuid;
 
                 costModel.premium = premium;
                 costModel.phase = String.valueOf(i);
                 if (i == 1) {
-                    costModel.pay_status = CustWarrantyCostModel.APPLY_UNDERWRITING_WAIT;
+                    costModel.pay_status = CustWarrantyCost.APPLY_UNDERWRITING_WAIT;
                     costModel.pay_time = request.startTime;
                 } else {
-                    costModel.pay_status = CustWarrantyCostModel.APPLY_UNDERWRITING_WAIT;
+                    costModel.pay_status = CustWarrantyCost.APPLY_UNDERWRITING_WAIT;
                     // TODO: 2018/6/14  pay_time
                     costModel.pay_time = request.startTime;
                 }
@@ -317,6 +368,7 @@ public class TradeAction extends BaseAction {
                 costModels.add(costModel);
             }
 
+            //地区拆分
             if (!StringKit.isEmpty(request.policyholder.area)) {
                 String[] split = StringKit.split(request.policyholder.area, "-");
                 if (split != null) {
@@ -333,9 +385,13 @@ public class TradeAction extends BaseAction {
 //                insureBean.insurePeriod;
 //                insureBean.periodUnit;
 
+            insureBean.key  = bean.managerUuid;
+            insureBean.secret = getSecret(bean.managerUuid);
+            insureBean.productCode = productCode;
+
             TradeBean.InsureRspData data = new TradeBean.InsureRspData();
             if (method == 1) {
-                RpcResponse<RspInsureBean> rpcResponse = insureServiceClient.insure(insureBean, request.productId);
+                RpcResponse<RspInsureBean> rpcResponse = insureServiceClient.insure(insureBean, productCode);
 
 
                 if (rpcResponse.data != null) {
@@ -347,14 +403,14 @@ public class TradeAction extends BaseAction {
 
                 }
 
-                CustWarrantyCostModel costModel = costModels.get(0);
+                CustWarrantyCost costModel = costModels.get(0);
                 costModel.warranty_uuid = warrantyUuid;
                 costModel.phase = "1";
 
 
                 if (rpcResponse.code == 200) {
 
-                    costModel.pay_status = CustWarrantyCostModel.PAY_STATUS_WAIT;
+                    costModel.pay_status = CustWarrantyCost.PAY_STATUS_WAIT;
                     data.status = costModel.pay_status;
                     data.statusTxt = costModel.payStatusText(data.status);
                     data.warrantyUuid = warrantyUuid;
@@ -366,10 +422,10 @@ public class TradeAction extends BaseAction {
                         data.payUrl = rpcResponse.data.payUrl;
                     }
                 } else {
-                    costModel.pay_status = CustWarrantyCostModel.APPLY_UNDERWRITING_FAILURE;
+                    costModel.pay_status = CustWarrantyCost.APPLY_UNDERWRITING_FAILURE;
                     data.status = costModel.pay_status;
                     if (StringKit.isEmpty(policyModel.pre_policy_no)) {
-                        policyModel.warranty_status = InsurancePolicyModel.POLICY_STATUS_INVALID;
+                        policyModel.warranty_status = CustWarranty.POLICY_STATUS_INVALID;
                     }
                 }
             } else {
@@ -378,7 +434,7 @@ public class TradeAction extends BaseAction {
 
             }
 
-            insurancePolicyDao.insure(policyModel, costModels);
+            custWarrantyDao.insure(policyModel, costModels);
 
             return data;
 
@@ -471,5 +527,10 @@ public class TradeAction extends BaseAction {
         return payWay;
     }
 
+
+    private String getSecret(String key){
+        // TODO: 2018/7/24
+        return null;
+    }
 
 }

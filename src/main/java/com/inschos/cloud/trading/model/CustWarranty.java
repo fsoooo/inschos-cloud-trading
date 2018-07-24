@@ -13,7 +13,7 @@ import java.util.Map;
  * 描述：
  * 作者：zhangyunhe
  */
-public class InsurancePolicyModel {
+public class CustWarranty {
 
     /**
      * 主键
@@ -184,7 +184,7 @@ public class InsurancePolicyModel {
     public String agent_id_string;
     public String queryWay;
     public long currentTime = System.currentTimeMillis();
-    public List<InsuranceParticipantModel> insured_list;
+    public List<CustWarrantyPerson> insured_list;
 
     public String person_type;
 
@@ -309,7 +309,7 @@ public class InsurancePolicyModel {
     }
 
     public static LinkedHashMap<String, String> getWarrantyFromMap() {
-        InsurancePolicyModel model = new InsurancePolicyModel();
+        CustWarranty model = new CustWarranty();
         LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put(SOURCE_SELF, model.warrantyFromText(SOURCE_SELF));
         linkedHashMap.put(SOURCE_ONLINE, model.warrantyFromText(SOURCE_ONLINE));
@@ -351,7 +351,7 @@ public class InsurancePolicyModel {
     }
 
     public static LinkedHashMap<String, String> getWarrantyStatusMap() {
-        InsurancePolicyModel model = new InsurancePolicyModel();
+        CustWarranty model = new CustWarranty();
         LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put(POLICY_STATUS_PENDING, model.warrantyStatusText(POLICY_STATUS_PENDING));
         linkedHashMap.put(POLICY_STATUS_WAITING, model.warrantyStatusText(POLICY_STATUS_WAITING));

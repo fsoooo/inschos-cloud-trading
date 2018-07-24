@@ -1,8 +1,8 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
-import com.inschos.cloud.trading.model.BrokerageStatisticModel;
-import com.inschos.cloud.trading.model.PremiumStatisticModel;
+import com.inschos.cloud.trading.model.BrokerageStatistic;
+import com.inschos.cloud.trading.model.PremiumStatistic;
 import com.inschos.common.assist.kit.StringKit;
 import com.inschos.common.assist.kit.TimeKit;
 
@@ -82,34 +82,34 @@ public class StatisticBean {
 
         }
 
-        public void setPremiumStatisticModel(PremiumStatisticModel premiumStatisticModel) {
-            if (premiumStatisticModel == null) {
+        public void setPremiumStatisticModel(PremiumStatistic premiumStatistic) {
+            if (premiumStatistic == null) {
                 return;
             }
 
-            if (!StringKit.isEmpty(premiumStatisticModel.premium) && StringKit.isNumeric(premiumStatisticModel.premium)) {
-                this.premium = premiumStatisticModel.premium;
+            if (!StringKit.isEmpty(premiumStatistic.premium) && StringKit.isNumeric(premiumStatistic.premium)) {
+                this.premium = premiumStatistic.premium;
                 this.premiumText = "¥" + this.premium;
             } else {
                 this.premium = "0.00";
                 this.premiumText = "¥0.00";
             }
 
-            if (!StringKit.isEmpty(premiumStatisticModel.insurance_policy_count) && StringKit.isInteger(premiumStatisticModel.insurance_policy_count)) {
-                this.insurancePolicyCount = premiumStatisticModel.insurance_policy_count;
+            if (!StringKit.isEmpty(premiumStatistic.insurance_policy_count) && StringKit.isInteger(premiumStatistic.insurance_policy_count)) {
+                this.insurancePolicyCount = premiumStatistic.insurance_policy_count;
             } else {
                 this.insurancePolicyCount = "0";
             }
 
         }
 
-        public void setBrokerageStatisticModel(BrokerageStatisticModel brokerageStatisticModel) {
-            if (brokerageStatisticModel == null) {
+        public void setBrokerageStatisticModel(BrokerageStatistic brokerageStatistic) {
+            if (brokerageStatistic == null) {
                 return;
             }
 
-            if (!StringKit.isEmpty(brokerageStatisticModel.brokerage) && StringKit.isNumeric(brokerageStatisticModel.brokerage)) {
-                this.brokerage = brokerageStatisticModel.brokerage;
+            if (!StringKit.isEmpty(brokerageStatistic.brokerage) && StringKit.isNumeric(brokerageStatistic.brokerage)) {
+                this.brokerage = brokerageStatistic.brokerage;
                 this.brokerageText = "¥" + this.brokerage;
             } else {
                 this.brokerage = "0.00";

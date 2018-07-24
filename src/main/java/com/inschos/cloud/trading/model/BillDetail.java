@@ -10,7 +10,7 @@ import java.util.List;
  * 描述：
  * 作者：zhangyunhe
  */
-public class BillDetailModel {
+public class BillDetail {
 
     /**
      * 主键id

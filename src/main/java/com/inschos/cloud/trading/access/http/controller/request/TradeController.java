@@ -43,9 +43,9 @@ public class TradeController {
     }
 
     @GetActionBeanAnnotation
-    @RequestMapping("/insure1")
+    @RequestMapping("/quote")
     @ResponseBody
-    public String insurea(ActionBean bean) {
+    public String quote(ActionBean bean) {
 
 
         return "";

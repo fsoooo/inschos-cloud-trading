@@ -5,7 +5,7 @@ package com.inschos.cloud.trading.model;
  * 描述：
  * 作者：zhangyunhe
  */
-public class BrokerageStatisticModel {
+public class BrokerageStatistic {
 
     public String time_text;
     public String brokerage;

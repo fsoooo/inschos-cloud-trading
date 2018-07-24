@@ -2,7 +2,7 @@ package com.inschos.cloud.trading.data.dao;
 
 
 import com.inschos.cloud.trading.data.mapper.CustWarrantyCostMapper;
-import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
+import com.inschos.cloud.trading.data.mapper.CustWarrantyMapper;
 import com.inschos.cloud.trading.model.*;
 import com.inschos.common.assist.kit.StringKit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,21 +24,21 @@ public class CustWarrantyCostDao extends BaseDao {
     private CustWarrantyCostMapper custWarrantyCostMapper;
 
     @Autowired
-    public InsurancePolicyMapper insurancePolicyMapper;
+    private CustWarrantyMapper custWarrantyMapper;
 
-    public List<CustWarrantyCostModel> findCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.findCustWarrantyCost(custWarrantyCostModel);
+    public List<CustWarrantyCost> findCustWarrantyCost(CustWarrantyCost custWarrantyCost) {
+        return custWarrantyCostMapper.findCustWarrantyCost(custWarrantyCost);
     }
 
-    public int addCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.addCustWarrantyCost(custWarrantyCostModel);
+    public int addCustWarrantyCost(CustWarrantyCost custWarrantyCost) {
+        return custWarrantyCostMapper.addCustWarrantyCost(custWarrantyCost);
     }
 
-    public String findCustWarrantyCostTotalByAccountUuid(CustWarrantyCostModel custWarrantyCostModel) {
+    public String findCustWarrantyCostTotalByAccountUuid(CustWarrantyCost custWarrantyCost) {
         BigDecimal amount = new BigDecimal("0.00");
 
-        if (custWarrantyCostModel != null && !StringKit.isEmpty(custWarrantyCostModel.account_uuid)) {
-            Double custWarrantyCostTotalByAccountUuidOrChannelId = custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCostModel);
+        if (custWarrantyCost != null && !StringKit.isEmpty(custWarrantyCost.account_uuid)) {
+            Double custWarrantyCostTotalByAccountUuidOrChannelId = custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCost);
 
             if (custWarrantyCostTotalByAccountUuidOrChannelId != null) {
                 amount = new BigDecimal(custWarrantyCostTotalByAccountUuidOrChannelId);
@@ -49,11 +49,11 @@ public class CustWarrantyCostDao extends BaseDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public String findCustWarrantyCostTotalByChannelId(CustWarrantyCostModel custWarrantyCostModel) {
+    public String findCustWarrantyCostTotalByChannelId(CustWarrantyCost custWarrantyCost) {
         BigDecimal amount = new BigDecimal("0.00");
 
-        if (custWarrantyCostModel != null && !StringKit.isEmpty(custWarrantyCostModel.channel_id)) {
-            Double custWarrantyCostTotalByAccountUuidOrChannelId = custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCostModel);
+        if (custWarrantyCost != null && !StringKit.isEmpty(custWarrantyCost.channel_id)) {
+            Double custWarrantyCostTotalByAccountUuidOrChannelId = custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCost);
 
             if (custWarrantyCostTotalByAccountUuidOrChannelId != null) {
                 amount = new BigDecimal(custWarrantyCostTotalByAccountUuidOrChannelId);
@@ -64,11 +64,11 @@ public class CustWarrantyCostDao extends BaseDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public String findCustWarrantyCostTotalByManagerUuid(CustWarrantyCostModel custWarrantyCostModel) {
+    public String findCustWarrantyCostTotalByManagerUuid(CustWarrantyCost custWarrantyCost) {
         BigDecimal amount = new BigDecimal("0.00");
 
-        if (custWarrantyCostModel != null && !StringKit.isEmpty(custWarrantyCostModel.manager_uuid)) {
-            Double custWarrantyCostTotalByAccountUuidOrChannelId = custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCostModel);
+        if (custWarrantyCost != null && !StringKit.isEmpty(custWarrantyCost.manager_uuid)) {
+            Double custWarrantyCostTotalByAccountUuidOrChannelId = custWarrantyCostMapper.findCustWarrantyCostTotal(custWarrantyCost);
 
             if (custWarrantyCostTotalByAccountUuidOrChannelId != null) {
                 amount = new BigDecimal(custWarrantyCostTotalByAccountUuidOrChannelId);
@@ -79,56 +79,56 @@ public class CustWarrantyCostDao extends BaseDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public List<PremiumStatisticModel> findCustWarrantyCostStatistic(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.findCustWarrantyCostStatistic(custWarrantyCostModel);
+    public List<PremiumStatistic> findCustWarrantyCostStatistic(CustWarrantyCost custWarrantyCost) {
+        return custWarrantyCostMapper.findCustWarrantyCostStatistic(custWarrantyCost);
     }
 
-    public List<BrokerageStatisticListModel> findInsurancePolicyBrokerageStatisticList(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticList(custWarrantyCostModel);
+    public List<BrokerageStatisticList> findInsurancePolicyBrokerageStatisticList(CustWarrantyCost custWarrantyCost) {
+        return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticList(custWarrantyCost);
     }
 
-    public long findInsurancePolicyBrokerageStatisticListCount(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticListCount(custWarrantyCostModel);
+    public long findInsurancePolicyBrokerageStatisticListCount(CustWarrantyCost custWarrantyCost) {
+        return custWarrantyCostMapper.findInsurancePolicyBrokerageStatisticListCount(custWarrantyCost);
     }
 
     /**
      * warranty_uuid 获取第一期的缴费情况
-     * @param custWarrantyCostModel
+     * @param custWarrantyCost
      * @return
      */
-    public CustWarrantyCostModel findFirstPhase(CustWarrantyCostModel custWarrantyCostModel){
-        return custWarrantyCostMapper.findFirstPhase(custWarrantyCostModel);
+    public CustWarrantyCost findFirstPhase(CustWarrantyCost custWarrantyCost){
+        return custWarrantyCostMapper.findFirstPhase(custWarrantyCost);
     }
 
-    public int updatePayStatusByWarrantyUuidPhase(CustWarrantyCostModel costModel) {
+    public int updatePayStatusByWarrantyUuidPhase(CustWarrantyCost costModel) {
         return costModel != null ? custWarrantyCostMapper.updatePayStatusByWarrantyUuidPhase(costModel) : 0;
     }
-    public List<InsurancePolicyModel> findInsurancePolicyBillListForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
-        return custWarrantyCostMapper.findInsurancePolicyBillListForManagerSystem(insurancePolicyModel);
+    public List<CustWarranty> findInsurancePolicyBillListForManagerSystem(CustWarranty custWarranty) {
+        return custWarrantyCostMapper.findInsurancePolicyBillListForManagerSystem(custWarranty);
     }
 
-    public long findInsurancePolicyBillCountForManagerSystem(InsurancePolicyModel insurancePolicyModel) {
-        return custWarrantyCostMapper.findInsurancePolicyBillCountForManagerSystem(insurancePolicyModel);
+    public long findInsurancePolicyBillCountForManagerSystem(CustWarranty custWarranty) {
+        return custWarrantyCostMapper.findInsurancePolicyBillCountForManagerSystem(custWarranty);
     }
 
-    public int updateSettlementAndBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.updateSettlementAndBillUuidByCostId(custWarrantyCostModel);
+    public int updateSettlementAndBillUuidByCostId(CustWarrantyCost custWarrantyCost) {
+        return custWarrantyCostMapper.updateSettlementAndBillUuidByCostId(custWarrantyCost);
     }
 
-    public int updateBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.updateBillUuidByCostId(custWarrantyCostModel);
+    public int updateBillUuidByCostId(CustWarrantyCost custWarrantyCost) {
+        return custWarrantyCostMapper.updateBillUuidByCostId(custWarrantyCost);
     }
 
-    public CustWarrantyBrokerageModel findBrokerageByCostId(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.findBrokerageByCostId(custWarrantyCostModel);
+    public CustWarrantyBrokerage findBrokerageByCostId(CustWarrantyCost custWarrantyCost) {
+        return custWarrantyCostMapper.findBrokerageByCostId(custWarrantyCost);
     }
 
-    public List<CustWarrantyCostModel> findCompletePayListByManagerUuid(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.findCompletePayListByManagerUuid(custWarrantyCostModel);
+    public List<CustWarrantyCost> findCompletePayListByManagerUuid(CustWarrantyCost custWarrantyCost) {
+        return custWarrantyCostMapper.findCompletePayListByManagerUuid(custWarrantyCost);
     }
 
-    public long findCompletePayCountByManagerUuid(CustWarrantyCostModel custWarrantyCostModel) {
-        return custWarrantyCostMapper.findCompletePayCountByManagerUuid(custWarrantyCostModel);
+    public long findCompletePayCountByManagerUuid(CustWarrantyCost custWarrantyCost) {
+        return custWarrantyCostMapper.findCompletePayCountByManagerUuid(custWarrantyCost);
     }
 
 }

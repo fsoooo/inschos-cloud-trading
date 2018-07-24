@@ -1,7 +1,7 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
-import com.inschos.cloud.trading.model.InsuranceParticipantModel;
+import com.inschos.cloud.trading.model.CustWarrantyPerson;
 import com.inschos.common.assist.kit.TimeKit;
 
 import java.util.List;
@@ -39,6 +39,8 @@ public class TradeBean {
         public InsurePersonData beneficiary;
 
         public String businessParams;
+
+        public Object selectQuote;
     }
 
     public static class InsureResponse extends BaseResponse {
@@ -65,6 +67,18 @@ public class TradeBean {
     }
 
 
+    public static class QuoteRequest extends BaseRequest {
+
+        @CheckParams(hintName = "产品ID", stringType = CheckParams.StringType.NUMBER, maxLen = 20)
+        public String productId;
+
+        /**本次所有选中项的值*/
+        public String new_val;
+        /**被改变项的值*/
+        public String old_val;
+        /**旧的试算因子项*/
+        public String old_option;
+    }
 
 
 
@@ -160,9 +174,9 @@ public class TradeBean {
         public String address;
 
 
-        public InsuranceParticipantModel toParticipant(String warrantyUuid, String type, String operTime, String startTime, String endTime) {
+        public CustWarrantyPerson toParticipant(String warrantyUuid, String type, String operTime, String startTime, String endTime) {
 
-            InsuranceParticipantModel participantModel = new InsuranceParticipantModel();
+            CustWarrantyPerson participantModel = new CustWarrantyPerson();
 
             participantModel.type = type;
             participantModel.relation_name = this.relationName;

@@ -13,7 +13,7 @@ import java.util.List;
  * 描述：
  * 作者：zhangyunhe
  */
-public class OfflineInsurancePolicyModel {
+public class OfflineCustWarranty {
 
     public final static List<String> OFFLINE_COLUMN_FIELD_LIST;
 
@@ -289,10 +289,10 @@ public class OfflineInsurancePolicyModel {
         } else {
             switch (pay_status) {
                 case "未支付":
-                    pay_status = CustWarrantyCostModel.PAY_STATUS_WAIT;
+                    pay_status = CustWarrantyCost.PAY_STATUS_WAIT;
                     break;
                 case "已支付":
-                    pay_status = CustWarrantyCostModel.PAY_STATUS_SUCCESS;
+                    pay_status = CustWarrantyCost.PAY_STATUS_SUCCESS;
                     break;
                 default:
                     reasonList.add(new ErrorReason("支付状态只能为：未支付/已支付", "payStatus"));
@@ -337,8 +337,8 @@ public class OfflineInsurancePolicyModel {
         return StringKit.equals(this.warranty_code, "保单号");
     }
 
-    public static OfflineInsurancePolicyModel getTitleModel() {
-        OfflineInsurancePolicyModel title = new OfflineInsurancePolicyModel();
+    public static OfflineCustWarranty getTitleModel() {
+        OfflineCustWarranty title = new OfflineCustWarranty();
         title.insured_name = "被保险人";
         title.policy_holder_name = "投保人";
         title.insurance_company = "保险公司";

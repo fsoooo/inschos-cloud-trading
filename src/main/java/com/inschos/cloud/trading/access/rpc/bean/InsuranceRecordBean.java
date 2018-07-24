@@ -1,6 +1,6 @@
 package com.inschos.cloud.trading.access.rpc.bean;
 
-import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicy;
+import com.inschos.cloud.trading.access.http.controller.bean.InsurancePolicyBean;
 import com.inschos.cloud.trading.access.http.controller.bean.PageBean;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class InsuranceRecordBean {
     public String pageNum;
     public String lastId;
 
-    public List<InsurancePolicy.GetInsurancePolicy> data;
+    public List<InsurancePolicyBean.GetInsurancePolicy> data;
     public PageBean page;
 
 }

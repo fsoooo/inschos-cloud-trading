@@ -9,16 +9,16 @@ import com.inschos.cloud.trading.model.*;
  */
 public class InsurancePolicyAndParticipantForCarInsurance {
 
-    public InsurancePolicyModel ciProposal;
-    public InsurancePolicyModel biProposal;
-    public InsuranceParticipantModel ciInsured;
-    public InsuranceParticipantModel biInsured;
-    public InsuranceParticipantModel ciPolicyholder;
-    public InsuranceParticipantModel biPolicyholder;
-    public CarInfoModel ciCarInfoModel;
-    public CarInfoModel biCarInfoModel;
-    public CustWarrantyCostModel ciCustWarrantyCostModel;
-    public CustWarrantyCostModel biCustWarrantyCostModel;
-    public CustWarrantyBrokerageModel ciCustWarrantyBrokerageModel;
-    public CustWarrantyBrokerageModel biCustWarrantyBrokerageModel;
+    public CustWarranty ciProposal;
+    public CustWarranty biProposal;
+    public CustWarrantyPerson ciInsured;
+    public CustWarrantyPerson biInsured;
+    public CustWarrantyPerson ciPolicyholder;
+    public CustWarrantyPerson biPolicyholder;
+    public CustWarrantyCar ciCustWarrantyCar;
+    public CustWarrantyCar biCustWarrantyCar;
+    public CustWarrantyCost ciCustWarrantyCost;
+    public CustWarrantyCost biCustWarrantyCost;
+    public CustWarrantyBrokerage ciCustWarrantyBrokerage;
+    public CustWarrantyBrokerage biCustWarrantyBrokerage;
 }

@@ -1,7 +1,7 @@
 package com.inschos.cloud.trading.data.mapper;
 
-import com.inschos.cloud.trading.model.BrokerageStatisticModel;
-import com.inschos.cloud.trading.model.CustWarrantyBrokerageModel;
+import com.inschos.cloud.trading.model.BrokerageStatistic;
+import com.inschos.cloud.trading.model.CustWarrantyBrokerage;
 
 import java.util.List;
 
@@ -12,19 +12,19 @@ import java.util.List;
  */
 public interface CustWarrantyBrokerageMapper {
 
-    int addCustWarrantyBrokerage (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
+    int addCustWarrantyBrokerage (CustWarrantyBrokerage custWarrantyBrokerage);
 
-    List<CustWarrantyBrokerageModel> findCustWarrantyBrokerageByWarrantyUuid (String warrantyUuid);
+    List<CustWarrantyBrokerage> findCustWarrantyBrokerageByWarrantyUuid (String warrantyUuid);
 
-    Double findCustWarrantyBrokerageTotal (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
+    Double findCustWarrantyBrokerageTotal (CustWarrantyBrokerage custWarrantyBrokerage);
 
-    Double findIncomeByManagerUuidAndAccountUuid (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
+    Double findIncomeByManagerUuidAndAccountUuid (CustWarrantyBrokerage custWarrantyBrokerage);
 
-    List<BrokerageStatisticModel> findCustWarrantyBrokerageStatistic (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
+    List<BrokerageStatistic> findCustWarrantyBrokerageStatistic (CustWarrantyBrokerage custWarrantyBrokerage);
 
-    List<BrokerageStatisticModel> findStatisticByAgent (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
+    List<BrokerageStatistic> findStatisticByAgent (CustWarrantyBrokerage custWarrantyBrokerage);
 
     Double findCustWarrantyBrokerageCarIntegral (String warranty_uuid);
 
-    int updateCustWarrantyBrokerageForCar (CustWarrantyBrokerageModel custWarrantyBrokerageModel);
+    int updateCustWarrantyBrokerageForCar (CustWarrantyBrokerage custWarrantyBrokerage);
 }

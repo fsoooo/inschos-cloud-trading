@@ -11,42 +11,44 @@ import java.util.List;
  */
 public interface CustWarrantyCostMapper {
 
-    List<CustWarrantyCostModel> findCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel);
+    List<CustWarrantyCost> findCustWarrantyCost(CustWarrantyCost custWarrantyCost);
 
-    int addCustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel);
+    int addCustWarrantyCost(CustWarrantyCost custWarrantyCost);
 
-    int updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel);
+    int updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCost custWarrantyCost);
 
-    int updateCustWarrantyCostPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCostModel custWarrantyCostModel);
+    int updateCustWarrantyCostPayStatusForCarInsuranceByWarrantyUuid(CustWarrantyCost custWarrantyCost);
 
-    int updatePayStatusByWarrantyUuidPhase(CustWarrantyCostModel custWarrantyCostModel);
+    int updatePayStatusByWarrantyUuidPhase(CustWarrantyCost custWarrantyCost);
 
-    Double findCustWarrantyCostTotal(CustWarrantyCostModel custWarrantyCostModel);
+    int updatePayResult(CustWarrantyCost cost);
 
-    List<InsurancePolicyModel> findInsurancePolicyListForInsuring(InsurancePolicyModel insurancePolicyModel);
+    Double findCustWarrantyCostTotal(CustWarrantyCost custWarrantyCost);
 
-    long findInsurancePolicyCountForInsuring(InsurancePolicyModel insurancePolicyModel);
+    List<CustWarranty> findInsurancePolicyListForInsuring(CustWarranty custWarranty);
 
-    List<PremiumStatisticModel> findCustWarrantyCostStatistic(CustWarrantyCostModel custWarrantyCostModel);
+    long findInsurancePolicyCountForInsuring(CustWarranty custWarranty);
 
-    List<BrokerageStatisticListModel> findInsurancePolicyBrokerageStatisticList(CustWarrantyCostModel custWarrantyCostModel);
+    List<PremiumStatistic> findCustWarrantyCostStatistic(CustWarrantyCost custWarrantyCost);
 
-    long findInsurancePolicyBrokerageStatisticListCount(CustWarrantyCostModel custWarrantyCostModel);
+    List<BrokerageStatisticList> findInsurancePolicyBrokerageStatisticList(CustWarrantyCost custWarrantyCost);
+
+    long findInsurancePolicyBrokerageStatisticListCount(CustWarrantyCost custWarrantyCost);
 
     //获取第一期的缴费情况
-    CustWarrantyCostModel findFirstPhase(CustWarrantyCostModel search);
+    CustWarrantyCost findFirstPhase(CustWarrantyCost search);
 
-    List<InsurancePolicyModel> findInsurancePolicyBillListForManagerSystem(InsurancePolicyModel insurancePolicyModel);
+    List<CustWarranty> findInsurancePolicyBillListForManagerSystem(CustWarranty custWarranty);
 
-    long findInsurancePolicyBillCountForManagerSystem(InsurancePolicyModel insurancePolicyModel);
+    long findInsurancePolicyBillCountForManagerSystem(CustWarranty custWarranty);
 
-    int updateSettlementAndBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel);
+    int updateSettlementAndBillUuidByCostId(CustWarrantyCost custWarrantyCost);
 
-    int updateBillUuidByCostId(CustWarrantyCostModel custWarrantyCostModel);
+    int updateBillUuidByCostId(CustWarrantyCost custWarrantyCost);
 
-    CustWarrantyBrokerageModel findBrokerageByCostId(CustWarrantyCostModel custWarrantyCostModel);
+    CustWarrantyBrokerage findBrokerageByCostId(CustWarrantyCost custWarrantyCost);
 
-    List<CustWarrantyCostModel> findCompletePayListByManagerUuid (CustWarrantyCostModel custWarrantyCostModel);
+    List<CustWarrantyCost> findCompletePayListByManagerUuid (CustWarrantyCost custWarrantyCost);
 
-    long findCompletePayCountByManagerUuid (CustWarrantyCostModel custWarrantyCostModel);
+    long findCompletePayCountByManagerUuid (CustWarrantyCost custWarrantyCost);
 }

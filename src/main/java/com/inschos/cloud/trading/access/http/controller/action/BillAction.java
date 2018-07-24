@@ -2,7 +2,7 @@ package com.inschos.cloud.trading.access.http.controller.action;
 
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
-import com.inschos.cloud.trading.access.http.controller.bean.Bill;
+import com.inschos.cloud.trading.access.http.controller.bean.BillBean;
 import com.inschos.cloud.trading.access.rpc.bean.InsuranceCompanyBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
 import com.inschos.cloud.trading.access.rpc.client.CompanyClient;
@@ -46,13 +46,13 @@ public class BillAction extends BaseAction {
     private BillDetailDao billDetailDao;
 
     @Autowired
-    private InsurancePolicyDao insurancePolicyDao;
+    private CustWarrantyDao custWarrantyDao;
 
     @Autowired
     private CustWarrantyCostDao custWarrantyCostDao;
 
     @Autowired
-    private OfflineInsurancePolicyDao offlineInsurancePolicyDao;
+    private OfflineCustWarrantyDao offlineCustWarrantyDao;
 
     @Autowired
     private ProductClient productClient;
@@ -64,8 +64,8 @@ public class BillAction extends BaseAction {
     private FileClient fileClient;
 
     public String createBill(ActionBean actionBean) {
-        Bill.CreateBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.CreateBillRequest.class);
-        Bill.CreateBillResponse response = new Bill.CreateBillResponse();
+        BillBean.CreateBillRequest request = JsonKit.json2Bean(actionBean.body, BillBean.CreateBillRequest.class);
+        BillBean.CreateBillResponse response = new BillBean.CreateBillResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -78,40 +78,40 @@ public class BillAction extends BaseAction {
 
         String time = String.valueOf(System.currentTimeMillis());
 
-        BillModel billModel = new BillModel();
-        billModel.manager_uuid = actionBean.managerUuid;
+        Bill bill = new Bill();
+        bill.manager_uuid = actionBean.managerUuid;
 
-        billModel.bill_name = request.billName;
-        billModel.insurance_company_id = request.insuranceCompanyId;
-        billModel.principal = request.principal;
-        billModel.remark = request.remark;
-        billModel.created_at = time;
-        billModel.updated_at = time;
-        billModel.state = "1";
+        bill.bill_name = request.billName;
+        bill.insurance_company_id = request.insuranceCompanyId;
+        bill.principal = request.principal;
+        bill.remark = request.remark;
+        bill.created_at = time;
+        bill.updated_at = time;
+        bill.state = "1";
 
-        BillModel billByBillName = billDao.findBillByBillName(billModel);
+        Bill billByBillName = billDao.findBillByBillName(bill);
         if (billByBillName != null) {
             return json(BaseResponse.CODE_FAILURE, "结算单'" + request.billName + "'已存在", response);
         }
 
-        billModel.bill_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
+        bill.bill_uuid = String.valueOf(WarrantyUuidWorker.getWorker(2, 1).nextId());
 
-        DealBillInsurancePolicyList dealBillInsurancePolicyList = dealBillInsurancePolicyList(billModel.bill_uuid, request.warrantyList);
+        DealBillInsurancePolicyList dealBillInsurancePolicyList = dealBillInsurancePolicyList(bill.bill_uuid, request.warrantyList);
 
         if (!dealBillInsurancePolicyList.isSuccess) {
             return json(BaseResponse.CODE_FAILURE, dealBillInsurancePolicyList.message, response);
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-        billModel.billDetailModelList = dealBillInsurancePolicyList.result;
-        billModel.is_settlement = (dealBillInsurancePolicyList.result != null && !dealBillInsurancePolicyList.result.isEmpty()) ? "1" : "0";
-        billModel.bill_money = decimalFormat.format(dealBillInsurancePolicyList.brokerage.doubleValue());
+        bill.billDetailList = dealBillInsurancePolicyList.result;
+        bill.is_settlement = (dealBillInsurancePolicyList.result != null && !dealBillInsurancePolicyList.result.isEmpty()) ? "1" : "0";
+        bill.bill_money = decimalFormat.format(dealBillInsurancePolicyList.brokerage.doubleValue());
 
-        int i = billDao.addBill(billModel);
+        int i = billDao.addBill(bill);
 
         String str;
         if (i > 0) {
-            response.data = billModel.bill_uuid;
+            response.data = bill.bill_uuid;
             str = json(BaseResponse.CODE_SUCCESS, "添加结算单成功", response);
         } else {
             str = json(BaseResponse.CODE_FAILURE, "添加结算单失败", response);
@@ -121,8 +121,8 @@ public class BillAction extends BaseAction {
     }
 
     public String addBillDetail(ActionBean actionBean) {
-        Bill.AddBillDetailRequest request = JsonKit.json2Bean(actionBean.body, Bill.AddBillDetailRequest.class);
-        Bill.AddBillDetailResponse response = new Bill.AddBillDetailResponse();
+        BillBean.AddBillDetailRequest request = JsonKit.json2Bean(actionBean.body, BillBean.AddBillDetailRequest.class);
+        BillBean.AddBillDetailResponse response = new BillBean.AddBillDetailResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -133,7 +133,7 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+        Bill billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
 
         if (billByBillUuid == null) {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
@@ -150,23 +150,23 @@ public class BillAction extends BaseAction {
         }
 
         if (dealBillInsurancePolicyList.result != null && !dealBillInsurancePolicyList.result.isEmpty()) {
-            BillDetailModel billDetailModel = new BillDetailModel();
-            billDetailModel.warranty_list = new ArrayList<>();
-            for (BillDetailModel detailModel : dealBillInsurancePolicyList.result) {
-                billDetailModel.warranty_list.add(detailModel.warranty_uuid);
+            BillDetail billDetail = new BillDetail();
+            billDetail.warranty_list = new ArrayList<>();
+            for (BillDetail detailModel : dealBillInsurancePolicyList.result) {
+                billDetail.warranty_list.add(detailModel.warranty_uuid);
             }
 
-            BillDetailModel billDetailByWarrantyUuids = billDetailDao.findBillDetailByWarrantyUuids(billDetailModel);
+            BillDetail billDetailByWarrantyUuids = billDetailDao.findBillDetailByWarrantyUuids(billDetail);
 
             if (billDetailByWarrantyUuids != null) {
                 String str = "";
-                if (StringKit.equals(billDetailByWarrantyUuids.type, BillDetailModel.TYPE_ON_LINE)) {
-                    InsurancePolicyModel insurancePolicyDetailByWarrantyUuid = insurancePolicyDao.findInsurancePolicyDetailByWarrantyUuid(billDetailByWarrantyUuids.warranty_uuid);
+                if (StringKit.equals(billDetailByWarrantyUuids.type, BillDetail.TYPE_ON_LINE)) {
+                    CustWarranty insurancePolicyDetailByWarrantyUuid = custWarrantyDao.findInsurancePolicyDetailByWarrantyUuid(billDetailByWarrantyUuids.warranty_uuid);
                     if (insurancePolicyDetailByWarrantyUuid != null) {
                         str = insurancePolicyDetailByWarrantyUuid.warranty_code;
                     }
-                } else if (StringKit.equals(billDetailByWarrantyUuids.type, BillDetailModel.TYPE_OFF_LINE)) {
-                    OfflineInsurancePolicyModel offlineInsurancePolicyByWarrantyUuid = offlineInsurancePolicyDao.findOfflineInsurancePolicyByWarrantyUuid(billDetailByWarrantyUuids.warranty_uuid);
+                } else if (StringKit.equals(billDetailByWarrantyUuids.type, BillDetail.TYPE_OFF_LINE)) {
+                    OfflineCustWarranty offlineInsurancePolicyByWarrantyUuid = offlineCustWarrantyDao.findOfflineInsurancePolicyByWarrantyUuid(billDetailByWarrantyUuids.warranty_uuid);
                     if (offlineInsurancePolicyByWarrantyUuid != null) {
                         str = offlineInsurancePolicyByWarrantyUuid.warranty_code;
                     }
@@ -195,8 +195,8 @@ public class BillAction extends BaseAction {
     }
 
     public String getBillEnableInsurancePolicyList(ActionBean actionBean) {
-        Bill.GetBillEnableInsurancePolicyListRequest request = JsonKit.json2Bean(actionBean.body, Bill.GetBillEnableInsurancePolicyListRequest.class);
-        Bill.GetBillEnableInsurancePolicyListResponse response = new Bill.GetBillEnableInsurancePolicyListResponse();
+        BillBean.GetBillEnableInsurancePolicyListRequest request = JsonKit.json2Bean(actionBean.body, BillBean.GetBillEnableInsurancePolicyListRequest.class);
+        BillBean.GetBillEnableInsurancePolicyListResponse response = new BillBean.GetBillEnableInsurancePolicyListResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -254,7 +254,7 @@ public class BillAction extends BaseAction {
         }
 
 
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+        Bill billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
 
         if (billByBillUuid == null) {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
@@ -278,26 +278,26 @@ public class BillAction extends BaseAction {
         response.data = new ArrayList<>();
 
         switch (request.type) {
-            case BillDetailModel.TYPE_ON_LINE:
-                CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-                custWarrantyCostModel.search = request.searchKey;
-                custWarrantyCostModel.searchType = request.searchType;
-                custWarrantyCostModel.ins_company_id = billByBillUuid.insurance_company_id;
-                custWarrantyCostModel.manager_uuid = actionBean.managerUuid;
-                custWarrantyCostModel.time_type = request.timeType;
-                custWarrantyCostModel.start_time = request.startTime;
-                custWarrantyCostModel.end_time = request.endTime;
-                custWarrantyCostModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+            case BillDetail.TYPE_ON_LINE:
+                CustWarrantyCost custWarrantyCost = new CustWarrantyCost();
+                custWarrantyCost.search = request.searchKey;
+                custWarrantyCost.searchType = request.searchType;
+                custWarrantyCost.ins_company_id = billByBillUuid.insurance_company_id;
+                custWarrantyCost.manager_uuid = actionBean.managerUuid;
+                custWarrantyCost.time_type = request.timeType;
+                custWarrantyCost.start_time = request.startTime;
+                custWarrantyCost.end_time = request.endTime;
+                custWarrantyCost.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
                 Set<String> productIds = new HashSet<>();
                 Set<String> companyIds = new HashSet<>();
 
-                List<CustWarrantyCostModel> completePayListByManagerUuid = custWarrantyCostDao.findCompletePayListByManagerUuid(custWarrantyCostModel);
+                List<CustWarrantyCost> completePayListByManagerUuid = custWarrantyCostDao.findCompletePayListByManagerUuid(custWarrantyCost);
                 if (completePayListByManagerUuid != null && !completePayListByManagerUuid.isEmpty()) {
-                    for (CustWarrantyCostModel warrantyCostModel : completePayListByManagerUuid) {
+                    for (CustWarrantyCost warrantyCostModel : completePayListByManagerUuid) {
                         companyIds.add(warrantyCostModel.ins_company_id);
                         productIds.add(warrantyCostModel.product_id);
-                        response.data.add(new Bill.BillInsurancePolicy(warrantyCostModel));
+                        response.data.add(new BillBean.BillInsurancePolicy(warrantyCostModel));
                     }
 
                     List<ProductBean> productList = productClient.getProductList(new ArrayList<>(productIds));
@@ -316,7 +316,7 @@ public class BillAction extends BaseAction {
                         }
                     }
 
-                    for (Bill.BillInsurancePolicy datum : response.data) {
+                    for (BillBean.BillInsurancePolicy datum : response.data) {
                         ProductBean productBean = productMap.get(datum.productId);
                         if (productBean != null) {
                             datum.productName = productBean.name;
@@ -329,23 +329,23 @@ public class BillAction extends BaseAction {
                     }
                 }
 
-                total = custWarrantyCostDao.findCompletePayCountByManagerUuid(custWarrantyCostModel);
+                total = custWarrantyCostDao.findCompletePayCountByManagerUuid(custWarrantyCost);
                 break;
-            case BillDetailModel.TYPE_OFF_LINE:
-                OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
-                offlineInsurancePolicyModel.search = request.searchKey;
-                offlineInsurancePolicyModel.searchType = request.searchType;
-                offlineInsurancePolicyModel.insurance_company = company.name;
-                offlineInsurancePolicyModel.manager_uuid = actionBean.managerUuid;
-                offlineInsurancePolicyModel.time_type = request.timeType;
-                offlineInsurancePolicyModel.start_time = request.startTime;
-                offlineInsurancePolicyModel.end_time = request.endTime;
-                offlineInsurancePolicyModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+            case BillDetail.TYPE_OFF_LINE:
+                OfflineCustWarranty offlineCustWarranty = new OfflineCustWarranty();
+                offlineCustWarranty.search = request.searchKey;
+                offlineCustWarranty.searchType = request.searchType;
+                offlineCustWarranty.insurance_company = company.name;
+                offlineCustWarranty.manager_uuid = actionBean.managerUuid;
+                offlineCustWarranty.time_type = request.timeType;
+                offlineCustWarranty.start_time = request.startTime;
+                offlineCustWarranty.end_time = request.endTime;
+                offlineCustWarranty.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
-                List<OfflineInsurancePolicyModel> completePayListByManagerUuid1 = offlineInsurancePolicyDao.findCompletePayListByManagerUuid(offlineInsurancePolicyModel);
+                List<OfflineCustWarranty> completePayListByManagerUuid1 = offlineCustWarrantyDao.findCompletePayListByManagerUuid(offlineCustWarranty);
                 if (completePayListByManagerUuid1 != null && !completePayListByManagerUuid1.isEmpty()) {
-                    for (OfflineInsurancePolicyModel offlineInsurancePolicyModel1 : completePayListByManagerUuid1) {
-                        Bill.BillInsurancePolicy insurancePolicy = new Bill.BillInsurancePolicy(offlineInsurancePolicyModel1);
+                    for (OfflineCustWarranty offlineCustWarranty1 : completePayListByManagerUuid1) {
+                        BillBean.BillInsurancePolicy insurancePolicy = new BillBean.BillInsurancePolicy(offlineCustWarranty1);
                         if("14463303497682968".equals(actionBean.managerUuid)){
                             insurancePolicy.insuredName = "***";
                         }
@@ -353,7 +353,7 @@ public class BillAction extends BaseAction {
                     }
                 }
 
-                total = offlineInsurancePolicyDao.findCompletePayCountByManagerUuid(offlineInsurancePolicyModel);
+                total = offlineCustWarrantyDao.findCompletePayCountByManagerUuid(offlineCustWarranty);
                 break;
             default:
                 return json(BaseResponse.CODE_PARAM_ERROR, "保单类型错误", response);
@@ -370,8 +370,8 @@ public class BillAction extends BaseAction {
     }
 
     public String getBillList(ActionBean actionBean) {
-        Bill.GetBillListRequest request = JsonKit.json2Bean(actionBean.body, Bill.GetBillListRequest.class);
-        Bill.GetBillListResponse response = new Bill.GetBillListResponse();
+        BillBean.GetBillListRequest request = JsonKit.json2Bean(actionBean.body, BillBean.GetBillListRequest.class);
+        BillBean.GetBillListResponse response = new BillBean.GetBillListResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -382,8 +382,8 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        BillModel billModel = new BillModel();
-        billModel.manager_uuid = actionBean.managerUuid;
+        Bill bill = new Bill();
+        bill.manager_uuid = actionBean.managerUuid;
 
         if (StringKit.isEmpty(request.searchType)) {
             request.searchKey = "";
@@ -392,7 +392,7 @@ public class BillAction extends BaseAction {
                 return json(BaseResponse.CODE_FAILURE, "关键字不能为空", response);
             }
 
-            billModel.searchType = request.searchType;
+            bill.searchType = request.searchType;
             switch (request.searchType) {
                 case "1":
                     InsuranceCompanyBean insuranceCompanyBean = new InsuranceCompanyBean();
@@ -411,7 +411,7 @@ public class BillAction extends BaseAction {
                                 sb1.append(",");
                             }
                         }
-                        billModel.insurance_company_id_string = "";
+                        bill.insurance_company_id_string = "";
                     } else {
                         response.data = new ArrayList<>();
                         response.page = setPageBean("0", request.pageNum, request.pageSize, 0, 0);
@@ -420,28 +420,28 @@ public class BillAction extends BaseAction {
 
                     break;
                 case "2":
-                    billModel.search = request.searchKey;
+                    bill.search = request.searchKey;
                     break;
             }
         }
 
-        billModel.is_settlement = request.billStatus;
+        bill.is_settlement = request.billStatus;
 
         if (StringKit.isEmpty(request.pageSize)) {
             request.pageSize = "10";
         }
 
-        billModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+        bill.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
-        List<BillModel> billByManagerUuid = billDao.findBillByManagerUuid(billModel);
-        long total = billDao.findBillCountByManagerUuid(billModel);
+        List<Bill> billByManagerUuid = billDao.findBillByManagerUuid(bill);
+        long total = billDao.findBillCountByManagerUuid(bill);
         response.data = new ArrayList<>();
 
 //        Map<String, String> agentName = new HashMap<>();
         Map<String, String> companyName = new HashMap<>();
 
         if (billByManagerUuid != null && !billByManagerUuid.isEmpty()) {
-            for (BillModel model : billByManagerUuid) {
+            for (Bill model : billByManagerUuid) {
 
 //                String s = agentName.get(model.principal);
 //                if (s == null && StringKit.isInteger(model.principal)) {
@@ -467,7 +467,7 @@ public class BillAction extends BaseAction {
                 } else {
                     model.insurance_company_name = s1;
                 }
-                response.data.add(new Bill.BillBean(model));
+                response.data.add(new BillBean.BillData(model));
             }
         }
 
@@ -482,8 +482,8 @@ public class BillAction extends BaseAction {
     }
 
     public String getBillInfo(ActionBean actionBean) {
-        Bill.GetBillInfoRequest request = JsonKit.json2Bean(actionBean.body, Bill.GetBillInfoRequest.class);
-        Bill.GetBillInfoResponse response = new Bill.GetBillInfoResponse();
+        BillBean.GetBillInfoRequest request = JsonKit.json2Bean(actionBean.body, BillBean.GetBillInfoRequest.class);
+        BillBean.GetBillInfoResponse response = new BillBean.GetBillInfoResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -494,7 +494,7 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+        Bill billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
 
         if (billByBillUuid == null) {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
@@ -508,14 +508,14 @@ public class BillAction extends BaseAction {
             }
         }
 
-        response.data = new Bill.BillBean(billByBillUuid);
+        response.data = new BillBean.BillData(billByBillUuid);
 
         return json(BaseResponse.CODE_SUCCESS, "获取结算单信息成功", response);
     }
 
     public String getBillDetail(ActionBean actionBean) {
-        Bill.GetBillDetailRequest request = JsonKit.json2Bean(actionBean.body, Bill.GetBillDetailRequest.class);
-        Bill.GetBillDetailResponse response = new Bill.GetBillDetailResponse();
+        BillBean.GetBillDetailRequest request = JsonKit.json2Bean(actionBean.body, BillBean.GetBillDetailRequest.class);
+        BillBean.GetBillDetailResponse response = new BillBean.GetBillDetailResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -526,7 +526,7 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+        Bill billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
 
         if (billByBillUuid == null) {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
@@ -536,8 +536,8 @@ public class BillAction extends BaseAction {
             request.pageSize = "10";
         }
 
-        BillDetailModel billDetailModel = new BillDetailModel();
-        billDetailModel.bill_uuid = request.billUuid;
+        BillDetail billDetail = new BillDetail();
+        billDetail.bill_uuid = request.billUuid;
 
         if (StringKit.isEmpty(request.searchType)) {
             request.searchKey = "";
@@ -563,23 +563,23 @@ public class BillAction extends BaseAction {
                                     sb.append(",");
                                 }
                             }
-                            billDetailModel.product_id_string = sb.toString();
+                            billDetail.product_id_string = sb.toString();
                         }
                     }
 
-                    billDetailModel.search = request.searchKey;
-                    billDetailModel.searchType = request.searchType;
+                    billDetail.search = request.searchKey;
+                    billDetail.searchType = request.searchType;
                     break;
                 default:
                     return json(BaseResponse.CODE_FAILURE, "搜索类型不正确", response);
             }
         }
 
-        billDetailModel.page = setPage(request.lastId, request.pageNum, request.pageSize);
+        billDetail.page = setPage(request.lastId, request.pageNum, request.pageSize);
 
-        List<BillDetailModel> billDetailByBillUuid = billDetailDao.findBillDetailByBillUuid(billDetailModel);
+        List<BillDetail> billDetailByBillUuid = billDetailDao.findBillDetailByBillUuid(billDetail);
 
-        long total = billDetailDao.findBillDetailCountByBillUuid(billDetailModel);
+        long total = billDetailDao.findBillDetailCountByBillUuid(billDetail);
         response.data = dealBillDetailModelList(billDetailByBillUuid,actionBean.managerUuid);
 
         String lastId = "0";
@@ -593,8 +593,8 @@ public class BillAction extends BaseAction {
     }
 
     public String downloadBillDetail(ActionBean actionBean) {
-        Bill.DownloadBillDetailRequest request = JsonKit.json2Bean(actionBean.body, Bill.DownloadBillDetailRequest.class);
-        Bill.DownloadBillDetailResponse response = new Bill.DownloadBillDetailResponse();
+        BillBean.DownloadBillDetailRequest request = JsonKit.json2Bean(actionBean.body, BillBean.DownloadBillDetailRequest.class);
+        BillBean.DownloadBillDetailResponse response = new BillBean.DownloadBillDetailResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -605,11 +605,11 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        BillDetailModel billDetailModel = new BillDetailModel();
-        billDetailModel.bill_uuid = request.billUuid;
-        billDetailModel.page = setPage("0", null, "1000");
+        BillDetail billDetail = new BillDetail();
+        billDetail.bill_uuid = request.billUuid;
+        billDetail.page = setPage("0", null, "1000");
 
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+        Bill billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
 
         if (billByBillUuid == null) {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
@@ -618,14 +618,14 @@ public class BillAction extends BaseAction {
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet(billByBillUuid.bill_name + "-结算单明细");
 
-        List<ExcelModel<Bill.BillInsurancePolicy>> list = new ArrayList<>();
-        Bill.BillInsurancePolicy downloadBillDetailTitle = Bill.getDownloadBillDetailTitle();
-        ExcelModel<Bill.BillInsurancePolicy> title = new ExcelModel<>(downloadBillDetailTitle, true, "title");
+        List<ExcelModel<BillBean.BillInsurancePolicy>> list = new ArrayList<>();
+        BillBean.BillInsurancePolicy downloadBillDetailTitle = BillBean.getDownloadBillDetailTitle();
+        ExcelModel<BillBean.BillInsurancePolicy> title = new ExcelModel<>(downloadBillDetailTitle, true, "title");
         title.boldWeight = Font.BOLDWEIGHT_BOLD;
         list.add(title);
         int startRow = 0;
 
-        Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(Bill.BILL_DETAIL_LIST, 0);
+        Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(BillBean.BILL_DETAIL_LIST, 0);
         Map<String, CellStyle> cellStyleMap = ExcelModelKit.getCellStyleMap();
 
         int i = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap, new HashMap<>());
@@ -633,17 +633,17 @@ public class BillAction extends BaseAction {
 
         boolean flag;
         do {
-            List<BillDetailModel> billDetailByBillUuid = billDetailDao.findBillDetailByBillUuid(billDetailModel);
+            List<BillDetail> billDetailByBillUuid = billDetailDao.findBillDetailByBillUuid(billDetail);
 
-            List<Bill.BillInsurancePolicy> billInsurancePolicies = dealBillDetailModelList(billDetailByBillUuid,actionBean.managerUuid);
+            List<BillBean.BillInsurancePolicy> billInsurancePolicies = dealBillDetailModelList(billDetailByBillUuid,actionBean.managerUuid);
 
             if (!billInsurancePolicies.isEmpty()) {
                 list.clear();
-                for (Bill.BillInsurancePolicy billInsurancePolicy : billInsurancePolicies) {
+                for (BillBean.BillInsurancePolicy billInsurancePolicy : billInsurancePolicies) {
                     list.add(new ExcelModel<>(billInsurancePolicy));
                 }
-                startRow = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap, Bill.BILL_DETAIL_FIELD_TYPE);
-                billDetailModel.page = setPage(billInsurancePolicies.get(billInsurancePolicies.size() - 1).id, null, "1000");
+                startRow = ExcelModelKit.writeRank(sheet, list, columnFieldMap, startRow, cellStyleMap, BillBean.BILL_DETAIL_FIELD_TYPE);
+                billDetail.page = setPage(billInsurancePolicies.get(billInsurancePolicies.size() - 1).id, null, "1000");
             }
 
             flag = billDetailByBillUuid != null && billDetailByBillUuid.size() >= 1000;
@@ -676,8 +676,8 @@ public class BillAction extends BaseAction {
     }
 
     public String deleteBill(ActionBean actionBean) {
-        Bill.DeleteBillRequest request = JsonKit.json2Bean(actionBean.body, Bill.DeleteBillRequest.class);
-        Bill.DeleteBillResponse response = new Bill.DeleteBillResponse();
+        BillBean.DeleteBillRequest request = JsonKit.json2Bean(actionBean.body, BillBean.DeleteBillRequest.class);
+        BillBean.DeleteBillResponse response = new BillBean.DeleteBillResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -688,7 +688,7 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+        Bill billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
 
         if (billByBillUuid == null) {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
@@ -711,8 +711,8 @@ public class BillAction extends BaseAction {
     }
 
     public String deleteBillDetail(ActionBean actionBean) {
-        Bill.DeleteBillDetailRequest request = JsonKit.json2Bean(actionBean.body, Bill.DeleteBillDetailRequest.class);
-        Bill.DeleteBillDetailResponse response = new Bill.DeleteBillDetailResponse();
+        BillBean.DeleteBillDetailRequest request = JsonKit.json2Bean(actionBean.body, BillBean.DeleteBillDetailRequest.class);
+        BillBean.DeleteBillDetailResponse response = new BillBean.DeleteBillDetailResponse();
 
         if (request == null) {
             return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
@@ -727,7 +727,7 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "无可删除数据", response);
         }
 
-        BillModel billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
+        Bill billByBillUuid = billDao.findBillByBillUuid(request.billUuid);
 
         if (billByBillUuid == null) {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
@@ -738,18 +738,18 @@ public class BillAction extends BaseAction {
 //        }
 
         BigDecimal bigDecimal = new BigDecimal(0);
-        List<BillDetailModel> list = new ArrayList<>();
-        CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-        OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
+        List<BillDetail> list = new ArrayList<>();
+        CustWarrantyCost custWarrantyCost = new CustWarrantyCost();
+        OfflineCustWarranty offlineCustWarranty = new OfflineCustWarranty();
 
-        for (Bill.BillInsurancePolicy billDetail : request.billDetails) {
-            BillDetailModel billDetailById = billDetailDao.findBillDetailById(billDetail.id);
+        for (BillBean.BillInsurancePolicy billDetail : request.billDetails) {
+            BillDetail billDetailById = billDetailDao.findBillDetailById(billDetail.id);
             BigDecimal brokerage;
             if (billDetailById != null) {
                 list.add(billDetailById);
-                if (StringKit.equals(billDetailById.type, BillDetailModel.TYPE_ON_LINE)) {
-                    custWarrantyCostModel.id = billDetail.costId;
-                    CustWarrantyBrokerageModel brokerageByCostId = custWarrantyCostDao.findBrokerageByCostId(custWarrantyCostModel);
+                if (StringKit.equals(billDetailById.type, BillDetail.TYPE_ON_LINE)) {
+                    custWarrantyCost.id = billDetail.costId;
+                    CustWarrantyBrokerage brokerageByCostId = custWarrantyCostDao.findBrokerageByCostId(custWarrantyCost);
 
                     if (brokerageByCostId != null && StringKit.isNumeric(brokerageByCostId.manager_money)) {
                         brokerage = new BigDecimal(brokerageByCostId.manager_money);
@@ -757,9 +757,9 @@ public class BillAction extends BaseAction {
                         brokerage = new BigDecimal("0");
                     }
 
-                } else if (StringKit.equals(billDetailById.type, BillDetailModel.TYPE_OFF_LINE)) {
-                    offlineInsurancePolicyModel.warranty_uuid = billDetailById.warranty_uuid;
-                    OfflineInsurancePolicyModel brokerageByWarrantyUuid = offlineInsurancePolicyDao.findBrokerageByWarrantyUuid(offlineInsurancePolicyModel);
+                } else if (StringKit.equals(billDetailById.type, BillDetail.TYPE_OFF_LINE)) {
+                    offlineCustWarranty.warranty_uuid = billDetailById.warranty_uuid;
+                    OfflineCustWarranty brokerageByWarrantyUuid = offlineCustWarrantyDao.findBrokerageByWarrantyUuid(offlineCustWarranty);
 
                     if (brokerageByWarrantyUuid != null && StringKit.isNumeric(brokerageByWarrantyUuid.brokerage)) {
                         brokerage = new BigDecimal(brokerageByWarrantyUuid.brokerage);
@@ -860,8 +860,8 @@ public class BillAction extends BaseAction {
 //        return str;
 //    }
 
-    private List<Bill.BillInsurancePolicy> dealBillDetailModelList(List<BillDetailModel> list,String managerUuid) {
-        List<Bill.BillInsurancePolicy> result = new ArrayList<>();
+    private List<BillBean.BillInsurancePolicy> dealBillDetailModelList(List<BillDetail> list, String managerUuid) {
+        List<BillBean.BillInsurancePolicy> result = new ArrayList<>();
         if (list == null || list.isEmpty()) {
             return result;
         }
@@ -872,8 +872,8 @@ public class BillAction extends BaseAction {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
-        for (BillDetailModel detailModel : list) {
-            Bill.BillInsurancePolicy billInsurancePolicy = new Bill.BillInsurancePolicy();
+        for (BillDetail detailModel : list) {
+            BillBean.BillInsurancePolicy billInsurancePolicy = new BillBean.BillInsurancePolicy();
 
             billInsurancePolicy.id = detailModel.id;
             billInsurancePolicy.warrantyUuid = detailModel.warranty_uuid;
@@ -891,7 +891,7 @@ public class BillAction extends BaseAction {
                 billInsurancePolicy.createdAtText = sdf.format(new Date(Long.valueOf(detailModel.created_at)));
             }
 
-            if (StringKit.equals(detailModel.type, BillDetailModel.TYPE_ON_LINE)) {
+            if (StringKit.equals(detailModel.type, BillDetail.TYPE_ON_LINE)) {
                 billInsurancePolicy.warrantyCode = detailModel.online_warranty_code;
                 billInsurancePolicy.productId = detailModel.online_product_id;
                 billInsurancePolicy.companyId = detailModel.online_ins_company_id;
@@ -943,7 +943,7 @@ public class BillAction extends BaseAction {
                 }
                 billInsurancePolicy.phase = detailModel.online_phase;
 
-            } else if (StringKit.equals(detailModel.type, BillDetailModel.TYPE_OFF_LINE)) {
+            } else if (StringKit.equals(detailModel.type, BillDetail.TYPE_OFF_LINE)) {
                 billInsurancePolicy.warrantyCode = detailModel.offline_warranty_code;
                 billInsurancePolicy.companyName = detailModel.offline_insurance_company;
                 billInsurancePolicy.productName = detailModel.offline_insurance_product;
@@ -1016,8 +1016,8 @@ public class BillAction extends BaseAction {
             }
         }
 
-        for (Bill.BillInsurancePolicy datum : result) {
-            if (StringKit.equals(datum.warrantyType, BillDetailModel.TYPE_ON_LINE)) {
+        for (BillBean.BillInsurancePolicy datum : result) {
+            if (StringKit.equals(datum.warrantyType, BillDetail.TYPE_ON_LINE)) {
                 ProductBean productBean = productMap.get(datum.productId);
                 if (productBean != null) {
                     datum.productName = productBean.name;
@@ -1035,12 +1035,12 @@ public class BillAction extends BaseAction {
 
     static class DealBillInsurancePolicyList {
         boolean isSuccess;
-        List<BillDetailModel> result;
+        List<BillDetail> result;
         BigDecimal brokerage;
         String message;
     }
 
-    private DealBillInsurancePolicyList dealBillInsurancePolicyList(String bill_uuid, List<Bill.BillInsurancePolicy> list) {
+    private DealBillInsurancePolicyList dealBillInsurancePolicyList(String bill_uuid, List<BillBean.BillInsurancePolicy> list) {
 
         DealBillInsurancePolicyList dealBillInsurancePolicyList = new DealBillInsurancePolicyList();
 
@@ -1050,38 +1050,38 @@ public class BillAction extends BaseAction {
 
         if (list != null && !list.isEmpty()) {
             String time = String.valueOf(System.currentTimeMillis());
-            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-            OfflineInsurancePolicyModel offlineInsurancePolicyModel = new OfflineInsurancePolicyModel();
+            CustWarrantyCost custWarrantyCost = new CustWarrantyCost();
+            OfflineCustWarranty offlineCustWarranty = new OfflineCustWarranty();
 
-            for (Bill.BillInsurancePolicy billInsurancePolicy : list) {
+            for (BillBean.BillInsurancePolicy billInsurancePolicy : list) {
 
-                BillDetailModel billDetailModel = new BillDetailModel();
-                billDetailModel.bill_uuid = bill_uuid;
-                billDetailModel.cost_id = billInsurancePolicy.costId;
-                billDetailModel.warranty_uuid = billInsurancePolicy.warrantyUuid;
-                billDetailModel.type = billInsurancePolicy.warrantyType;
-                billDetailModel.created_at = time;
-                billDetailModel.updated_at = time;
-                dealBillInsurancePolicyList.result.add(billDetailModel);
+                BillDetail billDetail = new BillDetail();
+                billDetail.bill_uuid = bill_uuid;
+                billDetail.cost_id = billInsurancePolicy.costId;
+                billDetail.warranty_uuid = billInsurancePolicy.warrantyUuid;
+                billDetail.type = billInsurancePolicy.warrantyType;
+                billDetail.created_at = time;
+                billDetail.updated_at = time;
+                dealBillInsurancePolicyList.result.add(billDetail);
                 BigDecimal brokerage;
 
-                if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_ON_LINE)) {
+                if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetail.TYPE_ON_LINE)) {
                     if (StringKit.isEmpty(billInsurancePolicy.costId)) {
                         dealBillInsurancePolicyList.isSuccess = false;
-                        dealBillInsurancePolicyList.message = "网销保单'" + billDetailModel.warranty_uuid + "'必须提供costId";
+                        dealBillInsurancePolicyList.message = "网销保单'" + billDetail.warranty_uuid + "'必须提供costId";
                         return dealBillInsurancePolicyList;
                     }
-                    custWarrantyCostModel.id = billInsurancePolicy.costId;
-                    CustWarrantyBrokerageModel brokerageByCostId = custWarrantyCostDao.findBrokerageByCostId(custWarrantyCostModel);
+                    custWarrantyCost.id = billInsurancePolicy.costId;
+                    CustWarrantyBrokerage brokerageByCostId = custWarrantyCostDao.findBrokerageByCostId(custWarrantyCost);
 
                     if (brokerageByCostId != null && StringKit.isNumeric(brokerageByCostId.manager_money)) {
                         brokerage = new BigDecimal(brokerageByCostId.manager_money);
                     } else {
                         brokerage = new BigDecimal("0");
                     }
-                } else if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetailModel.TYPE_OFF_LINE)) {
-                    offlineInsurancePolicyModel.warranty_uuid = billInsurancePolicy.warrantyUuid;
-                    OfflineInsurancePolicyModel brokerageByWarrantyUuid = offlineInsurancePolicyDao.findBrokerageByWarrantyUuid(offlineInsurancePolicyModel);
+                } else if (StringKit.equals(billInsurancePolicy.warrantyType, BillDetail.TYPE_OFF_LINE)) {
+                    offlineCustWarranty.warranty_uuid = billInsurancePolicy.warrantyUuid;
+                    OfflineCustWarranty brokerageByWarrantyUuid = offlineCustWarrantyDao.findBrokerageByWarrantyUuid(offlineCustWarranty);
 
                     if (brokerageByWarrantyUuid != null && StringKit.isNumeric(brokerageByWarrantyUuid.brokerage)) {
                         brokerage = new BigDecimal(brokerageByWarrantyUuid.brokerage);

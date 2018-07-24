@@ -7,7 +7,7 @@ import java.util.List;
  * 描述：
  * 作者：zhangyunhe
  */
-public class BillModel {
+public class Bill {
 
     /**
      * 主键id
@@ -83,7 +83,7 @@ public class BillModel {
     public String insurance_company_name;
     public String principal_name;
 
-    public List<BillDetailModel> billDetailModelList;
+    public List<BillDetail> billDetailList;
 
     // 已结算
     public static final String SETTLEMENT_STATE_NOT = "0";

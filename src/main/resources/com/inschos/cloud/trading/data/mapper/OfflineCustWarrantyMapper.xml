@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.inschos.cloud.trading.data.mapper.OfflineInsurancePolicyMapper">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.OfflineCustWarrantyMapper">
 
     <sql id="Base_Column_List">
         `id`,`manager_uuid`,`warranty_uuid`,`insured_name`,`policy_holder_name`,`insurance_company`,`insurance_type`,`insurance_product`,`warranty_code`,`payment_time`,`order_time`,`real_income_time`,`start_time`,`end_time`,`premium`,`pay_status`,`brokerage`,`channel_name`,`agent_name`,`is_settlement`,`bill_uuid`,`created_at`,`updated_at`,`state`
     </sql>
 
-    <insert id="addOfflineInsurancePolicy" parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
+    <insert id="addOfflineInsurancePolicy" parameterType="com.inschos.cloud.trading.model.OfflineCustWarranty"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into offline_cust_warranty
@@ -16,35 +16,35 @@
     </insert>
 
     <update id="updateSettlementAndBillUuidByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.OfflineCustWarranty">
         update offline_cust_warranty set
         `is_settlement`=#{is_settlement},`bill_uuid`=#{bill_uuid},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
     <update id="updateBillUuidByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.OfflineCustWarranty">
         update offline_cust_warranty set
         `bill_uuid`=#{bill_uuid},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
     <update id="updatePayStatusByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.OfflineCustWarranty">
         update offline_cust_warranty set
         `pay_status`=#{pay_status},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
     <update id="updateStateByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.OfflineCustWarranty">
         update offline_cust_warranty set
         `state`=#{state},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
     <select id="findOfflineInsurancePolicyByWarrantyCode" parameterType="java.lang.String"
-            resultType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+            resultType="com.inschos.cloud.trading.model.OfflineCustWarranty">
         select
         <include refid="Base_Column_List"/>
         from offline_cust_warranty
@@ -52,7 +52,7 @@
     </select>
 
     <select id="findOfflineInsurancePolicyByWarrantyUuid" parameterType="java.lang.String"
-            resultType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+            resultType="com.inschos.cloud.trading.model.OfflineCustWarranty">
         select
         <include refid="Base_Column_List"/>
         from offline_cust_warranty
@@ -60,8 +60,8 @@
     </select>
 
     <select id="findOfflineInsurancePolicyListForManagerSystem"
-            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.OfflineCustWarranty"
+            resultType="com.inschos.cloud.trading.model.OfflineCustWarranty">
         select
         <include refid="Base_Column_List"/>
         from offline_cust_warranty
@@ -144,7 +144,7 @@
     </select>
 
     <select id="findOfflineInsurancePolicyCountForManagerSystem"
-            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.OfflineCustWarranty"
             resultType="long">
         select
         count(id)
@@ -182,8 +182,8 @@
     </select>
 
 
-    <select id="findBrokerageByWarrantyUuid" parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+    <select id="findBrokerageByWarrantyUuid" parameterType="com.inschos.cloud.trading.model.OfflineCustWarranty"
+            resultType="com.inschos.cloud.trading.model.OfflineCustWarranty">
         select
         `id`,`brokerage`
         from offline_cust_warranty
@@ -191,8 +191,8 @@
     </select>
 
     <select id="findCompletePayListByManagerUuid"
-            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.OfflineCustWarranty"
+            resultType="com.inschos.cloud.trading.model.OfflineCustWarranty">
         select
         <include refid="Base_Column_List"/>
         from offline_cust_warranty
@@ -276,7 +276,7 @@
     </select>
 
     <select id="findCompletePayCountByManagerUuid"
-            parameterType="com.inschos.cloud.trading.model.OfflineInsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.OfflineCustWarranty"
             resultType="long">
         select
         COUNT(id)

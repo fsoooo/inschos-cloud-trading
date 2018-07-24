@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.inschos.cloud.trading.data.mapper.InsuranceParticipantMapper">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.CustWarrantyPersonMapper">
 
     <sql id="Base_Column_List">
         `id`,`warranty_uuid`,`type`,`relation_name`,`out_order_no`,`name`,`card_type`,`card_code`,`phone`,`occupation`,`birthday`,`sex`,`age`,`email`,`nationality`,`annual_income`,`height`,`weight`,`area`,`address`,`start_time`,`end_time`,`record_start_time`,`record_end_time`
     </sql>
 
-    <insert id="addInsuranceParticipant" parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
+    <insert id="addInsuranceParticipant" parameterType="com.inschos.cloud.trading.model.CustWarrantyPerson"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty_person
@@ -16,40 +16,40 @@
     </insert>
 
     <select id="findInsuranceParticipantByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
-            resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyPerson"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyPerson">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_person where warranty_uuid=#{warranty_uuid} AND `record_end_time`=#{max_time}
     </select>
 
     <select id="findInsuranceParticipantInsuredNameByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
-            resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyPerson"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyPerson">
         select
         `name`
         from cust_warranty_person where warranty_uuid=#{warranty_uuid} AND `type`=2 AND `record_end_time`=#{max_time}
     </select>
 
     <select id="findInsuranceParticipantInsuredByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
-            resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyPerson"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyPerson">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_person where warranty_uuid=#{warranty_uuid} AND `type`=2 AND `record_end_time`=#{max_time}
     </select>
 
     <select id="findInsuranceParticipantPolicyHolderNameAndMobileByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
-            resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyPerson"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyPerson">
         select
         `name`,`phone`
         from cust_warranty_person where warranty_uuid=#{warranty_uuid} AND `type`=1 AND `record_end_time`=#{max_time}
     </select>
 
     <select id="findInsuranceParticipantInsuredNameByWarrantyUuids"
-            parameterType="com.inschos.cloud.trading.model.InsuranceParticipantModel"
-            resultType="com.inschos.cloud.trading.model.InsuranceParticipantModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyPerson"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyPerson">
         select
         `warranty_uuid`,group_concat(`name`) as `name` ,COUNT(`warranty_uuid`) as `count`
         from cust_warranty_person where `warranty_uuid` in (${warranty_uuid_string}) AND `type`=2 AND `record_end_time`=#{max_time} GROUP BY `warranty_uuid`

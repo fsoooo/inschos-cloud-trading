@@ -18,7 +18,7 @@ import static com.inschos.cloud.trading.assist.kit.ExcelModelKit.TYPE_DOUBLE;
  * 描述：
  * 作者：zhangyunhe
  */
-public class InsurancePolicy {
+public class InsurancePolicyBean {
 
     public static class GetInsurancePolicyListRequest extends BaseRequest {
         // 保单状态，1-待支付 2-待生效 3-保障中 4-已失效
@@ -315,7 +315,7 @@ public class InsurancePolicy {
         public GetInsurancePolicy() {
         }
 
-        public GetInsurancePolicy(InsurancePolicyModel model) {
+        public GetInsurancePolicy(CustWarranty model) {
             if (model == null) {
                 return;
             }
@@ -359,10 +359,10 @@ public class InsurancePolicy {
             this.integral = model.integral;
             this.payStatus = model.pay_status;
             this.warrantyStatus = model.warranty_status;
-            CustWarrantyCostModel model1 = new CustWarrantyCostModel();
+            com.inschos.cloud.trading.model.CustWarrantyCost model1 = new com.inschos.cloud.trading.model.CustWarrantyCost();
             this.payStatusText = model1.payStatusText(payStatus);
 
-            if (StringKit.equals(this.warrantyStatus, InsurancePolicyModel.POLICY_STATUS_PENDING)) {
+            if (StringKit.equals(this.warrantyStatus, CustWarranty.POLICY_STATUS_PENDING)) {
                 this.warrantyStatusText = payStatusText;
             } else {
                 this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
@@ -444,7 +444,7 @@ public class InsurancePolicy {
             this.taxMoneyText = "¥" + this.taxMoney;
         }
 
-        public GetInsurancePolicy(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+        public GetInsurancePolicy(CustWarranty model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
             this(model);
             DecimalFormat decimalFormat = new DecimalFormat("#0.00");
             if (premium != null) {
@@ -466,7 +466,7 @@ public class InsurancePolicy {
             }
             this.taxMoneyText = "¥" + this.taxMoney;
             this.payStatus = warrantyStatusForPay;
-            if (StringKit.equals(this.warrantyStatus, InsurancePolicyModel.POLICY_STATUS_PENDING)) {
+            if (StringKit.equals(this.warrantyStatus, CustWarranty.POLICY_STATUS_PENDING)) {
                 this.warrantyStatusText = warrantyStatusForPayText;
             } else {
                 this.warrantyStatusText = model.warrantyStatusText(warrantyStatus);
@@ -491,7 +491,7 @@ public class InsurancePolicy {
             super();
         }
 
-        public GetInsurancePolicyDetail(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+        public GetInsurancePolicyDetail(CustWarranty model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
             super(model, premium, pay_money, tax_money, warrantyStatusForPay, warrantyStatusForPayText);
         }
     }
@@ -612,7 +612,7 @@ public class InsurancePolicy {
 
         //险别列表json
         // public String coverageList;
-        public List<CarInsurance.InsuranceInfo> coverageList;
+        public List<CarInsuranceBean.InsuranceInfo> coverageList;
 
         // 特约信息
         // public String spAgreement;
@@ -629,7 +629,7 @@ public class InsurancePolicy {
 
         }
 
-        public CarInfo(CarInfoModel model) {
+        public CarInfo(CustWarrantyCar model) {
             if (model == null) {
                 return;
             }
@@ -651,7 +651,7 @@ public class InsurancePolicy {
                 this.birthdayText = sdf.format(new Date(Long.valueOf(model.birthday)));
             }
             this.sex = model.sex;
-            this.sexText = new InsuranceParticipantModel().sexText(model.sex);
+            this.sexText = new CustWarrantyPerson().sexText(model.sex);
             this.age = model.age;
             this.frameNo = model.frame_no;
             this.engineNo = model.engine_no;
@@ -696,10 +696,10 @@ public class InsurancePolicy {
             }
             this.carSeat = model.car_seat;
             this.standardName = model.standard_name;
-            List<CarInsurance.InsuranceInfo> list = model.parseCoverageList(model.coverage_list);
+            List<CarInsuranceBean.InsuranceInfo> list = model.parseCoverageList(model.coverage_list);
             this.coverageList = new ArrayList<>();
             if (list != null && !list.isEmpty()) {
-                for (CarInsurance.InsuranceInfo o : list) {
+                for (CarInsuranceBean.InsuranceInfo o : list) {
                     if (model.insuranceType(insuranceType, o.coverageCode)) {
                         // StringKit.equals(o.hasExcessOption, "1") &&
                         if (StringKit.equals(o.isExcessOption, "1")) {
@@ -810,7 +810,7 @@ public class InsurancePolicy {
 
         }
 
-        public InsurancePolicyParticipantInfo(InsuranceParticipantModel model) {
+        public InsurancePolicyParticipantInfo(CustWarrantyPerson model) {
             if (model == null) {
                 return;
             }
@@ -869,7 +869,7 @@ public class InsurancePolicy {
 
         }
 
-        public GetInsurancePolicyItemBean(InsurancePolicyModel model) {
+        public GetInsurancePolicyItemBean(CustWarranty model) {
             super(model);
 
             this.policyHolderName = model.policy_holder_name;
@@ -877,7 +877,7 @@ public class InsurancePolicy {
             this.carCode = model.car_code;
         }
 
-        public GetInsurancePolicyItemBean(InsurancePolicyModel model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
+        public GetInsurancePolicyItemBean(CustWarranty model, BigDecimal premium, BigDecimal pay_money, BigDecimal tax_money, String warrantyStatusForPay, String warrantyStatusForPayText) {
             super(model, premium, pay_money, tax_money, warrantyStatusForPay, warrantyStatusForPayText);
         }
 
@@ -995,34 +995,34 @@ public class InsurancePolicy {
             this.timeText = timeText;
         }
 
-        public void setPremiumStatisticModel(PremiumStatisticModel premiumStatisticModel) {
-            if (premiumStatisticModel == null) {
+        public void setPremiumStatisticModel(PremiumStatistic premiumStatistic) {
+            if (premiumStatistic == null) {
                 return;
             }
 
-            if (!StringKit.isEmpty(premiumStatisticModel.premium) && StringKit.isNumeric(premiumStatisticModel.premium)) {
-                this.premium = premiumStatisticModel.premium;
+            if (!StringKit.isEmpty(premiumStatistic.premium) && StringKit.isNumeric(premiumStatistic.premium)) {
+                this.premium = premiumStatistic.premium;
                 this.premiumText = "¥" + this.premium;
             } else {
                 this.premium = "0.00";
                 this.premiumText = "¥0.00";
             }
 
-            if (!StringKit.isEmpty(premiumStatisticModel.insurance_policy_count) && StringKit.isInteger(premiumStatisticModel.insurance_policy_count)) {
-                this.insurancePolicyCount = premiumStatisticModel.insurance_policy_count;
+            if (!StringKit.isEmpty(premiumStatistic.insurance_policy_count) && StringKit.isInteger(premiumStatistic.insurance_policy_count)) {
+                this.insurancePolicyCount = premiumStatistic.insurance_policy_count;
             } else {
                 this.insurancePolicyCount = "0";
             }
 
         }
 
-        public void setBrokerageStatisticModel(BrokerageStatisticModel brokerageStatisticModel) {
-            if (brokerageStatisticModel == null) {
+        public void setBrokerageStatisticModel(BrokerageStatistic brokerageStatistic) {
+            if (brokerageStatistic == null) {
                 return;
             }
 
-            if (!StringKit.isEmpty(brokerageStatisticModel.brokerage) && StringKit.isNumeric(brokerageStatisticModel.brokerage)) {
-                this.brokerage = brokerageStatisticModel.brokerage;
+            if (!StringKit.isEmpty(brokerageStatistic.brokerage) && StringKit.isNumeric(brokerageStatistic.brokerage)) {
+                this.brokerage = brokerageStatistic.brokerage;
                 this.brokerageText = "¥" + this.brokerage;
             } else {
                 this.brokerage = "0.00";
@@ -1062,6 +1062,7 @@ public class InsurancePolicy {
         public String actualPayTime;
         public String actualPayTimeText;
         public String brokerageId;
+        public String type;
 
         public String warrantyMoney;
         public String warrantyMoneyText;
@@ -1091,76 +1092,77 @@ public class InsurancePolicy {
 
         }
 
-        public InsurancePolicyBrokerageStatistic(BrokerageStatisticListModel brokerageStatisticListModel) {
-            if (brokerageStatisticListModel == null) {
+        public InsurancePolicyBrokerageStatistic(BrokerageStatisticList brokerageStatisticList) {
+            if (brokerageStatisticList == null) {
                 return;
             }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             DecimalFormat decimalFormat = new DecimalFormat("#0.00");
             DecimalFormat money = new DecimalFormat("###,###,###,###,##0.00");
 
-            this.costId = brokerageStatisticListModel.cost_id;
-            this.warrantyId = brokerageStatisticListModel.warranty_id;
-            this.warrantyUuid = brokerageStatisticListModel.warranty_uuid;
-            this.warrantyCode = brokerageStatisticListModel.warranty_code;
-            this.productId = brokerageStatisticListModel.product_id;
-            this.insCompanyId = brokerageStatisticListModel.ins_company_id;
+            this.costId = brokerageStatisticList.cost_id;
+            this.warrantyId = brokerageStatisticList.warranty_id;
+            this.warrantyUuid = brokerageStatisticList.warranty_uuid;
+            this.warrantyCode = brokerageStatisticList.warranty_code;
+            this.productId = brokerageStatisticList.product_id;
+            this.insCompanyId = brokerageStatisticList.ins_company_id;
 
-            this.count = brokerageStatisticListModel.count;
-            this.byStagesWay = brokerageStatisticListModel.by_stages_way;
+            this.count = brokerageStatisticList.count;
+//            this.byStagesWay = brokerageStatisticListModel.by_stages_way;
 
-            this.warrantyStatus = brokerageStatisticListModel.warranty_status;
-            this.phase = brokerageStatisticListModel.phase;
+            this.warrantyStatus = brokerageStatisticList.warranty_status;
+            this.phase = brokerageStatisticList.phase;
+            this.type = brokerageStatisticList.type;
 
-            if (!StringKit.isEmpty(brokerageStatisticListModel.premium) && StringKit.isNumeric(brokerageStatisticListModel.premium)) {
-                this.premium = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.premium).doubleValue());
+            if (!StringKit.isEmpty(brokerageStatisticList.premium) && StringKit.isNumeric(brokerageStatisticList.premium)) {
+                this.premium = decimalFormat.format(new BigDecimal(brokerageStatisticList.premium).doubleValue());
                 this.premiumText = "¥" + this.premium;
             } else {
                 this.premium = "0.00";
                 this.premiumText = "¥0.00";
             }
 
-            this.actualPayTime = brokerageStatisticListModel.actual_pay_time;
-            if (StringKit.isInteger(brokerageStatisticListModel.actual_pay_time)) {
-                this.actualPayTimeText = sdf.format(new Date(Long.valueOf(brokerageStatisticListModel.actual_pay_time)));
+            this.actualPayTime = brokerageStatisticList.actual_pay_time;
+            if (StringKit.isInteger(brokerageStatisticList.actual_pay_time)) {
+                this.actualPayTimeText = sdf.format(new Date(Long.valueOf(brokerageStatisticList.actual_pay_time)));
             }
 
-            this.brokerageId = brokerageStatisticListModel.brokerage_id;
+            this.brokerageId = brokerageStatisticList.brokerage_id;
 
-            if (StringKit.isNumeric(brokerageStatisticListModel.warranty_money)) {
-                this.warrantyMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.warranty_money).doubleValue());
+            if (StringKit.isNumeric(brokerageStatisticList.warranty_money)) {
+                this.warrantyMoney = decimalFormat.format(new BigDecimal(brokerageStatisticList.warranty_money).doubleValue());
                 this.warrantyMoneyText = "¥" + money.format(new BigDecimal(this.warrantyMoney));
             } else {
                 this.warrantyMoney = "0.00";
                 this.warrantyMoneyText = "¥0.00";
             }
 
-            if (StringKit.isNumeric(brokerageStatisticListModel.manager_money)) {
-                this.managerMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.manager_money).doubleValue());
+            if (StringKit.isNumeric(brokerageStatisticList.manager_money)) {
+                this.managerMoney = decimalFormat.format(new BigDecimal(brokerageStatisticList.manager_money).doubleValue());
                 this.managerMoneyText = "¥" + money.format(new BigDecimal(this.managerMoney));
             } else {
                 this.managerMoney = "0.00";
                 this.managerMoneyText = "¥0.00";
             }
 
-            if (StringKit.isNumeric(brokerageStatisticListModel.channel_money)) {
-                this.channelMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.channel_money).doubleValue());
+            if (StringKit.isNumeric(brokerageStatisticList.channel_money)) {
+                this.channelMoney = decimalFormat.format(new BigDecimal(brokerageStatisticList.channel_money).doubleValue());
                 this.channelMoneyText = "¥" + money.format(new BigDecimal(this.channelMoney));
             } else {
                 this.channelMoney = "0.00";
                 this.channelMoneyText = "¥0.00";
             }
 
-            if (StringKit.isNumeric(brokerageStatisticListModel.agent_money)) {
-                this.agentMoney = decimalFormat.format(new BigDecimal(brokerageStatisticListModel.agent_money).doubleValue());
+            if (StringKit.isNumeric(brokerageStatisticList.agent_money)) {
+                this.agentMoney = decimalFormat.format(new BigDecimal(brokerageStatisticList.agent_money).doubleValue());
                 this.agentMoneyText = "¥" + money.format(new BigDecimal(this.agentMoney));
             } else {
                 this.agentMoney = "0.00";
                 this.agentMoneyText = "¥0.00";
             }
 
-            if (StringKit.isNumeric(brokerageStatisticListModel.warranty_rate)) {
-                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticListModel.warranty_rate);
+            if (StringKit.isNumeric(brokerageStatisticList.warranty_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticList.warranty_rate);
                 this.warrantyRate = decimalFormat.format(bigDecimal.doubleValue());
                 bigDecimal = bigDecimal.multiply(new BigDecimal("100"));
                 this.warrantyRateText = decimalFormat.format(bigDecimal.doubleValue()) + "%";
@@ -1169,8 +1171,8 @@ public class InsurancePolicy {
                 this.warrantyRateText = "0.00%";
             }
 
-            if (StringKit.isNumeric(brokerageStatisticListModel.manager_rate)) {
-                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticListModel.manager_rate);
+            if (StringKit.isNumeric(brokerageStatisticList.manager_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticList.manager_rate);
                 this.managerRate = decimalFormat.format(bigDecimal.doubleValue());
                 bigDecimal = bigDecimal.multiply(new BigDecimal("100"));
                 this.managerRateText = decimalFormat.format(bigDecimal.doubleValue()) + "%";
@@ -1180,8 +1182,8 @@ public class InsurancePolicy {
             }
 
 
-            if (StringKit.isNumeric(brokerageStatisticListModel.channel_rate)) {
-                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticListModel.channel_rate);
+            if (StringKit.isNumeric(brokerageStatisticList.channel_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticList.channel_rate);
                 this.channelRate = decimalFormat.format(bigDecimal.doubleValue());
                 bigDecimal = bigDecimal.multiply(new BigDecimal("100"));
                 this.channelRateText = decimalFormat.format(bigDecimal.doubleValue()) + "%";
@@ -1191,8 +1193,8 @@ public class InsurancePolicy {
             }
 
 
-            if (StringKit.isNumeric(brokerageStatisticListModel.agent_rate)) {
-                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticListModel.agent_rate);
+            if (StringKit.isNumeric(brokerageStatisticList.agent_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(brokerageStatisticList.agent_rate);
                 this.agentRate = decimalFormat.format(bigDecimal.doubleValue());
                 bigDecimal = bigDecimal.multiply(new BigDecimal("100"));
                 this.agentRateText = decimalFormat.format(bigDecimal.doubleValue()) + "%";
@@ -1293,83 +1295,83 @@ public class InsurancePolicy {
         public String isSettlementText;
 
         public String reason;
-        public List<OfflineInsurancePolicyModel.ErrorReason> reasonList;
+        public List<OfflineCustWarranty.ErrorReason> reasonList;
 
         public OfflineInsurancePolicy() {
 
         }
 
-        public OfflineInsurancePolicy(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
-            if (offlineInsurancePolicyModel == null) {
+        public OfflineInsurancePolicy(OfflineCustWarranty offlineCustWarranty) {
+            if (offlineCustWarranty == null) {
                 return;
             }
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             DecimalFormat money = new DecimalFormat("###,###,###,###,##0.00");
 
-            this.id = offlineInsurancePolicyModel.id;
-            this.managerUuid = offlineInsurancePolicyModel.manager_uuid;
-            this.warrantyUuid = offlineInsurancePolicyModel.warranty_uuid;
-            this.insuredName = offlineInsurancePolicyModel.insured_name;
-            this.policyHolderName = offlineInsurancePolicyModel.policy_holder_name;
-            this.insuranceCompany = offlineInsurancePolicyModel.insurance_company;
-            this.insuranceType = offlineInsurancePolicyModel.insurance_type;
-            this.insuranceProduct = offlineInsurancePolicyModel.insurance_product;
-            this.warrantyCode = offlineInsurancePolicyModel.warranty_code;
-            this.paymentTime = offlineInsurancePolicyModel.payment_time;
+            this.id = offlineCustWarranty.id;
+            this.managerUuid = offlineCustWarranty.manager_uuid;
+            this.warrantyUuid = offlineCustWarranty.warranty_uuid;
+            this.insuredName = offlineCustWarranty.insured_name;
+            this.policyHolderName = offlineCustWarranty.policy_holder_name;
+            this.insuranceCompany = offlineCustWarranty.insurance_company;
+            this.insuranceType = offlineCustWarranty.insurance_type;
+            this.insuranceProduct = offlineCustWarranty.insurance_product;
+            this.warrantyCode = offlineCustWarranty.warranty_code;
+            this.paymentTime = offlineCustWarranty.payment_time;
 //            if (StringKit.isInteger(this.paymentTime)) {
 //                this.paymentTimeText = sdf.format(new Date(Long.valueOf(this.paymentTime)));
 //            }
-            this.orderTime = offlineInsurancePolicyModel.order_time;
+            this.orderTime = offlineCustWarranty.order_time;
             if (StringKit.isInteger(this.orderTime)) {
                 this.orderTimeText = sdf.format(new Date(Long.valueOf(this.orderTime)));
             }
-            this.realIncomeTime = offlineInsurancePolicyModel.real_income_time;
+            this.realIncomeTime = offlineCustWarranty.real_income_time;
             if (StringKit.isInteger(this.realIncomeTime)) {
                 this.realIncomeTimeText = sdf.format(new Date(Long.valueOf(this.realIncomeTime)));
             }
-            this.startTime = offlineInsurancePolicyModel.start_time;
+            this.startTime = offlineCustWarranty.start_time;
             if (StringKit.isInteger(this.startTime)) {
                 this.startTimeText = sdf.format(new Date(Long.valueOf(this.startTime)));
             }
-            this.endTime = offlineInsurancePolicyModel.end_time;
+            this.endTime = offlineCustWarranty.end_time;
             if (StringKit.isInteger(this.endTime)) {
                 this.endTimeText = sdf.format(new Date(Long.valueOf(this.endTime)));
             }
-            if (StringKit.isNumeric(offlineInsurancePolicyModel.premium)) {
-                BigDecimal bigDecimal = new BigDecimal(offlineInsurancePolicyModel.premium);
+            if (StringKit.isNumeric(offlineCustWarranty.premium)) {
+                BigDecimal bigDecimal = new BigDecimal(offlineCustWarranty.premium);
                 this.premium = money.format(bigDecimal.doubleValue());
             } else {
                 this.premium = "0.00";
             }
             this.premiumText = "¥" + this.premium;
-            this.payStatus = offlineInsurancePolicyModel.pay_status;
-            CustWarrantyCostModel custWarrantyCostModel = new CustWarrantyCostModel();
-            this.payStatusText = custWarrantyCostModel.payStatusText(offlineInsurancePolicyModel.pay_status);
-            if (StringKit.isNumeric(offlineInsurancePolicyModel.brokerage)) {
-                BigDecimal bigDecimal = new BigDecimal(offlineInsurancePolicyModel.brokerage);
+            this.payStatus = offlineCustWarranty.pay_status;
+            com.inschos.cloud.trading.model.CustWarrantyCost custWarrantyCost = new com.inschos.cloud.trading.model.CustWarrantyCost();
+            this.payStatusText = custWarrantyCost.payStatusText(offlineCustWarranty.pay_status);
+            if (StringKit.isNumeric(offlineCustWarranty.brokerage)) {
+                BigDecimal bigDecimal = new BigDecimal(offlineCustWarranty.brokerage);
                 this.brokerage = money.format(bigDecimal.doubleValue());
             } else {
                 this.brokerage = "0.00";
             }
             this.brokerageText = "¥" + this.brokerage;
 
-            this.channelName = offlineInsurancePolicyModel.channel_name;
-            this.agentName = offlineInsurancePolicyModel.agent_name;
-            this.createdAt = offlineInsurancePolicyModel.created_at;
+            this.channelName = offlineCustWarranty.channel_name;
+            this.agentName = offlineCustWarranty.agent_name;
+            this.createdAt = offlineCustWarranty.created_at;
             if (StringKit.isInteger(this.createdAt)) {
                 this.createdAtText = sdf.format(new Date(Long.valueOf(this.createdAt)));
             }
-            this.updatedAt = offlineInsurancePolicyModel.updated_at;
+            this.updatedAt = offlineCustWarranty.updated_at;
             if (StringKit.isInteger(this.updatedAt)) {
                 this.updatedAtText = sdf.format(new Date(Long.valueOf(this.updatedAt)));
             }
-            this.reasonList = offlineInsurancePolicyModel.reasonList;
+            this.reasonList = offlineCustWarranty.reasonList;
             if (this.reasonList != null && !this.reasonList.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 int size = this.reasonList.size();
                 for (int i = 0; i < size; i++) {
-                    OfflineInsurancePolicyModel.ErrorReason errorReason = this.reasonList.get(i);
+                    OfflineCustWarranty.ErrorReason errorReason = this.reasonList.get(i);
                     sb.append(errorReason.reason);
                     if (i != size - 1) {
                         sb.append("，");
@@ -1377,9 +1379,9 @@ public class InsurancePolicy {
                 }
                 this.reason = sb.toString();
             }
-            this.isSettlement = offlineInsurancePolicyModel.is_settlement;
-            BillModel billModel = new BillModel();
-            this.isSettlementText = billModel.isSettlementText(offlineInsurancePolicyModel.is_settlement);
+            this.isSettlement = offlineCustWarranty.is_settlement;
+            Bill bill = new Bill();
+            this.isSettlementText = bill.isSettlementText(offlineCustWarranty.is_settlement);
         }
 
     }
@@ -1491,68 +1493,68 @@ public class InsurancePolicy {
 
         }
 
-        public CustWarrantyBrokerage(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+        public CustWarrantyBrokerage(com.inschos.cloud.trading.model.CustWarrantyBrokerage custWarrantyBrokerage) {
 
-            if (custWarrantyBrokerageModel == null) {
+            if (custWarrantyBrokerage == null) {
                 return;
             }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
-            this.id = custWarrantyBrokerageModel.id;
-            this.warrantyUuid = custWarrantyBrokerageModel.warranty_uuid;
-            this.managerUuid = custWarrantyBrokerageModel.manager_uuid;
-            this.costId = custWarrantyBrokerageModel.cost_id;
-            this.channelId = custWarrantyBrokerageModel.id;
-            this.agentId = custWarrantyBrokerageModel.id;
-            this.warrantyMoney = custWarrantyBrokerageModel.warranty_money;
-            this.warrantyMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.warranty_money));
-            this.insMoney = custWarrantyBrokerageModel.ins_money;
-            this.insMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.ins_money));
-            this.managerMoney = custWarrantyBrokerageModel.manager_money;
-            this.managerMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.manager_money));
-            this.channelMoney = custWarrantyBrokerageModel.channel_money;
-            this.channelMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.channel_money));
-            this.agentMoney = custWarrantyBrokerageModel.agent_money;
-            this.agentMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerageModel.agent_money));
-            this.warrantyRate = custWarrantyBrokerageModel.warranty_rate;
-            if (StringKit.isNumeric(custWarrantyBrokerageModel.warranty_rate)) {
-                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.warranty_rate);
+            this.id = custWarrantyBrokerage.id;
+            this.warrantyUuid = custWarrantyBrokerage.warranty_uuid;
+            this.managerUuid = custWarrantyBrokerage.manager_uuid;
+            this.costId = custWarrantyBrokerage.cost_id;
+            this.channelId = custWarrantyBrokerage.id;
+            this.agentId = custWarrantyBrokerage.id;
+            this.warrantyMoney = custWarrantyBrokerage.warranty_money;
+            this.warrantyMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerage.warranty_money));
+            this.insMoney = custWarrantyBrokerage.ins_money;
+            this.insMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerage.ins_money));
+            this.managerMoney = custWarrantyBrokerage.manager_money;
+            this.managerMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerage.manager_money));
+            this.channelMoney = custWarrantyBrokerage.channel_money;
+            this.channelMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerage.channel_money));
+            this.agentMoney = custWarrantyBrokerage.agent_money;
+            this.agentMoneyText = "¥" + decimalFormat.format(new BigDecimal(custWarrantyBrokerage.agent_money));
+            this.warrantyRate = custWarrantyBrokerage.warranty_rate;
+            if (StringKit.isNumeric(custWarrantyBrokerage.warranty_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerage.warranty_rate);
                 BigDecimal multiply = bigDecimal.multiply(new BigDecimal(100));
                 this.warrantyRateText = decimalFormat.format(multiply.doubleValue()) + "%";
             }
-            this.insRate = custWarrantyBrokerageModel.ins_rate;
-            if (StringKit.isNumeric(custWarrantyBrokerageModel.ins_rate)) {
-                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.ins_rate);
+            this.insRate = custWarrantyBrokerage.ins_rate;
+            if (StringKit.isNumeric(custWarrantyBrokerage.ins_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerage.ins_rate);
                 BigDecimal multiply = bigDecimal.multiply(new BigDecimal(100));
                 this.insRateText = decimalFormat.format(multiply.doubleValue()) + "%";
             }
-            this.managerRate = custWarrantyBrokerageModel.manager_rate;
-            if (StringKit.isNumeric(custWarrantyBrokerageModel.manager_rate)) {
-                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.manager_rate);
+            this.managerRate = custWarrantyBrokerage.manager_rate;
+            if (StringKit.isNumeric(custWarrantyBrokerage.manager_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerage.manager_rate);
                 BigDecimal multiply = bigDecimal.multiply(new BigDecimal(100));
                 this.managerRateText = decimalFormat.format(multiply.doubleValue()) + "%";
             }
-            this.channelRate = custWarrantyBrokerageModel.channel_rate;
-            if (StringKit.isNumeric(custWarrantyBrokerageModel.channel_rate)) {
-                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.channel_rate);
+            this.channelRate = custWarrantyBrokerage.channel_rate;
+            if (StringKit.isNumeric(custWarrantyBrokerage.channel_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerage.channel_rate);
                 BigDecimal multiply = bigDecimal.multiply(new BigDecimal(100));
                 this.channelRateText = decimalFormat.format(multiply.doubleValue()) + "%";
             }
-            this.agentRate = custWarrantyBrokerageModel.agent_rate;
-            if (StringKit.isNumeric(custWarrantyBrokerageModel.agent_rate)) {
-                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerageModel.agent_rate);
+            this.agentRate = custWarrantyBrokerage.agent_rate;
+            if (StringKit.isNumeric(custWarrantyBrokerage.agent_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyBrokerage.agent_rate);
                 BigDecimal multiply = bigDecimal.multiply(new BigDecimal(100));
                 this.agentRateText = decimalFormat.format(multiply.doubleValue()) + "%";
             }
 
-            this.createdAt = custWarrantyBrokerageModel.created_at;
-            if (StringKit.isInteger(custWarrantyBrokerageModel.created_at)) {
-                this.createdAtText = sdf.format(new Date(Long.valueOf(custWarrantyBrokerageModel.created_at)));
+            this.createdAt = custWarrantyBrokerage.created_at;
+            if (StringKit.isInteger(custWarrantyBrokerage.created_at)) {
+                this.createdAtText = sdf.format(new Date(Long.valueOf(custWarrantyBrokerage.created_at)));
             }
-            this.updatedAt = custWarrantyBrokerageModel.updated_at;
-            if (StringKit.isInteger(custWarrantyBrokerageModel.updated_at)) {
-                this.updatedAtText = sdf.format(new Date(Long.valueOf(custWarrantyBrokerageModel.updated_at)));
+            this.updatedAt = custWarrantyBrokerage.updated_at;
+            if (StringKit.isInteger(custWarrantyBrokerage.updated_at)) {
+                this.updatedAtText = sdf.format(new Date(Long.valueOf(custWarrantyBrokerage.updated_at)));
             }
         }
     }
@@ -1560,7 +1562,7 @@ public class InsurancePolicy {
     public static class DownInsurancePolicy {
         public String count;
         public String time;
-        public List<InsurancePolicy.GetInsurancePolicyItemBean> list;
+        public List<InsurancePolicyBean.GetInsurancePolicyItemBean> list;
     }
 
     public static class CustWarrantyCost {
@@ -1621,61 +1623,61 @@ public class InsurancePolicy {
 
         }
 
-        public CustWarrantyCost(CustWarrantyCostModel custWarrantyCostModel) {
-            if (custWarrantyCostModel == null) {
+        public CustWarrantyCost(com.inschos.cloud.trading.model.CustWarrantyCost custWarrantyCost) {
+            if (custWarrantyCost == null) {
                 return;
             }
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
-            this.id = custWarrantyCostModel.id;
-            this.warrantyUuid = custWarrantyCostModel.warranty_uuid;
-            this.payTime = custWarrantyCostModel.pay_time;
-            if (StringKit.isInteger(custWarrantyCostModel.pay_time)) {
-                this.payTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.pay_time)));
+            this.id = custWarrantyCost.id;
+            this.warrantyUuid = custWarrantyCost.warranty_uuid;
+            this.payTime = custWarrantyCost.pay_time;
+            if (StringKit.isInteger(custWarrantyCost.pay_time)) {
+                this.payTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCost.pay_time)));
             }
-            this.phase = custWarrantyCostModel.phase;
-            if (StringKit.isNumeric(custWarrantyCostModel.premium)) {
-                BigDecimal bigDecimal = new BigDecimal(custWarrantyCostModel.premium);
+            this.phase = custWarrantyCost.phase;
+            if (StringKit.isNumeric(custWarrantyCost.premium)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyCost.premium);
                 this.premium = decimalFormat.format(bigDecimal.doubleValue());
             } else {
                 this.premium = "0.00";
             }
             this.premiumText = "¥" + this.premium;
-            if (StringKit.isNumeric(custWarrantyCostModel.tax_money)) {
-                BigDecimal bigDecimal = new BigDecimal(custWarrantyCostModel.tax_money);
+            if (StringKit.isNumeric(custWarrantyCost.tax_money)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyCost.tax_money);
                 this.taxMoney = decimalFormat.format(bigDecimal.doubleValue());
             } else {
                 this.taxMoney = "0.00";
             }
             this.taxMoneyText = "¥" + this.taxMoney;
-            this.actualPayTime = custWarrantyCostModel.actual_pay_time;
-            if (StringKit.isInteger(custWarrantyCostModel.actual_pay_time)) {
-                this.actualPayTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.actual_pay_time)));
+            this.actualPayTime = custWarrantyCost.actual_pay_time;
+            if (StringKit.isInteger(custWarrantyCost.actual_pay_time)) {
+                this.actualPayTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCost.actual_pay_time)));
             }
-            this.payWay = custWarrantyCostModel.pay_way;
-            this.payWayText = custWarrantyCostModel.payWayText(custWarrantyCostModel.pay_way);
-            if (StringKit.isNumeric(custWarrantyCostModel.pay_money)) {
-                BigDecimal bigDecimal = new BigDecimal(custWarrantyCostModel.pay_money);
+            this.payWay = custWarrantyCost.pay_way;
+            this.payWayText = custWarrantyCost.payWayText(custWarrantyCost.pay_way);
+            if (StringKit.isNumeric(custWarrantyCost.pay_money)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyCost.pay_money);
                 this.payMoney = decimalFormat.format(bigDecimal.doubleValue());
             } else {
                 this.payMoney = "0.00";
             }
             this.payMoneyText = "¥" + this.taxMoney;
-            this.payStatus = custWarrantyCostModel.pay_status;
-            this.payStatusText = custWarrantyCostModel.payStatusText(custWarrantyCostModel.pay_status);
-            this.isSettlement = custWarrantyCostModel.is_settlement;
-            BillModel billModel = new BillModel();
-            this.isSettlementText = billModel.isSettlementText(custWarrantyCostModel.is_settlement);
-            this.billUuid = custWarrantyCostModel.id;
-            this.createdAt = custWarrantyCostModel.created_at;
-            if (StringKit.isInteger(custWarrantyCostModel.created_at)) {
-                this.createdAtText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.created_at)));
+            this.payStatus = custWarrantyCost.pay_status;
+            this.payStatusText = custWarrantyCost.payStatusText(custWarrantyCost.pay_status);
+            this.isSettlement = custWarrantyCost.is_settlement;
+            Bill bill = new Bill();
+            this.isSettlementText = bill.isSettlementText(custWarrantyCost.is_settlement);
+            this.billUuid = custWarrantyCost.id;
+            this.createdAt = custWarrantyCost.created_at;
+            if (StringKit.isInteger(custWarrantyCost.created_at)) {
+                this.createdAtText = sdf.format(new Date(Long.valueOf(custWarrantyCost.created_at)));
             }
-            this.updatedAt = custWarrantyCostModel.updated_at;
-            if (StringKit.isInteger(custWarrantyCostModel.updated_at)) {
-                this.updatedAtText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.updated_at)));
+            this.updatedAt = custWarrantyCost.updated_at;
+            if (StringKit.isInteger(custWarrantyCost.updated_at)) {
+                this.updatedAtText = sdf.format(new Date(Long.valueOf(custWarrantyCost.updated_at)));
             }
         }
     }

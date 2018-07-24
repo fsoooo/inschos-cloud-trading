@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.CustWarrantyMapper">
 
     <sql id="Base_Column_List">
         `id`,`warranty_uuid`,`pre_policy_no`,`warranty_code`,`comb_product`,`comb_warranty_code`,`business_no`,`manager_uuid`,`account_uuid`,`agent_id`,`channel_id`,`plan_id`,`product_id`,`start_time`,`end_time`,`ins_company_id`,`count`,`pay_category_id`,`is_settlement`,`warranty_url`,`warranty_from`,`type`,`warranty_status`,`integral`,`express_no`,`express_company_name`,`express_address`,`express_province_code`,`express_city_code`,`express_county_code`,`express_email`,`delivery_type`,`order_time`,`resp_code`,`resp_msg`,`created_at`,`updated_at`,`state`
     </sql>
 
-    <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+    <insert id="addInsurancePolicy" parameterType="com.inschos.cloud.trading.model.CustWarranty"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty
@@ -16,28 +16,28 @@
     </insert>
 
     <update id="updateInsurancePolicyProPolicyNoByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty">
         update cust_warranty set
         `pre_policy_no`=#{pre_policy_no},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
     <update id="updateInsurancePolicyStatusForCarInsuranceWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty">
         update cust_warranty set
         `pre_policy_no`=#{pre_policy_no},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
     <update id="updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty">
         update cust_warranty set
-        `warranty_code`=#{warranty_code},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
+        `warranty_code`=#{warranty_code},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at},`resp_msg`=#{resp_msg},`resp_code`=#{resp_code}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
     <update id="updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty">
         update cust_warranty set
         `express_no`=#{express_no},`express_company_name`=#{express_company_name},`express_address`=#{express_address},`express_province_code`=#{express_province_code},`express_city_code`=#{express_city_code},`express_county_code`=#{express_county_code},`delivery_type`=#{delivery_type},`express_email`=#{express_email},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
@@ -45,7 +45,7 @@
 
     <select id="findInsurancePolicyDetailByWarrantyUuid"
             parameterType="String"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            resultType="com.inschos.cloud.trading.model.CustWarranty">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty
@@ -53,7 +53,7 @@
     </select>
 
     <select id="findEffectiveInsurancePolicyCountByChannelIdAndTime"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
             resultType="long">
         select
         COUNT(id)
@@ -68,7 +68,7 @@
     </select>
 
     <select id="findEffectiveInsurancePolicyCountByAgentAndTime"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
             resultType="int">
         select
         COUNT(id)
@@ -84,7 +84,7 @@
     </select>
 
     <select id="findInsurancePolicyListCount"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
             resultType="long">
         select
         count(id)
@@ -107,8 +107,8 @@
     </select>
 
     <select id="findInsurancePolicyListCountByTimeAndManagerUuidAndProductId"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="PolicyListCountModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
+            resultType="PolicyListCount">
         select
         `product_id`, count(id) product_count
         from cust_warranty
@@ -132,8 +132,8 @@
     </select>
 
     <select id="findInsurancePolicyListByActualPayTime"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
+            resultType="com.inschos.cloud.trading.model.CustWarranty">
         select
         `cust_warranty`.`id` id,`cust_warranty`.`warranty_uuid` warranty_uuid,`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,
         `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,`cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,
@@ -203,7 +203,7 @@
     </select>
 
     <select id="findInsurancePolicyCountByActualPayTime"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
             resultType="long">
         select
         COUNT(`cust_warranty`.`id`)
@@ -230,8 +230,8 @@
     </select>
 
     <select id="findInsurancePolicyListForManagerSystem"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
+            resultType="com.inschos.cloud.trading.model.CustWarranty">
         select
         `cust_warranty`.`id` id,`cust_warranty`.`warranty_uuid` warranty_uuid,`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,
         `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,`cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,
@@ -456,7 +456,7 @@
     </select>
 
     <select id="findInsurancePolicyCountForManagerSystem"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
             resultType="long">
         select
         COUNT(`cust_warranty`.`id`)
@@ -548,8 +548,8 @@
     </select>
 
     <select id="findInsurancePolicyListForOnlineStore"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
+            resultType="com.inschos.cloud.trading.model.CustWarranty">
         select
         <if test='searchType=="7"'>
             distinct
@@ -783,7 +783,7 @@
     </select>
 
     <select id="findInsurancePolicyCountForOnlineStore"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
             resultType="long">
         select
         COUNT(`cust_warranty`.`id`)
@@ -889,7 +889,7 @@
         </if>
     </select>
 
-    <select id="findExistsValid" resultType="com.inschos.cloud.trading.model.InsurancePolicyModel" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+    <select id="findExistsValid" resultType="com.inschos.cloud.trading.model.CustWarranty" parameterType="com.inschos.cloud.trading.model.CustWarranty">
         select
           <include refid="Base_Column_List"/>
         from cust_warranty
@@ -902,7 +902,7 @@
         </where>
     </select>
 
-    <select id="findCountByAgentWarrantyStatus" parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" resultType="int">
+    <select id="findCountByAgentWarrantyStatus" parameterType="com.inschos.cloud.trading.model.CustWarranty" resultType="int">
         select
           count(1)
         from cust_warranty
@@ -918,7 +918,7 @@
         </where>
     </select>
 
-    <select id="findCountByAgentCostStatus"  parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel" resultType="int">
+    <select id="findCountByAgentCostStatus" parameterType="com.inschos.cloud.trading.model.CustWarranty" resultType="int">
         select
           count(1)
         from cust_warranty w
@@ -936,8 +936,8 @@
     </select>
 
     <select id="findInsuranceRecordListByManagerUuid"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
+            resultType="com.inschos.cloud.trading.model.CustWarranty">
         select
         `cust_warranty`.`id` id,`cust_warranty`.`warranty_uuid` warranty_uuid,`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,
         `cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,`cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,
@@ -969,7 +969,7 @@
     </select>
 
     <select id="findInsuranceRecordCountByManagerUuid"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
             resultType="long">
         select
         COUNT(`cust_warranty`.`id`)
@@ -979,8 +979,8 @@
     </select>
 
     <select id="findPremiumCountByCustomerManager"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
+            resultType="com.inschos.cloud.trading.model.CustWarranty">
         select count(1) `times`, sum(premium) premium from (
             select
               distinct c.warranty_uuid,c.premium,c.phase
@@ -998,6 +998,15 @@
                 and c.pay_status=206
             </where>
         ) c
+    </select>
+
+    <select id="findByProposalNo"
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
+            resultType="com.inschos.cloud.trading.model.CustWarranty">
+        select
+         <include refid="Base_Column_List"/>
+        from cust_warranty
+        where find_in_set(#{pre_policy_no},`pre_policy_no`) and state=1
     </select>
 
 

@@ -1,6 +1,6 @@
 package com.inschos.cloud.trading.data.mapper;
 
-import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.cloud.trading.model.CustWarrantyCar;
 
 import java.util.List;
 
@@ -11,19 +11,19 @@ import java.util.List;
  */
 public interface CarInfoMapper {
 
-    int addCarInfo(CarInfoModel carInfoModel);
+    int addCarInfo(CustWarrantyCar custWarrantyCar);
 
-    CarInfoModel findOneByWarrantyUuid(String warrantyUuid);
+    CustWarrantyCar findOneByWarrantyUuid(String warrantyUuid);
 
-    CarInfoModel findCarInfoCarCodeAndFrameNoByWarrantyUuid(String warrantyUuid);
+    CustWarrantyCar findCarInfoCarCodeAndFrameNoByWarrantyUuid(String warrantyUuid);
 
-    List<CarInfoModel> findByBizId(String bizId);
+    List<CustWarrantyCar> findByBizId(String bizId);
 
-    List<CarInfoModel> findWarrantyUuidByBizId(String bizId);
+    List<CustWarrantyCar> findWarrantyUuidByBizId(String bizId);
 
-    List<CarInfoModel> findWarrantyUuidByThpBizID(String thpBizID);
+    List<CustWarrantyCar> findWarrantyUuidByThpBizID(String thpBizID);
 
-    CarInfoModel findBjCodeFlagAndBizIdByWarrantyUuid(String warrantyUuid);
+    CustWarrantyCar findBjCodeFlagAndBizIdByWarrantyUuid(String warrantyUuid);
 
-    int updateBjCodeFlagByWarrantyUuid(CarInfoModel carInfoModel);
+    int updateBjCodeFlagByWarrantyUuid(CustWarrantyCar custWarrantyCar);
 }

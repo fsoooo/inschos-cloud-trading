@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.inschos.cloud.trading.data.mapper.InsurancePreservationMapper">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.CustWarrantyChangeRecordMapper">
 
     <sql id="Base_Column_List">
         `id`,`private_code`,`cust_id`,`cust_type`,`apply_time`,`event`,`ip_address`,`old_content`,`content`,`describe`,`type`,`status`,`remark`,`created_at`,`updated_at`
     </sql>
 
-    <insert id="addInsurancePreservation" parameterType="com.inschos.cloud.trading.model.InsurancePreservationModel" useGeneratedKeys="true"
+    <insert id="addInsurancePreservation" parameterType="com.inschos.cloud.trading.model.CustWarrantyChangeRecord" useGeneratedKeys="true"
             keyProperty="id">
         insert into cust_warranty_change_record
         <include refid="Base_Column_List" />
@@ -14,8 +14,8 @@
         (#{id},#{private_code},#{cust_id},#{cust_type},#{apply_time},#{event},#{ip_address},#{old_content},#{content},#{describe},#{type},#{status},#{remark},#{created_at},#{updated_at})
     </insert>
 
-    <select id="findInsurancePreservationListPrivateCode" parameterType="com.inschos.cloud.trading.model.InsurancePreservationModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePreservationModel">
+    <select id="findInsurancePreservationListPrivateCode" parameterType="com.inschos.cloud.trading.model.CustWarrantyChangeRecord"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyChangeRecord">
 
         select
         <include refid="Base_Column_List"/>
