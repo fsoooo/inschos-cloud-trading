@@ -5,9 +5,9 @@ import com.inschos.cloud.trading.access.rpc.bean.ChannelIdBean;
 import com.inschos.cloud.trading.access.rpc.bean.CustomerBean;
 import com.inschos.cloud.trading.access.rpc.service.PremiumService;
 import com.inschos.cloud.trading.data.dao.CustWarrantyCostDao;
-import com.inschos.cloud.trading.data.dao.InsurancePolicyDao;
-import com.inschos.cloud.trading.model.CustWarrantyCostModel;
-import com.inschos.cloud.trading.model.InsurancePolicyModel;
+import com.inschos.cloud.trading.data.dao.CustWarrantyDao;
+import com.inschos.cloud.trading.model.CustWarrantyCost;
+import com.inschos.cloud.trading.model.CustWarranty;
 import com.inschos.common.assist.kit.StringKit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.text.DecimalFormat;
 public class PremiumServiceImpl implements PremiumService {
 
     @Autowired
-    private InsurancePolicyDao insurancePolicyDao;
+    private CustWarrantyDao custWarrantyDao;
 
     @Autowired
     private CustWarrantyCostDao custWarrantyCostDao;
@@ -33,7 +33,7 @@ public class PremiumServiceImpl implements PremiumService {
     public String getPremiumByChannelIdForManagerSystem(ChannelIdBean bean) {
         String result = "0.00";
         if (bean != null) {
-            CustWarrantyCostModel insurance = new CustWarrantyCostModel();
+            CustWarrantyCost insurance = new CustWarrantyCost();
             if (bean.channelId != null) {
                 insurance.channel_id = bean.channelId;
             } else {
@@ -50,7 +50,7 @@ public class PremiumServiceImpl implements PremiumService {
     public String getPremiumByAccountUuidForManagerSystem(AccountUuidBean bean) {
         String result = "0.00";
         if (bean != null) {
-            CustWarrantyCostModel insurance = new CustWarrantyCostModel();
+            CustWarrantyCost insurance = new CustWarrantyCost();
             if (bean.accountUuid != null) {
                 insurance.account_uuid = bean.accountUuid;
             } else {
@@ -67,7 +67,7 @@ public class PremiumServiceImpl implements PremiumService {
     public String getPremiumCountByChannelIdForManagerSystem(ChannelIdBean bean) {
         String result = "0";
         if (bean != null) {
-            InsurancePolicyModel insurance = new InsurancePolicyModel();
+            CustWarranty insurance = new CustWarranty();
             if (bean.channelId != null) {
                 insurance.channel_id = bean.channelId;
             } else {
@@ -75,7 +75,7 @@ public class PremiumServiceImpl implements PremiumService {
             }
             insurance.start_time = bean.startTime;
             insurance.end_time = bean.endTime;
-            result = String.valueOf(insurancePolicyDao.findEffectiveInsurancePolicyCountByChannelIdAndTime(insurance));
+            result = String.valueOf(custWarrantyDao.findEffectiveInsurancePolicyCountByChannelIdAndTime(insurance));
         }
         return result;
     }
@@ -86,20 +86,20 @@ public class PremiumServiceImpl implements PremiumService {
         if (bean == null || StringKit.isEmpty(bean.managerUuid) || StringKit.isEmpty(bean.personType) || StringKit.isEmpty(bean.cardType) || StringKit.isEmpty(bean.cardCode)) {
             return bean;
         }
-        InsurancePolicyModel insurancePolicyModel = new InsurancePolicyModel();
-        insurancePolicyModel.manager_uuid = bean.managerUuid;
-        insurancePolicyModel.person_type = bean.personType;
+        CustWarranty custWarranty = new CustWarranty();
+        custWarranty.manager_uuid = bean.managerUuid;
+        custWarranty.person_type = bean.personType;
 
         if (bean.cardCode != null && bean.cardType != null) {
-            insurancePolicyModel.card_code = bean.cardCode;
-            insurancePolicyModel.card_type = bean.cardType;
+            custWarranty.card_code = bean.cardCode;
+            custWarranty.card_type = bean.cardType;
         } else {
             return bean;
         }
-        insurancePolicyModel.start_time = bean.startTime;
-        insurancePolicyModel.end_time = bean.endTime;
+        custWarranty.start_time = bean.startTime;
+        custWarranty.end_time = bean.endTime;
 
-        InsurancePolicyModel manager = insurancePolicyDao.findPremiumCountByCustomerManager(insurancePolicyModel);
+        CustWarranty manager = custWarrantyDao.findPremiumCountByCustomerManager(custWarranty);
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         if (manager != null) {
             bean.times = manager.times;

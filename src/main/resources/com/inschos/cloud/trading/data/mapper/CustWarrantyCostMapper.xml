@@ -6,7 +6,7 @@
         `id`,`warranty_uuid`,`pay_time`,`phase`,`premium`,`tax_money`,`actual_pay_time`,`pay_way`,`pay_money`,`pay_status`,`is_settlement`,`bill_uuid`,`created_at`,`updated_at`
     </sql>
 
-    <insert id="addCustWarrantyCost" parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
+    <insert id="addCustWarrantyCost" parameterType="com.inschos.cloud.trading.model.CustWarrantyCost"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty_cost
@@ -15,8 +15,8 @@
         (#{id},#{warranty_uuid},#{pay_time},#{phase},#{premium},#{tax_money},#{actual_pay_time},#{pay_way},#{pay_money},#{pay_status},#{is_settlement},#{bill_uuid},#{created_at},#{updated_at})
     </insert>
 
-    <select id="findCustWarrantyCost" parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
-            resultType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+    <select id="findCustWarrantyCost" parameterType="com.inschos.cloud.trading.model.CustWarrantyCost"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyCost">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_cost where warranty_uuid=#{warranty_uuid}
@@ -24,42 +24,50 @@
     </select>
 
     <update id="updateCustWarrantyCostActualPayTimeAndPayMoneyAndPayStatusForCarInsuranceByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost">
         update cust_warranty_cost set
         `actual_pay_time`=#{actual_pay_time},`pay_status`=#{pay_status},`pay_money`=#{pay_money},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
     <update id="updateCustWarrantyCostPayStatusForCarInsuranceByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost">
         update cust_warranty_cost set
         `pay_status`=#{pay_status},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
     <update id="updatePayStatusByWarrantyUuidPhase"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost">
         update cust_warranty_cost set
         `pay_status`=#{pay_status},`updated_at`=#{updated_at}
         where `warranty_uuid`=#{warranty_uuid} and `phase`=#{phase}
     </update>
 
     <update id="updateSettlementAndBillUuidByCostId"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost">
         update cust_warranty_cost set
         `is_settlement`=#{is_settlement},`bill_uuid`=#{bill_uuid},`updated_at`=#{updated_at}
         where `id`=#{id}
     </update>
 
     <update id="updateBillUuidByCostId"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost">
         update cust_warranty_cost set
         `is_settlement`=#{is_settlement},`bill_uuid`=#{bill_uuid},`updated_at`=#{updated_at}
         where `id`=#{id}
     </update>
 
+
+    <update id="updatePayResult"
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost">
+        update cust_warranty_cost set
+        `actual_pay_time`=#{actual_pay_time},`pay_status`=#{pay_status},`pay_money`=#{pay_money},`premium`=#{premium},`updated_at`=#{updated_at}
+        where id=#{id}
+    </update>
+
     <select id="findCustWarrantyCostTotal"
             resultType="Double"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost">
         select SUM(`premium`)
         from cust_warranty_cost LEFT JOIN cust_warranty ON cust_warranty.warranty_uuid=cust_warranty_cost.warranty_uuid
         <where>
@@ -86,8 +94,8 @@
     </select>
 
     <select id="findInsurancePolicyListForInsuring"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
+            resultType="com.inschos.cloud.trading.model.CustWarranty">
         select
         `cust_warranty_cost`.`id`,`cust_warranty`.`warranty_uuid`,`cust_warranty`.`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,`cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,`cust_warranty`.`is_settlement`,`cust_warranty`.`warranty_url`,`cust_warranty`.`warranty_from`,`cust_warranty`.`type`,`cust_warranty`.`warranty_status`,`cust_warranty`.`integral`,`cust_warranty`.`express_no`,`cust_warranty`.`express_company_name`,`cust_warranty`.`express_address`,`cust_warranty`.`express_province_code`,`cust_warranty`.`express_city_code`,`cust_warranty`.`express_county_code`,`cust_warranty`.`delivery_type`,`cust_warranty`.`created_at`,`cust_warranty`.`updated_at`
         from cust_warranty_cost LEFT JOIN cust_warranty ON
@@ -125,7 +133,7 @@
     </select>
 
     <select id="findInsurancePolicyCountForInsuring"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
             resultType="long">
         select
         COUNT(cust_warranty_cost.id)
@@ -140,8 +148,8 @@
     </select>
 
     <select id="findCustWarrantyCostStatistic"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
-            resultType="com.inschos.cloud.trading.model.PremiumStatisticModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost"
+            resultType="com.inschos.cloud.trading.model.PremiumStatistic">
         <choose>
             <when test='time_range_type=="1"'>
                 select from_unixtime(cust_warranty_cost.actual_pay_time/1000,"%Y-%m-%d")
@@ -175,8 +183,8 @@
     </select>
 
     <select id="findInsurancePolicyBrokerageStatisticList"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
-            resultType="com.inschos.cloud.trading.model.BrokerageStatisticListModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost"
+            resultType="com.inschos.cloud.trading.model.BrokerageStatisticList">
         select
         `cust_warranty`.`id` warranty_id,`cust_warranty`.`warranty_uuid`,`cust_warranty`.`warranty_code`,
         `cust_warranty`.`product_id`,`cust_warranty`.`ins_company_id`,`cust_warranty`.`count`,`cust_warranty`.`pay_category_id`,
@@ -225,7 +233,7 @@
     </select>
 
     <select id="findInsurancePolicyBrokerageStatisticListCount"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost"
             resultType="long">
         select
         count(`cust_warranty_cost`.`id`)
@@ -241,7 +249,7 @@
     </select>
 
 
-    <select id="findFirstPhase" parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel" resultType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+    <select id="findFirstPhase" parameterType="com.inschos.cloud.trading.model.CustWarrantyCost" resultType="com.inschos.cloud.trading.model.CustWarrantyCost">
         select
           <include refid="Base_Column_List"/>
         from cust_warranty_cost
@@ -249,8 +257,8 @@
     </select>
 
     <select id="findInsurancePolicyBillListForManagerSystem"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
-            resultType="com.inschos.cloud.trading.model.InsurancePolicyModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
+            resultType="com.inschos.cloud.trading.model.CustWarranty">
         select
         `cust_warranty`.`id` id,`cust_warranty`.`warranty_uuid`
         warranty_uuid,`pre_policy_no`,`cust_warranty`.`warranty_code`,`cust_warranty`.`manager_uuid`,`cust_warranty`.`account_uuid`,`cust_warranty`.`agent_id`,`cust_warranty`.`channel_id`,`cust_warranty`.`plan_id`,`cust_warranty`.`product_id`,`cust_warranty`.`start_time`,`cust_warranty`.`end_time`,
@@ -403,7 +411,7 @@
     </select>
 
     <select id="findInsurancePolicyBillCountForManagerSystem"
-            parameterType="com.inschos.cloud.trading.model.InsurancePolicyModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarranty"
             resultType="long">
         select
         COUNT(`cust_warranty_cost`.`id`)
@@ -472,8 +480,8 @@
 
 
     <select id="findBrokerageByCostId"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
-            resultType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyBrokerage">
         select
         `cust_warranty_cost`.`id`,`cust_warranty_cost`.`warranty_uuid`,`cust_warranty_brokerage`.`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`ins_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`ins_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`car_integral`,`cust_warranty_brokerage`.`created_at`,`cust_warranty_brokerage`.`updated_at`
         from cust_warranty_cost
@@ -483,8 +491,8 @@
     </select>
 
     <select id="findCompletePayListByManagerUuid"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
-            resultType="com.inschos.cloud.trading.model.CustWarrantyCostModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost"
+            resultType="com.inschos.cloud.trading.model.CustWarrantyCost">
         select
         `cust_warranty_cost`.`id` id,`cust_warranty_cost`.`warranty_uuid` warranty_uuid,`cust_warranty_cost`.`pay_time` pay_time,`cust_warranty_cost`.`phase` phase,`cust_warranty_cost`.`tax_money` tax_money,`cust_warranty_cost`.`actual_pay_time` actual_pay_time,`cust_warranty_cost`.`premium` premium,
         `cust_warranty_cost`.`pay_way` pay_way,`cust_warranty_cost`.`pay_money` pay_money,`cust_warranty_cost`.`pay_status` pay_status,`cust_warranty_cost`.`created_at` created_at,`cust_warranty_cost`.`updated_at` updated_at,
@@ -606,7 +614,7 @@
     </select>
 
     <select id="findCompletePayCountByManagerUuid"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyCostModel"
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyCost"
             resultType="long">
         select
         COUNT(cust_warranty_cost.id)

@@ -5,7 +5,7 @@ package com.inschos.cloud.trading.model;
  * 描述：
  * 作者：zhangyunhe
  */
-public class PolicyListCountModel {
+public class PolicyListCount {
 
     public String product_id;
     public long product_count;

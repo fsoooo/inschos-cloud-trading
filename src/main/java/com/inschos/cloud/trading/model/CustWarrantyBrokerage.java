@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
  * 描述：
  * 作者：zhangyunhe
  */
-public class CustWarrantyBrokerageModel {
+public class CustWarrantyBrokerage {
 
     /**
      * 主键
@@ -114,11 +114,11 @@ public class CustWarrantyBrokerageModel {
     public Page page;
 
 
-    public CustWarrantyBrokerageModel() {
+    public CustWarrantyBrokerage() {
 
     }
 
-    public CustWarrantyBrokerageModel(String warranty_uuid, String manager_uuid, String channel_id, String agent_id, String time) {
+    public CustWarrantyBrokerage(String warranty_uuid, String manager_uuid, String channel_id, String agent_id, String time) {
         this.warranty_uuid = warranty_uuid;
         this.manager_uuid = manager_uuid;
         this.channel_id = channel_id;

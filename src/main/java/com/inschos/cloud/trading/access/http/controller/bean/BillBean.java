@@ -1,10 +1,10 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
-import com.inschos.cloud.trading.model.BillDetailModel;
-import com.inschos.cloud.trading.model.BillModel;
-import com.inschos.cloud.trading.model.CustWarrantyCostModel;
-import com.inschos.cloud.trading.model.OfflineInsurancePolicyModel;
+import com.inschos.cloud.trading.model.BillDetail;
+import com.inschos.cloud.trading.model.Bill;
+import com.inschos.cloud.trading.model.CustWarrantyCost;
+import com.inschos.cloud.trading.model.OfflineCustWarranty;
 import com.inschos.common.assist.kit.StringKit;
 
 import java.math.BigDecimal;
@@ -19,7 +19,7 @@ import static com.inschos.cloud.trading.assist.kit.ExcelModelKit.TYPE_DOUBLE;
  * 描述：
  * 作者：zhangyunhe
  */
-public class Bill {
+public class BillBean {
 
     public static class CreateBillRequest extends BaseRequest {
         @CheckParams(hintName = "结算单标识")
@@ -74,7 +74,7 @@ public class Bill {
     }
 
     public static class GetBillListResponse extends BaseResponse {
-        public List<BillBean> data;
+        public List<BillData> data;
     }
 
     public static class GetBillInfoRequest extends BaseRequest {
@@ -83,7 +83,7 @@ public class Bill {
     }
 
     public static class GetBillInfoResponse extends BaseResponse {
-        public BillBean data;
+        public BillData data;
     }
 
     public static class GetBillDetailRequest extends BaseRequest {
@@ -145,7 +145,7 @@ public class Bill {
 
     }
 
-    public static class BillBean {
+    public static class BillData {
 
         //主键id
         public String id;
@@ -190,11 +190,11 @@ public class Bill {
         public String updatedAt;
         public String updatedAtText;
 
-        public BillBean() {
+        public BillData() {
 
         }
 
-        public BillBean(BillModel model) {
+        public BillData(Bill model) {
             if (model == null) {
                 return;
             }
@@ -354,47 +354,47 @@ public class Bill {
 
         }
 
-        public BillInsurancePolicy(CustWarrantyCostModel custWarrantyCostModel) {
-            if (custWarrantyCostModel == null) {
+        public BillInsurancePolicy(CustWarrantyCost custWarrantyCost) {
+            if (custWarrantyCost == null) {
                 return;
             }
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
-            this.id = custWarrantyCostModel.id;
-            this.warrantyCode = custWarrantyCostModel.warranty_code;
-            this.warrantyUuid = custWarrantyCostModel.warranty_uuid;
-            this.costId = custWarrantyCostModel.id;
-            this.companyId = custWarrantyCostModel.ins_company_id;
-            this.productId = custWarrantyCostModel.product_id;
-            this.insuredName = custWarrantyCostModel.person_name;
-            if (StringKit.isNumeric(custWarrantyCostModel.premium)) {
-                this.premium = decimalFormat.format(new BigDecimal(custWarrantyCostModel.premium).doubleValue());
+            this.id = custWarrantyCost.id;
+            this.warrantyCode = custWarrantyCost.warranty_code;
+            this.warrantyUuid = custWarrantyCost.warranty_uuid;
+            this.costId = custWarrantyCost.id;
+            this.companyId = custWarrantyCost.ins_company_id;
+            this.productId = custWarrantyCost.product_id;
+            this.insuredName = custWarrantyCost.person_name;
+            if (StringKit.isNumeric(custWarrantyCost.premium)) {
+                this.premium = decimalFormat.format(new BigDecimal(custWarrantyCost.premium).doubleValue());
             } else {
                 this.premium = "0.00";
             }
             this.premiumText = "¥" + this.premium;
-            this.startTime = custWarrantyCostModel.warranty_start_time;
-            if (StringKit.isInteger(custWarrantyCostModel.warranty_start_time)) {
-                this.startTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.warranty_start_time)));
+            this.startTime = custWarrantyCost.warranty_start_time;
+            if (StringKit.isInteger(custWarrantyCost.warranty_start_time)) {
+                this.startTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCost.warranty_start_time)));
             }
-            this.endTime = custWarrantyCostModel.warranty_end_time;
-            if (StringKit.isInteger(custWarrantyCostModel.warranty_end_time)) {
-                this.endTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.warranty_end_time)));
+            this.endTime = custWarrantyCost.warranty_end_time;
+            if (StringKit.isInteger(custWarrantyCost.warranty_end_time)) {
+                this.endTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCost.warranty_end_time)));
             }
-            this.orderTime = custWarrantyCostModel.created_at;
-            if (StringKit.isInteger(custWarrantyCostModel.created_at)) {
-                this.orderTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.created_at)));
+            this.orderTime = custWarrantyCost.created_at;
+            if (StringKit.isInteger(custWarrantyCost.created_at)) {
+                this.orderTimeText = sdf.format(new Date(Long.valueOf(custWarrantyCost.created_at)));
             }
-            this.createdAt = custWarrantyCostModel.created_at;
-            if (StringKit.isInteger(custWarrantyCostModel.created_at)) {
-                this.createdAtText = sdf.format(new Date(Long.valueOf(custWarrantyCostModel.created_at)));
+            this.createdAt = custWarrantyCost.created_at;
+            if (StringKit.isInteger(custWarrantyCost.created_at)) {
+                this.createdAtText = sdf.format(new Date(Long.valueOf(custWarrantyCost.created_at)));
             }
-            this.phase = custWarrantyCostModel.phase;
-            this.feeRate = custWarrantyCostModel.brokerage_manager_rate;
-            if (StringKit.isNumeric(custWarrantyCostModel.brokerage_manager_rate)) {
-                BigDecimal bigDecimal = new BigDecimal(custWarrantyCostModel.brokerage_manager_rate);
+            this.phase = custWarrantyCost.phase;
+            this.feeRate = custWarrantyCost.brokerage_manager_rate;
+            if (StringKit.isNumeric(custWarrantyCost.brokerage_manager_rate)) {
+                BigDecimal bigDecimal = new BigDecimal(custWarrantyCost.brokerage_manager_rate);
                 this.feeRate = decimalFormat.format(bigDecimal.doubleValue());
                 bigDecimal = bigDecimal.multiply(new BigDecimal(100));
                 this.feeRateText = decimalFormat.format(bigDecimal) + "%";
@@ -402,9 +402,9 @@ public class Bill {
                 this.feeRate = "0.00";
                 this.feeRateText = "0.00%";
             }
-            this.fee = custWarrantyCostModel.brokerage_manager_money;
-            if (StringKit.isNumeric(custWarrantyCostModel.brokerage_manager_money)) {
-                this.fee = decimalFormat.format(new BigDecimal(custWarrantyCostModel.brokerage_manager_money).doubleValue());
+            this.fee = custWarrantyCost.brokerage_manager_money;
+            if (StringKit.isNumeric(custWarrantyCost.brokerage_manager_money)) {
+                this.fee = decimalFormat.format(new BigDecimal(custWarrantyCost.brokerage_manager_money).doubleValue());
             } else {
                 this.fee = "0.00";
             }
@@ -413,39 +413,39 @@ public class Bill {
             this.feeRatePercentage = decimalFormat.format(new BigDecimal(this.feeRate).multiply(new BigDecimal(100)).doubleValue());
 
             this.warrantyType = "1";
-            this.warrantyTypeText = new BillDetailModel().typeText(this.warrantyType);
+            this.warrantyTypeText = new BillDetail().typeText(this.warrantyType);
 
         }
 
-        public BillInsurancePolicy(OfflineInsurancePolicyModel offlineInsurancePolicyModel) {
-            if (offlineInsurancePolicyModel == null) {
+        public BillInsurancePolicy(OfflineCustWarranty offlineCustWarranty) {
+            if (offlineCustWarranty == null) {
                 return;
             }
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
-            this.id = offlineInsurancePolicyModel.id;
-            this.warrantyCode = offlineInsurancePolicyModel.warranty_code;
-            this.warrantyUuid = offlineInsurancePolicyModel.warranty_uuid;
-            this.costId = offlineInsurancePolicyModel.id;
-            this.companyName = offlineInsurancePolicyModel.insurance_company;
-            this.productName = offlineInsurancePolicyModel.insurance_product;
-            this.insuredName = offlineInsurancePolicyModel.insured_name;
+            this.id = offlineCustWarranty.id;
+            this.warrantyCode = offlineCustWarranty.warranty_code;
+            this.warrantyUuid = offlineCustWarranty.warranty_uuid;
+            this.costId = offlineCustWarranty.id;
+            this.companyName = offlineCustWarranty.insurance_company;
+            this.productName = offlineCustWarranty.insurance_product;
+            this.insuredName = offlineCustWarranty.insured_name;
 
-            this.fee = offlineInsurancePolicyModel.brokerage;
-            if (StringKit.isNumeric(offlineInsurancePolicyModel.brokerage)) {
-                this.fee = decimalFormat.format(new BigDecimal(offlineInsurancePolicyModel.brokerage).doubleValue());
+            this.fee = offlineCustWarranty.brokerage;
+            if (StringKit.isNumeric(offlineCustWarranty.brokerage)) {
+                this.fee = decimalFormat.format(new BigDecimal(offlineCustWarranty.brokerage).doubleValue());
             } else {
                 this.fee = "0.00";
             }
             this.feeText = "¥" + this.fee;
 
-            if (StringKit.isNumeric(offlineInsurancePolicyModel.premium)) {
-                BigDecimal bigDecimal = new BigDecimal(offlineInsurancePolicyModel.premium);
+            if (StringKit.isNumeric(offlineCustWarranty.premium)) {
+                BigDecimal bigDecimal = new BigDecimal(offlineCustWarranty.premium);
                 this.premium = decimalFormat.format(bigDecimal.doubleValue());
                 if (bigDecimal.compareTo(BigDecimal.ZERO) > 0) {
-                    BigDecimal divide = new BigDecimal(offlineInsurancePolicyModel.brokerage).divide(bigDecimal, 6, BigDecimal.ROUND_HALF_DOWN);
+                    BigDecimal divide = new BigDecimal(offlineCustWarranty.brokerage).divide(bigDecimal, 6, BigDecimal.ROUND_HALF_DOWN);
                     this.feeRate = decimalFormat.format(divide.doubleValue());
                     BigDecimal multiply = divide.multiply(new BigDecimal("100"));
                     this.feeRateText = decimalFormat.format(multiply.doubleValue()) + "%";
@@ -462,25 +462,25 @@ public class Bill {
 
             this.feeRatePercentage = decimalFormat.format(new BigDecimal(this.feeRate).multiply(new BigDecimal(100)).doubleValue());
 
-            this.startTime = offlineInsurancePolicyModel.start_time;
-            if (StringKit.isInteger(offlineInsurancePolicyModel.start_time)) {
-                this.startTimeText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.start_time)));
+            this.startTime = offlineCustWarranty.start_time;
+            if (StringKit.isInteger(offlineCustWarranty.start_time)) {
+                this.startTimeText = sdf.format(new Date(Long.valueOf(offlineCustWarranty.start_time)));
             }
-            this.endTime = offlineInsurancePolicyModel.end_time;
-            if (StringKit.isInteger(offlineInsurancePolicyModel.end_time)) {
-                this.endTimeText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.end_time)));
+            this.endTime = offlineCustWarranty.end_time;
+            if (StringKit.isInteger(offlineCustWarranty.end_time)) {
+                this.endTimeText = sdf.format(new Date(Long.valueOf(offlineCustWarranty.end_time)));
             }
-            this.orderTime = offlineInsurancePolicyModel.order_time;
-            if (StringKit.isInteger(offlineInsurancePolicyModel.order_time)) {
-                this.orderTimeText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.order_time)));
+            this.orderTime = offlineCustWarranty.order_time;
+            if (StringKit.isInteger(offlineCustWarranty.order_time)) {
+                this.orderTimeText = sdf.format(new Date(Long.valueOf(offlineCustWarranty.order_time)));
             }
-            this.createdAt = offlineInsurancePolicyModel.created_at;
-            if (StringKit.isInteger(offlineInsurancePolicyModel.created_at)) {
-                this.createdAtText = sdf.format(new Date(Long.valueOf(offlineInsurancePolicyModel.created_at)));
+            this.createdAt = offlineCustWarranty.created_at;
+            if (StringKit.isInteger(offlineCustWarranty.created_at)) {
+                this.createdAtText = sdf.format(new Date(Long.valueOf(offlineCustWarranty.created_at)));
             }
-            this.phase = offlineInsurancePolicyModel.payment_time;
+            this.phase = offlineCustWarranty.payment_time;
             this.warrantyType = "2";
-            this.warrantyTypeText = new BillDetailModel().typeText(this.warrantyType);
+            this.warrantyTypeText = new BillDetail().typeText(this.warrantyType);
         }
 
     }

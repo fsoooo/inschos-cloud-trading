@@ -2,7 +2,7 @@ package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
-import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.cloud.trading.model.CustWarrantyCar;
 import com.inschos.common.assist.kit.StringKit;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
  * 描述：
  * 作者：zhangyunhe
  */
-public class CarInsurance {
+public class CarInsuranceBean {
 
     // 获取省级信息
     public static class GetProvinceCodeRequest extends BaseRequest {
@@ -303,46 +303,46 @@ public class CarInsurance {
 
         public void dealInsuranceInfoSort () {
             switch (coverageCode) {
-                case CarInfoModel.COVERAGE_CODE_FORCEPREMIUM:
+                case CustWarrantyCar.COVERAGE_CODE_FORCEPREMIUM:
                     sort = 0;
                     break;
-                case CarInfoModel.COVERAGE_CODE_A:
+                case CustWarrantyCar.COVERAGE_CODE_A:
                     sort = 5;
                     break;
-                case CarInfoModel.COVERAGE_CODE_B:
+                case CustWarrantyCar.COVERAGE_CODE_B:
                     sort = 10;
                     break;
-                case CarInfoModel.COVERAGE_CODE_D3:
+                case CustWarrantyCar.COVERAGE_CODE_D3:
                     sort = 15;
                     break;
-                case CarInfoModel.COVERAGE_CODE_D4:
+                case CustWarrantyCar.COVERAGE_CODE_D4:
                     sort = 20;
                     break;
-                case CarInfoModel.COVERAGE_CODE_G1:
+                case CustWarrantyCar.COVERAGE_CODE_G1:
                     sort = 25;
                     break;
-                case CarInfoModel.COVERAGE_CODE_F:
+                case CustWarrantyCar.COVERAGE_CODE_F:
                     sort = 30;
                     break;
-                case CarInfoModel.COVERAGE_CODE_Z:
+                case CustWarrantyCar.COVERAGE_CODE_Z:
                     sort = 35;
                     break;
-                case CarInfoModel.COVERAGE_CODE_L:
+                case CustWarrantyCar.COVERAGE_CODE_L:
                     sort = 40;
                     break;
-                case CarInfoModel.COVERAGE_CODE_X1:
+                case CustWarrantyCar.COVERAGE_CODE_X1:
                     sort = 45;
                     break;
-                case CarInfoModel.COVERAGE_CODE_R:
+                case CustWarrantyCar.COVERAGE_CODE_R:
                     sort = 50;
                     break;
-                case CarInfoModel.COVERAGE_CODE_Z2:
+                case CustWarrantyCar.COVERAGE_CODE_Z2:
                     sort = 55;
                     break;
-                case CarInfoModel.COVERAGE_CODE_Q3:
+                case CustWarrantyCar.COVERAGE_CODE_Q3:
                     sort = 60;
                     break;
-                case CarInfoModel.COVERAGE_CODE_Z3:
+                case CustWarrantyCar.COVERAGE_CODE_Z3:
                     sort = 65;
                     break;
             }

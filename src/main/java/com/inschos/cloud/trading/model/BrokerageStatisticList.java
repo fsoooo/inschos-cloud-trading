@@ -5,7 +5,7 @@ package com.inschos.cloud.trading.model;
  * 描述：
  * 作者：zhangyunhe
  */
-public class BrokerageStatisticListModel {
+public class BrokerageStatisticList {
 
     public String cost_id;
     public String warranty_id;

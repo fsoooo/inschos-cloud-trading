@@ -5,7 +5,7 @@ package com.inschos.cloud.trading.model;
  * 描述：
  * 作者：zhangyunhe
  */
-public class InsurancePreservationModel {
+public class CustWarrantyChangeRecord {
 
     public static final int EVENT_TYPE_INSURE = 1;
     public static final int EVENT_TYPE_SURRENDER = 2;

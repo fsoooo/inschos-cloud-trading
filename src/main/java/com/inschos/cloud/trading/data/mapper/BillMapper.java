@@ -1,6 +1,6 @@
 package com.inschos.cloud.trading.data.mapper;
 
-import com.inschos.cloud.trading.model.BillModel;
+import com.inschos.cloud.trading.model.Bill;
 
 import java.util.List;
 
@@ -11,24 +11,24 @@ import java.util.List;
  */
 public interface BillMapper {
 
-    int addBill(BillModel billModel);
+    int addBill(Bill bill);
 
-    int updateBillSettlementAndMoneyAndTimeByBillUuid(BillModel billModel);
+    int updateBillSettlementAndMoneyAndTimeByBillUuid(Bill bill);
 
-    int updateBillMoneyByBillUuid(BillModel billModel);
+    int updateBillMoneyByBillUuid(Bill bill);
 
-    int updateSettlementByBillUuid(BillModel billModel);
+    int updateSettlementByBillUuid(Bill bill);
 
-    int deleteBill(BillModel billModel);
+    int deleteBill(Bill bill);
 
-    BillModel findBillByBillUuid(String bill_uuid);
+    Bill findBillByBillUuid(String bill_uuid);
 
-    BillModel findBillByBillName(BillModel billModel);
+    Bill findBillByBillName(Bill bill);
 
-    List<BillModel> findBillByManagerUuid(BillModel billModel);
+    List<Bill> findBillByManagerUuid(Bill bill);
 
-    long findBillCountByManagerUuid(BillModel billModel);
+    long findBillCountByManagerUuid(Bill bill);
 
-    List<BillModel> findBillByInsuranceCompany(BillModel billModel);
+    List<Bill> findBillByInsuranceCompany(Bill bill);
 
 }

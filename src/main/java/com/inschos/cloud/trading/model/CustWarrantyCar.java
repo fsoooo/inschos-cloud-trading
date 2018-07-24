@@ -1,7 +1,7 @@
 package com.inschos.cloud.trading.model;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.inschos.cloud.trading.access.http.controller.bean.CarInsurance;
+import com.inschos.cloud.trading.access.http.controller.bean.CarInsuranceBean;
 import com.inschos.cloud.trading.assist.kit.CardCodeKit;
 import com.inschos.cloud.trading.extend.car.ExtendCarInsurancePolicy;
 import com.inschos.common.assist.kit.JsonKit;
@@ -15,7 +15,7 @@ import java.util.List;
  * 描述：
  * 作者：zhangyunhe
  */
-public class CarInfoModel {
+public class CustWarrantyCar {
 
     /**
      * 主键
@@ -212,11 +212,11 @@ public class CarInfoModel {
      */
     public String updated_at;
 
-    public CarInfoModel() {
+    public CustWarrantyCar() {
 
     }
 
-    public CarInfoModel(String warrantyUuid, String bizId, String thpBizId, String insuranceType, String time, String coverageList, String spAgreement, String bjCodeFlag, ExtendCarInsurancePolicy.CarInfoDetail carInfoDetail, ExtendCarInsurancePolicy.InsuranceParticipant participant) {
+    public CustWarrantyCar(String warrantyUuid, String bizId, String thpBizId, String insuranceType, String time, String coverageList, String spAgreement, String bjCodeFlag, ExtendCarInsurancePolicy.CarInfoDetail carInfoDetail, ExtendCarInsurancePolicy.InsuranceParticipant participant) {
         this.warranty_uuid = warrantyUuid;
         this.biz_id = bizId;
         this.thp_biz_id = thpBizId;
@@ -320,8 +320,8 @@ public class CarInfoModel {
         return str;
     }
 
-    public List<CarInsurance.InsuranceInfo> parseCoverageList(String coverageList) {
-        return JsonKit.json2Bean(coverageList, new TypeReference<List<CarInsurance.InsuranceInfo>>() {
+    public List<CarInsuranceBean.InsuranceInfo> parseCoverageList(String coverageList) {
+        return JsonKit.json2Bean(coverageList, new TypeReference<List<CarInsuranceBean.InsuranceInfo>>() {
         });
     }
 
@@ -362,10 +362,10 @@ public class CarInfoModel {
      */
     public boolean insuranceType(String insuranceType, String coverageCode) {
         switch (insuranceType) {
-            case CarInfoModel.INSURANCE_TYPE_STRONG:
-                return StringKit.equals(CarInfoModel.COVERAGE_CODE_FORCEPREMIUM, coverageCode);
-            case CarInfoModel.INSURANCE_TYPE_COMMERCIAL:
-                return !StringKit.equals(CarInfoModel.COVERAGE_CODE_FORCEPREMIUM, coverageCode);
+            case CustWarrantyCar.INSURANCE_TYPE_STRONG:
+                return StringKit.equals(CustWarrantyCar.COVERAGE_CODE_FORCEPREMIUM, coverageCode);
+            case CustWarrantyCar.INSURANCE_TYPE_COMMERCIAL:
+                return !StringKit.equals(CustWarrantyCar.COVERAGE_CODE_FORCEPREMIUM, coverageCode);
         }
         return false;
     }

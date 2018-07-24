@@ -2,9 +2,9 @@ package com.inschos.cloud.trading.data.dao;
 
 
 import com.inschos.cloud.trading.data.mapper.CustWarrantyBrokerageMapper;
-import com.inschos.cloud.trading.data.mapper.InsurancePolicyMapper;
-import com.inschos.cloud.trading.model.BrokerageStatisticModel;
-import com.inschos.cloud.trading.model.CustWarrantyBrokerageModel;
+import com.inschos.cloud.trading.data.mapper.CustWarrantyMapper;
+import com.inschos.cloud.trading.model.BrokerageStatistic;
+import com.inschos.cloud.trading.model.CustWarrantyBrokerage;
 import com.inschos.common.assist.kit.StringKit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,20 +25,20 @@ public class CustWarrantyBrokerageDao {
     private CustWarrantyBrokerageMapper custWarrantyBrokerageMapper;
 
     @Autowired
-    public InsurancePolicyMapper insurancePolicyMapper;
+    public CustWarrantyMapper custWarrantyMapper;
 
-    public int addCustWarrantyBrokerage(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
-        return custWarrantyBrokerageMapper.addCustWarrantyBrokerage(custWarrantyBrokerageModel);
+    public int addCustWarrantyBrokerage(CustWarrantyBrokerage custWarrantyBrokerage) {
+        return custWarrantyBrokerageMapper.addCustWarrantyBrokerage(custWarrantyBrokerage);
     }
 
-    public List<CustWarrantyBrokerageModel> findCustWarrantyBrokerageByWarrantyUuid (String warrantyUuid){
+    public List<CustWarrantyBrokerage> findCustWarrantyBrokerageByWarrantyUuid (String warrantyUuid){
         return custWarrantyBrokerageMapper.findCustWarrantyBrokerageByWarrantyUuid(warrantyUuid);
     }
 
-    public String findCustWarrantyBrokerageTotalByWarrantyUuid(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+    public String findCustWarrantyBrokerageTotalByWarrantyUuid(CustWarrantyBrokerage custWarrantyBrokerage) {
         BigDecimal amount = new BigDecimal("0.00");
-        if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.warranty_uuid)) {
-            Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findCustWarrantyBrokerageTotal(custWarrantyBrokerageModel);
+        if (custWarrantyBrokerage != null && !StringKit.isEmpty(custWarrantyBrokerage.warranty_uuid)) {
+            Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findCustWarrantyBrokerageTotal(custWarrantyBrokerage);
 
             if (custWarrantyBrokerageTotal != null) {
                 amount = new BigDecimal(custWarrantyBrokerageTotal);
@@ -49,10 +49,10 @@ public class CustWarrantyBrokerageDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public String findCustWarrantyBrokerageTotalByChannelId(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+    public String findCustWarrantyBrokerageTotalByChannelId(CustWarrantyBrokerage custWarrantyBrokerage) {
         BigDecimal amount = new BigDecimal("0.00");
-        if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.channel_id)) {
-            Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findCustWarrantyBrokerageTotal(custWarrantyBrokerageModel);
+        if (custWarrantyBrokerage != null && !StringKit.isEmpty(custWarrantyBrokerage.channel_id)) {
+            Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findCustWarrantyBrokerageTotal(custWarrantyBrokerage);
 
             if (custWarrantyBrokerageTotal != null) {
                 amount = new BigDecimal(custWarrantyBrokerageTotal);
@@ -63,10 +63,10 @@ public class CustWarrantyBrokerageDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public String findCustWarrantyBrokerageTotalByManagerUuid(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+    public String findCustWarrantyBrokerageTotalByManagerUuid(CustWarrantyBrokerage custWarrantyBrokerage) {
         BigDecimal amount = new BigDecimal("0.00");
-        if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.manager_uuid)) {
-            Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findCustWarrantyBrokerageTotal(custWarrantyBrokerageModel);
+        if (custWarrantyBrokerage != null && !StringKit.isEmpty(custWarrantyBrokerage.manager_uuid)) {
+            Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findCustWarrantyBrokerageTotal(custWarrantyBrokerage);
 
             if (custWarrantyBrokerageTotal != null) {
                 amount = new BigDecimal(custWarrantyBrokerageTotal);
@@ -77,10 +77,10 @@ public class CustWarrantyBrokerageDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public String findIncomeByManagerUuidAndAccountUuid(CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
+    public String findIncomeByManagerUuidAndAccountUuid(CustWarrantyBrokerage custWarrantyBrokerage) {
         BigDecimal amount = new BigDecimal("0.00");
-        if (custWarrantyBrokerageModel != null && !StringKit.isEmpty(custWarrantyBrokerageModel.manager_uuid) && !StringKit.isEmpty(custWarrantyBrokerageModel.account_uuid)) {
-            Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findIncomeByManagerUuidAndAccountUuid(custWarrantyBrokerageModel);
+        if (custWarrantyBrokerage != null && !StringKit.isEmpty(custWarrantyBrokerage.manager_uuid) && !StringKit.isEmpty(custWarrantyBrokerage.account_uuid)) {
+            Double custWarrantyBrokerageTotal = custWarrantyBrokerageMapper.findIncomeByManagerUuidAndAccountUuid(custWarrantyBrokerage);
 
             if (custWarrantyBrokerageTotal != null) {
                 amount = new BigDecimal(custWarrantyBrokerageTotal);
@@ -91,10 +91,10 @@ public class CustWarrantyBrokerageDao {
         return decimalFormat.format(amount.doubleValue());
     }
 
-    public List<BrokerageStatisticModel> findCustWarrantyBrokerageStatistic (CustWarrantyBrokerageModel custWarrantyBrokerageModel){
-        return custWarrantyBrokerageMapper.findCustWarrantyBrokerageStatistic(custWarrantyBrokerageModel);
+    public List<BrokerageStatistic> findCustWarrantyBrokerageStatistic (CustWarrantyBrokerage custWarrantyBrokerage){
+        return custWarrantyBrokerageMapper.findCustWarrantyBrokerageStatistic(custWarrantyBrokerage);
     }
-    public List<BrokerageStatisticModel> findStatisticByAgent (CustWarrantyBrokerageModel search){
+    public List<BrokerageStatistic> findStatisticByAgent (CustWarrantyBrokerage search){
         return search!=null? custWarrantyBrokerageMapper.findStatisticByAgent(search):null;
     }
 
@@ -102,7 +102,7 @@ public class CustWarrantyBrokerageDao {
         return custWarrantyBrokerageMapper.findCustWarrantyBrokerageCarIntegral(warranty_uuid);
     }
 
-    public int updateCustWarrantyBrokerageForCar (CustWarrantyBrokerageModel custWarrantyBrokerageModel) {
-        return custWarrantyBrokerageMapper.updateCustWarrantyBrokerageForCar(custWarrantyBrokerageModel);
+    public int updateCustWarrantyBrokerageForCar (CustWarrantyBrokerage custWarrantyBrokerage) {
+        return custWarrantyBrokerageMapper.updateCustWarrantyBrokerageForCar(custWarrantyBrokerage);
     }
 }

@@ -1,7 +1,7 @@
 package com.inschos.cloud.trading.access.http.controller.bean;
 
 import com.inschos.cloud.trading.annotation.CheckParams;
-import com.inschos.cloud.trading.model.InsuranceParticipantModel;
+import com.inschos.cloud.trading.model.CustWarrantyPerson;
 import com.inschos.common.assist.kit.TimeKit;
 
 import java.util.List;
@@ -160,9 +160,9 @@ public class TradeBean {
         public String address;
 
 
-        public InsuranceParticipantModel toParticipant(String warrantyUuid, String type, String operTime, String startTime, String endTime) {
+        public CustWarrantyPerson toParticipant(String warrantyUuid, String type, String operTime, String startTime, String endTime) {
 
-            InsuranceParticipantModel participantModel = new InsuranceParticipantModel();
+            CustWarrantyPerson participantModel = new CustWarrantyPerson();
 
             participantModel.type = type;
             participantModel.relation_name = this.relationName;

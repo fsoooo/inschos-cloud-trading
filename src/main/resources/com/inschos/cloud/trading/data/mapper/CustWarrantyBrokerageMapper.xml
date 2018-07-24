@@ -6,7 +6,7 @@
         `id`,`warranty_uuid`,`manager_uuid`,`cost_id`,`channel_id`,`agent_id`,`warranty_money`,`ins_money`,`manager_money`,`channel_money`,`agent_money`,`warranty_rate`,`ins_rate`,`manager_rate`,`channel_rate`,`agent_rate`,`car_integral`,`created_at`,`updated_at`
     </sql>
 
-    <insert id="addCustWarrantyBrokerage" parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
+    <insert id="addCustWarrantyBrokerage" parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerage"
             useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty_brokerage
@@ -16,7 +16,7 @@
     </insert>
 
     <select id="findCustWarrantyBrokerageByWarrantyUuid" parameterType="String"
-            resultType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
+            resultType="com.inschos.cloud.trading.model.CustWarrantyBrokerage">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_brokerage where warranty_uuid=#{_parameter}
@@ -33,7 +33,7 @@
 
     <select id="findCustWarrantyBrokerageTotal"
             resultType="Double"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerage">
         select
         <choose>
             <when test='channel_id!=null and channel_id!=""'>
@@ -79,7 +79,7 @@
 
     <select id="findIncomeByManagerUuidAndAccountUuid"
             resultType="Double"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerage">
         select SUM(`manager_money` - `agent_money`)
         from cust_warranty_brokerage LEFT JOIN cust_warranty ON
         cust_warranty.warranty_uuid=cust_warranty_brokerage.warranty_uuid
@@ -101,8 +101,8 @@
     </select>
 
     <select id="findCustWarrantyBrokerageStatistic"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
-            resultType="com.inschos.cloud.trading.model.BrokerageStatisticModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerage"
+            resultType="com.inschos.cloud.trading.model.BrokerageStatistic">
         <choose>
             <when test='time_range_type=="1"'>
                 select from_unixtime(cb.created_at/1000,"%Y-%m-%d") `time_text`,sum(cb.`manager_money`) `brokerage`
@@ -124,8 +124,8 @@
     </select>
 
     <select id="findStatisticByAgent"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel"
-            resultType="com.inschos.cloud.trading.model.BrokerageStatisticModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerage"
+            resultType="com.inschos.cloud.trading.model.BrokerageStatistic">
         <choose>
             <when test='time_range_type=="1"'>
                 select from_unixtime(cb.created_at/1000,"%Y-%m-%d") `time_text`,sum(cb.`agent_money`) `brokerage`
@@ -147,7 +147,7 @@
     </select>
 
     <update id="updateCustWarrantyBrokerageForCar"
-            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerageModel">
+            parameterType="com.inschos.cloud.trading.model.CustWarrantyBrokerage">
         update cust_warranty_brokerage set
         `warranty_money`=#{warranty_money},`ins_money`=#{ins_money},`manager_money`=#{manager_money},`channel_money`=#{channel_money},`agent_money`=#{agent_money},
         `warranty_rate`=#{warranty_rate},`ins_rate`=#{ins_rate},`manager_rate`=#{manager_rate},`channel_rate`=#{channel_rate},`agent_rate`=#{agent_rate},`updated_at`=#{updated_at}

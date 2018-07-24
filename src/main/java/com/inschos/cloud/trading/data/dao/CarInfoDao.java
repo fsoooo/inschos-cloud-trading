@@ -1,7 +1,7 @@
 package com.inschos.cloud.trading.data.dao;
 
 import com.inschos.cloud.trading.data.mapper.CarInfoMapper;
-import com.inschos.cloud.trading.model.CarInfoModel;
+import com.inschos.cloud.trading.model.CustWarrantyCar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,27 +18,27 @@ public class CarInfoDao {
     @Autowired
     private CarInfoMapper carInfoMapper;
 
-    public int addCarInfo(CarInfoModel carInfoModel) {
-        return carInfoMapper.addCarInfo(carInfoModel);
+    public int addCarInfo(CustWarrantyCar custWarrantyCar) {
+        return carInfoMapper.addCarInfo(custWarrantyCar);
     }
 
-    public CarInfoModel findOneByWarrantyUuid(String warrantyUuid) {
+    public CustWarrantyCar findOneByWarrantyUuid(String warrantyUuid) {
         return carInfoMapper.findOneByWarrantyUuid(warrantyUuid);
     }
 
-    public CarInfoModel findCarInfoCarCodeAndFrameNoByWarrantyUuid(String warrantyUuid) {
+    public CustWarrantyCar findCarInfoCarCodeAndFrameNoByWarrantyUuid(String warrantyUuid) {
         return carInfoMapper.findCarInfoCarCodeAndFrameNoByWarrantyUuid(warrantyUuid);
     }
 
-    public List<CarInfoModel> findWarrantyUuidByBizId(String bizId) {
+    public List<CustWarrantyCar> findWarrantyUuidByBizId(String bizId) {
         return carInfoMapper.findWarrantyUuidByBizId(bizId);
     }
 
-    public List<CarInfoModel> findWarrantyUuidByThpBizID(String thpBizID) {
+    public List<CustWarrantyCar> findWarrantyUuidByThpBizID(String thpBizID) {
         return carInfoMapper.findWarrantyUuidByThpBizID(thpBizID);
     }
 
-    public CarInfoModel findBjCodeFlagAndBizIdByWarrantyUuid(String warrantyUuid) {
+    public CustWarrantyCar findBjCodeFlagAndBizIdByWarrantyUuid(String warrantyUuid) {
         return carInfoMapper.findBjCodeFlagAndBizIdByWarrantyUuid(warrantyUuid);
     }
 

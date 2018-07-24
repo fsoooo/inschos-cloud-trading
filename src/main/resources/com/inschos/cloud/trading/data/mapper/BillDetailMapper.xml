@@ -6,7 +6,7 @@
       `id`,`cost_id`,`bill_uuid`,`warranty_uuid`,`type`,`created_at`,`updated_at`
     </sql>
 
-    <insert id="addBillDetail" parameterType="com.inschos.cloud.trading.model.BillDetailModel" useGeneratedKeys="true"
+    <insert id="addBillDetail" parameterType="com.inschos.cloud.trading.model.BillDetail" useGeneratedKeys="true"
             keyProperty="id">
         insert ignore into cust_warranty_bill_detail
         (`id`,`cost_id`,`bill_uuid`,`warranty_uuid`,`type`,`created_at`,`updated_at`)
@@ -20,14 +20,14 @@
     </delete>
 
     <select id="findBillDetailById" parameterType="String"
-            resultType="com.inschos.cloud.trading.model.BillDetailModel">
+            resultType="com.inschos.cloud.trading.model.BillDetail">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_bill_detail where `id`=#{_parameter}
     </select>
 
-    <select id="findBillDetailByWarrantyUuids" parameterType="com.inschos.cloud.trading.model.BillDetailModel"
-            resultType="com.inschos.cloud.trading.model.BillDetailModel">
+    <select id="findBillDetailByWarrantyUuids" parameterType="com.inschos.cloud.trading.model.BillDetail"
+            resultType="com.inschos.cloud.trading.model.BillDetail">
         select
         <include refid="Base_Column_List"/>
         from cust_warranty_bill_detail
@@ -47,8 +47,8 @@
         limit 1;
     </select>
 
-    <select id="findBillDetailByBillUuid" parameterType="com.inschos.cloud.trading.model.BillDetailModel"
-            resultType="com.inschos.cloud.trading.model.BillDetailModel">
+    <select id="findBillDetailByBillUuid" parameterType="com.inschos.cloud.trading.model.BillDetail"
+            resultType="com.inschos.cloud.trading.model.BillDetail">
         select
         `cust_warranty_bill_detail`.`id` id,`cust_warranty_bill_detail`.`cost_id` cost_id,`cust_warranty_bill_detail`.`bill_uuid` bill_uuid,`cust_warranty_bill_detail`.`warranty_uuid` warranty_uuid,`cust_warranty_bill_detail`.`type` type,`cust_warranty_bill_detail`.`created_at` created_at,`cust_warranty_bill_detail`.`updated_at` updated_at,
         `cust_warranty_bill`.`id` bill_id,`cust_warranty_bill`.`manager_uuid` manager_uuid,`cust_warranty_bill`.`bill_name` bill_name,`cust_warranty_bill`.`insurance_company_id` insurance_company_id,
@@ -193,7 +193,7 @@
 
     </select>
 
-    <select id="findBillDetailCountByBillUuid" parameterType="com.inschos.cloud.trading.model.BillDetailModel"
+    <select id="findBillDetailCountByBillUuid" parameterType="com.inschos.cloud.trading.model.BillDetail"
             resultType="long">
         select
         COUNT(`cust_warranty_bill_detail`.`id`)

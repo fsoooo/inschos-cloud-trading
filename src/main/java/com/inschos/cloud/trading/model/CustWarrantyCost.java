@@ -9,7 +9,7 @@ import com.inschos.common.assist.kit.TimeKit;
  * 描述：
  * 作者：zhangyunhe
  */
-public class CustWarrantyCostModel {
+public class CustWarrantyCost {
 
     /**
      * 主键
@@ -85,7 +85,7 @@ public class CustWarrantyCostModel {
     public String max_time = String.valueOf(TimeKit.MAX_MILLIS);
     public Page page;
 
-    public CustWarrantyCostModel() {
+    public CustWarrantyCost() {
 
     }
     //预投保

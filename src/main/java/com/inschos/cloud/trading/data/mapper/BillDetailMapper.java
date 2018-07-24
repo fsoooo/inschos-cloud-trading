@@ -1,6 +1,6 @@
 package com.inschos.cloud.trading.data.mapper;
 
-import com.inschos.cloud.trading.model.BillDetailModel;
+import com.inschos.cloud.trading.model.BillDetail;
 
 import java.util.List;
 
@@ -11,16 +11,16 @@ import java.util.List;
  */
 public interface BillDetailMapper {
 
-    int addBillDetail(BillDetailModel billDetailModel);
+    int addBillDetail(BillDetail billDetail);
 
     int deleteBillDetailById (String id);
 
-    BillDetailModel findBillDetailById (String id);
+    BillDetail findBillDetailById (String id);
 
-    List<BillDetailModel> findBillDetailByBillUuid (BillDetailModel billDetailModel);
+    List<BillDetail> findBillDetailByBillUuid (BillDetail billDetail);
 
-    long findBillDetailCountByBillUuid (BillDetailModel billDetailModel);
+    long findBillDetailCountByBillUuid (BillDetail billDetail);
 
-    BillDetailModel findBillDetailByWarrantyUuids (BillDetailModel billDetailModel);
+    BillDetail findBillDetailByWarrantyUuids (BillDetail billDetail);
 
 }
