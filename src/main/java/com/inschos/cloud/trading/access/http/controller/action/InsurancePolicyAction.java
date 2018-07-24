@@ -610,7 +610,7 @@ public class InsurancePolicyAction extends BaseAction {
         int failCount = 0;
 
         List<InsuranceCo> productCoList = productClient.getProductCoList(actionBean.managerUuid);
-        List<ProductCategory> categoryList = productClient.getCategoryList("1");
+        List<ProductCategory> categoryList = productClient.getCategoryList("2");
 
         Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(OfflineInsurancePolicyModel.OFFLINE_COLUMN_FIELD_LIST, 0);
 
@@ -897,7 +897,7 @@ public class InsurancePolicyAction extends BaseAction {
                 ExcelModelKit.writeRow(sheetAt3, productName, 3, 0, new HashMap<>());
 
                 Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(InsurancePolicy.CAR_FIELD_LIST, 0);
-                ExcelModelKit.autoSizeColumn(sheetAt1, columnFieldMap.size() - 1);
+                ExcelModelKit.autoSizeColumn(sheetAt1, columnFieldMap.size());
 
                 flag = fileClient.upload(fileKey, fileName, ExcelModelKit.getWorkbookByteArray(sheets));
             }

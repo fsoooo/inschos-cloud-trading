@@ -307,6 +307,40 @@ public class ExcelModelKit {
     }
 
     /**
+     * 设置自适应行宽并加倍，在生成完成后调用一次。
+     *
+     * @param sheet     工作薄
+     * @param columnNum 一共多少列
+     */
+    public static void autoSizeColumnAndMultiplier(Sheet sheet, int columnNum, float multiplier) {
+        if (sheet == null || columnNum == 0) {
+            return;
+        }
+
+        for (int i = 0; i < columnNum; i++) {
+            sheet.autoSizeColumn(i);
+            float f = multiplier * sheet.getColumnWidth(i);
+            sheet.setColumnWidth(i, (int) f);
+        }
+    }
+
+    /**
+     * 设置指定行宽，在生成完成后调用一次。
+     *
+     * @param sheet     工作薄
+     * @param columnNum 一共多少列
+     */
+    public static void setSizeColumn(Sheet sheet, List<Integer> columnNum) {
+        if (sheet == null || columnNum == null || columnNum.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < columnNum.size(); i++) {
+            sheet.setColumnWidth(i, columnNum.get(i));
+        }
+    }
+
+    /**
      * 获取Excel二进制文件
      *
      * @param workbook Excel
