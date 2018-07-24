@@ -36,13 +36,6 @@
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
-    <update id="updateInsurancePolicyStatusAndWarrantyCodeForCarInsuranceByWarrantyUuid"
-            parameterType="com.inschos.cloud.trading.model.CustWarranty">
-        update cust_warranty set
-        `warranty_code`=#{warranty_code},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at},
-        where `warranty_uuid`=#{warranty_uuid}
-    </update>
-
     <update id="updateInsurancePolicyExpressInfoForCarInsuranceByWarrantyUuid"
             parameterType="com.inschos.cloud.trading.model.CustWarranty">
         update cust_warranty set
