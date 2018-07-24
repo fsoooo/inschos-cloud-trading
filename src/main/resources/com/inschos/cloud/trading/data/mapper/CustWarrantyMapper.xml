@@ -108,7 +108,7 @@
 
     <select id="findInsurancePolicyListCountByTimeAndManagerUuidAndProductId"
             parameterType="com.inschos.cloud.trading.model.CustWarranty"
-            resultType="PolicyListCountModel">
+            resultType="PolicyListCount">
         select
         `product_id`, count(id) product_count
         from cust_warranty
