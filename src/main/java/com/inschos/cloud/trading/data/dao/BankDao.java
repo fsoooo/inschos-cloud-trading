@@ -18,6 +18,14 @@ public interface BankDao {
     int add(Bank record);
 
     /**
+     * 授权成功
+     * @param bank
+     * @return
+     */
+    int applyAuth(Bank bank);
+
+
+    /**
      * 修改
      */
     int update(Bank update);
@@ -42,5 +50,7 @@ public interface BankDao {
      * account_uuid 下的所以银行卡
      */
     List<Bank> findListByAuuid(Bank search);
+
+
 
 }

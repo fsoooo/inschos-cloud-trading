@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.inschos.cloud.trading.data.mapper.BankAuthorizeMapper">
+
+    <sql id="Base_Column_List">
+        `id`,`account_uuid`,`bank_id`,`request_serial`,`contract_expired_time`,`contract_id`,`change_type`,`contract_code`,`openid`,`state`,`created_at`,`updated_at`
+    </sql>
+
+    <insert id="insert" parameterType="BankAuthorize">
+        insert into bank_authorize(`id`,`account_uuid`,`bank_id`,`request_serial`,`contract_expired_time`,`contract_id`,`change_type`,`contract_code`,`openid`,`state`,`created_at`,`updated_at`)
+        values(
+          #{id},#{account_uuid},#{bank_id},#{request_serial},#{contract_expired_time},#{contract_id},#{change_type},#{contract_code},#{openid},#{state},#{created_at},#{updated_at}
+        )
+    </insert>
+
+    <update id="update" parameterType="BankAuthorize">
+        update bank_authorize set
+          `account_uuid`=#{account_uuid},`bank_id`=#{bank_id},`request_serial`=#{request_serial},`contract_expired_time`=#{contract_expired_time},`contract_id`=#{contract_id},`change_type`=#{change_type},`contract_code`=#{contract_code},`openid`=#{openid},`state`=#{state},`created_at`=#{created_at},`updated_at`=#{updated_at}
+        where `id`=#{id}
+    </update>
+
+    <select id="selectOne" parameterType="long" resultType="BankAuthorize">
+        select
+          <include refid="Base_Column_List"/>
+        from bank_authorize
+        where `id`=#{id}
+    </select>
+
+    <select id="selectByAUuid" parameterType="java.lang.String" resultType="BankAuthorize">
+        select
+          <include refid="Base_Column_List"/>
+        from bank_authorize
+        where `account_uuid`=#{account_uuid}
+    </select>
+
+</mapper>

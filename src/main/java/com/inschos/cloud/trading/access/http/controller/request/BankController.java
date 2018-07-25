@@ -58,6 +58,29 @@ public class BankController {
     }
 
 
+    @GetActionBeanAnnotation
+    @RequestMapping("/applyAuth")
+    @ResponseBody
+    public String applyAuth(ActionBean bean){
+        return bankAction.applyAuth(bean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/confirmAuth")
+    @ResponseBody
+    public String confirmAuth(ActionBean bean){
+        return bankAction.confirmAuth(bean);
+    }
+
+    @GetActionBeanAnnotation
+    @RequestMapping("/getUsedPayInfo")
+    @ResponseBody
+    public String getUsedPayInfo(ActionBean bean){
+        return bankAction.getUsedPayInfo(bean);
+    }
+
+
+
 
 
 }

@@ -90,6 +90,33 @@ public class BankBean {
         public String requestId;
     }
 
+    public static class GetUsePayInfoResponse extends BaseResponse{
+
+        public BankData bank;
+
+        public WeiXinData weixin;
+    }
+
+    public static class WeiXinData{
+        /** 请求序列号*/
+        public String requestSerial;
+
+        /** 协议过期时间*/
+        public String contractExpiredTime;
+
+        /** 委托代扣协议id*/
+        public String contractId;
+
+        /** 变更类型*/
+        public String changeType;
+
+        /** 签约协议号*/
+        public String contractCode;
+
+        /** 微信openID*/
+        public String openid;
+    }
+
 
 
     public static class BankData{
@@ -125,6 +152,8 @@ public class BankBean {
          * 审核状态(授权状态):是否通过审核检验，默认1未审核,2已审核,3审核失败
          */
         public int status;
+
+        public int isUsing;
 
     }
 }

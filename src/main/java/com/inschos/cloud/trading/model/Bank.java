@@ -39,7 +39,7 @@ public class Bank {
     public String bank_code;
 
     /**
-     * 银行卡类型：储蓄卡，借记卡等
+     * 银行卡类型：1储蓄卡，2借记卡等
      */
     public String bank_type;
 

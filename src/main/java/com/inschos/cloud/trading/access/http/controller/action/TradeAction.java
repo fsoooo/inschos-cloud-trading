@@ -126,7 +126,7 @@ public class TradeAction extends BaseAction {
                     if (policyModel != null) {
                         ProductBean product = productClient.getProduct(Long.valueOf(policyModel.product_id));
                         if (product != null) {
-                            payBean.key  = bean.managerUuid;
+                            payBean.key = bean.managerUuid;
                             payBean.secret = getSecret(bean.managerUuid);
 
                             RpcResponse<RspPayBean> rpcResponse = insureServiceClient.pay(payBean, product.code);
@@ -215,12 +215,12 @@ public class TradeAction extends BaseAction {
             return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
         }
 
-        if(StringKit.isInteger(request.productId)){
+        if (StringKit.isInteger(request.productId)) {
 
             ProductBean product = productClient.getProduct(Long.valueOf(request.productId));
-            if(product!=null){
+            if (product != null) {
                 QuoteBean quoteBean = new QuoteBean();
-                quoteBean.key  = bean.managerUuid;
+                quoteBean.key = bean.managerUuid;
                 quoteBean.secret = getSecret(bean.managerUuid);
                 quoteBean.old_option = request.old_option;
                 quoteBean.old_val = request.old_val;
@@ -228,10 +228,10 @@ public class TradeAction extends BaseAction {
                 quoteBean.productCode = product.code;
 
                 RpcResponse<String> rpcResponse = insureServiceClient.quote(quoteBean, product.code);
-                if(rpcResponse.code==RpcResponse.CODE_SUCCESS){
-                    response.data = JsonKit.json2Bean(rpcResponse.data,Object.class);
+                if (rpcResponse.code == RpcResponse.CODE_SUCCESS) {
+                    response.data = JsonKit.json2Bean(rpcResponse.data, Object.class);
                     return json(BaseResponse.CODE_SUCCESS, "保费试算成功", response);
-                }else{
+                } else {
                     return json(BaseResponse.CODE_FAILURE, "保费试算失败", response);
                 }
             }
@@ -240,9 +240,6 @@ public class TradeAction extends BaseAction {
         return json(BaseResponse.CODE_FAILURE, "保费试算失败", response);
 
     }
-
-
-
 
 
     /**
@@ -380,12 +377,11 @@ public class TradeAction extends BaseAction {
                     }
                 }
             }
-            // TODO: 2018/6/25
-
+            // TODO: 2018/6/25 insurePeriod  periodUnit
 //                insureBean.insurePeriod;
 //                insureBean.periodUnit;
 
-            insureBean.key  = bean.managerUuid;
+            insureBean.key = bean.managerUuid;
             insureBean.secret = getSecret(bean.managerUuid);
             insureBean.productCode = productCode;
 
@@ -441,9 +437,57 @@ public class TradeAction extends BaseAction {
         }
 
         return null;
+    }
 
+    public String query(ActionBean bean) {
+
+        TradeBean.QueryRequest request = requst2Bean(bean.body, TradeBean.QueryRequest.class);
+        TradeBean.QueryResponse response = new TradeBean.QueryResponse();
+
+
+        if (request == null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, "解析错误", response);
+        }
+
+        List<CheckParamsKit.Entry<String, String>> entries = checkParams(request);
+        if (entries != null) {
+            return json(BaseResponse.CODE_PARAM_ERROR, entries, response);
+        }
+
+        CustWarranty warranty = custWarrantyDao.findInsurancePolicyDetailByWarrantyUuid(request.warrantyUuid);
+
+        TradeBean.PolicyData policyData = new TradeBean.PolicyData();
+
+        if (warranty != null) {
+
+
+            policyData.policyNo = warranty.warranty_code;
+            policyData.proposalNo = warranty.pre_policy_no;
+            policyData.warrantyUuid = request.warrantyUuid;
+            policyData.remark = warranty.resp_msg;
+
+
+            if (CustWarranty.APPLY_UNDERWRITING_PROCESSING.equals(warranty.warranty_status)) {
+                CustWarrantyCost searchCost = new CustWarrantyCost();
+                searchCost.warranty_uuid = request.warrantyUuid;
+                searchCost.phase = "1";
+                CustWarrantyCost warrantyCost = custWarrantyCostDao.findFirstPhase(searchCost);
+                if (warrantyCost != null) {
+                    policyData.status = warrantyCost.pay_status;
+
+                }
+                policyData.statusTxt = "待支付";
+            }else{
+                policyData.status = warranty.warranty_status;
+                policyData.statusTxt = warranty.warrantyStatusText(warranty.warranty_status);
+
+            }
+        }
+        response.data = policyData;
+        return json(BaseResponse.CODE_SUCCESS,"获取成功",response);
 
     }
+
 
     private InsureBean tranBean(TradeBean.InsureRequest request) {
         InsureBean bean = new InsureBean();
@@ -528,7 +572,7 @@ public class TradeAction extends BaseAction {
     }
 
 
-    private String getSecret(String key){
+    private String getSecret(String key) {
         // TODO: 2018/7/24
         return null;
     }

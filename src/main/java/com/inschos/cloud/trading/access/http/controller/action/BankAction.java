@@ -6,8 +6,11 @@ import com.inschos.cloud.trading.access.http.controller.bean.BankBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.rpc.client.PayAuthServiceClient;
 import com.inschos.cloud.trading.annotation.CheckParamsKit;
+import com.inschos.cloud.trading.data.dao.BankAuthorizeDao;
 import com.inschos.cloud.trading.data.dao.BankDao;
 import com.inschos.cloud.trading.model.Bank;
+import com.inschos.cloud.trading.model.BankAuthorize;
+import com.inschos.common.assist.kit.StringKit;
 import com.inschos.common.assist.kit.TimeKit;
 import com.inschos.dock.bean.BankConfirmBean;
 import com.inschos.dock.bean.RpcResponse;
@@ -29,6 +32,9 @@ public class BankAction extends BaseAction {
 
     @Autowired
     private BankDao bankDao;
+    @Autowired
+    private BankAuthorizeDao bankAuthorizeDao;
+
     @Autowired
     private PayAuthServiceClient payAuthServiceClient;
 
@@ -128,8 +134,16 @@ public class BankAction extends BaseAction {
         List<BankBean.BankData> dataList = new ArrayList<>();
 
         if (bankList != null && !bankList.isEmpty()) {
+            BankAuthorize bankAuthorize = bankAuthorizeDao.findByAUuid(bean.accountUuid);
+            long bindId = 0;
+            if (bankAuthorize != null) {
+                bindId = bankAuthorize.bank_id;
+            }
             for (Bank bank : bankList) {
                 BankBean.BankData data = toData(bank);
+                if (data.id == bindId) {
+                    data.isUsing = 1;
+                }
                 dataList.add(data);
             }
         }
@@ -174,9 +188,13 @@ public class BankAction extends BaseAction {
 
             if (bank.status == Bank.BANK_AUTH_STATUS_OK) {
                 // TODO: 2018/7/12 银行解绑
+                BankAuthorize bankAuthorize = bankAuthorizeDao.findByAUuid(bean.accountUuid);
+                if (bankAuthorize != null && bankAuthorize.bank_id == bankId) {
+                    bankAuthorize.bank_id = 0;
+                    bankAuthorize.updated_at = TimeKit.currentTimeMillis();
+                    bankAuthorizeDao.update(bankAuthorize);
+                }
             }
-
-            bank.id = Long.valueOf(request.id);
             bank.state = 0;
             bank.updated_at = TimeKit.currentTimeMillis();
 
@@ -211,7 +229,7 @@ public class BankAction extends BaseAction {
             if (rpcResponse.code == RpcResponse.CODE_SUCCESS) {
                 return json(BaseResponse.CODE_SUCCESS, rpcResponse.message, response);
             } else {
-                return json(BaseResponse.CODE_FAILURE, rpcResponse.message, response);
+                return json(BaseResponse.CODE_FAILURE, StringKit.isEmpty(rpcResponse.esbErrCode) ? rpcResponse.message : rpcResponse.esbErrCode, response);
             }
         } else {
             return json(BaseResponse.CODE_FAILURE, "发送失败", response);
@@ -237,23 +255,59 @@ public class BankAction extends BaseAction {
         bankConfirmBean.idCard = request.idCard;
         RpcResponse<RspBankConfirmBean> rpcResponse = payAuthServiceClient.bankConfirmAuth(request.origin, bankConfirmBean);
 
-        Bank search = new Bank();
-        search.account_uuid = bean.accountUuid;
-        search.bank_code = request.bankCode;
-        Bank bank = bankDao.findExistsOne(search);
-
         boolean authOk = rpcResponse != null && rpcResponse.code == RpcResponse.CODE_SUCCESS;
+        int exResult = 0;
+        if (authOk) {
 
-        if(authOk){
+            Bank bank = new Bank();
+            bank.account_uuid = bean.accountUuid;
+            bank.bank_code = request.bankCode;
+            bank.phone = request.bankPhone;
+            bank.status = Bank.BANK_AUTH_STATUS_OK;
 
+            exResult = bankDao.applyAuth(bank);
         }
 
 
-        if (rpcResponse.code == RpcResponse.CODE_SUCCESS) {
+        if (exResult > 0) {
             return json(BaseResponse.CODE_SUCCESS, rpcResponse.message, response);
         } else {
-            return json(BaseResponse.CODE_FAILURE, rpcResponse.message, response);
+            String errMsg = rpcResponse != null ?
+                    (rpcResponse.code == BaseResponse.CODE_SUCCESS || StringKit.isEmpty(rpcResponse.esbErrCode) ?
+                            "授权失败" : rpcResponse.esbErrCode)
+                    : "授权失败";
+            return json(BaseResponse.CODE_FAILURE, errMsg, response);
         }
+
+    }
+
+    public String getUsedPayInfo(ActionBean bean) {
+
+        BankBean.GetUsePayInfoResponse response = new BankBean.GetUsePayInfoResponse();
+
+
+        BankAuthorize bankAuthorize = bankAuthorizeDao.findByAUuid(bean.accountUuid);
+
+        if (bankAuthorize != null) {
+
+            if (bankAuthorize.bank_id > 0) {
+                Bank bank = bankDao.findOne(bankAuthorize.bank_id);
+                if (bank != null) {
+                    response.bank = toData(bank);
+                }
+            }
+
+            if (!StringKit.isEmpty(bankAuthorize.openid)) {
+                response.weixin = new BankBean.WeiXinData();
+                response.weixin.openid = bankAuthorize.openid;
+                response.weixin.changeType = bankAuthorize.change_type;
+                response.weixin.contractCode = bankAuthorize.contract_code;
+                response.weixin.contractExpiredTime = bankAuthorize.contract_expired_time;
+                response.weixin.contractId = bankAuthorize.contract_id;
+                response.weixin.requestSerial = bankAuthorize.request_serial;
+            }
+        }
+        return json(BaseResponse.CODE_SUCCESS,"获取成功",response);
 
     }
 
