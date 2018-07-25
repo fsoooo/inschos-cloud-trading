@@ -777,6 +777,7 @@ public class InsurancePolicyAction extends BaseAction {
         offlineCustWarranty.search_company = request.companyName;
         offlineCustWarranty.search_channel = request.channelName;
         offlineCustWarranty.search_product = request.productName;
+        offlineCustWarranty.search_warranty_code = request.warrantyCode;
 
         if (StringKit.isEmpty(request.pageNum)) {
             request.pageNum = "1";

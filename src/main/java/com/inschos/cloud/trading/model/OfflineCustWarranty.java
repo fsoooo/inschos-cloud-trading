@@ -184,6 +184,7 @@ public class OfflineCustWarranty {
     public String search_company;
     public String search_channel;
     public String search_product;
+    public String search_warranty_code;
     public String time_type;
 
     public boolean isEnable() {

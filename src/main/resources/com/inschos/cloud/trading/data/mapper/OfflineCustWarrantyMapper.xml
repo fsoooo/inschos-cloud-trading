@@ -102,6 +102,9 @@
                     <if test="search_product!=null and search_product!=''">
                         and `insurance_product` like concat("%",#{search_product},"%")
                     </if>
+                    <if test="search_warranty_code!=null and search_warranty_code!=''">
+                        and `warranty_code` like concat("%",#{search_warranty_code},"%")
+                    </if>
                     ORDER BY `id` DESC limit #{page.start},1
                     )
                 </when>
@@ -138,6 +141,9 @@
             </if>
             <if test="search_product!=null and search_product!=''">
                 and `insurance_product` like concat("%",#{search_product},"%")
+            </if>
+            <if test="search_warranty_code!=null and search_warranty_code!=''">
+                and `warranty_code` like concat("%",#{search_warranty_code},"%")
             </if>
             ORDER BY `id` DESC limit #{page.offset}
         </where>
@@ -178,6 +184,9 @@
         </if>
         <if test="search_product!=null and search_product!=''">
             and `insurance_product` like concat("%",#{search_product},"%")
+        </if>
+        <if test="search_warranty_code!=null and search_warranty_code!=''">
+            and `warranty_code` like concat("%",#{search_warranty_code},"%")
         </if>
     </select>
 
