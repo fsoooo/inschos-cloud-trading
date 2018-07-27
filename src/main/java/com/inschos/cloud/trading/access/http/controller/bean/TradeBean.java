@@ -85,6 +85,8 @@ public class TradeBean {
          * 旧的试算因子项
          */
         public String old_option;
+
+        public String old_protect_item;
     }
 
 

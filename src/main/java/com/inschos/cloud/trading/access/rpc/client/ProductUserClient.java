@@ -27,13 +27,22 @@ public class ProductUserClient {
     }
 
 
-    public ProductUserBean getPlatformProductAll(String managerUuid) {
+    public ProductUserBean getProductUser(String managerUuid) {
         try {
             ProductUserService service = getService();
             return service != null ? service.getUsersByAccountId(managerUuid) : null;
         } catch (Exception e) {
             L.log.error("remote fail {}", e.getMessage(), e);
             return null;
+        }
+    }
+    public int add(ProductUserBean bean) {
+        try {
+            ProductUserService service = getService();
+            return service != null ? service.addUsers(bean) : 0;
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return 0;
         }
     }
 }

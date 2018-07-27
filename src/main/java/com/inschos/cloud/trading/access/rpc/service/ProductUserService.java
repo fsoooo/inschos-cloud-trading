@@ -11,4 +11,6 @@ public interface ProductUserService {
 
     ProductUserBean getUsersByAccountId(String accountUuid);
 
+    int addUsers(ProductUserBean bean);
+
 }
