@@ -873,10 +873,18 @@ public class InsurancePolicyAction extends BaseAction {
             if (sheets != null) {
                 // Excel在一个sheet里面设置这个的时候，因为之前不知道设置数据大小，选择全列，会导致选择项出现空值
                 // sheet2 C列
-                List<InsuranceCo> productCoList = productClient.getProductCoList(actionBean.managerUuid);
+//                List<InsuranceCo> productCoList = productClient.getProductCoList(actionBean.managerUuid);
+//                List<ExcelModel<String>> companyName = new ArrayList<>();
+//                if (productCoList != null && !productCoList.isEmpty()) {
+//                    for (InsuranceCo insuranceCo : productCoList) {
+//                        companyName.add(new ExcelModel<>(insuranceCo.name));
+//                    }
+//                }
+
+                List<InsuranceCompanyBean> insuranceCompanyList = companyClient.getCompanyAll();
                 List<ExcelModel<String>> companyName = new ArrayList<>();
-                if (productCoList != null && !productCoList.isEmpty()) {
-                    for (InsuranceCo insuranceCo : productCoList) {
+                if (insuranceCompanyList != null && !insuranceCompanyList.isEmpty()) {
+                    for (InsuranceCompanyBean insuranceCo : insuranceCompanyList) {
                         companyName.add(new ExcelModel<>(insuranceCo.name));
                     }
                 }

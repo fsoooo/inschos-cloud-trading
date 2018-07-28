@@ -60,4 +60,15 @@ public class CompanyClient {
             return null;
         }
     }
+
+    public List<InsuranceCompanyBean> getCompanyAll(){
+        try {
+            CompanyService service = getService();
+            return service != null ? service.getCompanyAll() : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
 }
