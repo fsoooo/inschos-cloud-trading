@@ -57,6 +57,8 @@ public class InsureCallBackServiceImpl implements CallBackService {
 
             CustWarranty search = new CustWarranty();
             search.pre_policy_no = proposalNo;
+            search.comb_product = payBean.data.isCombProduct?1:0;
+            search.comb_warranty_code = payBean.data.combCardCode;
             CustWarranty policy = custWarrantyDao.findByProposalNo(search);
 
             if(policy==null){

@@ -1,8 +1,8 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
 
+import com.inschos.cloud.trading.access.rpc.bean.InsureDock;
 import com.inschos.common.assist.kit.L;
-import com.inschos.common.assist.kit.StringKit;
 import com.inschos.dock.api.InsureService;
 import com.inschos.dock.api.QueryService;
 import com.inschos.dock.bean.*;
@@ -24,12 +24,12 @@ public class InsureServiceClient {
 
     private InsureService getService(String productKey) {
 
-        String host = dockHost + (isNewProduct(productKey) ? productKey.toLowerCase() : "general");
+        String host = dockHost + (InsureDock.isNewProduct(productKey) ? productKey.toLowerCase() : "general");
         return new HproseHttpClient(host + uri).useService(InsureService.class);
     }
 
     private QueryService getQueryService(String productKey) {
-        String host = dockHost + (isNewProduct(productKey) ? productKey.toLowerCase() : "general");
+        String host = dockHost + (InsureDock.isNewProduct(productKey) ? productKey.toLowerCase() : "general");
         return new HproseHttpClient(host + uri).useService(QueryService.class);
     }
 
@@ -88,44 +88,5 @@ public class InsureServiceClient {
         }
     }
 
-    private boolean isNewProduct(String productKey) {
-
-        boolean isNew = false;
-
-        if (!StringKit.isEmpty(productKey)) {
-
-            switch (productKey) {
-                case "Qx":
-                    isNew = false;
-                    break;
-                case "Tk":
-                    isNew = false;
-                    break;
-                case "Hg":
-                    isNew = false;
-                    break;
-                case "Ya":
-                    isNew = false;
-                    break;
-                case "Axc":
-                    isNew = false;
-                    break;
-                case "Za":
-                    isNew = false;
-                    break;
-                case "Ygc":
-                    isNew = true;
-                    break;
-                case "Yd":
-                    isNew = true;
-                    break;
-                case "Zhf":
-                    isNew = true;
-                    break;
-
-            }
-        }
-        return isNew;
-    }
 
 }

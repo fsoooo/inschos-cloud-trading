@@ -156,6 +156,19 @@ public class TradeAction extends BaseAction {
                             } else {
                                 isOk = true;
                                 msg = rpcResponse.message;
+                                if (!StringKit.isEmpty(rpcResponse.data.combCardCode)) {
+                                    policyModel.comb_warranty_code = rpcResponse.data.combCardCode;
+                                }
+                                policyModel.resp_msg = msg;
+                                if (!StringKit.isEmpty(rpcResponse.data.proposalNo)) {
+                                    policyModel.pre_policy_no = rpcResponse.data.proposalNo;
+                                }
+                                policyModel.updated_at = TimeKit.curTimeMillis2Str();
+                                custWarrantyDao.updateInsurancePolicyStatusForCarInsuranceWarrantyUuid(policyModel);
+                                firstPhase.pay_status = CustWarrantyCost.PAY_STATUS_PROCESSING;
+                                firstPhase.updated_at = TimeKit.curTimeMillis2Str();
+                                custWarrantyCostDao.updatePayStatusByWarrantyUuidPhase(firstPhase);
+
                             }
                         }
                     }
@@ -596,27 +609,27 @@ public class TradeAction extends BaseAction {
         ProductUserBean userBean = productUserClient.getProductUser(key);
         if (userBean != null) {
             return userBean.sign_key;
-        }else{
+        } else {
             userBean = new ProductUserBean();
             userBean.account_id = key;
             userBean.call_back_url = dockGeneralHost;
             userBean.name = "cloud调用";
             userBean.email = "rd@inschos.com";
             userBean.password = "";
-            userBean.sign_key = MD5Kit.MD5Digest(key+TimeKit.curTimeMillis2Str());
+            userBean.sign_key = MD5Kit.MD5Digest(key + TimeKit.curTimeMillis2Str());
             userBean.sell_status = 1;
             int i = productUserClient.add(userBean);
-            if(i>0){
+            if (i > 0) {
                 return userBean.sign_key;
             }
         }
         return null;
     }
 
-    private String getApiFromUuid(String productCode){
+    private String getApiFromUuid(String productCode) {
 
         ProductApiFromBean apiFrom = productApiFromClient.getApiFrom(productCode);
-        if(apiFrom!=null){
+        if (apiFrom != null) {
             return apiFrom.apiUuid;
         }
 
