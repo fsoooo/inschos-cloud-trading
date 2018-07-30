@@ -5,14 +5,14 @@ import com.inschos.cloud.trading.access.rpc.service.ProductUserService;
 import com.inschos.common.assist.kit.L;
 import hprose.client.HproseHttpClient;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 
 /**
  * author   meiming_mm@163.com
  * date     2018/7/25
  * version  v1.0.0
  */
-@Controller
+@Component
 public class ProductUserClient {
 
 
