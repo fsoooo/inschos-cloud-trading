@@ -507,6 +507,15 @@ public class BillAction extends BaseAction {
             return json(BaseResponse.CODE_FAILURE, "结算单不存在", response);
         }
 
+        //根据负责人ID查询负责人名称
+        if (StringKit.isInteger(billByBillUuid.principal)) {
+            AgentBean agentBean = agentClient.getAgentById(Long.valueOf(billByBillUuid.principal));
+
+            if (agentBean != null) {
+                billByBillUuid.principal = agentBean.name;
+            }
+        }
+
         if (StringKit.isInteger(billByBillUuid.insurance_company_id)) {
             InsuranceCompanyBean company = companyClient.getCompany(Long.valueOf(billByBillUuid.insurance_company_id));
 
