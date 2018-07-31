@@ -453,12 +453,13 @@ public class BillAction extends BaseAction {
                 if (s == null && StringKit.isInteger(model.principal)) {
                     AgentBean agentById = agentClient.getAgentById(Long.valueOf(model.principal));
                     if (agentById != null) {
+                        model.principal = agentById.name;
                         agentName.put(model.principal, agentById.name);
                     } else {
                         agentName.put(model.principal, "");
                     }
                 } else {
-                    model.principal_name = s;
+                    model.principal = s;
                 }
 
                 String s1 = companyName.get(model.insurance_company_id);
