@@ -3,8 +3,10 @@ package com.inschos.cloud.trading.access.http.controller.action;
 import com.inschos.cloud.trading.access.http.controller.bean.ActionBean;
 import com.inschos.cloud.trading.access.http.controller.bean.BaseResponse;
 import com.inschos.cloud.trading.access.http.controller.bean.BillBean;
+import com.inschos.cloud.trading.access.rpc.bean.AgentBean;
 import com.inschos.cloud.trading.access.rpc.bean.InsuranceCompanyBean;
 import com.inschos.cloud.trading.access.rpc.bean.ProductBean;
+import com.inschos.cloud.trading.access.rpc.client.AgentClient;
 import com.inschos.cloud.trading.access.rpc.client.CompanyClient;
 import com.inschos.cloud.trading.access.rpc.client.FileClient;
 import com.inschos.cloud.trading.access.rpc.client.ProductClient;
@@ -56,6 +58,9 @@ public class BillAction extends BaseAction {
 
     @Autowired
     private ProductClient productClient;
+
+    @Autowired
+    private AgentClient agentClient;
 
     @Autowired
     private CompanyClient companyClient;
@@ -437,23 +442,24 @@ public class BillAction extends BaseAction {
         long total = billDao.findBillCountByManagerUuid(bill);
         response.data = new ArrayList<>();
 
-//        Map<String, String> agentName = new HashMap<>();
+        Map<String, String> agentName = new HashMap<>();
         Map<String, String> companyName = new HashMap<>();
 
         if (billByManagerUuid != null && !billByManagerUuid.isEmpty()) {
             for (Bill model : billByManagerUuid) {
 
-//                String s = agentName.get(model.principal);
-//                if (s == null && StringKit.isInteger(model.principal)) {
-//                    AgentBean agentById = agentClient.getAgentById(Long.valueOf(model.principal));
-//                    if (agentById != null) {
-//                        agentName.put(model.principal, agentById.name);
-//                    } else {
-//                        agentName.put(model.principal, "");
-//                    }
-//                } else {
-//                    model.principal_name = s;
-//                }
+                //根据负责人ID获取负责人名称
+                String s = agentName.get(model.principal);
+                if (s == null && StringKit.isInteger(model.principal)) {
+                    AgentBean agentById = agentClient.getAgentById(Long.valueOf(model.principal));
+                    if (agentById != null) {
+                        agentName.put(model.principal, agentById.name);
+                    } else {
+                        agentName.put(model.principal, "");
+                    }
+                } else {
+                    model.principal_name = s;
+                }
 
                 String s1 = companyName.get(model.insurance_company_id);
                 if (s1 == null && StringKit.isInteger(model.insurance_company_id)) {
