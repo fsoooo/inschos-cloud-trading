@@ -17,4 +17,5 @@ public interface CompanyService {
 
     List<InsuranceCompanyBean> getCompanyList(List<String> companyId);
 
+    List<InsuranceCompanyBean> getCompanyAll();
 }

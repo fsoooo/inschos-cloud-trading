@@ -88,6 +88,7 @@ public class InsurancePolicyBean {
         public String companyName;
         public String channelName;
         public String productName;
+        public String warrantyCode;
         public String timeType;
         public String startTime;
         public String endTime;

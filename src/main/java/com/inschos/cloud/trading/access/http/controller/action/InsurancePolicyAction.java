@@ -610,7 +610,7 @@ public class InsurancePolicyAction extends BaseAction {
         int failCount = 0;
 
         List<InsuranceCo> productCoList = productClient.getProductCoList(actionBean.managerUuid);
-        List<ProductCategory> categoryList = productClient.getCategoryList("1");
+        List<ProductCategory> categoryList = productClient.getCategoryList("2");
 
         Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(OfflineCustWarranty.OFFLINE_COLUMN_FIELD_LIST, 0);
 
@@ -777,6 +777,7 @@ public class InsurancePolicyAction extends BaseAction {
         offlineCustWarranty.search_company = request.companyName;
         offlineCustWarranty.search_channel = request.channelName;
         offlineCustWarranty.search_product = request.productName;
+        offlineCustWarranty.search_warranty_code = request.warrantyCode;
 
         if (StringKit.isEmpty(request.pageNum)) {
             request.pageNum = "1";
@@ -872,10 +873,18 @@ public class InsurancePolicyAction extends BaseAction {
             if (sheets != null) {
                 // Excel在一个sheet里面设置这个的时候，因为之前不知道设置数据大小，选择全列，会导致选择项出现空值
                 // sheet2 C列
-                List<InsuranceCo> productCoList = productClient.getProductCoList(actionBean.managerUuid);
+//                List<InsuranceCo> productCoList = productClient.getProductCoList(actionBean.managerUuid);
+//                List<ExcelModel<String>> companyName = new ArrayList<>();
+//                if (productCoList != null && !productCoList.isEmpty()) {
+//                    for (InsuranceCo insuranceCo : productCoList) {
+//                        companyName.add(new ExcelModel<>(insuranceCo.name));
+//                    }
+//                }
+
+                List<InsuranceCompanyBean> insuranceCompanyList = companyClient.getCompanyAll();
                 List<ExcelModel<String>> companyName = new ArrayList<>();
-                if (productCoList != null && !productCoList.isEmpty()) {
-                    for (InsuranceCo insuranceCo : productCoList) {
+                if (insuranceCompanyList != null && !insuranceCompanyList.isEmpty()) {
+                    for (InsuranceCompanyBean insuranceCo : insuranceCompanyList) {
                         companyName.add(new ExcelModel<>(insuranceCo.name));
                     }
                 }
@@ -896,7 +905,8 @@ public class InsurancePolicyAction extends BaseAction {
                 ExcelModelKit.writeRow(sheetAt2, companyName, 2, 0, new HashMap<>());
                 ExcelModelKit.writeRow(sheetAt3, productName, 3, 0, new HashMap<>());
 
-                Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(InsurancePolicyBean.CAR_FIELD_LIST, 0);
+
+//                Map<String, String> columnFieldMap = ExcelModelKit.getColumnFieldMap(InsurancePolicyBean.CAR_FIELD_LIST, 0);
 //                ExcelModelKit.autoSizeColumn(sheetAt1, columnFieldMap.size() - 1);
 
                 flag = fileClient.upload(fileKey, fileName, ExcelModelKit.getWorkbookByteArray(sheets));
@@ -1195,7 +1205,7 @@ public class InsurancePolicyAction extends BaseAction {
      * {@link #getInsurancePolicyListForManagerSystem}
      * {@link #downInsurancePolicyListForManagerSystem}
      *
-     * @param request              获取保单列表请求
+     * @param request      获取保单列表请求
      * @param custWarranty 获取保单列表数据库查询model
      * @return 是否有参数异常（如果有，此为异常）
      */
@@ -1329,7 +1339,7 @@ public class InsurancePolicyAction extends BaseAction {
      * 将列表处理为前台数据
      *
      * @param custWarrantyList 保单列表
-     * @param parameter                处理结果参数
+     * @param parameter        处理结果参数
      * @return 前台数据列表
      */
     private List<InsurancePolicyBean.GetInsurancePolicyItemBean> dealInsurancePolicyResultList(List<CustWarranty> custWarrantyList, DealInsurancePolicyResultParameter parameter) {
@@ -1568,8 +1578,8 @@ public class InsurancePolicyAction extends BaseAction {
      * FINISH: 2018/6/8
      * 根据关键字获取代理人id
      *
-     * @param managerUuid          业管唯一标识
-     * @param searchKey            搜索关键字
+     * @param managerUuid  业管唯一标识
+     * @param searchKey    搜索关键字
      * @param custWarranty 数据库查询model
      * @return 代理人id-bean map
      */

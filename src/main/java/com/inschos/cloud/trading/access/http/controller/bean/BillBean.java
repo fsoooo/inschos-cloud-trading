@@ -26,6 +26,7 @@ public class BillBean {
         public String billName;
         @CheckParams(hintName = "保险公司")
         public String insuranceCompanyId;
+        @CheckParams(hintName = "负责人")
         public String principal;
         public List<BillInsurancePolicy> warrantyList;
         public String remark;
