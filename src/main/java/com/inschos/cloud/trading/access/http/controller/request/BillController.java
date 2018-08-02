@@ -98,11 +98,4 @@ public class BillController {
         return billAction.deleteBillDetail(actionBean);
     }
 
-    @GetActionBeanAnnotation
-    @RequestMapping("test")
-    @ResponseBody
-    public String test(ActionBean actionBean) {
-        return "11213";
-    }
-
 }
