@@ -48,10 +48,10 @@ public class BankBean {
         @CheckParams(hintName = "银行预留手机号",stringType = CheckParams.StringType.STRING,maxLen = 13)
         public String bankPhone;
 
-        @CheckParams(hintName = "银行卡号",stringType = CheckParams.StringType.STRING,maxLen = 20)
+        @CheckParams(hintName = "银行卡号",stringType = CheckParams.StringType.STRING,maxLen = 21)
         public String bankCode;
 
-        @CheckParams(hintName = "身份证号",stringType = CheckParams.StringType.STRING,maxLen = 18)
+        @CheckParams(hintName = "身份证号",stringType = CheckParams.StringType.STRING,maxLen = 19)
         public String idCard;
 
     }
@@ -71,7 +71,7 @@ public class BankBean {
         @CheckParams(hintName = "银行卡号",stringType = CheckParams.StringType.STRING,maxLen = 20)
         public String bankCode;
 
-        @CheckParams(hintName = "身份证号",stringType = CheckParams.StringType.STRING,maxLen = 18)
+        @CheckParams(hintName = "身份证号",stringType = CheckParams.StringType.STRING,maxLen = 19)
         public String idCard;
 
         @CheckParams(hintName = "验证序号",stringType = CheckParams.StringType.STRING,maxLen = 50)
