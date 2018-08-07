@@ -48,10 +48,10 @@ public class BankBean {
         @CheckParams(hintName = "银行预留手机号",stringType = CheckParams.StringType.STRING,maxLen = 13)
         public String bankPhone;
 
-        @CheckParams(hintName = "银行卡号",stringType = CheckParams.StringType.STRING,maxLen = 20)
+        @CheckParams(hintName = "银行卡号",stringType = CheckParams.StringType.STRING,maxLen = 21)
         public String bankCode;
 
-        @CheckParams(hintName = "身份证号",stringType = CheckParams.StringType.STRING,maxLen = 18)
+        @CheckParams(hintName = "身份证号",stringType = CheckParams.StringType.STRING,maxLen = 19)
         public String idCard;
 
     }
@@ -71,7 +71,7 @@ public class BankBean {
         @CheckParams(hintName = "银行卡号",stringType = CheckParams.StringType.STRING,maxLen = 20)
         public String bankCode;
 
-        @CheckParams(hintName = "身份证号",stringType = CheckParams.StringType.STRING,maxLen = 18)
+        @CheckParams(hintName = "身份证号",stringType = CheckParams.StringType.STRING,maxLen = 19)
         public String idCard;
 
         @CheckParams(hintName = "验证序号",stringType = CheckParams.StringType.STRING,maxLen = 50)
@@ -88,6 +88,33 @@ public class BankBean {
 
     public static class ApplyData{
         public String requestId;
+    }
+
+    public static class GetUsePayInfoResponse extends BaseResponse{
+
+        public BankData bank;
+
+        public WeiXinData weixin;
+    }
+
+    public static class WeiXinData{
+        /** 请求序列号*/
+        public String requestSerial;
+
+        /** 协议过期时间*/
+        public String contractExpiredTime;
+
+        /** 委托代扣协议id*/
+        public String contractId;
+
+        /** 变更类型*/
+        public String changeType;
+
+        /** 签约协议号*/
+        public String contractCode;
+
+        /** 微信openID*/
+        public String openid;
     }
 
 
@@ -125,6 +152,8 @@ public class BankBean {
          * 审核状态(授权状态):是否通过审核检验，默认1未审核,2已审核,3审核失败
          */
         public int status;
+
+        public int isUsing;
 
     }
 }

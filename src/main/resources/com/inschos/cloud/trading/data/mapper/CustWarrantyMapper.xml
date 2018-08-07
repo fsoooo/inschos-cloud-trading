@@ -25,7 +25,7 @@
     <update id="updateInsurancePolicyStatusForCarInsuranceWarrantyUuid"
             parameterType="com.inschos.cloud.trading.model.CustWarranty">
         update cust_warranty set
-        `pre_policy_no`=#{pre_policy_no},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at}
+        `comb_product`=#{comb_product},`comb_warranty_code`=#{comb_warranty_code},`pre_policy_no`=#{pre_policy_no},`warranty_status`=#{warranty_status},`updated_at`=#{updated_at},`resp_msg`=#{resp_msg},`resp_code`=#{resp_code}
         where `warranty_uuid`=#{warranty_uuid}
     </update>
 
@@ -1006,7 +1006,17 @@
         select
          <include refid="Base_Column_List"/>
         from cust_warranty
-        where find_in_set(#{pre_policy_no},`pre_policy_no`) and state=1
+        <where>
+            <choose>
+                <when test="comb_product==1">
+                    `comb_warranty_code`=#{comb_warranty_code}
+                </when>
+                <otherwise>
+                    find_in_set(#{pre_policy_no},`pre_policy_no`)
+                </otherwise>
+            </choose>
+            and state=1
+        </where>
     </select>
 
 

@@ -47,7 +47,7 @@ public class TradeBean {
         public InsureRspData data;
     }
 
-    public static class InsurePayRequest extends BaseRequest{
+    public static class InsurePayRequest extends BaseRequest {
         @CheckParams(hintName = "支付号", stringType = CheckParams.StringType.STRING)
         public String payNo;
         //
@@ -58,10 +58,11 @@ public class TradeBean {
 
     }
 
-    public static class InsurePayResponse extends BaseResponse{
+    public static class InsurePayResponse extends BaseResponse {
         public InsureRspData data;
     }
-    public static class PreInsureResponse extends BaseResponse{
+
+    public static class PreInsureResponse extends BaseResponse {
         public InsureRspData data;
 
     }
@@ -72,17 +73,35 @@ public class TradeBean {
         @CheckParams(hintName = "产品ID", stringType = CheckParams.StringType.NUMBER, maxLen = 20)
         public String productId;
 
-        /**本次所有选中项的值*/
+        /**
+         * 本次所有选中项的值
+         */
         public String new_val;
-        /**被改变项的值*/
+        /**
+         * 被改变项的值
+         */
         public String old_val;
-        /**旧的试算因子项*/
+        /**
+         * 旧的试算因子项
+         */
         public String old_option;
+
+        public String old_protect_item;
     }
 
 
+    public static class QueryRequest extends BaseRequest {
+        @CheckParams(hintName = "保单uuid")
+        public String warrantyUuid;
+    }
 
-    public static class InsureRspData{
+
+    public static class QueryResponse extends BaseResponse {
+        public PolicyData data;
+    }
+
+
+    public static class InsureRspData {
         //保单状态
         public String status;
         public String statusTxt;
@@ -205,7 +224,7 @@ public class TradeBean {
     }
 
 
-    public static class BankData{
+    public static class BankData {
         public String bankCode;
 
         public String bankPhone;
@@ -213,6 +232,21 @@ public class TradeBean {
         public String name;
 
         public String certCode;
+    }
+
+    public static class PolicyData {
+
+        public String warrantyUuid;
+
+        public String policyNo;
+
+        public String proposalNo;
+
+        public String status;
+
+        public String statusTxt;
+
+        public String remark;
     }
 
 }

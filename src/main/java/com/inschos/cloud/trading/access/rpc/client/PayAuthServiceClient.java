@@ -1,10 +1,12 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
 
+import com.inschos.cloud.trading.access.rpc.bean.InsureDock;
 import com.inschos.common.assist.kit.L;
 import com.inschos.dock.api.PayAuthService;
 import com.inschos.dock.bean.*;
 import hprose.client.HproseHttpClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,11 +17,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class PayAuthServiceClient {
 
-    private final String uri = "/rpc/agent";
+    @Value("${rpc.remote.dock.host}")
+    private String dockHost;
+
+    private final String uri = "/rpc/auth";
 
     private PayAuthService getService(String productKey) {
-        // TODO: 2018/7/13
-        String host = null;
+
+        String host = dockHost + (InsureDock.isNewProduct(productKey) ? productKey.toLowerCase() : "general");
 
         return new HproseHttpClient(host + uri).useService(PayAuthService.class);
     }
@@ -52,6 +57,8 @@ public class PayAuthServiceClient {
             return null;
         }
     }
+
+
 
 
 }

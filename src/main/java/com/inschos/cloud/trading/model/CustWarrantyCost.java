@@ -51,7 +51,7 @@ public class CustWarrantyCost {
      */
     public String pay_money;
     /**
-     * 支付状态  201-核保中 202-核保失败 203-待支付 204-支付中 205-支付取消 206-支付成功
+     * 支付状态  201-核保中 202-核保失败 203-待支付 204-支付中 205-支付取消 206-支付成功 207支付失败
      */
     public String pay_status;
 

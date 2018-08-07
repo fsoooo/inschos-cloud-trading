@@ -46,13 +46,15 @@ public class TradeController {
     @RequestMapping("/quote")
     @ResponseBody
     public String quote(ActionBean bean) {
-
-
-        return "";
+        return tradeAction.quote(bean);
     }
 
-
-
+    @GetActionBeanAnnotation
+    @RequestMapping("/query")
+    @ResponseBody
+    public String query(ActionBean bean) {
+        return tradeAction.query(bean);
+    }
 
 
 

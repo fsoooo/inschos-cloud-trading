@@ -1,31 +1,35 @@
 package com.inschos.cloud.trading.access.rpc.client;
 
 
+import com.inschos.cloud.trading.access.rpc.bean.InsureDock;
 import com.inschos.common.assist.kit.L;
 import com.inschos.dock.api.InsureService;
 import com.inschos.dock.api.QueryService;
 import com.inschos.dock.bean.*;
 import hprose.client.HproseHttpClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by IceAnt on 2018/6/25.
  */
 @Component
-public class InsureServiceClient  {
+public class InsureServiceClient {
 
 
-    private final String uri = "/rpc/agent";
+    @Value("${rpc.remote.dock.host}")
+    private String dockHost;
+
+    private final String uri = "/rpc/insure";
 
     private InsureService getService(String productKey) {
-        // TODO: 2018/6/26  
-        String host = null;
+
+        String host = dockHost + (InsureDock.isNewProduct(productKey) ? productKey.toLowerCase() : "general");
         return new HproseHttpClient(host + uri).useService(InsureService.class);
     }
 
     private QueryService getQueryService(String productKey) {
-        // TODO: 2018/6/26
-        String host = null;
+        String host = dockHost + (InsureDock.isNewProduct(productKey) ? productKey.toLowerCase() : "general");
         return new HproseHttpClient(host + uri).useService(QueryService.class);
     }
 
@@ -83,4 +87,6 @@ public class InsureServiceClient  {
             return null;
         }
     }
+
+
 }
