@@ -1340,7 +1340,17 @@ public class InsurancePolicyBean {
                 this.endTimeText = sdf.format(new Date(Long.valueOf(this.endTime)));
             }
             if (StringKit.isNumeric(offlineCustWarranty.premium)) {
-                BigDecimal bigDecimal = new BigDecimal(offlineCustWarranty.premium);
+                String offlineCustWarrantyPremium = "";
+                if (offlineCustWarranty.premium.contains(",")){
+                    for (int i = 0; i < offlineCustWarranty.premium.length(); i++) {
+                        if (offlineCustWarranty.premium.charAt(i) != ',') {
+                            offlineCustWarrantyPremium += offlineCustWarranty.premium.charAt(i);
+                        }
+                    }
+                }else {
+                    offlineCustWarrantyPremium = offlineCustWarranty.premium;
+                }
+                BigDecimal bigDecimal = new BigDecimal(offlineCustWarrantyPremium);
                 this.premium = money.format(bigDecimal.doubleValue());
             } else {
                 this.premium = "0.00";
@@ -1350,7 +1360,17 @@ public class InsurancePolicyBean {
             com.inschos.cloud.trading.model.CustWarrantyCost custWarrantyCost = new com.inschos.cloud.trading.model.CustWarrantyCost();
             this.payStatusText = custWarrantyCost.payStatusText(offlineCustWarranty.pay_status);
             if (StringKit.isNumeric(offlineCustWarranty.brokerage)) {
-                BigDecimal bigDecimal = new BigDecimal(offlineCustWarranty.brokerage);
+                String offlineCustWarrantyBrokerage = "";
+                if (offlineCustWarranty.brokerage.contains(",")){
+                    for (int i = 0; i < offlineCustWarranty.brokerage.length(); i++) {
+                        if (offlineCustWarranty.brokerage.charAt(i) != ',') {
+                            offlineCustWarrantyBrokerage += offlineCustWarranty.brokerage.charAt(i);
+                        }
+                    }
+                }else {
+                    offlineCustWarrantyBrokerage = offlineCustWarranty.brokerage;
+                }
+                BigDecimal bigDecimal = new BigDecimal(offlineCustWarrantyBrokerage);
                 this.brokerage = money.format(bigDecimal.doubleValue());
             } else {
                 this.brokerage = "0.00";
