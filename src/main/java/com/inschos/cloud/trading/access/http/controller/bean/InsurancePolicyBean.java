@@ -1340,7 +1340,17 @@ public class InsurancePolicyBean {
                 this.endTimeText = sdf.format(new Date(Long.valueOf(this.endTime)));
             }
             if (StringKit.isNumeric(offlineCustWarranty.premium)) {
-                BigDecimal bigDecimal = new BigDecimal(offlineCustWarranty.premium);
+                String offlineCustWarrantyPremium = "";
+                if (offlineCustWarranty.premium.contains(",")){
+                    for (int i = 0; i < offlineCustWarranty.premium.length(); i++) {
+                        if (offlineCustWarranty.premium.charAt(i) != ',') {
+                            offlineCustWarrantyPremium += offlineCustWarranty.premium.charAt(i);
+                        }
+                    }
+                }else {
+                    offlineCustWarrantyPremium = offlineCustWarranty.premium;
+                }
+                BigDecimal bigDecimal = new BigDecimal(offlineCustWarrantyPremium);
                 this.premium = money.format(bigDecimal.doubleValue());
             } else {
                 this.premium = "0.00";
