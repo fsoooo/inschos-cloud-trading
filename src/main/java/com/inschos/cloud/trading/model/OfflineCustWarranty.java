@@ -314,6 +314,7 @@ public class OfflineCustWarranty {
                     pay_status = CustWarrantyCost.PAY_STATUS_SUCCESS;
                     break;
                 default:
+                    flag = false;
                     reasonList.add(new ErrorReason("支付状态只能为：未支付/已支付", "payStatus"));
                     break;
             }
