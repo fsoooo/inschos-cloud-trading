@@ -274,15 +274,33 @@ public class OfflineCustWarranty {
             }
         }
 
+        if (premium.contains(",")){
+            String warrantyPremium = "";
+            for (int i = 0; i < premium.length(); i++) {
+                if (premium.charAt(i) != ',') {
+                    warrantyPremium += premium.charAt(i);
+                }
+            }
+            premium = warrantyPremium;
+        }
         if (!StringKit.isNumeric(premium)) {
             flag = false;
             reasonList.add(new ErrorReason("保费必须是数字", "premium"));
         }
 
-        if (!StringKit.isNumeric(brokerage)) {
-            flag = false;
-            reasonList.add(new ErrorReason("应收佣金必须是数字", "brokerage"));
-        }
+//        if (brokerage.contains(",")){
+//            String warrantyBrokerage = "";
+//            for (int i = 0; i < brokerage.length(); i++) {
+//                if (brokerage.charAt(i) != ',') {
+//                    warrantyBrokerage += brokerage.charAt(i);
+//                }
+//            }
+//            brokerage = warrantyBrokerage;
+//        }
+//        if (!StringKit.isNumeric(brokerage)) {
+//            flag = false;
+//            reasonList.add(new ErrorReason("应收佣金必须是数字", "brokerage"));
+//        }
 
         if (pay_status == null) {
             flag = false;
