@@ -647,7 +647,7 @@ public class InsurancePolicyAction extends BaseAction {
                         }
 
                         if (!b) {
-                            offlineCustWarranty.addErrorReason("insuranceCompany", "保险公司名称不存在");
+                            offlineCustWarranty.addErrorReason("保险公司名称不存在", "insuranceCompany");
                         }
                     }
 
