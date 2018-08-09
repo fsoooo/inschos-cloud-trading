@@ -1360,7 +1360,17 @@ public class InsurancePolicyBean {
             com.inschos.cloud.trading.model.CustWarrantyCost custWarrantyCost = new com.inschos.cloud.trading.model.CustWarrantyCost();
             this.payStatusText = custWarrantyCost.payStatusText(offlineCustWarranty.pay_status);
             if (StringKit.isNumeric(offlineCustWarranty.brokerage)) {
-                BigDecimal bigDecimal = new BigDecimal(offlineCustWarranty.brokerage);
+                String offlineCustWarrantyBrokerage = "";
+                if (offlineCustWarranty.brokerage.contains(",")){
+                    for (int i = 0; i < offlineCustWarranty.brokerage.length(); i++) {
+                        if (offlineCustWarranty.brokerage.charAt(i) != ',') {
+                            offlineCustWarrantyBrokerage += offlineCustWarranty.brokerage.charAt(i);
+                        }
+                    }
+                }else {
+                    offlineCustWarrantyBrokerage = offlineCustWarranty.brokerage;
+                }
+                BigDecimal bigDecimal = new BigDecimal(offlineCustWarrantyBrokerage);
                 this.brokerage = money.format(bigDecimal.doubleValue());
             } else {
                 this.brokerage = "0.00";
