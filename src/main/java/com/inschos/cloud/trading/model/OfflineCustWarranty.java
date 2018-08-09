@@ -199,14 +199,14 @@ public class OfflineCustWarranty {
             reasonList.add(new ErrorReason("保单号不能为空", "warrantyCode"));
         }
 
-        if (!StringKit.isEmpty(insured_name) && insured_name.length() > 16) {
+        if (!StringKit.isEmpty(insured_name) && insured_name.length() > 64) {
             flag = false;
-            reasonList.add(new ErrorReason("投保人最多为16个字符", "insuredName"));
+            reasonList.add(new ErrorReason("投保人最多为64个字符", "insuredName"));
         }
 
-        if (!StringKit.isEmpty(policy_holder_name) && policy_holder_name.length() > 16) {
+        if (!StringKit.isEmpty(policy_holder_name) && policy_holder_name.length() > 64) {
             flag = false;
-            reasonList.add(new ErrorReason("被保险人人最多为16个字符", "policyHolderName"));
+            reasonList.add(new ErrorReason("被保险人人最多为64个字符", "policyHolderName"));
         }
 
         if (!StringKit.isEmpty(channel_name) && channel_name.length() > 16) {
@@ -224,9 +224,9 @@ public class OfflineCustWarranty {
             reasonList.add(new ErrorReason("缴费期必须是正整数", "paymentTime"));
         }
 
-        if (StringKit.isEmpty(insurance_product) || insurance_product.length() > 16) {
+        if (StringKit.isEmpty(insurance_product) || insurance_product.length() > 64) {
             flag = false;
-            reasonList.add(new ErrorReason("保险产品不能为空，且最多为16个字符", "insuranceProduct"));
+            reasonList.add(new ErrorReason("保险产品不能为空，且最多为64个字符", "insuranceProduct"));
         }
 
         List<SimpleDateFormat> sdfs = new ArrayList<>();
@@ -274,15 +274,33 @@ public class OfflineCustWarranty {
             }
         }
 
+        if (premium.contains(",")){
+            String warrantyPremium = "";
+            for (int i = 0; i < premium.length(); i++) {
+                if (premium.charAt(i) != ',') {
+                    warrantyPremium += premium.charAt(i);
+                }
+            }
+            premium = warrantyPremium;
+        }
         if (!StringKit.isNumeric(premium)) {
             flag = false;
             reasonList.add(new ErrorReason("保费必须是数字", "premium"));
         }
 
-        if (!StringKit.isNumeric(brokerage)) {
-            flag = false;
-            reasonList.add(new ErrorReason("应收佣金必须是数字", "brokerage"));
-        }
+//        if (brokerage.contains(",")){
+//            String warrantyBrokerage = "";
+//            for (int i = 0; i < brokerage.length(); i++) {
+//                if (brokerage.charAt(i) != ',') {
+//                    warrantyBrokerage += brokerage.charAt(i);
+//                }
+//            }
+//            brokerage = warrantyBrokerage;
+//        }
+//        if (!StringKit.isNumeric(brokerage)) {
+//            flag = false;
+//            reasonList.add(new ErrorReason("应收佣金必须是数字", "brokerage"));
+//        }
 
         if (pay_status == null) {
             flag = false;
