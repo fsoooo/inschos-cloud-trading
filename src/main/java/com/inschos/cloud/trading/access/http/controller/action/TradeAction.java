@@ -129,6 +129,7 @@ public class TradeAction extends BaseAction {
                     PayBean payBean = new PayBean();
                     payBean.payNo = request.payNo;
                     payBean.payWay = toPayWay(request.payWay);
+                    payBean.ip = bean.ip;
                     if (request.bankData != null) {
                         payBean.bankData = new BankBean();
                         payBean.bankData.userName = request.bankData.name;

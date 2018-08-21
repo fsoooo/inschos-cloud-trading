@@ -27,4 +27,6 @@ public class ActionBean {
     public String phone;
 
     public String email;
+
+    public String ip;
 }
