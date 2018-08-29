@@ -369,13 +369,24 @@ public class TradeAction extends BaseAction {
             String premium = null;
 
             ProductBean productBean = productClient.getPremium(insureBean);
+            if(productBean == null){
+                ProductBean productBean1 = new ProductBean();
+                productBean1.id = Long.valueOf(request.productId);
+                productBean = productClient.getNewPremium(productBean1);
+            }
             String productCode = null;
+            String apiUuid = null;
 
             if (productBean != null) {
                 premium = productBean.basePrice;
                 insureBean.premium = premium;
                 insureBean.amount = productBean.amount;
                 productCode = productBean.code;
+                if(productBean.apiUuid == null){
+                    apiUuid = getApiFromUuid(productCode);
+                }else {
+                    apiUuid = productBean.apiUuid;
+                }
             }
 
             List<CustWarrantyCost> costModels = new ArrayList<>();
@@ -420,7 +431,7 @@ public class TradeAction extends BaseAction {
 
             TradeBean.InsureRspData data = new TradeBean.InsureRspData();
             if (method == 1) {
-                RpcResponse<RspInsureBean> rpcResponse = insureServiceClient.insure(insureBean, getApiFromUuid(productCode));
+                RpcResponse<RspInsureBean> rpcResponse = insureServiceClient.insure(insureBean, apiUuid);
 
 
                 if (rpcResponse.data != null) {
@@ -458,7 +469,7 @@ public class TradeAction extends BaseAction {
                     }
                 }
             } else {
-                RpcResponse<RspPreInsureBean> rpcResponse = insureServiceClient.preInsure(insureBean, getApiFromUuid(productCode));
+                RpcResponse<RspPreInsureBean> rpcResponse = insureServiceClient.preInsure(insureBean, apiUuid);
 
 
             }

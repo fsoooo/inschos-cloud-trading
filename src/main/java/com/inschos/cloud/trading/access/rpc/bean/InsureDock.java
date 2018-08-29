@@ -43,6 +43,9 @@ public class InsureDock {
                 case "Zhf":
                     isNew = true;
                     break;
+                case "Tkks":
+                    isNew = true;
+                    break;
 
             }
         }

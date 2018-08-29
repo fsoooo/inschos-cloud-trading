@@ -26,7 +26,9 @@ public class ProductBean {
     public int coolingOffPeriod;
     public String latestDate;
     public String earliestDate;
+    //private_code
     public String code;
+    public String apiUuid;
 
     public long payCategoryId;
     public String payCategoryName;

@@ -129,6 +129,18 @@ public class ProductClient {
         }
     }
 
+    //保费试算的rpc
+    public ProductBean getNewPremium(ProductBean productBean) {
+        try {
+            ProductService service = getService();
+            return service != null ? service.getPremium(productBean) : null;
+
+        } catch (Exception e) {
+            L.log.error("remote fail {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
 
     public List<ProductBean> getListProduct(String name, String managerUuid) {
         try {

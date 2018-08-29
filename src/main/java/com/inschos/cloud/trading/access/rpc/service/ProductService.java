@@ -27,6 +27,9 @@ public interface ProductService {
     //保费试算的rpc
     public ProductBean getPremium(InsureBean search);
 
+    //保费试算的rpc
+    public ProductBean getPremium(ProductBean search);
+
     List<ProductCategory> getCategoryList(String level);
 
     List<InsuranceCo> getProductCoList(String managerUuid);
